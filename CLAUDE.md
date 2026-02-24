@@ -4,7 +4,7 @@
 Dee Buck (dee@wmbuck.net) - HOA President, villasboulders.org
 
 ## What This Is
-Code and automation for the Villas at the Boulders HOA (Scottsdale, AZ).
+Code and automation for the Villas at the Boulders HOA (Broomfield, CO).
 All Google Apps Script projects deploy to the villasboulders.org Google Workspace.
 
 ## Repository: github.com/vab-hoa/hoa-code
