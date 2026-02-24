@@ -1,0 +1,33 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+
+# Credentials and secrets - NEVER commit these
+*.credentials.json
+*service-account*.json
+client_secret_*.json
+.env
+.env.*
+
+# clasp metadata (pushed to Apps Script, not needed in git)
+_metadata.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+
+# Logs
+*.log

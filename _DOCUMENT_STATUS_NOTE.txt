@@ -1,0 +1,14 @@
+IMPORTANT: HOA Code Documentation Update (February 16, 2026)
+
+The planning documents have been reorganized for clarity.
+
+START HERE:
+  - INDEX.md          (Document navigation guide)
+  - CURRENT_PLAN.md   (What we're working on NOW)
+
+Some documents have been renamed or archived:
+  - APPSHEET_HYBRID_SPECIFICATION.md → FUTURE_APPSHEET_PLAN.md
+  - Older documents marked as ARCHIVED (see INDEX.md)
+
+See INDEX.md for complete document reference and status.
+
