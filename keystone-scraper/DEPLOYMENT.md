@@ -40,8 +40,8 @@ This guide covers deployment and verification of all three components.
 ### Keystone Portal Access
 
 - **URL:** https://kppm.cincwebaxis.com
-- **Username:** REDACTED_EMAIL
-- **Password:** REDACTED_PASSWORD
+- **Username:** (see .env file)
+- **Password:** (see .env file)
 
 ---
 
@@ -536,8 +536,9 @@ If issues arise after deployment:
 - **File permissions:** 600 on service account JSON
 - **Consider environment variables** for credentials:
   ```bash
-  export KEYSTONE_USER="REDACTED_EMAIL"
-  export KEYSTONE_PASS="REDACTED_PASSWORD"
+  # Load from .env file or set manually:
+  export KEYSTONE_USERNAME="<your-username>"
+  export KEYSTONE_PASSWORD="<your-password>"
   ```
 
 ### Data Privacy

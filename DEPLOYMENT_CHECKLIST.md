@@ -220,8 +220,8 @@
 ### Step 12: Export Data from Keystone Portal
 
 1. Login to Keystone: https://kppm.cincwebaxis.com
-   - User: REDACTED_EMAIL
-   - Pass: REDACTED_PASSWORD
+   - User: (see keystone-scraper/.env)
+   - Pass: (see keystone-scraper/.env)
 
 2. Open cache spreadsheet: https://docs.google.com/spreadsheets/d/1TBC1B2V_yzZaost6r7IGWWqiEebEcQwMp5DknahwYuQ
 

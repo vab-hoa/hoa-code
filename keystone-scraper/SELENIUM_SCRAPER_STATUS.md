@@ -11,7 +11,7 @@ Successfully replaced Playwright with Selenium (Firefox) and got the scraper wor
 ## What Works
 
 1. **Browser automation**: Selenium with Firefox works perfectly in headless mode
-2. **Login**: Successfully authenticates with credentials (REDACTED_EMAIL / REDACTED_PASSWORD)
+2. **Login**: Successfully authenticates with credentials (from .env file)
 3. **Data extraction**: Can navigate to and scrape:
    - Homeowner Directory (found 3+ profiles)
    - Violations (found data)

@@ -202,8 +202,8 @@ logging.basicConfig(level=logging.DEBUG)
 - The service account credentials should have minimal permissions
 - Consider using environment variables for credentials:
   ```python
-  KEYSTONE_USERNAME = os.environ.get('KEYSTONE_USER', 'REDACTED_EMAIL')
-  KEYSTONE_PASSWORD = os.environ.get('KEYSTONE_PASS', 'REDACTED_PASSWORD')
+  KEYSTONE_USERNAME = os.environ['KEYSTONE_USERNAME']
+  KEYSTONE_PASSWORD = os.environ['KEYSTONE_PASSWORD']
   ```
 
 ## Rollback Plan

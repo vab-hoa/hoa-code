@@ -21,8 +21,8 @@ from googleapiclient.errors import HttpError
 
 # Configuration
 KEYSTONE_URL = "https://kppm.cincwebaxis.com"
-KEYSTONE_USERNAME = "REDACTED_EMAIL"
-KEYSTONE_PASSWORD = "REDACTED_PASSWORD"
+KEYSTONE_USERNAME = os.environ['KEYSTONE_USERNAME']
+KEYSTONE_PASSWORD = os.environ['KEYSTONE_PASSWORD']
 
 CREDENTIALS_PATH = os.path.expanduser("~/.config/openclaw/google-service-account.json")
 SPREADSHEET_ID = "1TBC1B2V_yzZaost6r7IGWWqiEebEcQwMp5DknahwYuQ"

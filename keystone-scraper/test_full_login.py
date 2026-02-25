@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Test the full login process"""
 
+import os
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -11,8 +12,8 @@ from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.service import Service
 
 KEYSTONE_URL = "https://kppm.cincwebaxis.com"
-KEYSTONE_USERNAME = "REDACTED_EMAIL"
-KEYSTONE_PASSWORD = "REDACTED_PASSWORD"
+KEYSTONE_USERNAME = os.environ['KEYSTONE_USERNAME']
+KEYSTONE_PASSWORD = os.environ['KEYSTONE_PASSWORD']
 
 print("Starting browser...")
 options = FirefoxOptions()

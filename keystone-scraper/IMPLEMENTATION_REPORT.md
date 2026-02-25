@@ -320,8 +320,8 @@ No new dependencies required. Uses existing packages:
 
 **Portal Credentials:**
 - URL: https://kppm.cincwebaxis.com
-- Username: REDACTED_EMAIL
-- Password: REDACTED_PASSWORD
+- Username: (see .env file)
+- Password: (see .env file)
 
 **Google Sheets:**
 - Spreadsheet ID: 1TBC1B2V_yzZaost6r7IGWWqiEebEcQwMp5DknahwYuQ

@@ -139,7 +139,7 @@ Since the Python scraper needs Playwright (pending fix), you'll populate the cac
 ### Step 3.1: Log into Keystone Portal
 
 1. Go to https://kppm.cincwebaxis.com
-2. Login with: REDACTED_EMAIL / REDACTED_PASSWORD
+2. Login with credentials from keystone-scraper/.env
 
 ### Step 3.2: Export Homeowner Directory
 
