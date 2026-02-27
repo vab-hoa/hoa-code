@@ -28,6 +28,9 @@ const CONFIG = {
   woodTrimSheetId: '1Eu0y6O8Uco6VZ1mYcB2ehDXwE_EV_NJHV_M5Ji6Mts0',  // JPEG converted 2026-02-23
   keystoneCacheSheetId: '1TBC1B2V_yzZaost6r7IGWWqiEebEcQwMp5DknahwYuQ',
   
+  // Gutter Pictures folder (on VaB Board Documents shared drive, via shortcut target)
+  gutterPicturesFolderId: '1hJ47l2_fOsmysZ2OkLnUoliJTux1PBe7',
+
   ownersGroup: 'owners@villasboulders.org',
   boardGroup: 'board@villasboulders.org'
 };
@@ -427,30 +430,18 @@ function getGutterFolderImages(address) {
   console.log('Looking for gutter images for: ' + address);
   
   try {
-    // Find the Gutter Pictures folder (handles both folders and shortcuts)
+    // Open Gutter Pictures folder directly by ID (it's a shortcut target on the
+    // VaB Board Documents shared drive — DriveApp.getFoldersByName() can't find
+    // folders on shared drives, so we use the ID from CONFIG)
     let gutterPicturesFolder = null;
-    
-    // Method 1: Direct search
-    gutterPicturesFolder = findFolderOrShortcut('Gutter Pictures', null);
-    
-    if (!gutterPicturesFolder) {
-      // Method 2: Search in HOA Board Documents/Gutters
-      console.log('Searching in HOA Board Documents/Gutters...');
-      const hoaFolder = findFolderOrShortcut('HOA Board Documents', null);
-      if (hoaFolder) {
-        const guttersFolder = findFolderOrShortcut('Gutters', hoaFolder);
-        if (guttersFolder) {
-          gutterPicturesFolder = findFolderOrShortcut('Gutter Pictures', guttersFolder);
-        }
-      }
-    }
-    
-    if (!gutterPicturesFolder) {
-      console.log('Could not find Gutter Pictures folder or shortcut');
+    try {
+      gutterPicturesFolder = DriveApp.getFolderById(CONFIG.gutterPicturesFolderId);
+    } catch (e) {
+      console.error('Could not open Gutter Pictures folder by ID: ' + e.toString());
       return {unitImages: [], buildingImages: []};
     }
-    
-    console.log('Successfully found Gutter Pictures folder');
+
+    console.log('Successfully found Gutter Pictures folder: ' + gutterPicturesFolder.getName());
     
     // Standardize the request address
     const requestStandardized = HOALibrary.standardizeHOAAddress(address);
