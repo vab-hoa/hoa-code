@@ -81,27 +81,23 @@ function generateSectionWoodTrim(address, displayAddress, data) {
         .setForegroundColor('#666666');
     }
 
-    // Folder-based photos (from Wood Trim Photos folder on shared drive)
-    var hasFolderPhotos = data.woodTrimFolderImages &&
-        (data.woodTrimFolderImages.unitImages.length > 0 || data.woodTrimFolderImages.buildingImages.length > 0);
+    // Folder-based photos — only if no spreadsheet photos (to avoid duplicates)
+    if (!allPhotos || allPhotos.length === 0) {
+      var hasFolderPhotos = data.woodTrimFolderImages &&
+          (data.woodTrimFolderImages.unitImages.length > 0 || data.woodTrimFolderImages.buildingImages.length > 0);
 
-    if (hasFolderPhotos) {
-      if (allPhotos && allPhotos.length > 0) {
-        // Already had a page break for spreadsheet photos, just add a separator
-        body.appendParagraph('');
-        body.appendHorizontalRule();
-      } else {
+      if (hasFolderPhotos) {
         body.appendPageBreak();
+
+        body.appendParagraph('Site Photos')
+          .setHeading(DocumentApp.ParagraphHeading.HEADING2)
+          .setAlignment(DocumentApp.HorizontalAlignment.CENTER)
+          .setForegroundColor('#1a3c5e');
+
+        body.appendParagraph('');
+
+        formatWoodTrimFolderPhotos(body, data.woodTrimFolderImages);
       }
-
-      body.appendParagraph('Site Photos')
-        .setHeading(DocumentApp.ParagraphHeading.HEADING2)
-        .setAlignment(DocumentApp.HorizontalAlignment.CENTER)
-        .setForegroundColor('#1a3c5e');
-
-      body.appendParagraph('');
-
-      formatWoodTrimFolderPhotos(body, data.woodTrimFolderImages);
     }
 
     // Footer

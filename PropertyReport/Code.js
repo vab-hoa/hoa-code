@@ -38,7 +38,7 @@ const CONFIG = {
 };
 
 // Change this address, then select testPropertyReport and click Run
-const TEST_ADDRESS = '13737RP2';
+const TEST_ADDRESS = '13662BP1';
 const TEST_EMAIL = 'admin@villasboulders.org';
 
 /**
