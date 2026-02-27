@@ -43,6 +43,7 @@ function generateSectionWoodTrim(address, displayAddress, data) {
     body.appendParagraph('');
 
     // Assessment Data Section
+    var allPhotos = [];
     if (data.woodTrim && data.woodTrim.rows.length > 0) {
       body.appendParagraph('Assessment Summary')
         .setHeading(DocumentApp.ParagraphHeading.HEADING3)
@@ -56,7 +57,7 @@ function generateSectionWoodTrim(address, displayAddress, data) {
       body.appendParagraph('');
 
       // Format wood trim data - collect photos for later
-      var allPhotos = formatWoodTrimDataTable(body, data.woodTrim);
+      allPhotos = formatWoodTrimDataTable(body, data.woodTrim);
 
       // === PAGE 2+: Photos Section ===
       if (allPhotos && allPhotos.length > 0) {
@@ -78,6 +79,29 @@ function generateSectionWoodTrim(address, displayAddress, data) {
       body.appendParagraph('No wood trim assessment records found for this property.')
         .setItalic(true)
         .setForegroundColor('#666666');
+    }
+
+    // Folder-based photos (from Wood Trim Photos folder on shared drive)
+    var hasFolderPhotos = data.woodTrimFolderImages &&
+        (data.woodTrimFolderImages.unitImages.length > 0 || data.woodTrimFolderImages.buildingImages.length > 0);
+
+    if (hasFolderPhotos) {
+      if (allPhotos && allPhotos.length > 0) {
+        // Already had a page break for spreadsheet photos, just add a separator
+        body.appendParagraph('');
+        body.appendHorizontalRule();
+      } else {
+        body.appendPageBreak();
+      }
+
+      body.appendParagraph('Site Photos')
+        .setHeading(DocumentApp.ParagraphHeading.HEADING2)
+        .setAlignment(DocumentApp.HorizontalAlignment.CENTER)
+        .setForegroundColor('#1a3c5e');
+
+      body.appendParagraph('');
+
+      formatWoodTrimFolderPhotos(body, data.woodTrimFolderImages);
     }
 
     // Footer
@@ -188,50 +212,71 @@ function formatWoodTrimDataTable(body, woodTrimData) {
  * Add a single wood trim photo with caption, sized for 2 per page
  */
 function addWoodTrimPhoto(body, photo, caption) {
+  addScaledPhoto_(body, photo.fileId, caption + (photo.label && photo.label !== 'Photo' ? ' - ' + photo.label : ''));
+}
+
+/**
+ * Format wood trim photos from Drive folder (unit + building)
+ */
+function formatWoodTrimFolderPhotos(body, folderImages) {
+  if (!folderImages) return;
+  var photoCount = 0;
+
+  if (folderImages.unitImages && folderImages.unitImages.length > 0) {
+    body.appendParagraph('Unit: ' + (folderImages.unitFolderName || 'Your Unit'))
+      .setBold(true).setFontSize(11).setForegroundColor('#1a3c5e');
+    body.appendParagraph('');
+    for (var i = 0; i < folderImages.unitImages.length; i++) {
+      photoCount++;
+      addScaledPhoto_(body, folderImages.unitImages[i].fileId, 'Photo ' + photoCount);
+    }
+  }
+
+  if (folderImages.buildingImages && folderImages.buildingImages.length > 0) {
+    if (folderImages.unitImages && folderImages.unitImages.length > 0) {
+      body.appendParagraph('');
+    }
+    body.appendParagraph('Building: ' + (folderImages.buildingFolderName || 'Common Areas'))
+      .setBold(true).setFontSize(11).setForegroundColor('#1a3c5e');
+    body.appendParagraph('');
+    for (var i = 0; i < folderImages.buildingImages.length; i++) {
+      photoCount++;
+      addScaledPhoto_(body, folderImages.buildingImages[i].fileId, 'Photo ' + photoCount);
+    }
+  }
+}
+
+/**
+ * Add a scaled photo with caption (shared by spreadsheet and folder photos)
+ */
+function addScaledPhoto_(body, fileId, captionText) {
   try {
-    var imageFile = DriveApp.getFileById(photo.fileId);
+    var imageFile = DriveApp.getFileById(fileId);
     var imageBlob = imageFile.getBlob();
-    var convertedBlob = convertHeifToJpeg(imageBlob, 'woodtrim_photo.jpg');
+    var convertedBlob = convertHeifToJpeg(imageBlob, 'photo.jpg');
 
     if (convertedBlob) {
       var inlineImage = body.appendImage(convertedBlob);
-
-      // Get original dimensions
       var width = inlineImage.getWidth();
       var height = inlineImage.getHeight();
-
-      // Scale to fit within max bounds while maintaining aspect ratio
       var widthRatio = WOODTRIM_PHOTO_MAX_WIDTH / width;
       var heightRatio = WOODTRIM_PHOTO_MAX_HEIGHT / height;
-      var ratio = Math.min(widthRatio, heightRatio, 1); // Don't scale up
-
+      var ratio = Math.min(widthRatio, heightRatio, 1);
       if (ratio < 1) {
         inlineImage.setWidth(Math.round(width * ratio));
         inlineImage.setHeight(Math.round(height * ratio));
       }
-
-      // Caption with photo label info
-      var captionText = caption;
-      if (photo.label && photo.label !== 'Photo') {
-        captionText += ' - ' + photo.label;
-      }
-
       body.appendParagraph(captionText)
         .setAlignment(DocumentApp.HorizontalAlignment.CENTER)
-        .setFontSize(9)
-        .setItalic(true)
-        .setForegroundColor('#666666')
+        .setFontSize(9).setItalic(true).setForegroundColor('#666666')
         .setSpacingAfter(12);
-
     } else {
       body.appendParagraph('[HEIF image could not be displayed]')
-        .setItalic(true)
-        .setForegroundColor('#999999');
+        .setItalic(true).setForegroundColor('#999999');
     }
   } catch (error) {
-    console.error('Error adding wood trim photo: ' + error.toString());
+    console.error('Error adding photo: ' + error.toString());
     body.appendParagraph('[Could not load image]')
-      .setItalic(true)
-      .setForegroundColor('#999999');
+      .setItalic(true).setForegroundColor('#999999');
   }
 }

@@ -30,13 +30,15 @@ const CONFIG = {
   
   // Gutter Pictures folder (on VaB Board Documents shared drive, under Gutters/)
   gutterPicturesFolderId: '1dWjvxclLYYeP8yP8fIyIySVrnoa5psrs',
+  // Wood Trim Photos folder (on VaB Board Documents shared drive, under Wood Trim Damage Repair/Wood Trim Project/)
+  woodTrimPhotosFolderId: '1P-Jsvh1yDD0dBISP4A5e_r0Bl8zBuBBw',
 
   ownersGroup: 'owners@villasboulders.org',
   boardGroup: 'board@villasboulders.org'
 };
 
-// Address and email used by testPropertyReport() — change these to test a different unit
-const TEST_ADDRESS = '13737 Rock Point Unit 102';
+// Change this address, then select testPropertyReport and click Run
+const TEST_ADDRESS = '13737RP2';
 const TEST_EMAIL = 'admin@villasboulders.org';
 
 /**
@@ -156,7 +158,8 @@ function gatherReportData(email, standardizedAddress, displayAddress, originalAd
     gutters: null,
     woodTrim: null,
     keystone: null,
-    gutterFolderImages: null
+    gutterFolderImages: null,
+    woodTrimFolderImages: null
   };
 
   // Get homeowner contact info from HOA Contacts
@@ -207,6 +210,14 @@ function gatherReportData(email, standardizedAddress, displayAddress, originalAd
     console.error('Error getting wood trim data: ' + error.toString());
   }
   
+  // Get wood trim folder images (using standardized address)
+  try {
+    data.woodTrimFolderImages = getWoodTrimFolderImages(standardizedAddress);
+  } catch (error) {
+    console.error('Error getting wood trim folder images: ' + error.toString());
+    data.woodTrimFolderImages = null;
+  }
+
   // Get Keystone data (using standardized address)
   try {
     console.log('Fetching Keystone data...');
@@ -563,6 +574,83 @@ function getImagesFromDriveFolder(folderId) {
     console.error('Error reading folder images: ' + error.toString());
   }
   return images;
+}
+
+/**
+ * Get wood trim images from Drive folders using HOA standardization.
+ * Same approach as getGutterFolderImages — uses Advanced Drive Service for shared drives.
+ */
+function getWoodTrimFolderImages(address) {
+  console.log('Looking for wood trim images for: ' + address);
+
+  try {
+    const parentId = CONFIG.woodTrimPhotosFolderId;
+    const requestStandardized = HOALibrary.standardizeHOAAddress(address);
+    const requestBuilding = HOALibrary.getBuildingAddress(address);
+    const requestUnit = HOALibrary.getUnitFromAddress(address);
+
+    console.log('Request: ' + requestStandardized + ' (building: ' + requestBuilding + ', unit: ' + requestUnit + ')');
+
+    let unitFolderId = null;
+    let buildingFolderId = null;
+    let unitFolderName = '';
+    let buildingFolderName = '';
+
+    let pageToken = null;
+    let folderCount = 0;
+    do {
+      const response = Drive.Files.list({
+        q: "'" + parentId + "' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false",
+        fields: 'nextPageToken, files(id, name)',
+        pageSize: 100,
+        includeItemsFromAllDrives: true,
+        supportsAllDrives: true,
+        pageToken: pageToken
+      });
+
+      const folders = response.files || [];
+      for (let i = 0; i < folders.length; i++) {
+        const folderName = folders[i].name;
+        const folderId = folders[i].id;
+        folderCount++;
+
+        const folderStandardized = HOALibrary.standardizeHOAAddress(folderName);
+        const folderBuilding = HOALibrary.getBuildingAddress(folderName);
+        const folderUnit = HOALibrary.getUnitFromAddress(folderName);
+
+        if (requestUnit && folderStandardized === requestStandardized) {
+          unitFolderId = folderId;
+          unitFolderName = folderName;
+          console.log('  MATCH wood trim unit folder: ' + unitFolderName);
+        }
+
+        if (folderBuilding === requestBuilding && !folderUnit) {
+          buildingFolderId = folderId;
+          buildingFolderName = folderName;
+          console.log('  MATCH wood trim building folder: ' + buildingFolderName);
+        }
+      }
+      pageToken = response.nextPageToken;
+    } while (pageToken);
+
+    console.log('Scanned ' + folderCount + ' wood trim subfolders');
+
+    const unitImages = unitFolderId ? getImagesFromDriveFolder(unitFolderId) : [];
+    const buildingImages = buildingFolderId ? getImagesFromDriveFolder(buildingFolderId) : [];
+
+    console.log('Wood trim results: ' + unitImages.length + ' unit images, ' + buildingImages.length + ' building images');
+
+    return {
+      unitImages: unitImages,
+      buildingImages: buildingImages,
+      unitFolderName: unitFolderName,
+      buildingFolderName: buildingFolderName
+    };
+
+  } catch (error) {
+    console.error('Error getting wood trim folder images: ' + error.toString());
+    return {unitImages: [], buildingImages: []};
+  }
 }
 
 // Keep old function for any non-shared-drive usage
