@@ -28,16 +28,37 @@ const CONFIG = {
   woodTrimSheetId: '1Eu0y6O8Uco6VZ1mYcB2ehDXwE_EV_NJHV_M5Ji6Mts0',  // JPEG converted 2026-02-23
   keystoneCacheSheetId: '1TBC1B2V_yzZaost6r7IGWWqiEebEcQwMp5DknahwYuQ',
   
-  // Gutter Pictures folder (on VaB Board Documents shared drive, via shortcut target)
-  gutterPicturesFolderId: '1hJ47l2_fOsmysZ2OkLnUoliJTux1PBe7',
+  // Gutter Pictures folder (on VaB Board Documents shared drive, under Gutters/)
+  gutterPicturesFolderId: '1dWjvxclLYYeP8yP8fIyIySVrnoa5psrs',
 
   ownersGroup: 'owners@villasboulders.org',
   boardGroup: 'board@villasboulders.org'
 };
 
 // Address and email used by testPropertyReport() — change these to test a different unit
-const TEST_ADDRESS = '13738 Rock Point Unit 101';
+const TEST_ADDRESS = '13737 Rock Point Unit 102';
 const TEST_EMAIL = 'admin@villasboulders.org';
+
+/**
+ * Diagnostic: test gutter folder image lookup.
+ * Run from Apps Script editor to verify gutter photos work.
+ */
+function testGutterImages() {
+  console.log('=== GUTTER IMAGE DIAGNOSTIC ===');
+  console.log('Address: ' + TEST_ADDRESS);
+  const standardized = HOALibrary.standardizeHOAAddress(TEST_ADDRESS);
+  console.log('Standardized: ' + standardized);
+  const result = getGutterFolderImages(standardized);
+  console.log('Unit images: ' + result.unitImages.length);
+  console.log('Building images: ' + result.buildingImages.length);
+  if (result.unitImages.length > 0) {
+    result.unitImages.forEach(function(img) { console.log('  Unit: ' + img.name); });
+  }
+  if (result.buildingImages.length > 0) {
+    result.buildingImages.forEach(function(img) { console.log('  Bldg: ' + img.name); });
+  }
+  console.log('=== END DIAGNOSTIC ===');
+}
 
 /**
  * ONE-TIME SETUP: Run this function to connect to your form
@@ -428,112 +449,139 @@ function findFolderOrShortcut(folderName, parentFolder) {
  */
 function getGutterFolderImages(address) {
   console.log('Looking for gutter images for: ' + address);
-  
-  try {
-    // Open Gutter Pictures folder directly by ID (it's a shortcut target on the
-    // VaB Board Documents shared drive — DriveApp.getFoldersByName() can't find
-    // folders on shared drives, so we use the ID from CONFIG)
-    let gutterPicturesFolder = null;
-    try {
-      gutterPicturesFolder = DriveApp.getFolderById(CONFIG.gutterPicturesFolderId);
-    } catch (e) {
-      console.error('Could not open Gutter Pictures folder by ID: ' + e.toString());
-      return {unitImages: [], buildingImages: []};
-    }
 
-    console.log('Successfully found Gutter Pictures folder: ' + gutterPicturesFolder.getName());
-    
+  try {
+    // Use Advanced Drive Service to list subfolders — DriveApp.getFolders()
+    // does not work reliably on shared drive folders
+    const parentId = CONFIG.gutterPicturesFolderId;
+
     // Standardize the request address
     const requestStandardized = HOALibrary.standardizeHOAAddress(address);
     const requestBuilding = HOALibrary.getBuildingAddress(address);
     const requestUnit = HOALibrary.getUnitFromAddress(address);
-    
-    console.log('Request standardized: ' + requestStandardized + ' (building: ' + requestBuilding + ', unit: ' + requestUnit + ')');
-    
-    let unitFolder = null;
-    let buildingFolder = null;
+
+    console.log('Request: ' + requestStandardized + ' (building: ' + requestBuilding + ', unit: ' + requestUnit + ')');
+
+    let unitFolderId = null;
+    let buildingFolderId = null;
     let unitFolderName = '';
     let buildingFolderName = '';
-    
-    // Iterate through all folders and standardize their names for comparison
-    const folders = gutterPicturesFolder.getFolders();
-    
-    while (folders.hasNext()) {
-      const folder = folders.next();
-      const folderName = folder.getName();
-      
-      // Standardize the folder name using the same HOA logic
-      const folderStandardized = HOALibrary.standardizeHOAAddress(folderName);
-      const folderBuilding = HOALibrary.getBuildingAddress(folderName);
-      const folderUnit = HOALibrary.getUnitFromAddress(folderName);
-      
-      // Log only essential info
-      // console.log('Checking folder: "' + folderName + '" -> "' + folderStandardized + '"');
-      
-      // Check for unit folder match
-      if (requestUnit && folderStandardized === requestStandardized) {
-        unitFolder = folder;
-        unitFolderName = folderName;
-        console.log('Found unit folder: ' + unitFolderName);
+
+    // List subfolders using Advanced Drive Service (supports shared drives)
+    let pageToken = null;
+    let folderCount = 0;
+    do {
+      const response = Drive.Files.list({
+        q: "'" + parentId + "' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false",
+        fields: 'nextPageToken, files(id, name)',
+        pageSize: 100,
+        includeItemsFromAllDrives: true,
+        supportsAllDrives: true,
+        pageToken: pageToken
+      });
+
+      const folders = response.files || [];
+      for (let i = 0; i < folders.length; i++) {
+        const folderName = folders[i].name;
+        const folderId = folders[i].id;
+        folderCount++;
+
+        const folderStandardized = HOALibrary.standardizeHOAAddress(folderName);
+        const folderBuilding = HOALibrary.getBuildingAddress(folderName);
+        const folderUnit = HOALibrary.getUnitFromAddress(folderName);
+
+        // Check for unit folder match
+        if (requestUnit && folderStandardized === requestStandardized) {
+          unitFolderId = folderId;
+          unitFolderName = folderName;
+          console.log('  MATCH unit folder: ' + unitFolderName);
+        }
+
+        // Check for building folder match (same building, NO unit number)
+        if (folderBuilding === requestBuilding && !folderUnit) {
+          buildingFolderId = folderId;
+          buildingFolderName = folderName;
+          console.log('  MATCH building folder: ' + buildingFolderName);
+        }
       }
-      
-      // Check for building folder match
-      // Building folder = same building but NO unit number
-      if (folderBuilding === requestBuilding && !folderUnit) {
-        buildingFolder = folder;
-        buildingFolderName = folderName;
-        console.log('Found building folder: ' + buildingFolderName);
-      }
-    }
-    
-    // Get images from matched folders
-    const unitImages = unitFolder ? getImagesFromFolder(unitFolder) : [];
-    const buildingImages = buildingFolder ? getImagesFromFolder(buildingFolder) : [];
-    
+      pageToken = response.nextPageToken;
+    } while (pageToken);
+
+    console.log('Scanned ' + folderCount + ' subfolders');
+
+    // Get images from matched folders (also using Advanced Drive Service)
+    const unitImages = unitFolderId ? getImagesFromDriveFolder(unitFolderId) : [];
+    const buildingImages = buildingFolderId ? getImagesFromDriveFolder(buildingFolderId) : [];
+
     console.log('Results: ' + unitImages.length + ' unit images, ' + buildingImages.length + ' building images');
-    
+
     return {
       unitImages: unitImages,
       buildingImages: buildingImages,
       unitFolderName: unitFolderName,
       buildingFolderName: buildingFolderName
     };
-    
+
   } catch (error) {
     console.error('Error getting gutter folder images: ' + error.toString());
     return {unitImages: [], buildingImages: []};
   }
 }
 
+/**
+ * List image files in a folder using Advanced Drive Service (shared drive compatible)
+ */
+function getImagesFromDriveFolder(folderId) {
+  const images = [];
+  try {
+    let pageToken = null;
+    do {
+      const response = Drive.Files.list({
+        q: "'" + folderId + "' in parents and mimeType contains 'image/' and trashed = false",
+        fields: 'nextPageToken, files(id, name, mimeType)',
+        pageSize: 100,
+        includeItemsFromAllDrives: true,
+        supportsAllDrives: true,
+        pageToken: pageToken
+      });
+
+      const files = response.files || [];
+      for (let i = 0; i < files.length; i++) {
+        // Skip HEIF/HEIC images (not supported in Apps Script doc embedding)
+        if (files[i].mimeType.includes('heif') || files[i].mimeType.includes('heic')) {
+          console.log('Skipping HEIF image: ' + files[i].name);
+          continue;
+        }
+        images.push({
+          name: files[i].name,
+          fileId: files[i].id
+        });
+      }
+      pageToken = response.nextPageToken;
+    } while (pageToken);
+  } catch (error) {
+    console.error('Error reading folder images: ' + error.toString());
+  }
+  return images;
+}
+
+// Keep old function for any non-shared-drive usage
 function getImagesFromFolder(folder, maxImages) {
-  // maxImages: 0 = no limit
   if (maxImages === undefined) maxImages = 0;
   const images = [];
-
   try {
     const files = folder.getFiles();
     while (files.hasNext() && (maxImages === 0 || images.length < maxImages)) {
       const file = files.next();
       const mimeType = file.getMimeType();
-
-      // Check if it's an image, but skip HEIF (not supported in Apps Script)
       if (mimeType.startsWith('image/')) {
-        // Skip HEIF/HEIC images
-        if (mimeType.includes('heif') || mimeType.includes('heic')) {
-          console.log('Skipping HEIF image (not supported): ' + file.getName());
-          continue;
-        }
-
-        images.push({
-          name: file.getName(),
-          fileId: file.getId()
-        });
+        if (mimeType.includes('heif') || mimeType.includes('heic')) continue;
+        images.push({ name: file.getName(), fileId: file.getId() });
       }
     }
   } catch (error) {
     console.error('Error reading folder images: ' + error.toString());
   }
-
   return images;
 }
 
