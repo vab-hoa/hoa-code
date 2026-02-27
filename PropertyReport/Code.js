@@ -1145,13 +1145,32 @@ function appendGutterData(body, sheetData) {
  * Edit the TEST_ADDRESS below and run this function
  */
 function testPropertyReport() {
-  console.log('=== MANUAL TEST RUN ===');
-  console.log('Testing address: ' + TEST_ADDRESS);
+  runReportFor(TEST_ADDRESS);
+}
+
+/**
+ * Generate a property report for any address and email it to admin@.
+ * Run from the Apps Script editor. Examples:
+ *   runReportFor('13664 Stone Circle Unit 101')
+ *   runReportFor('13737 Rock Point Unit 102')
+ *   runReportFor('3510 Broadlands Lane')
+ */
+function runReportFor(address) {
+  if (!address) {
+    console.log('Usage: runReportFor("13664 Stone Circle Unit 101")');
+    return;
+  }
+  const email = CONFIG.adminEmail;
+  console.log('=== GENERATING REPORT ===');
+  console.log('Address: ' + address);
+  console.log('Sending to: ' + email);
 
   try {
-    const standardized = HOALibrary.standardizeHOAAddress(TEST_ADDRESS);
+    const standardized = HOALibrary.standardizeHOAAddress(address);
     const display = HOALibrary.getDisplayAddress(standardized);
-    const reportData = gatherReportData(TEST_EMAIL, standardized, display, TEST_ADDRESS);
+    console.log('Standardized: ' + standardized + ' (' + display + ')');
+
+    const reportData = gatherReportData(email, standardized, display, address);
 
     console.log('Data gathered. Generating sections...');
     const sections = generateAllSections(standardized, display, reportData);
@@ -1161,12 +1180,12 @@ function testPropertyReport() {
       console.log('  ' + (i+1) + ') ' + s.label + '\n     ' + s.url);
     });
 
-    console.log('\nSending test email to: ' + TEST_EMAIL);
-    sendPropertyReportEmail(TEST_EMAIL, display, sections);
+    console.log('\nSending report to: ' + email);
+    sendPropertyReportEmail(email, display, sections);
 
-    console.log('\n✅ TEST COMPLETE - Check ' + TEST_EMAIL + ' for the report');
+    console.log('\nDone — check ' + email + ' for the report');
   } catch (error) {
-    console.error('❌ Test failed: ' + error.toString());
+    console.error('Failed: ' + error.toString());
     console.error(error.stack);
   }
 }
