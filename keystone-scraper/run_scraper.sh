@@ -6,6 +6,24 @@
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 LOG="$SCRIPT_DIR/scraper.log"
 
+# Trim log to last 14 days
+if [ -f "$LOG" ]; then
+    CUTOFF=$(date -d '14 days ago' '+%a %b')
+    # Find the first run header within the retention window
+    LINE=$(grep -n "=== Keystone scraper run:" "$LOG" | while IFS=: read -r num text; do
+        # Extract date from: === Keystone scraper run: Mon Mar 24 03:00:00 AM MDT 2026 ===
+        run_epoch=$(date -d "$(echo "$text" | sed 's/.*run: //;s/ ===//')" '+%s' 2>/dev/null)
+        cutoff_epoch=$(date -d '14 days ago' '+%s')
+        if [ -n "$run_epoch" ] && [ "$run_epoch" -ge "$cutoff_epoch" ]; then
+            echo "$num"
+            break
+        fi
+    done)
+    if [ -n "$LINE" ] && [ "$LINE" -gt 1 ]; then
+        tail -n +"$LINE" "$LOG" > "$LOG.tmp" && mv "$LOG.tmp" "$LOG"
+    fi
+fi
+
 echo "=== Keystone scraper run: $(date) ===" >> "$LOG"
 
 # Load credentials

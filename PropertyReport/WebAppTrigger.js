@@ -105,7 +105,7 @@ function processReportAsync(e) {
         '  ' + jobData.displayAddress + '\n\n' +
         'Report sent to: ' + jobData.recipientEmail;
       MailApp.sendEmail(
-        CONFIG.managerEmail,
+        'admin@villasboulders.org',
         'Board Report Request: ' + jobData.displayAddress,
         managerMsg
       );
