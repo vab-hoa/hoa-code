@@ -72,15 +72,45 @@ def extract_drive_id(url):
     return None
 
 
+def _link_context(el, tag):
+    """Build a brief context string describing where a link element appears."""
+    parts = [f"<{tag}>"]
+    if tag == "a":
+        text = el.get_text(strip=True)[:80]
+        if text:
+            parts.append(f'text="{text}"')
+    elif tag in ("img", "source"):
+        alt = el.get("alt", "").strip()[:40]
+        if alt:
+            parts.append(f'alt="{alt}"')
+    # Walk up ancestors looking for a block element with id or class
+    parent = el.parent
+    for _ in range(6):
+        if parent is None or not hasattr(parent, "name") or parent.name is None:
+            break
+        if parent.name in ("div", "section", "article", "main", "aside", "nav", "footer", "header", "p", "li"):
+            pid = parent.get("id", "").strip()
+            pcls = " ".join(parent.get("class", [])).strip()[:60]
+            desc = pid or pcls
+            if desc:
+                parts.append(f'in <{parent.name} "{desc}">')
+                break
+        parent = parent.parent
+    return " ".join(parts)
+
+
 def extract_links(page_url, html):
-    """Extract all linked resources from HTML."""
+    """Extract all linked resources from HTML with location context.
+
+    Returns list of (url, context_str) tuples.
+    """
     from bs4 import BeautifulSoup
     soup = BeautifulSoup(html, "html.parser")
     attrs = [
         ("a", "href"), ("img", "src"), ("script", "src"),
         ("link", "href"), ("source", "src"), ("iframe", "src"),
     ]
-    urls = []
+    results = []
     for tag, attr in attrs:
         for el in soup.find_all(tag):
             val = el.get(attr)
@@ -94,8 +124,9 @@ def extract_links(page_url, html):
                 continue
             full = normalize(urljoin(page_url, val))
             if full:
-                urls.append(full)
-    return urls
+                ctx = _link_context(el, tag)
+                results.append((full, ctx))
+    return results
 
 
 def check_url_http(url):
@@ -110,11 +141,14 @@ def check_url_http(url):
 
 
 def crawl_site():
-    """Crawl the site and return (checked_urls, found_on) dicts."""
+    """Crawl the site and return (checked_urls, found_on) dicts.
+
+    found_on maps link_url -> list of (page_url, context_str) tuples.
+    """
     visited = set()
     to_crawl = {BASE}
     checked = {}
-    found_on = defaultdict(set)
+    found_on = defaultdict(list)
 
     while to_crawl:
         url = to_crawl.pop()
@@ -135,8 +169,8 @@ def crawl_site():
         if "html" not in ct:
             continue
 
-        for link in extract_links(url, r.text):
-            found_on[link].add(url)
+        for link, ctx in extract_links(url, r.text):
+            found_on[link].append((url, ctx))
             if is_internal(link) and link not in visited:
                 to_crawl.add(link)
 
@@ -174,15 +208,21 @@ def check_external_links(checked, found_on, drive):
 
 
 def find_broken(checked, found_on):
-    """Return list of (url, status, pages) for broken links."""
+    """Return list of (url, status, by_page) for broken links.
+
+    by_page is a dict mapping page_url -> list of context strings.
+    """
     broken = []
-    for url, pages in sorted(found_on.items()):
+    for url, occurrences in sorted(found_on.items()):
         status = checked.get(url)
         if status is None:
             continue
         is_error = isinstance(status, str) or (isinstance(status, int) and status >= 400)
         if is_error:
-            broken.append((url, status, sorted(pages)))
+            by_page = defaultdict(list)
+            for page_url, ctx in occurrences:
+                by_page[page_url].append(ctx)
+            broken.append((url, status, dict(by_page)))
     return broken
 
 
@@ -222,16 +262,18 @@ def main():
 
         if new_broken:
             print(f"\n--- NEW BROKEN LINKS ({len(new_broken)}) ---\n")
-            for url, status, pages in new_broken:
+            for url, status, by_page in new_broken:
                 print(f"  {url}")
                 print(f"    Status: {status}")
-                for p in pages:
-                    print(f"    Found on: {p}")
+                for page_url, contexts in sorted(by_page.items()):
+                    print(f"    Found on: {page_url}")
+                    for ctx in contexts:
+                        print(f"      {ctx}")
                 print()
 
         if still_known:
             print(f"\n--- KNOWN/SUPPRESSED ({len(still_known)}) ---\n")
-            for url, status, pages in still_known:
+            for url, status, by_page in still_known:
                 print(f"  {url}  ({status})")
 
     # Build email body
@@ -253,11 +295,13 @@ def main():
 
         if new_broken:
             body_lines.append(f"{len(new_broken)} NEW broken link(s):\n")
-            for url, status, pages in new_broken:
+            for url, status, by_page in new_broken:
                 body_lines.append(f"  {url}")
                 body_lines.append(f"    Status: {status}")
-                for p in pages:
-                    body_lines.append(f"    Found on: {p}")
+                for page_url, contexts in sorted(by_page.items()):
+                    body_lines.append(f"    Found on: {page_url}")
+                    for ctx in contexts:
+                        body_lines.append(f"      {ctx}")
                 body_lines.append("")
 
         if still_known:

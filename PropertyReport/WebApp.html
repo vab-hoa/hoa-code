@@ -161,6 +161,10 @@
         <label for="targetAddress">Property Address <span style="font-weight:normal; color:#888;">(leave blank for your own report)</span></label>
         <input type="text" id="targetAddress" name="targetAddress" placeholder="e.g. 13738 Rock Point Unit 101">
         <div class="address-note">Enter the full unit address of the property to report on.</div>
+
+        <label for="sendTo">Send report to <span style="font-weight:normal; color:#888;">(leave blank to send to yourself)</span></label>
+        <input type="email" id="sendTo" name="sendTo" placeholder="e.g. homeowner@gmail.com">
+        <div class="address-note">Email address of the person who should receive the report.</div>
       <? } else { ?>
         <p style="color:#555; margin-bottom:20px;">Click below to request a property report for your unit. The report will be sent to your email address.</p>
       <? } ?>
@@ -204,6 +208,8 @@
     if (userRole === 'board') {
       var addrField = document.getElementById('targetAddress');
       if (addrField) params.targetAddress = addrField.value.trim();
+      var sendToField = document.getElementById('sendTo');
+      if (sendToField) params.sendTo = sendToField.value.trim();
     }
 
     google.script.run

@@ -282,6 +282,9 @@ function processReportRequest(params) {
     if (role === 'board' && params.targetAddress && params.targetAddress.trim() !== '') {
       targetAddress = params.targetAddress.trim();
       boardRequestForOther = true;
+      if (params.sendTo && params.sendTo.trim() !== '') {
+        recipientEmail = params.sendTo.trim();
+      }
     } else {
       var homeowner = HOALibrary.getHomeownerFromEmail(email);
       if (!homeowner || !homeowner.address) {
@@ -321,7 +324,7 @@ function processReportRequest(params) {
     createReportTrigger(jobId);
 
     var msg = 'Your report for ' + displayAddress + ' is being generated. ' +
-              'You will receive it at ' + recipientEmail + ' within a few minutes.';
+              'It will be sent to ' + recipientEmail + ' within a few minutes.';
     return { success: true, message: msg };
   } catch (e) {
     console.error('Error in processReportRequest: ' + e.toString());
