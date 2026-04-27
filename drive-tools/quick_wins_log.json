@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-04-27T12:09:55.259709",
+  "dry_run": false,
+  "actions": [
+    {
+      "type": "create_folder",
+      "name": "Current",
+      "parent": "Budget/",
+      "created_id": "1Ij8noiGYV_dyiPgPJQWu5Cp8pa8M8xv-"
+    },
+    {
+      "type": "move_file",
+      "file_id": "1Nwzq-Fi-H0IqliKJWw9uCow1SpalAxod",
+      "file_name": "2025 11 17 Budget meeting.pdf",
+      "from": "Budget/2026/",
+      "to": "Budget/Current/"
+    },
+    {
+      "type": "move_file",
+      "file_id": "16j2aJXvQLHF7PaM5d4BR4vCO1jNF3PNY",
+      "file_name": "2026 VATB Budget.pdf",
+      "from": "Budget/2026/",
+      "to": "Budget/Current/"
+    },
+    {
+      "type": "create_folder",
+      "name": "Current",
+      "parent": "Rules and Regulations Document/",
+      "created_id": "1GAAHEohSlB1naLNKiCdlcX23QZSaGTqk"
+    },
+    {
+      "type": "move_file",
+      "file_id": "19hxAt3aSH4D1Fj1ZruszcR-a3CKGmsLS",
+      "file_name": "Rules and Regulations new layout.docx",
+      "from": "Rules and Regulations Document/2026/",
+      "to": "Rules and Regulations Document/Current/"
+    },
+    {
+      "type": "move_file",
+      "file_id": "18LzGuaz5gZMIMumIQVbuJleY7a2lrlat",
+      "file_name": "Rules and Regulations (2026.02).docx",
+      "from": "Rules and Regulations Document/2026/",
+      "to": "Rules and Regulations Document/Current/"
+    },
+    {
+      "type": "rename_folder",
+      "folder_id": "1THpTFCsKoXWJpQ8sLmW20lku69EaraMW",
+      "old_name": "Final",
+      "new_name": "Policy Source Documents"
+    },
+    {
+      "type": "rename_folder",
+      "folder_id": "1zVpVIb2IxgQx67iKk4KaikZOLOOncm3r",
+      "old_name": "Z_Downloaded Stuff to Remove",
+      "new_name": "Reviewed - Legacy Downloads (2013-2019)"
+    }
+  ]
+}

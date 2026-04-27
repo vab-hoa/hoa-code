@@ -1,0 +1,65 @@
+{
+  "timestamp": "2026-04-27T12:14:59.641811",
+  "dry_run": false,
+  "actions": [
+    {
+      "type": "create_folder",
+      "name": "Active",
+      "parent": "Projects/",
+      "created_id": "1DDR6xraSyZR2u4ZItAX3uoc13ciYdbZ8"
+    },
+    {
+      "type": "create_folder",
+      "name": "Archive",
+      "parent": "Projects/",
+      "created_id": "1YDpyBsdgLHDC_eC5K58QM_GmewXrarXS"
+    },
+    {
+      "type": "move_folder",
+      "folder_name": "2020",
+      "folder_id": "100I0iEnRol7rCGwWmn1vfqyMd_X-fSZ-",
+      "from": "Projects/",
+      "to": "Projects/Archive/"
+    },
+    {
+      "type": "move_folder",
+      "folder_name": "2021",
+      "folder_id": "1Elj1_dhzjRggrtRyMBgnu2eZQHNonN1M",
+      "from": "Projects/",
+      "to": "Projects/Archive/"
+    },
+    {
+      "type": "move_folder",
+      "folder_name": "2022",
+      "folder_id": "1wmSrL3RRKLYqVaE_W1-YNEIyRnz7DTXB",
+      "from": "Projects/",
+      "to": "Projects/Archive/"
+    },
+    {
+      "type": "move_folder",
+      "folder_name": "2025",
+      "folder_id": "1BRtxOJQQwuyD4QgGBykQFvyZ2c5vZs4_",
+      "from": "Projects/",
+      "to": "Projects/Active/"
+    },
+    {
+      "type": "move_folder",
+      "folder_name": "2026",
+      "folder_id": "1l8ZhjW8FtHRuEjrC4ZDQxI84WRSugLYs",
+      "from": "Projects/",
+      "to": "Projects/Active/"
+    },
+    {
+      "type": "rename_folder",
+      "folder_id": "1aOHwfOxzfUa2gx-_gHKyLel2AXHVAQfc",
+      "old_name": "Contracts/Landscaping/2019-20",
+      "new_name": "Contracts/Landscaping/2019-2020"
+    },
+    {
+      "type": "rename_folder",
+      "folder_id": "1oT4aKguGn-0jzAkzXYaTapmsLb2udsWB",
+      "old_name": "Contracts/Snow Removal/2019-20",
+      "new_name": "Contracts/Snow Removal/2019-2020"
+    }
+  ]
+}
