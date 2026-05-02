@@ -1,0 +1,107 @@
+{
+  "timestamp": "2026-05-02T12:46:29.901236",
+  "dry_run": false,
+  "actions": [
+    {
+      "type": "move_file",
+      "file_id": "1Nwzq-Fi-H0IqliKJWw9uCow1SpalAxod",
+      "file_name": "2025 11 17 Budget meeting.pdf",
+      "from": "Budget/Current/",
+      "to": "Budget/2026/"
+    },
+    {
+      "type": "move_file",
+      "file_id": "16j2aJXvQLHF7PaM5d4BR4vCO1jNF3PNY",
+      "file_name": "2026 VATB Budget.pdf",
+      "from": "Budget/Current/",
+      "to": "Budget/2026/"
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "1Ij8noiGYV_dyiPgPJQWu5Cp8pa8M8xv-",
+      "label": "Budget/Current/"
+    },
+    {
+      "type": "move_file",
+      "file_id": "19hxAt3aSH4D1Fj1ZruszcR-a3CKGmsLS",
+      "file_name": "Rules and Regulations new layout.docx",
+      "from": "Rules and Regulations Document/Current/",
+      "to": "Rules and Regulations Document/2026/"
+    },
+    {
+      "type": "move_file",
+      "file_id": "18LzGuaz5gZMIMumIQVbuJleY7a2lrlat",
+      "file_name": "Rules and Regulations (2026.02).docx",
+      "from": "Rules and Regulations Document/Current/",
+      "to": "Rules and Regulations Document/2026/"
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "1GAAHEohSlB1naLNKiCdlcX23QZSaGTqk",
+      "label": "Rules and Regulations Document/Current/"
+    },
+    {
+      "type": "move_file",
+      "file_id": "1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG",
+      "file_name": "ARC Design Guidelines (2025.9a).pdf",
+      "from": "Committees/ARC Design Guidelines/Current/",
+      "to": "Committees/ARC Design Guidelines/"
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "1_5_rDlgcYH1ItIAvaty9eLa5KDJ9smTB",
+      "label": "Committees/ARC Design Guidelines/Current/"
+    },
+    {
+      "type": "move_file",
+      "file_id": "1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L",
+      "file_name": "ByLaws.Current",
+      "from": "Governing Documents/Bylaws/Current/",
+      "to": "Governing Documents/Bylaws/"
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "1shWWqeSXueHDR6HUBZOAmpv4mHkzV6PX",
+      "label": "Governing Documents/Bylaws/Current/"
+    },
+    {
+      "type": "move_file",
+      "file_id": "18CbXaVwhasENdTlsaMGigOeHRdCPoRfO",
+      "file_name": "Amendment 1 to Declaration of Covenants, Conditions and Restrictions (2022).pdf",
+      "from": "Governing Documents/Covenants/Current/",
+      "to": "Governing Documents/Covenants/"
+    },
+    {
+      "type": "move_file",
+      "file_id": "1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin",
+      "file_name": "Covenants.Current",
+      "from": "Governing Documents/Covenants/Current/",
+      "to": "Governing Documents/Covenants/"
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "1-nLWUx6Mb4rfQgBJnF_p9Kddi9yCCdEm",
+      "label": "Governing Documents/Covenants/Current/"
+    },
+    {
+      "type": "move_file",
+      "file_id": "14EOPsEeHZM85Uj2giGbjRf3biwmTaY4_",
+      "file_name": "Policy Directory.2026.02.01.docx",
+      "from": "Policies and Procedures/Policy Directory/Current/",
+      "to": "Policies and Procedures/Policy Directory/"
+    },
+    {
+      "type": "move_file",
+      "file_id": "1dyAdDg9vza7vIQfbTm1i9jOcte5R4Hnr",
+      "file_name": "Policy Directory.2026.02.01.docx - 3/23/26, 11:51\u202fAM",
+      "from": "Policies and Procedures/Policy Directory/Current/",
+      "to": "Policies and Procedures/Policy Directory/"
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "10caT0Dj948TBqNr_cOe4Wwri5oTAgsuk",
+      "label": "Policies and Procedures/Policy Directory/Current/"
+    }
+  ],
+  "skipped": []
+}

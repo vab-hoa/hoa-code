@@ -7,7 +7,8 @@ from email.mime.text import MIMEText
 
 SA_FILE = "/home/dee/.config/openclaw/google-service-account.json"
 SUBJECT = "admin@villasboulders.org"
-SHARED_DRIVE_ID = "0AExYZWmfRm9JUk9PVA"  # VaB Board Documents
+SHARED_DRIVE_ID      = "0AExYZWmfRm9JUk9PVA"   # VaB Board Documents
+HOMEOWNER_DRIVE_ID   = "0ALIbXXUEyG4GUk9PVA"   # VaB Homeowner Documents
 
 DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive"]
 GMAIL_SCOPES = ["https://www.googleapis.com/auth/gmail.send"]

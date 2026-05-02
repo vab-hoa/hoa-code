@@ -1,0 +1,67 @@
+{
+  "timestamp": "2026-05-02T12:55:49.201634",
+  "dry_run": false,
+  "actions": [
+    {
+      "type": "create_shortcut",
+      "name": "\u2192 Homeowner Budgets",
+      "target_folder": "Budgets",
+      "target_id": "1988HDieuPNZvB6DDl5_QeUQ-Bl9adBiv"
+    },
+    {
+      "type": "create_shortcut",
+      "name": "\u2192 Homeowner Financials",
+      "target_folder": "Financials",
+      "target_id": "1MUlUcjTZ506AOifBThfuzhZmViUbHW2Q"
+    },
+    {
+      "type": "create_shortcut",
+      "name": "\u2192 Forms",
+      "target_folder": "Forms",
+      "target_id": "1HIC9jwwddWJXDgrodVCEOcAIb46LwKHg"
+    },
+    {
+      "type": "create_shortcut",
+      "name": "\u2192 Governing Documents",
+      "target_folder": "Governing Documents",
+      "target_id": "1YyNR9HP7SDcFa4hYe0Q5Gz1CIgEBtzMe"
+    },
+    {
+      "type": "create_shortcut",
+      "name": "\u2192 Homeowner Maps",
+      "target_folder": "Maps",
+      "target_id": "1wk3OL7lNPc1z9cXwHUNu2pMJwV5XyfyE"
+    },
+    {
+      "type": "create_shortcut",
+      "name": "\u2192 Meeting Minutes (Published)",
+      "target_folder": "Meetings",
+      "target_id": "1I-A7N2b2tO-DD2nofyUd7Efhd19D2d4y"
+    },
+    {
+      "type": "create_shortcut",
+      "name": "\u2192 Newsletters",
+      "target_folder": "Newsletters",
+      "target_id": "1jenRK6zqDrqXJYF_vw9Dfe2z24RqHXeo"
+    },
+    {
+      "type": "create_shortcut",
+      "name": "\u2192 Policies (Canonical)",
+      "target_folder": "Policies",
+      "target_id": "1BXhPNd_rC8Y_Lln6Jhvpcq49BmaUVMSP"
+    },
+    {
+      "type": "create_shortcut",
+      "name": "\u2192 Projects",
+      "target_folder": "Projects",
+      "target_id": "12NkYuQVE0wFHsIc_o4TQeen4uWFs0uVX"
+    },
+    {
+      "type": "create_shortcut",
+      "name": "\u2192 Reserve Studies",
+      "target_folder": "Reserve Studies",
+      "target_id": "1ApYruSEGTykmUR_ywiMLYTgYg_ZYzzFU"
+    }
+  ],
+  "skipped": []
+}

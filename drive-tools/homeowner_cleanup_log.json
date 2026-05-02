@@ -1,0 +1,73 @@
+{
+  "timestamp": "2026-05-02T12:52:48.507122",
+  "dry_run": false,
+  "actions": [
+    {
+      "type": "trash_folder",
+      "folder_id": "1NQPhyTRXElWQTkGX2K1P0dPqBbyV_J7R",
+      "label": "Insurance/2022-2023/",
+      "item_count": 17
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "1T3zVIXwuMvE45sZeZgbBCVblUoc7406V",
+      "label": "Maps/Rock Point/Pictures/",
+      "item_count": 32
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "1FA4tk9X1_lw4XnhT1n3tXtx0_di7J_kg",
+      "label": "Maps/Rock Point/Rock Point Neighborhood Mailing List/",
+      "item_count": 15
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "14pYYpSUGuBOw14YrdRLkc6jGh7BKYTxS",
+      "label": "Meetings/2025/2025.08.18 Quarterly Meeting/",
+      "item_count": 1
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "1OSnA3vOqwWmJ1gHK47p50BjwlZ7oMipI",
+      "label": "Meetings/2025/2025.09.03.Documents and Committees/",
+      "item_count": 2
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "1tifb6FyAuImSDVdalowxqw9YrinQEohT",
+      "label": "Meetings/2025/2025.09.22 September Worksession/",
+      "item_count": 4
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "1pXqtg947FlpbK9ujVKEaqRdQB97G-S9w",
+      "label": "Meetings/2025/2025.09.25 Worksession/",
+      "item_count": 1
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "1UUrHZ5Y6dMb4k2j5ZvystrPpIIHU7hRo",
+      "label": "Meetings/2025/2025.10.20 Worksession/",
+      "item_count": 13
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "1_Qi05aW4xC9Cfmuua6OEr4IMKfcuBw7w",
+      "label": "Meetings/2025/2025.11.17 Annual Meeting/",
+      "item_count": 3
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "1iyb3PhjbaPHtR755UqfM-3ixiGHrZLIS",
+      "label": "Meetings/2025/2026.01.08 Check In/",
+      "item_count": 2
+    },
+    {
+      "type": "trash_folder",
+      "folder_id": "17LAYrhGGdKXyc2Y4V7avm_7SkKYf1H8R",
+      "label": "Meetings/2025/2026.01.27 Worksession/",
+      "item_count": 1
+    }
+  ],
+  "skipped": []
+}
