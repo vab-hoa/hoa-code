@@ -1,0 +1,283 @@
+====================================================================================================
+LINK FIX REPORT — villasboulders.org broken Drive links
+Generated for manual Google Sites editing
+All 32 broken links now have confirmed replacements.
+====================================================================================================
+
+[Verifying new file IDs via Drive API...]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../annual-budgetdues-process
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Budget Presentation
+  OLD: https://drive.google.com/file/d/1DQ3VG7iip_lMTbXu2DVcCGWAt_eWaCWT/preview
+  NEW: https://drive.google.com/file/d/1Nwzq-Fi-H0IqliKJWw9uCow1SpalAxod/preview  [OK: 2025 11 17 Budget meeting.pdf]
+
+  Bylaws
+  OLD: https://drive.google.com/file/d/1udQFTvcA0Fg8tKHkXEu_an1qzFZLvLIN/preview
+  NEW: https://drive.google.com/file/d/1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L/preview  [OK: ByLaws.Current]
+
+  Operating Budget
+  OLD: https://drive.google.com/file/d/1DAxuOr2eWMGdcGlwzx_AsZ5JmkuxLfU6/preview
+  NEW: https://drive.google.com/file/d/16j2aJXvQLHF7PaM5d4BR4vCO1jNF3PNY/preview  [OK: 2026 VATB Budget.pdf]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../arc
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ARC Guidelines
+  OLD: https://drive.google.com/file/d/1mu-_ltPczKFYj2IvPUTgi9NXDdzZOFmG/preview
+  NEW: https://drive.google.com/file/d/1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG/preview  [OK: ARC Design Guidelines (2025.9a).pdf]
+
+  Covenants (DCCRs)
+  OLD: https://drive.google.com/file/d/1533Hg-wnBYNWf8wRp3B2BI7-UDMUWOhx/preview
+  NEW: https://drive.google.com/file/d/1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin/preview  [OK: Covenants.Current]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../arc-guidelines
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ARC Guidelines
+  OLD: https://drive.google.com/file/d/1mu-_ltPczKFYj2IvPUTgi9NXDdzZOFmG/preview
+  NEW: https://drive.google.com/file/d/1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG/preview  [OK: ARC Design Guidelines (2025.9a).pdf]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../architectural-review-request
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ARC Guidelines
+  OLD: https://drive.google.com/file/d/1mu-_ltPczKFYj2IvPUTgi9NXDdzZOFmG/preview
+  NEW: https://drive.google.com/file/d/1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG/preview  [OK: ARC Design Guidelines (2025.9a).pdf]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../board-and-committees
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Current Directors and Officers List
+  OLD: https://drive.google.com/file/d/1p_IK70rLFbRfb0zXo0s2TouOzrmoGzQH/preview
+  NEW: https://drive.google.com/file/d/1Iq-ri3ZDumjaTzM7TMhQFwNl6HCx61U-/preview  [OK: Current Directors and Officers.2025.11.17.signed.pdf]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../board-of-directors
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Current Directors and Officers List
+  OLD: https://drive.google.com/file/d/1p_IK70rLFbRfb0zXo0s2TouOzrmoGzQH/preview
+  NEW: https://drive.google.com/file/d/1Iq-ri3ZDumjaTzM7TMhQFwNl6HCx61U-/preview  [OK: Current Directors and Officers.2025.11.17.signed.pdf]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../budgets-costs-and-dues
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Investment of Reserve Funds policy
+  OLD: https://drive.google.com/file/d/1Pp7eJCERWW2L0o9J9fSsvYoMT80vzdiV/preview
+  NEW: https://drive.google.com/file/d/1IK-TYMwkcJicLyeO4qXCtXfBQeEEdkkL/preview  [OK: Investment of Reserve Funds.pdf]
+
+  Reserve Requirements policy
+  OLD: https://drive.google.com/file/d/1SD5QYSJFMCifWIe0upFKsbF1XOX3KpE9/preview
+  NEW: https://drive.google.com/file/d/1GQrL1olKpM78NyQZvYgLbRo2WS0EptJF/preview  [OK: Reserve Requirements.pdf]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../faq
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Amendment to the Covenants
+  OLD: https://drive.google.com/file/d/1nAi8h5xjikw8g_T0oTcPJP8xGg-zTRJR/preview
+  NEW: https://drive.google.com/file/d/18CbXaVwhasENdTlsaMGigOeHRdCPoRfO/preview  [OK: Amendment 1 to Declaration of Covenants, Conditions and Restrictions (2022).pdf]
+
+  Bylaws
+  OLD: https://drive.google.com/file/d/1udQFTvcA0Fg8tKHkXEu_an1qzFZLvLIN/preview
+  NEW: https://drive.google.com/file/d/1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L/preview  [OK: ByLaws.Current]
+
+  Covenants (DCCRs)
+  OLD: https://drive.google.com/file/d/1533Hg-wnBYNWf8wRp3B2BI7-UDMUWOhx/preview
+  NEW: https://drive.google.com/file/d/1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin/preview  [OK: Covenants.Current]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../former-board-members
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Current Directors and Officers List
+  OLD: https://drive.google.com/file/d/1p_IK70rLFbRfb0zXo0s2TouOzrmoGzQH/preview
+  NEW: https://drive.google.com/file/d/1Iq-ri3ZDumjaTzM7TMhQFwNl6HCx61U-/preview  [OK: Current Directors and Officers.2025.11.17.signed.pdf]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../governing-documents
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Amendment to the Covenants
+  OLD: https://drive.google.com/file/d/1nAi8h5xjikw8g_T0oTcPJP8xGg-zTRJR/preview
+  NEW: https://drive.google.com/file/d/18CbXaVwhasENdTlsaMGigOeHRdCPoRfO/preview  [OK: Amendment 1 to Declaration of Covenants, Conditions and Restrictions (2022).pdf]
+
+  Articles of Incorporation
+  OLD: https://drive.google.com/file/d/1mf-N6D2SHWIA7u--zlVqR7l1Lldq9KaB/preview
+  NEW: https://drive.google.com/file/d/1Hd6NGIrGM023fN42bxZV_nzSdlPZSqEk/preview  [OK: Articles of Incorporation 2002.pdf]
+
+  Bylaws
+  OLD: https://drive.google.com/file/d/1udQFTvcA0Fg8tKHkXEu_an1qzFZLvLIN/preview
+  NEW: https://drive.google.com/file/d/1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L/preview  [OK: ByLaws.Current]
+
+  Colorado Certificate (of incorporation)
+  OLD: https://drive.google.com/file/d/1G_fxPeHVAHb3YUBVOGHLIRadDZRQ6HyT/preview
+  NEW: https://drive.google.com/file/d/1t1PbQG7ZtR9gU4g6uUPQcGupkYIqf5dT/preview  [OK: Colorado Certificate.pdf]
+
+  Covenants (DCCRs)
+  OLD: https://drive.google.com/file/d/1533Hg-wnBYNWf8wRp3B2BI7-UDMUWOhx/preview
+  NEW: https://drive.google.com/file/d/1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin/preview  [OK: Covenants.Current]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../homeowner-paid-planting
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Homeowner Paid Planting and Removal (form)
+  OLD: https://drive.google.com/file/d/1Hjgt5BOILNNsIBMeVCkXKRXNq3twsThx/preview
+  NEW: https://docs.google.com/forms/d/e/1FAIpQLSdePB2ZRaJ-V-9kCYH65oAJMALS0NNDx7L_LSdKgv1Fl6k_9Q/viewform  [Google Form — not verified via Drive API]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../policies
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Adoption and Amendment of Policies
+  OLD: https://drive.google.com/file/d/10AsxcnmTz8xn6Kcd1AOQjPOnQAc1bIiJ/preview
+  NEW: https://drive.google.com/file/d/1os0OlZYgGDRMb1prCiEzbioYGrjx_3VV/preview  [OK: Adoption and Amendment of Policies, Procedures and Rules.pdf]
+
+  Alternative Dispute Resolution policy
+  OLD: https://drive.google.com/file/d/1QKeMQIWfV4Xzd6DNu6Ba-iMAaIofJfya/preview
+  NEW: https://drive.google.com/file/d/1lkGkfmPVBZmsLi_Usw7oWg7MBVUJeE0V/preview  [OK: Alternative Dispute Resolution.pdf]
+
+  Association Directors and Officers (policy)
+  OLD: https://drive.google.com/file/d/137z5ohOvd323lgDE3lOym-0NTbUxq2v-/preview
+  NEW: https://drive.google.com/file/d/1ltdSmPja3G5HLeDozHuKWAHcWIGyb8Os/preview  [OK: Appointment of Officers.(2023.01.16.signed).pdf]
+
+  Collection of Unpaid Assessments policy
+  OLD: https://drive.google.com/file/d/1QcdQp6qubp-pZbZr3-Jz92tuK3CeMFjK/preview
+  NEW: https://drive.google.com/file/d/1rZGiDnXdvI4EF289L46fF52YBr28uWjF/preview  [OK: Collection of Unpaid Assessments.pdf]
+
+  Committee Authorities policy
+  OLD: https://drive.google.com/file/d/1ptp2EjRte57I_v10YPN_PEB6xakfet7r/preview
+  NEW: https://drive.google.com/file/d/1lnms3fSMzfUwtVuBTPdqDvOEUQFju4FU/preview  [OK: Committee Authorities Policy.pdf]
+
+  Conduct of Meetings policy
+  OLD: https://drive.google.com/file/d/1v1v4qwqj3gWDWCV7n7iohaudFM9VcJnn/preview
+  NEW: https://drive.google.com/file/d/1BNeDX1DZnXrz3CpBY0f42h6jkQTPbydN/preview  [OK: Conduct of Meetings.pdf]
+
+  Covenant Enforcement policy
+  OLD: https://drive.google.com/file/d/1mJZwynZim9MEnUjJnglPaVYBp9aQno_i/preview
+  NEW: https://drive.google.com/file/d/1UqGt1rQM8Tfzmw5xTHIqIceVepBvg0q7/preview  [OK: Covenant Enforcement.pdf]
+
+  Director Conflict of Interest policy
+  OLD: https://drive.google.com/file/d/1cwK8BsvqjCcxsdVoWaQ5km1qWrl_hDok/preview
+  NEW: https://drive.google.com/file/d/1Q-SjhkNQgwTFz30nP6MmkFMe7nxWN_JR/preview  [OK: Director Conflict of Interest.pdf]
+
+  Homeowner Paid Planting and Removal policy
+  OLD: https://drive.google.com/file/d/1kpToMEM7ncSAY53fb-b6gb-SE66gYjag/preview
+  NEW: https://drive.google.com/file/d/1E16iZaEVwGk5Zdxzh2cmyKj1rUgkEOho/preview  [OK: Homeowner Paid Planting and Removal.pdf]
+
+  Inspection and Copying of Association Records policy
+  OLD: https://drive.google.com/file/d/1is8xWW3b_YhCIta2S6TndGxjKmAl4MIQ/preview
+  NEW: https://drive.google.com/file/d/15yABqrybAJ4w-4nl1Zc_yWeJtI_dN6pG/preview  [OK: Inspection and Copying of Association Records.pdf]
+
+  Investment of Reserve Funds policy
+  OLD: https://drive.google.com/file/d/1Pp7eJCERWW2L0o9J9fSsvYoMT80vzdiV/preview
+  NEW: https://drive.google.com/file/d/1IK-TYMwkcJicLyeO4qXCtXfBQeEEdkkL/preview  [OK: Investment of Reserve Funds.pdf]
+
+  Reserve Requirements policy
+  OLD: https://drive.google.com/file/d/1SD5QYSJFMCifWIe0upFKsbF1XOX3KpE9/preview
+  NEW: https://drive.google.com/file/d/1GQrL1olKpM78NyQZvYgLbRo2WS0EptJF/preview  [OK: Reserve Requirements.pdf]
+
+  Responsibility for Deductible Portion of Insurance Claim
+  OLD: https://drive.google.com/file/d/1_898PAnP58NishT6BEO0M-xHOzB046oB/preview
+  NEW: https://drive.google.com/file/d/1h7fIPGI4BH5tVW-AsI0kctUN9MxNNGms/preview  [OK: Responsibility for Deductible Portion of Insurance Claim.pdf]
+
+  Snow Removal policy
+  OLD: https://drive.google.com/file/d/1TdeqabI_X6DYlrSi-Hitug9N2PCtQdqh/preview
+  NEW: https://drive.google.com/file/d/10y4X34OyiWWRIIHkbW-OACCPEZECyHKR/preview  [OK: Snow Removal.pdf]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../reserve-studies
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  2006 Reserve Study
+  OLD: https://drive.google.com/file/d/1VzsXjgNzeWFFWfMaELgiAvbQZTz7hvD2/preview
+  NEW: https://drive.google.com/file/d/1bh6Z9B8duYX0fGzJPZpEAbdfwx55ZEv4/preview  [OK: 2006-10-30 - Final Reserve Study - Villas at the Boulders.pdf]
+
+  2015 Reserve Study
+  OLD: https://drive.google.com/file/d/1iTJ_6j8G7JF8a-A077t5GgogcAVmtmF2/preview
+  NEW: https://drive.google.com/file/d/1OI2GQrTY0-_jHim0BGzEPCq1P_kIIEpP/preview  [OK: SBSA Reserve Study 151109 Revised.pdf]
+
+  2022 Reserve Study
+  OLD: https://drive.google.com/file/d/1conXw8mimAJ9XwzivxL0V6WipB9_7pTW/preview
+  NEW: https://drive.google.com/file/d/1mVeYpUWfPwnrSQNAS4eHfEwqUfixWsgV/preview  [OK: 28837-0-ReserveStudy.pdf]
+
+  Reserve Requirements policy
+  OLD: https://drive.google.com/file/d/1SD5QYSJFMCifWIe0upFKsbF1XOX3KpE9/preview
+  NEW: https://drive.google.com/file/d/1GQrL1olKpM78NyQZvYgLbRo2WS0EptJF/preview  [OK: Reserve Requirements.pdf]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../rules
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ARC Guidelines
+  OLD: https://drive.google.com/file/d/1mu-_ltPczKFYj2IvPUTgi9NXDdzZOFmG/preview
+  NEW: https://drive.google.com/file/d/1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG/preview  [OK: ARC Design Guidelines (2025.9a).pdf]
+
+  Amendment to the Covenants
+  OLD: https://drive.google.com/file/d/1nAi8h5xjikw8g_T0oTcPJP8xGg-zTRJR/preview
+  NEW: https://drive.google.com/file/d/18CbXaVwhasENdTlsaMGigOeHRdCPoRfO/preview  [OK: Amendment 1 to Declaration of Covenants, Conditions and Restrictions (2022).pdf]
+
+  Articles of Incorporation
+  OLD: https://drive.google.com/file/d/1mf-N6D2SHWIA7u--zlVqR7l1Lldq9KaB/preview
+  NEW: https://drive.google.com/file/d/1Hd6NGIrGM023fN42bxZV_nzSdlPZSqEk/preview  [OK: Articles of Incorporation 2002.pdf]
+
+  Bylaws
+  OLD: https://drive.google.com/file/d/1udQFTvcA0Fg8tKHkXEu_an1qzFZLvLIN/preview
+  NEW: https://drive.google.com/file/d/1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L/preview  [OK: ByLaws.Current]
+
+  Covenants (DCCRs)
+  OLD: https://drive.google.com/file/d/1533Hg-wnBYNWf8wRp3B2BI7-UDMUWOhx/preview
+  NEW: https://drive.google.com/file/d/1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin/preview  [OK: Covenants.Current]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../snow-removal
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Snow Removal policy
+  OLD: https://drive.google.com/file/d/1TdeqabI_X6DYlrSi-Hitug9N2PCtQdqh/preview
+  NEW: https://drive.google.com/file/d/10y4X34OyiWWRIIHkbW-OACCPEZECyHKR/preview  [OK: Snow Removal.pdf]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../the-association
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Colorado Certificate (of incorporation)
+  OLD: https://drive.google.com/file/d/1G_fxPeHVAHb3YUBVOGHLIRadDZRQ6HyT/preview
+  NEW: https://drive.google.com/file/d/1t1PbQG7ZtR9gU4g6uUPQcGupkYIqf5dT/preview  [OK: Colorado Certificate.pdf]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../the-roofing-loan
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Roofing Conclusions and Recommendations
+  OLD: https://drive.google.com/file/d/1rvvnS4AXM6Rksy9ygg_OqTzft0Pf-PqV/preview
+  NEW: https://drive.google.com/file/d/1ZztsHUg_9hC-da5tgrsCgl5cresGxmhY/preview  [OK: VAB Roofing Project Presentation_20211027.pdf]
+
+  Roofing Finished doc
+  OLD: https://drive.google.com/file/d/1YXsZL9fGmBEnO-fwDMZqTeMUInP2EOJk/preview
+  NEW: https://drive.google.com/file/d/1gQqwKAIZy-yOEeflc_nf3DWofyGmM4Bi/preview  [OK: BOD Update Packet 2.19.pdf]
+
+  Roofing Major Project doc
+  OLD: https://drive.google.com/file/d/1WezdYQm3ogBGHJBjyx4vLAWeX27CKO-n/preview
+  NEW: https://drive.google.com/file/d/1x1F76LnO2rMBH_UkKjgCB28G-PuD6-j_/preview  [OK: ANNOUNCEMENT- VAB ROOFING PROJECT_10.14.2021 A.pdf]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: https://www.villasboulders.org/.../villas-geography
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Map of the Villas at the Boulders
+  OLD: https://drive.google.com/file/d/1zVfswsEQHqcCcgtNUAE902qTXZTwtCIm/preview
+  NEW: https://drive.google.com/file/d/12R_K-MBX11dtOAoRhCvT9jhiGv9bVyUd/preview  [OK: villas map.jpg]
+
+  The Original Plat
+  OLD: https://drive.google.com/file/d/1ePjUVQg6ocQZtUC6Skwjq6O2d5z1fbkM/preview
+  NEW: https://drive.google.com/file/d/1VvA3-SWt7havg2WslyLmljG6XDfXLydq/preview  [OK: BROADLANDS_FILING_12_FINAL_PLAT.pdf]

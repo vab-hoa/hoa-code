@@ -1,0 +1,353 @@
+================================================================================
+BROKEN LINK CHEAT SHEET — villasboulders.org
+45 broken links across 21 pages
+================================================================================
+
+For each page: find the link by its text, then relink it
+by navigating to the correct file on Google Drive.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: Home
+  https://www.villasboulders.org
+  (1 broken link)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "Policy Directory"
+  Broken URL: https://docs.google.com/document/d/14EOPsEeHZM85Uj2giGbjRf3biwmTaY4_/edit?usp=drive_link&ouid=104170259298734996302&rtpof=true&sd=true
+  Status: 401
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: budgets-costs-and-dues
+  https://www.villasboulders.org/budgets-costs-and-dues
+  (2 broken links)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "Policy on Investment of Reserve Funds"
+  Broken URL: https://drive.google.com/file/d/1Pp7eJCERWW2L0o9J9fSsvYoMT80vzdiV/view?usp=drive_link
+  Status: 404
+
+  Link text: "Policy on Reserve Requirements"
+  Broken URL: https://drive.google.com/file/d/1SD5QYSJFMCifWIe0upFKsbF1XOX3KpE9/view?usp=drive_link
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: annual-budgetdues-process
+  https://www.villasboulders.org/budgets-costs-and-dues/annual-budgetdues-process
+  (3 broken links)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "a presentation"
+  Broken URL: https://drive.google.com/file/d/1DQ3VG7iip_lMTbXu2DVcCGWAt_eWaCWT/view?usp=drive_link
+  Status: 404
+
+  Link text: "operating budget"
+  Broken URL: https://drive.google.com/file/d/1DAxuOr2eWMGdcGlwzx_AsZ5JmkuxLfU6/view?usp=drive_link
+  Status: 404
+
+  Link text: "our Bylaws"
+  Broken URL: https://drive.google.com/file/d/1udQFTvcA0Fg8tKHkXEu_an1qzFZLvLIN/view?usp=drive_link
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: reserve-studies
+  https://www.villasboulders.org/budgets-costs-and-dues/reserve-studies
+  (4 broken links)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "2006 Reserve Study"
+  Broken URL: https://drive.google.com/file/d/1VzsXjgNzeWFFWfMaELgiAvbQZTz7hvD2/preview
+  Status: 404
+
+  Link text: "2015 Reserve Study"
+  Broken URL: https://drive.google.com/file/d/1iTJ_6j8G7JF8a-A077t5GgogcAVmtmF2/preview
+  Status: 404
+
+  Link text: "2022 Reserve Study"
+  Broken URL: https://drive.google.com/file/d/1conXw8mimAJ9XwzivxL0V6WipB9_7pTW/view?usp=sharing
+  Status: 404
+
+  Link text: "Reserve Requirements"
+  Broken URL: https://drive.google.com/file/d/1SD5QYSJFMCifWIe0upFKsbF1XOX3KpE9/view?usp=drive_link
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: the-roofing-loan
+  https://www.villasboulders.org/budgets-costs-and-dues/the-roofing-loan
+  (3 broken links)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "conclusions and recommendations"
+  Broken URL: https://drive.google.com/file/d/1rvvnS4AXM6Rksy9ygg_OqTzft0Pf-PqV/view?preview
+  Status: 404
+
+  Link text: "finished"
+  Broken URL: https://drive.google.com/file/d/1YXsZL9fGmBEnO-fwDMZqTeMUInP2EOJk/view?preview
+  Status: 404
+
+  Link text: "major project"
+  Broken URL: https://drive.google.com/file/d/1WezdYQm3ogBGHJBjyx4vLAWeX27CKO-n/view?preview
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: arc
+  https://www.villasboulders.org/committees/arc
+  (2 broken links)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "ARC Guidelines"
+  Broken URL: https://drive.google.com/file/d/1mu-_ltPczKFYj2IvPUTgi9NXDdzZOFmG/preview
+  Status: 404
+
+  Link text: "Covenants"
+  Broken URL: https://drive.google.com/file/d/1533Hg-wnBYNWf8wRp3B2BI7-UDMUWOhx/preview
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: arc-guidelines
+  https://www.villasboulders.org/committees/arc/arc-guidelines
+  (1 broken link)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "ARC Guidelines"
+  Broken URL: https://drive.google.com/file/d/1mu-_ltPczKFYj2IvPUTgi9NXDdzZOFmG/preview
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: the-board-of-directors
+  https://www.villasboulders.org/committees/the-board-of-directors
+  (1 broken link)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "Current Directors and Officers List"
+  Broken URL: https://drive.google.com/file/d/1p_IK70rLFbRfb0zXo0s2TouOzrmoGzQH/preview
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: former-board-members
+  https://www.villasboulders.org/committees/the-board-of-directors/former-board-members
+  (1 broken link)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "here"
+  Broken URL: https://drive.google.com/file/d/1p_IK70rLFbRfb0zXo0s2TouOzrmoGzQH/preview
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: board-and-committees
+  https://www.villasboulders.org/community/board-and-committees
+  (1 broken link)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "List of Directors and Officers"
+  Broken URL: https://drive.google.com/file/d/1p_IK70rLFbRfb0zXo0s2TouOzrmoGzQH/view?usp=drive_link
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: governing-documents
+  https://www.villasboulders.org/community/governing-documents
+  (5 broken links)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "Amendment to the Covenants"
+  Broken URL: https://drive.google.com/file/d/1nAi8h5xjikw8g_T0oTcPJP8xGg-zTRJR/preview
+  Status: 404
+
+  Link text: "Articles of Incorporation"
+  Broken URL: https://drive.google.com/file/d/1mf-N6D2SHWIA7u--zlVqR7l1Lldq9KaB/preview
+  Status: 404
+
+  Link text: "Bylaws"
+  Broken URL: https://drive.google.com/file/d/1udQFTvcA0Fg8tKHkXEu_an1qzFZLvLIN/preview
+  Status: 404
+
+  Link text: "Colorado Certificate"
+  Broken URL: https://drive.google.com/file/d/1G_fxPeHVAHb3YUBVOGHLIRadDZRQ6HyT/preview
+  Status: 404
+
+  Link text: "Covenants"
+  Broken URL: https://drive.google.com/file/d/1533Hg-wnBYNWf8wRp3B2BI7-UDMUWOhx/preview
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: policies
+  https://www.villasboulders.org/community/governing-documents/policies
+  (14 broken links)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "Adoption and Amendment of Policies, Procedures and Rules"
+  Broken URL: https://drive.google.com/file/d/10AsxcnmTz8xn6Kcd1AOQjPOnQAc1bIiJ/preview
+  Status: 404
+
+  Link text: "Alternative Dispute Resolution"
+  Broken URL: https://drive.google.com/file/d/1QKeMQIWfV4Xzd6DNu6Ba-iMAaIofJfya/preview
+  Status: 404
+
+  Link text: "Association Directors and Officers"
+  Broken URL: https://drive.google.com/file/d/137z5ohOvd323lgDE3lOym-0NTbUxq2v-/preview
+  Status: 404
+
+  Link text: "Collection of Unpaid Assessments"
+  Broken URL: https://drive.google.com/file/d/1QcdQp6qubp-pZbZr3-Jz92tuK3CeMFjK/preview
+  Status: 404
+
+  Link text: "Committee Authorities"
+  Broken URL: https://drive.google.com/file/d/1ptp2EjRte57I_v10YPN_PEB6xakfet7r/preview
+  Status: 404
+
+  Link text: "Conduct of Meetings"
+  Broken URL: https://drive.google.com/file/d/1v1v4qwqj3gWDWCV7n7iohaudFM9VcJnn/preview
+  Status: 404
+
+  Link text: "Covenant Enforcement"
+  Broken URL: https://drive.google.com/file/d/1mJZwynZim9MEnUjJnglPaVYBp9aQno_i/preview
+  Status: 404
+
+  Link text: "Director Conflict of Interest"
+  Broken URL: https://drive.google.com/file/d/1cwK8BsvqjCcxsdVoWaQ5km1qWrl_hDok/preview
+  Status: 404
+
+  Link text: "Homeowner Paid Planting and Removal"
+  Broken URL: https://drive.google.com/file/d/1kpToMEM7ncSAY53fb-b6gb-SE66gYjag/view?usp=sharing
+  Status: 404
+
+  Link text: "Inspection and Copying of Association Records"
+  Broken URL: https://drive.google.com/file/d/1is8xWW3b_YhCIta2S6TndGxjKmAl4MIQ/preview
+  Status: 404
+
+  Link text: "Investment of Reserve Funds"
+  Broken URL: https://drive.google.com/file/d/1Pp7eJCERWW2L0o9J9fSsvYoMT80vzdiV/preview
+  Status: 404
+
+  Link text: "Reserve Requirements"
+  Broken URL: https://drive.google.com/file/d/1SD5QYSJFMCifWIe0upFKsbF1XOX3KpE9/preview
+  Status: 404
+
+  Link text: "Responsibility for Deductible Portion of Insurance Claim"
+  Broken URL: https://drive.google.com/file/d/1_898PAnP58NishT6BEO0M-xHOzB046oB/preview
+  Status: 404
+
+  Link text: "Snow Removal"
+  Broken URL: https://drive.google.com/file/d/1TdeqabI_X6DYlrSi-Hitug9N2PCtQdqh/preview
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: the-association
+  https://www.villasboulders.org/community/the-association
+  (1 broken link)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "Non-Profit Association"
+  Broken URL: https://drive.google.com/file/d/1G_fxPeHVAHb3YUBVOGHLIRadDZRQ6HyT/preview
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: villas-geography
+  https://www.villasboulders.org/community/villas-geography
+  (3 broken links)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "Map of the Villas at the Boulders"
+  Broken URL: https://drive.google.com/file/d/1zVfswsEQHqcCcgtNUAE902qTXZTwtCIm/view?usp=sharing
+  Status: 404
+
+  Link text: "The "Condos""
+  Broken URL: https://www.zillow.com/b/the-condominiums-at-the-boulders-broomfield-co-5hPncs
+  Status: 403
+
+  Link text: "The Original Plat"
+  Broken URL: https://drive.google.com/file/d/1ePjUVQg6ocQZtUC6Skwjq6O2d5z1fbkM/view?usp=sharing
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: snow-removal
+  https://www.villasboulders.org/description-of-services/snow-removal
+  (1 broken link)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "Snow Removal"
+  Broken URL: https://drive.google.com/file/d/1TdeqabI_X6DYlrSi-Hitug9N2PCtQdqh/preview
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: snow-removal_1
+  https://www.villasboulders.org/description-of-services/snow-removal_1
+  (1 broken link)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "Snow Removal Policy"
+  Broken URL: https://drive.google.com/file/d/1TdeqabI_X6DYlrSi-Hitug9N2PCtQdqh/view?usp=drive_link
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: faq
+  https://www.villasboulders.org/faq
+  (3 broken links)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "Bylaws"
+  Broken URL: https://drive.google.com/file/d/1udQFTvcA0Fg8tKHkXEu_an1qzFZLvLIN/view?usp=sharing
+  Status: 404
+
+  Link text: "Declaration of Covenants, Conditions, and Restrictions (DCCRs)"
+  Broken URL: https://drive.google.com/file/d/1533Hg-wnBYNWf8wRp3B2BI7-UDMUWOhx/view?usp=drive_link
+  Status: 404
+
+  Link text: "amendments"
+  Broken URL: https://drive.google.com/file/d/1nAi8h5xjikw8g_T0oTcPJP8xGg-zTRJR/view?usp=sharing
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: architectural-review-request
+  https://www.villasboulders.org/forms/architectural-review-request
+  (1 broken link)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "ARC Design Guidelines"
+  Broken URL: https://drive.google.com/file/d/1mu-_ltPczKFYj2IvPUTgi9NXDdzZOFmG/view?usp=drive_link
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: homeowner-paid-planting
+  https://www.villasboulders.org/forms/homeowner-paid-planting
+  (1 broken link)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "Homeowner Paid Planting and Removal"
+  Broken URL: https://drive.google.com/file/d/1Hjgt5BOILNNsIBMeVCkXKRXNq3twsThx/view?usp=drive_link
+  Status: 404
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: home
+  https://www.villasboulders.org/home
+  (1 broken link)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "Policy Directory"
+  Broken URL: https://docs.google.com/document/d/14EOPsEeHZM85Uj2giGbjRf3biwmTaY4_/edit?usp=drive_link&ouid=104170259298734996302&rtpof=true&sd=true
+  Status: 401
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE: rules
+  https://www.villasboulders.org/rules
+  (5 broken links)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Link text: "ARC Guidelines"
+  Broken URL: https://drive.google.com/file/d/1mu-_ltPczKFYj2IvPUTgi9NXDdzZOFmG/preview
+  Status: 404
+
+  Link text: "Amendment"
+  Broken URL: https://drive.google.com/file/d/1nAi8h5xjikw8g_T0oTcPJP8xGg-zTRJR/view?usp=drive_link
+  Status: 404
+
+  Link text: "Articles of Incorporation"
+  Broken URL: https://drive.google.com/file/d/1mf-N6D2SHWIA7u--zlVqR7l1Lldq9KaB/view?usp=drive_link
+  Status: 404
+
+  Link text: "Bylaws"
+  Broken URL: https://drive.google.com/file/d/1udQFTvcA0Fg8tKHkXEu_an1qzFZLvLIN/view?usp=drive_link
+  Status: 404
+
+  Link text: "Declaration of Covenants, Conditions and Restrictions"
+  Broken URL: https://drive.google.com/file/d/1533Hg-wnBYNWf8wRp3B2BI7-UDMUWOhx/view?usp=drive_link
+  Status: 404

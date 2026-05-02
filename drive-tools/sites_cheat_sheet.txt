@@ -1,0 +1,268 @@
+GOOGLE SITES LINK FIX — CHEAT SHEET
+======================================================================
+
+For each page: open in Sites editor, find each broken
+embed/link, and replace the URL with the new one.
+
+TIP: In the Sites editor, broken embeds usually show as
+gray boxes or error frames. Click them to edit.
+
+━━━ annual-budgetdues-process (3 fixes) ━━━
+  sites.google.com > edit this page
+
+  Budget Presentation
+    FIND:    ...1DQ3VG7iip_l...
+    REPLACE: https://drive.google.com/file/d/1Nwzq-Fi-H0IqliKJWw9uCow1SpalAxod/preview
+
+  Bylaws
+    FIND:    ...1udQFTvcA0Fg...
+    REPLACE: https://drive.google.com/file/d/1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L/preview
+
+  Operating Budget
+    FIND:    ...1DAxuOr2eWMG...
+    REPLACE: https://drive.google.com/file/d/16j2aJXvQLHF7PaM5d4BR4vCO1jNF3PNY/preview
+
+━━━ arc (2 fixes) ━━━
+  sites.google.com > edit this page
+
+  ARC Guidelines
+    FIND:    ...1mu-_ltPczKF...
+    REPLACE: https://drive.google.com/file/d/1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG/preview
+
+  Covenants (DCCRs)
+    FIND:    ...1533Hg-wnBYN...
+    REPLACE: https://drive.google.com/file/d/1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin/preview
+
+━━━ arc-guidelines (1 fixes) ━━━
+  sites.google.com > edit this page
+
+  ARC Guidelines
+    FIND:    ...1mu-_ltPczKF...
+    REPLACE: https://drive.google.com/file/d/1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG/preview
+
+━━━ architectural-review-request (1 fixes) ━━━
+  sites.google.com > edit this page
+
+  ARC Guidelines
+    FIND:    ...1mu-_ltPczKF...
+    REPLACE: https://drive.google.com/file/d/1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG/preview
+
+━━━ board-and-committees (1 fixes) ━━━
+  sites.google.com > edit this page
+
+  Current Directors and Officers List
+    FIND:    ...1p_IK70rLFbR...
+    REPLACE: https://drive.google.com/file/d/1Iq-ri3ZDumjaTzM7TMhQFwNl6HCx61U-/preview
+
+━━━ board-of-directors (1 fixes) ━━━
+  sites.google.com > edit this page
+
+  Current Directors and Officers List
+    FIND:    ...1p_IK70rLFbR...
+    REPLACE: https://drive.google.com/file/d/1Iq-ri3ZDumjaTzM7TMhQFwNl6HCx61U-/preview
+
+━━━ budgets-costs-and-dues (2 fixes) ━━━
+  sites.google.com > edit this page
+
+  Investment of Reserve Funds policy
+    FIND:    ...1Pp7eJCERWW2...
+    REPLACE: https://drive.google.com/file/d/1IK-TYMwkcJicLyeO4qXCtXfBQeEEdkkL/preview
+
+  Reserve Requirements policy
+    FIND:    ...1SD5QYSJFMCi...
+    REPLACE: https://drive.google.com/file/d/1GQrL1olKpM78NyQZvYgLbRo2WS0EptJF/preview
+
+━━━ faq (3 fixes) ━━━
+  sites.google.com > edit this page
+
+  Amendment to the Covenants
+    FIND:    ...1nAi8h5xjikw...
+    REPLACE: https://drive.google.com/file/d/18CbXaVwhasENdTlsaMGigOeHRdCPoRfO/preview
+
+  Bylaws
+    FIND:    ...1udQFTvcA0Fg...
+    REPLACE: https://drive.google.com/file/d/1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L/preview
+
+  Covenants (DCCRs)
+    FIND:    ...1533Hg-wnBYN...
+    REPLACE: https://drive.google.com/file/d/1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin/preview
+
+━━━ former-board-members (1 fixes) ━━━
+  sites.google.com > edit this page
+
+  Current Directors and Officers List
+    FIND:    ...1p_IK70rLFbR...
+    REPLACE: https://drive.google.com/file/d/1Iq-ri3ZDumjaTzM7TMhQFwNl6HCx61U-/preview
+
+━━━ governing-documents (5 fixes) ━━━
+  sites.google.com > edit this page
+
+  Amendment to the Covenants
+    FIND:    ...1nAi8h5xjikw...
+    REPLACE: https://drive.google.com/file/d/18CbXaVwhasENdTlsaMGigOeHRdCPoRfO/preview
+
+  Articles of Incorporation
+    FIND:    ...1mf-N6D2SHWI...
+    REPLACE: https://drive.google.com/file/d/1Hd6NGIrGM023fN42bxZV_nzSdlPZSqEk/preview
+
+  Bylaws
+    FIND:    ...1udQFTvcA0Fg...
+    REPLACE: https://drive.google.com/file/d/1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L/preview
+
+  Colorado Certificate (of incorporation)
+    FIND:    ...1G_fxPeHVAHb...
+    REPLACE: https://drive.google.com/file/d/1t1PbQG7ZtR9gU4g6uUPQcGupkYIqf5dT/preview
+
+  Covenants (DCCRs)
+    FIND:    ...1533Hg-wnBYN...
+    REPLACE: https://drive.google.com/file/d/1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin/preview
+
+━━━ homeowner-paid-planting (1 fixes) ━━━
+  sites.google.com > edit this page
+
+  Homeowner Paid Planting and Removal (form)
+    FIND:    ...1Hjgt5BOILNN...
+    REPLACE: https://docs.google.com/forms/d/e/1FAIpQLSdePB2ZRaJ-V-9kCYH65oAJMALS0NNDx7L_LSdKgv1Fl6k_9Q/viewform
+
+━━━ policies (14 fixes) ━━━
+  sites.google.com > edit this page
+
+  Adoption and Amendment of Policies
+    FIND:    ...10AsxcnmTz8x...
+    REPLACE: https://drive.google.com/file/d/1os0OlZYgGDRMb1prCiEzbioYGrjx_3VV/preview
+
+  Alternative Dispute Resolution policy
+    FIND:    ...1QKeMQIWfV4X...
+    REPLACE: https://drive.google.com/file/d/1lkGkfmPVBZmsLi_Usw7oWg7MBVUJeE0V/preview
+
+  Association Directors and Officers (policy)
+    FIND:    ...137z5ohOvd32...
+    REPLACE: https://drive.google.com/file/d/1ltdSmPja3G5HLeDozHuKWAHcWIGyb8Os/preview
+
+  Collection of Unpaid Assessments policy
+    FIND:    ...1QcdQp6qubp-...
+    REPLACE: https://drive.google.com/file/d/1rZGiDnXdvI4EF289L46fF52YBr28uWjF/preview
+
+  Committee Authorities policy
+    FIND:    ...1ptp2EjRte57...
+    REPLACE: https://drive.google.com/file/d/1lnms3fSMzfUwtVuBTPdqDvOEUQFju4FU/preview
+
+  Conduct of Meetings policy
+    FIND:    ...1v1v4qwqj3gW...
+    REPLACE: https://drive.google.com/file/d/1BNeDX1DZnXrz3CpBY0f42h6jkQTPbydN/preview
+
+  Covenant Enforcement policy
+    FIND:    ...1mJZwynZim9M...
+    REPLACE: https://drive.google.com/file/d/1UqGt1rQM8Tfzmw5xTHIqIceVepBvg0q7/preview
+
+  Director Conflict of Interest policy
+    FIND:    ...1cwK8BsvqjCc...
+    REPLACE: https://drive.google.com/file/d/1Q-SjhkNQgwTFz30nP6MmkFMe7nxWN_JR/preview
+
+  Homeowner Paid Planting and Removal policy
+    FIND:    ...1kpToMEM7ncS...
+    REPLACE: https://drive.google.com/file/d/1E16iZaEVwGk5Zdxzh2cmyKj1rUgkEOho/preview
+
+  Inspection and Copying of Association Records policy
+    FIND:    ...1is8xWW3b_Yh...
+    REPLACE: https://drive.google.com/file/d/15yABqrybAJ4w-4nl1Zc_yWeJtI_dN6pG/preview
+
+  Investment of Reserve Funds policy
+    FIND:    ...1Pp7eJCERWW2...
+    REPLACE: https://drive.google.com/file/d/1IK-TYMwkcJicLyeO4qXCtXfBQeEEdkkL/preview
+
+  Reserve Requirements policy
+    FIND:    ...1SD5QYSJFMCi...
+    REPLACE: https://drive.google.com/file/d/1GQrL1olKpM78NyQZvYgLbRo2WS0EptJF/preview
+
+  Responsibility for Deductible Portion of Insurance Claim
+    FIND:    ...1_898PAnP58N...
+    REPLACE: https://drive.google.com/file/d/1h7fIPGI4BH5tVW-AsI0kctUN9MxNNGms/preview
+
+  Snow Removal policy
+    FIND:    ...1TdeqabI_X6D...
+    REPLACE: https://drive.google.com/file/d/10y4X34OyiWWRIIHkbW-OACCPEZECyHKR/preview
+
+━━━ reserve-studies (4 fixes) ━━━
+  sites.google.com > edit this page
+
+  2006 Reserve Study
+    FIND:    ...1VzsXjgNzeWF...
+    REPLACE: https://drive.google.com/file/d/1bh6Z9B8duYX0fGzJPZpEAbdfwx55ZEv4/preview
+
+  2015 Reserve Study
+    FIND:    ...1iTJ_6j8G7JF...
+    REPLACE: https://drive.google.com/file/d/1OI2GQrTY0-_jHim0BGzEPCq1P_kIIEpP/preview
+
+  2022 Reserve Study
+    FIND:    ...1conXw8mimAJ...
+    REPLACE: https://drive.google.com/file/d/1mVeYpUWfPwnrSQNAS4eHfEwqUfixWsgV/preview
+
+  Reserve Requirements policy
+    FIND:    ...1SD5QYSJFMCi...
+    REPLACE: https://drive.google.com/file/d/1GQrL1olKpM78NyQZvYgLbRo2WS0EptJF/preview
+
+━━━ rules (5 fixes) ━━━
+  sites.google.com > edit this page
+
+  ARC Guidelines
+    FIND:    ...1mu-_ltPczKF...
+    REPLACE: https://drive.google.com/file/d/1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG/preview
+
+  Amendment to the Covenants
+    FIND:    ...1nAi8h5xjikw...
+    REPLACE: https://drive.google.com/file/d/18CbXaVwhasENdTlsaMGigOeHRdCPoRfO/preview
+
+  Articles of Incorporation
+    FIND:    ...1mf-N6D2SHWI...
+    REPLACE: https://drive.google.com/file/d/1Hd6NGIrGM023fN42bxZV_nzSdlPZSqEk/preview
+
+  Bylaws
+    FIND:    ...1udQFTvcA0Fg...
+    REPLACE: https://drive.google.com/file/d/1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L/preview
+
+  Covenants (DCCRs)
+    FIND:    ...1533Hg-wnBYN...
+    REPLACE: https://drive.google.com/file/d/1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin/preview
+
+━━━ snow-removal (1 fixes) ━━━
+  sites.google.com > edit this page
+
+  Snow Removal policy
+    FIND:    ...1TdeqabI_X6D...
+    REPLACE: https://drive.google.com/file/d/10y4X34OyiWWRIIHkbW-OACCPEZECyHKR/preview
+
+━━━ the-association (1 fixes) ━━━
+  sites.google.com > edit this page
+
+  Colorado Certificate (of incorporation)
+    FIND:    ...1G_fxPeHVAHb...
+    REPLACE: https://drive.google.com/file/d/1t1PbQG7ZtR9gU4g6uUPQcGupkYIqf5dT/preview
+
+━━━ the-roofing-loan (3 fixes) ━━━
+  sites.google.com > edit this page
+
+  Roofing Conclusions and Recommendations
+    FIND:    ...1rvvnS4AXM6R...
+    REPLACE: https://drive.google.com/file/d/1ZztsHUg_9hC-da5tgrsCgl5cresGxmhY/preview
+
+  Roofing Finished doc
+    FIND:    ...1YXsZL9fGmBE...
+    REPLACE: https://drive.google.com/file/d/1gQqwKAIZy-yOEeflc_nf3DWofyGmM4Bi/preview
+
+  Roofing Major Project doc
+    FIND:    ...1WezdYQm3ogB...
+    REPLACE: https://drive.google.com/file/d/1x1F76LnO2rMBH_UkKjgCB28G-PuD6-j_/preview
+
+━━━ villas-geography (2 fixes) ━━━
+  sites.google.com > edit this page
+
+  Map of the Villas at the Boulders
+    FIND:    ...1zVfswsEQHqc...
+    REPLACE: https://drive.google.com/file/d/12R_K-MBX11dtOAoRhCvT9jhiGv9bVyUd/preview
+
+  The Original Plat
+    FIND:    ...1ePjUVQg6ocQ...
+    REPLACE: https://drive.google.com/file/d/1VvA3-SWt7havg2WslyLmljG6XDfXLydq/preview
+
+━━━ TOTAL: 51 replacements across 18 pages ━━━

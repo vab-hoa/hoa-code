@@ -19,9 +19,12 @@ const SYNC_LIST = [
 ];
 
 function executeCommunitySync() {
+  const allContactGroups = People.ContactGroups.list();
+  const contactGroups = (allContactGroups && allContactGroups.contactGroups) || [];
+
   SYNC_LIST.forEach(item => {
     const groupEmail = `${item.prefix}@${DOMAIN}`;
-    
+
     try {
       AdminDirectory.Groups.get(groupEmail);
     } catch (e) {
@@ -41,14 +44,13 @@ function executeCommunitySync() {
       AdminDirectory.Members.insert({ email: ADMIN_EMAIL, role: "OWNER" }, groupEmail);
     } catch (e) {}
 
-    syncLabelMembers(item.label, groupEmail);
+    syncLabelMembers(item.label, groupEmail, contactGroups);
   });
   console.log("Batch complete.");
 }
 
-function syncLabelMembers(labelName, groupEmail) {
-  const allContactGroups = People.ContactGroups.list();
-  const targetLabel = allContactGroups.contactGroups.find(g => g.name === labelName);
+function syncLabelMembers(labelName, groupEmail, contactGroups) {
+  const targetLabel = contactGroups.find(g => g.name === labelName);
   
   if (!targetLabel) return;
 

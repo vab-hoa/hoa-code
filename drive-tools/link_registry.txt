@@ -1,0 +1,329 @@
+====================================================================================================
+LINK REGISTRY — villasboulders.org Drive Links
+Total unique Drive IDs: 56
+  file: 38
+  folder: 7
+  form: 11
+====================================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FILE LINKS (38)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ID: 1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG
+  Format: view
+  Used on 4 page(s):
+    /committees/arc  "ARC Guidelines"
+    /committees/arc/arc-guidelines  "ARC Guidelines"
+    /forms/architectural-review-request  "ARC Design Guidelines"
+    /rules  "ARC Guidelines"
+
+  ID: 16j2aJXvQLHF7PaM5d4BR4vCO1jNF3PNY
+  Format: view
+  Used on 3 page(s):
+    /  "2026 Budget"
+    /budgets-costs-and-dues/annual-budgetdues-process  "operating budget"
+    /home  "2026 Budget"
+
+  ID: 18yMYm_-w0egzRQn9dv1B5SDDAxJqEy4j
+  Format: view
+  Used on 3 page(s):
+    /  "Covenants"
+    /community/governing-documents  "Declaration of Covenants, Conditions and Restrictions"
+    /home  "Covenants"
+
+  ID: 1Iyt-B8hadGUvDy55xUEcuX4Wa_KX7fbh
+  Format: view
+  Used on 3 page(s):
+    /budgets-costs-and-dues  "Policy on Reserve Requirements"
+    /budgets-costs-and-dues/reserve-studies  "Reserve Requirements"
+    /community/governing-documents/policies  "Reserve Requirements"
+
+  ID: 1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L
+  Format: view
+  Used on 3 page(s):
+    /budgets-costs-and-dues/annual-budgetdues-process  "our Bylaws"
+    /faq  "Bylaws"
+    /rules  "Bylaws"
+
+  ID: 1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin
+  Format: view
+  Used on 3 page(s):
+    /committees/arc  "Covenants"
+    /faq  "Declaration of Covenants, Conditions, and Restrictions (DCCRs)"
+    /rules  "Declaration of Covenants, Conditions and Restrictions"
+
+  ID: 1Iq-ri3ZDumjaTzM7TMhQFwNl6HCx61U-
+  Format: view
+  Used on 3 page(s):
+    /committees/the-board-of-directors  "Current Directors and Officers List"
+    /committees/the-board-of-directors/former-board-members  "here"
+    /community/board-and-committees  "List of Directors and Officers"
+
+  ID: 1nPUlf3ZMDxuC01QBSwpNhX_hgUtHj_0X
+  Format: view
+  Used on 3 page(s):
+    /community/governing-documents  "Articles of Incorporation"
+    /community/the-association  "Non-Profit Association"
+    /rules  "Articles of Incorporation"
+
+  ID: 18CbXaVwhasENdTlsaMGigOeHRdCPoRfO
+  Format: view
+  Used on 3 page(s):
+    /community/governing-documents  "Amendment to the Covenants"
+    /faq  "amendment"
+    /rules  "Amendment"
+
+  ID: 1dyAdDg9vza7vIQfbTm1i9jOcte5R4Hnr
+  Format: view
+  Used on 2 page(s):
+    /  "Policy Directory"
+    /home  "Policy Directory"
+
+  ID: 1BptCNP1WyqW2IHgXJD1roD0kohfF2TSM
+  Format: view
+  Used on 2 page(s):
+    /  "Bylaws"
+    /home  "Bylaws"
+
+  ID: 1f5dQOSjKfQ9vDHsg6kVHgKY-SAalcdME
+  Format: view
+  Used on 2 page(s):
+    /budgets-costs-and-dues  "Policy on Investment of Reserve Funds"
+    /community/governing-documents/policies  "Investment of Reserve Funds"
+
+  ID: 1p_e5f_uzWkq7j9QQxuuRuaNfL8vtmTHg
+  Format: view
+  Used on 2 page(s):
+    /community/governing-documents/policies  "Homeowner Paid Planting and Removal"
+    /forms/homeowner-paid-planting  "Homeowner Paid Planting and Removal"
+
+  ID: 1mswSXKtJ9mLX0dw7DxS-5LSEioi2ugRJ
+  Format: view
+  Used on 2 page(s):
+    /community/governing-documents/policies  "Snow Removal"
+    /description-of-services/snow-removal  "Snow Removal"
+
+  ID: 1Nwzq-Fi-H0IqliKJWw9uCow1SpalAxod
+  Format: view
+  Used on 1 page(s):
+    /budgets-costs-and-dues/annual-budgetdues-process  "a presentation"
+
+  ID: 1bh6Z9B8duYX0fGzJPZpEAbdfwx55ZEv4
+  Format: view
+  Used on 1 page(s):
+    /budgets-costs-and-dues/reserve-studies  "2006 Reserve Study"
+
+  ID: 1_UInq7t-kaHdi4WkS6SD1bp3aVK9CRD0
+  Format: view
+  Used on 1 page(s):
+    /budgets-costs-and-dues/reserve-studies  "2015 Reserve Study"
+
+  ID: 1VW6aBJgxRM4QnIMWlqxAnHS4-v__xiVW
+  Format: view
+  Used on 1 page(s):
+    /budgets-costs-and-dues/reserve-studies  "2022 Reserve Study"
+
+  ID: 1x1F76LnO2rMBH_UkKjgCB28G-PuD6-j_
+  Format: view
+  Used on 1 page(s):
+    /budgets-costs-and-dues/the-roofing-loan  "major project"
+
+  ID: 1ZztsHUg_9hC-da5tgrsCgl5cresGxmhY
+  Format: view
+  Used on 1 page(s):
+    /budgets-costs-and-dues/the-roofing-loan  "conclusions and recommendations"
+
+  ID: 1gQqwKAIZy-yOEeflc_nf3DWofyGmM4Bi
+  Format: view
+  Used on 1 page(s):
+    /budgets-costs-and-dues/the-roofing-loan  "finished"
+
+  ID: 10Y_8AI6ULssylwgs2m89J6YqH8RiFVcC
+  Format: preview
+  Used on 1 page(s):
+    /committees/lbc  "charter"
+
+  ID: 1t1PbQG7ZtR9gU4g6uUPQcGupkYIqf5dT
+  Format: view
+  Used on 1 page(s):
+    /community/governing-documents  "Colorado Certificate"
+
+  ID: 1fQHR2xWD12nLrf2G4utcxCgs6oOGJOQc
+  Format: view
+  Used on 1 page(s):
+    /community/governing-documents/policies  "Adoption and Amendment of Policies, Procedures and Rules"
+
+  ID: 1srP4059YBPrX1hZFkYLFF566z6slQ0fn
+  Format: view
+  Used on 1 page(s):
+    /community/governing-documents/policies  "Alternative Dispute Resolution"
+
+  ID: 1ltdSmPja3G5HLeDozHuKWAHcWIGyb8Os
+  Format: view
+  Used on 1 page(s):
+    /community/governing-documents/policies  "Association Directors and Officers"
+
+  ID: 1AS2nIZdbVY1WmUsIcRFvBICPKRIMxJj7
+  Format: view
+  Used on 1 page(s):
+    /community/governing-documents/policies  "Collection of Unpaid Assessments"
+
+  ID: 1CUFcSczO4FiRp5ifoHe5GYYMQL3V6SHy
+  Format: view
+  Used on 1 page(s):
+    /community/governing-documents/policies  "Committee Authorities"
+
+  ID: 1acFiQ_dMqAtOQIqn89pxm5biePX9Y6bu
+  Format: view
+  Used on 1 page(s):
+    /community/governing-documents/policies  "Conduct of Meetings"
+
+  ID: 1wvKcRSP8M-kZGOfrN-eIouLRyoftqglf
+  Format: view
+  Used on 1 page(s):
+    /community/governing-documents/policies  "Covenant Enforcement"
+
+  ID: 1cxg048xj9eUzGMkrKOMrZZyHWdM64Znb
+  Format: view
+  Used on 1 page(s):
+    /community/governing-documents/policies  "Director Conflict of Interest"
+
+  ID: 1b9W3FcgdZAd3nrfqOanhhPI_lW3smVLX
+  Format: view
+  Used on 1 page(s):
+    /community/governing-documents/policies  "Inspection and Copying of Association Records"
+
+  ID: 1hZndWB3N6p8ng1bA90IDqlkIozcmO42B
+  Format: view
+  Used on 1 page(s):
+    /community/governing-documents/policies  "Responsibility for Deductible Portion of Insurance Claim"
+
+  ID: 1pF9aNzJHBXrAP7X-wYEc0b91jNZCLRko
+  Format: view
+  Used on 1 page(s):
+    /community/houses  "document here"
+
+  ID: 1zVfswsEQHqcCcgtNUAE902qTXZTwtCIm
+  Format: view
+  Used on 1 page(s):
+    /community/villas-geography  "Map of the Villas at the Boulders"
+
+  ID: 1VvA3-SWt7havg2WslyLmljG6XDfXLydq
+  Format: view
+  Used on 1 page(s):
+    /community/villas-geography  "The Original Plat"
+
+  ID: 1TdeqabI_X6DYlrSi-Hitug9N2PCtQdqh
+  Format: view
+  Used on 1 page(s):
+    /description-of-services/snow-removal_1  "Snow Removal Policy"
+
+  ID: 1leTPh9CAQvayTYWPQEh_XIBg_
+  Format: other
+  Used on 1 page(s):
+    /description-of-services/water-sewer  "Landscape Beautification Committee"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FOLDER LINKS (7)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ID: 1h7tstUX0s6VAjdEdMf7UKdfNEdSZsYLn
+  Format: folder
+  Used on 3 page(s):
+    /  "2025 Financials"
+    /budgets-costs-and-dues/financials  "2025 Monthly Financial Reports"
+    /home  "2025 Financials"
+
+  ID: 1jenRK6zqDrqXJYF_vw9Dfe2z24RqHXeo
+  Format: folder
+  Used on 2 page(s):
+    /  "Newsletters"
+    /home  "Newsletters"
+
+  ID: 1sr0GBbNYHyT8QPO0fX37CEg8P4nYO1rK
+  Format: folder
+  Used on 1 page(s):
+    /budgets-costs-and-dues/budgets  "2024 Budget"
+
+  ID: 19NtrKBpOZSiuOU7UrH6aJKtIRbIG2YIu
+  Format: folder
+  Used on 1 page(s):
+    /budgets-costs-and-dues/budgets  "2025 Budget"
+
+  ID: 1A6MANs154xUOir-TmaQmkPBbBKBzWqpi
+  Format: folder
+  Used on 1 page(s):
+    /budgets-costs-and-dues/budgets  "2026 Budget"
+
+  ID: 1JuDLQyY4sBTbNKEiKygVz5JAmoyOldpR
+  Format: folder
+  Used on 1 page(s):
+    /budgets-costs-and-dues/financials  "2026 Monthly Financial Reports"
+
+  ID: 1BXhPNd_rC8Y_Lln6Jhvpcq49BmaUVMSP
+  Format: folder
+  Used on 1 page(s):
+    /faq  "policies"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FORM LINKS (11)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ID: 1FAIpQLSdjCQc3Iq9ZAUJVT-L6VwSr8wsKDkNChpF44Sts
+  Format: other
+  Used on 2 page(s):
+    /  "Survey: Do you think this website will be useful?"
+    /home  "Survey: Do you think this website will be useful?"
+
+  ID: 1FAIpQLSfKOd4g1pkW5yWjM5O3HrblVzPBMlTc1ZLVFTJb
+  Format: other
+  Used on 2 page(s):
+    /  "Take a survey: How's the Board doing so far?"
+    /home  "Take a survey: How's the Board doing so far?"
+
+  ID: 1FAIpQLSfUZqlnmkBo1oa1KIJqNWPVeYCKJogQGYlCAJU4
+  Format: other
+  Used on 2 page(s):
+    /forms/volunteer-expense-reimbursement  "[no text]"
+    /volunteering/reimbursement  "this form"
+
+  ID: 1FAIpQLSe9zovnZicuIvjuyKDM92JoQNbjRXB5h80AbfiS
+  Format: other
+  Used on 1 page(s):
+    /community/local-contractors  "[no text]"
+
+  ID: 1FAIpQLSe-eeQJelGiZIsOUhOKvQ7TbfFinC3S0NwEJiDh
+  Format: other
+  Used on 1 page(s):
+    /description-of-services/repair-requests  "[no text]"
+
+  ID: 1FAIpQLSepG0_rv0TFzODCHMtL3oH0kEXoiXmhdIPlxCnY
+  Format: other
+  Used on 1 page(s):
+    /forms  "Property Report Request"
+
+  ID: 1FAIpQLSe-6k8SfAYMXDvyOqHhAisLoTgtrMSSiG-ct97x
+  Format: other
+  Used on 1 page(s):
+    /forms/annual-meeting-proxy-form  "[no text]"
+
+  ID: 1FAIpQLSd-roOGwFLe7sSqdPki31zxtGCqntyLHmnooPsk
+  Format: other
+  Used on 1 page(s):
+    /forms/architectural-review-request  "[no text]"
+
+  ID: 1FAIpQLSdePB2ZRaJ-V-9kCYH65oAJMALS0NNDx7L_LSdK
+  Format: other
+  Used on 1 page(s):
+    /forms/homeowner-paid-planting  "[no text]"
+
+  ID: 1FAIpQLSfPEnzCYuTr48_5n6-cwBfG0bQTRiuPx7nhKigG
+  Format: other
+  Used on 1 page(s):
+    /forms/overnight-parking-request  "[no text]"
+
+  ID: 1FAIpQLSdoo_vzIL4GqrMFo38aAxcE2rXGfv-mPxvhLPY-
+  Format: other
+  Used on 1 page(s):
+    /forms/volunteer-form  "[no text]"

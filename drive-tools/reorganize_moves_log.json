@@ -1,0 +1,92 @@
+{
+  "timestamp": "2026-03-23T10:25:11.796890",
+  "dry_run": false,
+  "actions": [
+    {
+      "type": "create_folder",
+      "path": "Governing Documents > Bylaws > Current",
+      "parent": "1eGWXQGMyfOXzbBkk29BMct9yacIEbT1D",
+      "name": "Current"
+    },
+    {
+      "type": "create_folder",
+      "path": "Governing Documents > Covenants > Current",
+      "parent": "1gLvFoBGlAj5zoLDierBPCEHAzPWq8mdQ",
+      "name": "Current"
+    },
+    {
+      "type": "create_folder",
+      "path": "Committees > ARC Design Guidelines > Current",
+      "parent": "1KtRMHaHY-5KOYmi0cbTyPNS5W9l5VL4V",
+      "name": "Current"
+    },
+    {
+      "type": "move_file",
+      "file_id": "1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L",
+      "file_name": "ByLaws.Current",
+      "from_parent": "1vFQeFiHQNkV2tug8aMnSDV4Rb3VIF3rK",
+      "to_folder": "Governing Documents > Bylaws > Current"
+    },
+    {
+      "type": "move_file",
+      "file_id": "1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin",
+      "file_name": "Covenants.Current",
+      "from_parent": "1vFQeFiHQNkV2tug8aMnSDV4Rb3VIF3rK",
+      "to_folder": "Governing Documents > Covenants > Current"
+    },
+    {
+      "type": "move_file",
+      "file_id": "18CbXaVwhasENdTlsaMGigOeHRdCPoRfO",
+      "file_name": "Amendment 1 to Declaration of Covenants, Conditions and Restrictions (2022).pdf",
+      "from_parent": "1gLvFoBGlAj5zoLDierBPCEHAzPWq8mdQ",
+      "to_folder": "Governing Documents > Covenants > Current"
+    },
+    {
+      "type": "move_file",
+      "file_id": "1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG",
+      "file_name": "ARC Design Guidelines (2025.9a).pdf",
+      "from_parent": "12eOIoNoct0ygtIkWDTh5b_4H1DL4RQfr",
+      "to_folder": "Committees > ARC Design Guidelines > Current"
+    },
+    {
+      "type": "trash_folder",
+      "id": "14zIcljiU4DzdxcQdfSPwhd1kyB6aYCoh",
+      "reason": "Bylaws Archive (at root \u2014 wrong)"
+    },
+    {
+      "type": "trash_folder",
+      "id": "1-mvWNTU2PJ-RpKzLjdmN0wcEsYGSbGrV",
+      "reason": "Current Bylaws (under Gov Docs \u2014 wrong level)"
+    },
+    {
+      "type": "trash_folder",
+      "id": "1tyBlVAwo8lKgxt4eEt5CRY3ilc9sjz20",
+      "reason": "Current Covenants (under Gov Docs \u2014 wrong level)"
+    },
+    {
+      "type": "trash_folder",
+      "id": "1B6zF3_QXcY_xoY5ZCr-y8_ukZlFxpFG3",
+      "reason": "Current ARC Guidelines (under Gov Docs \u2014 wrong level)"
+    },
+    {
+      "type": "trash_shortcut",
+      "id": "1cXcnU6_vBFGhzV0CokYC5Jirwcl_FkDV",
+      "reason": "Current Bylaws shortcut in Governing Documents/"
+    },
+    {
+      "type": "trash_shortcut",
+      "id": "1VqJqUBePw3p4sXE3ioxFdP8kBAXIW0ID",
+      "reason": "Current Coventants shortcut in Governing Documents/"
+    },
+    {
+      "type": "trash_shortcut",
+      "id": "1vCZH4fY_8iDBR7icuiLvGg4HCqKpzCNQ",
+      "reason": "Current Bylaws shortcut in Bylaws/2025 Bylaws/"
+    },
+    {
+      "type": "trash_file",
+      "id": "1VXi66Dn9ZmEzJL-2NOLqHv-aNK1fAJVX",
+      "reason": "ARC Design Guidelines (current).pdf in Governing Documents/ (old copy)"
+    }
+  ]
+}

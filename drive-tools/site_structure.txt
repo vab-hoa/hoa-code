@@ -1,0 +1,504 @@
+VILLASBOULDERS.ORG SITE STRUCTURE
+Pages crawled: 69
+================================================================================
+
+/
+  Title: Villas at the Boulders
+  Content: ~2309 chars, 0 embedded docs
+  Links: 97 internal, 8 Drive, 1 other external
+  Drive links:
+    "2026 Budget" → https://drive.google.com/file/d/16j2aJXvQLHF7PaM5d4BR4vCO1jNF3PNY/view?usp=drive
+    "2025 Financials" → https://drive.google.com/drive/folders/1h7tstUX0s6VAjdEdMf7UKdfNEdSZsYLn?usp=sha
+    "Newsletters" → https://drive.google.com/drive/folders/1jenRK6zqDrqXJYF_vw9Dfe2z24RqHXeo?usp=dri
+    "Policy Directory" → https://drive.google.com/file/d/1dyAdDg9vza7vIQfbTm1i9jOcte5R4Hnr/view?usp=shari
+    "Covenants" → https://drive.google.com/file/d/18yMYm_-w0egzRQn9dv1B5SDDAxJqEy4j/view?usp=drive
+    "Bylaws" → https://drive.google.com/file/d/1BptCNP1WyqW2IHgXJD1roD0kohfF2TSM/view?usp=drive
+    "Survey: Do you think this website will be useful?" → https://docs.google.com/forms/d/e/1FAIpQLSdjCQc3Iq9ZAUJVT-L6VwSr8wsKDkNChpF44Sts
+    "Take a survey: How's the Board doing so far?" → https://docs.google.com/forms/d/e/1FAIpQLSfKOd4g1pkW5yWjM5O3HrblVzPBMlTc1ZLVFTJb
+  External links:
+    "Property Report Request" → https://script.google.com/macros/s/AKfycbxvKgAmbdtBie6WumLoI_7NC7OscV3LmjORbvV7M
+
+  /board-calendar
+    Title: Villas at the Boulders - Board Calendar
+    Content: ~2246 chars, 1 embedded docs
+    Links: 70 internal, 0 Drive, 1 other external
+    External links:
+      "[no text]" → https://www.google.com/calendar/embed?color=%23a47ae2&src=c_ef1cd4b77ba7d1b4549f
+
+  /broomfield-activities
+    Title: Villas at the Boulders - Broomfield Activities
+    Content: ~1518 chars, 0 embedded docs
+    Links: 71 internal, 0 Drive, 0 other external
+
+  /budgets-costs-and-dues
+    Title: Villas at the Boulders - Budgets, Costs and Dues
+    Content: ~1962 chars, 0 embedded docs
+    Links: 76 internal, 2 Drive, 0 other external
+    Drive links:
+      "Policy on Reserve Requirements" → https://drive.google.com/file/d/1Iyt-B8hadGUvDy55xUEcuX4Wa_KX7fbh/view?usp=drive
+      "Policy on Investment of Reserve Funds" → https://drive.google.com/file/d/1f5dQOSjKfQ9vDHsg6kVHgKY-SAalcdME/view?usp=drive
+
+    /budgets-costs-and-dues/annual-budgetdues-process
+      Title: Villas at the Boulders - Annual Budget/Dues Process
+      Content: ~2059 chars, 0 embedded docs
+      Links: 70 internal, 3 Drive, 0 other external
+      Drive links:
+        "a presentation" → https://drive.google.com/file/d/1Nwzq-Fi-H0IqliKJWw9uCow1SpalAxod/view?usp=shari
+        "operating budget" → https://drive.google.com/file/d/16j2aJXvQLHF7PaM5d4BR4vCO1jNF3PNY/view?usp=shari
+        "our Bylaws" → https://drive.google.com/file/d/1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L/view?usp=shari
+
+    /budgets-costs-and-dues/budgets
+      Title: Villas at the Boulders - Budgets
+      Content: ~1946 chars, 0 embedded docs
+      Links: 71 internal, 3 Drive, 0 other external
+      Drive links:
+        "2024 Budget" → https://drive.google.com/drive/folders/1sr0GBbNYHyT8QPO0fX37CEg8P4nYO1rK?usp=dri
+        "2025 Budget" → https://drive.google.com/drive/folders/19NtrKBpOZSiuOU7UrH6aJKtIRbIG2YIu?usp=dri
+        "2026 Budget" → https://drive.google.com/drive/folders/1A6MANs154xUOir-TmaQmkPBbBKBzWqpi?usp=dri
+
+    /budgets-costs-and-dues/dues
+      Title: Villas at the Boulders - Dues
+      Content: ~2088 chars, 0 embedded docs
+      Links: 72 internal, 0 Drive, 0 other external
+
+      /budgets-costs-and-dues/dues/assessments
+        Title: Villas at the Boulders - Assessments
+        Content: ~2409 chars, 0 embedded docs
+        Links: 70 internal, 0 Drive, 0 other external
+
+    /budgets-costs-and-dues/financials
+      Title: Villas at the Boulders - Financials
+      Content: ~1204 chars, 0 embedded docs
+      Links: 70 internal, 2 Drive, 0 other external
+      Drive links:
+        "2025 Monthly Financial Reports" → https://drive.google.com/drive/folders/1h7tstUX0s6VAjdEdMf7UKdfNEdSZsYLn?preview
+        "2026 Monthly Financial Reports" → https://drive.google.com/drive/folders/1JuDLQyY4sBTbNKEiKygVz5JAmoyOldpR?usp=dri
+
+    /budgets-costs-and-dues/reserve-studies
+      Title: Villas at the Boulders - Reserve Studies
+      Content: ~2093 chars, 0 embedded docs
+      Links: 70 internal, 4 Drive, 0 other external
+      Drive links:
+        "Reserve Requirements" → https://drive.google.com/file/d/1Iyt-B8hadGUvDy55xUEcuX4Wa_KX7fbh/view?usp=shari
+        "2006 Reserve Study" → https://drive.google.com/file/d/1bh6Z9B8duYX0fGzJPZpEAbdfwx55ZEv4/view?usp=shari
+        "2015 Reserve Study" → https://drive.google.com/file/d/1_UInq7t-kaHdi4WkS6SD1bp3aVK9CRD0/view?usp=shari
+        "2022 Reserve Study" → https://drive.google.com/file/d/1VW6aBJgxRM4QnIMWlqxAnHS4-v__xiVW/view?usp=shari
+
+    /budgets-costs-and-dues/the-roofing-loan
+      Title: Villas at the Boulders - The Roofing Loan
+      Content: ~2208 chars, 0 embedded docs
+      Links: 70 internal, 3 Drive, 0 other external
+      Drive links:
+        "major project" → https://drive.google.com/file/d/1x1F76LnO2rMBH_UkKjgCB28G-PuD6-j_/view?usp=shari
+        "conclusions and recommendations" → https://drive.google.com/file/d/1ZztsHUg_9hC-da5tgrsCgl5cresGxmhY/view?usp=shari
+        "finished" → https://drive.google.com/file/d/1gQqwKAIZy-yOEeflc_nf3DWofyGmM4Bi/view?usp=shari
+
+  /charitable-promotions
+    Title: Villas at the Boulders - Charitable Promotions
+    Content: ~1580 chars, 0 embedded docs
+    Links: 70 internal, 0 Drive, 0 other external
+
+  /committees
+    Title: Villas at the Boulders - Committees
+    Content: ~1320 chars, 0 embedded docs
+    Links: 77 internal, 0 Drive, 0 other external
+
+    /committees/arc
+      Title: Villas at the Boulders - ARC
+      Content: ~1606 chars, 0 embedded docs
+      Links: 72 internal, 2 Drive, 0 other external
+      Drive links:
+        "Covenants" → https://drive.google.com/file/d/1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin/view?usp=shari
+        "ARC Guidelines" → https://drive.google.com/file/d/1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG/view?usp=shari
+
+      /committees/arc/arc-guidelines
+        Title: Villas at the Boulders - ARC Guidelines
+        Content: ~1683 chars, 0 embedded docs
+        Links: 70 internal, 1 Drive, 0 other external
+        Drive links:
+          "ARC Guidelines" → https://drive.google.com/file/d/1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG/view?usp=shari
+
+    /committees/community-outreach
+      Title: Villas at the Boulders - Community Outreach
+      Content: ~1424 chars, 0 embedded docs
+      Links: 70 internal, 0 Drive, 0 other external
+
+    /committees/lbc
+      Title: Villas at the Boulders - LBC
+      Content: ~1955 chars, 0 embedded docs
+      Links: 72 internal, 1 Drive, 0 other external
+      Drive links:
+        "charter" → https://drive.google.com/file/d/10Y_8AI6ULssylwgs2m89J6YqH8RiFVcC/preview
+
+    /committees/lbc-workgroup
+      Title: Villas at the Boulders - LBC Workgroup
+      Content: ~1692 chars, 0 embedded docs
+      Links: 71 internal, 0 Drive, 0 other external
+
+    /committees/snow-squad
+      Title: Villas at the Boulders - Snow Squad
+      Content: ~1584 chars, 0 embedded docs
+      Links: 71 internal, 0 Drive, 0 other external
+
+    /committees/the-board-of-directors
+      Title: Villas at the Boulders - The Board of Directors
+      Content: ~2166 chars, 0 embedded docs
+      Links: 72 internal, 1 Drive, 0 other external
+      Drive links:
+        "Current Directors and Officers List" → https://drive.google.com/file/d/1Iq-ri3ZDumjaTzM7TMhQFwNl6HCx61U-/view?usp=shari
+
+      /committees/the-board-of-directors/former-board-members
+        Title: Villas at the Boulders - Former Board Members
+        Content: ~1697 chars, 0 embedded docs
+        Links: 70 internal, 1 Drive, 0 other external
+        Drive links:
+          "here" → https://drive.google.com/file/d/1Iq-ri3ZDumjaTzM7TMhQFwNl6HCx61U-/view?usp=shari
+
+  /community
+    Title: Villas at the Boulders - Community
+    Content: ~1313 chars, 0 embedded docs
+    Links: 81 internal, 0 Drive, 0 other external
+
+    /community/board-and-committees
+      Title: Villas at the Boulders - Board and Committees
+      Content: ~2073 chars, 0 embedded docs
+      Links: 74 internal, 1 Drive, 0 other external
+      Drive links:
+        "List of Directors and Officers" → https://drive.google.com/file/d/1Iq-ri3ZDumjaTzM7TMhQFwNl6HCx61U-/view?usp=shari
+
+    /community/features
+      Title: Villas at the Boulders - Features
+      Content: ~1198 chars, 0 embedded docs
+      Links: 70 internal, 0 Drive, 0 other external
+
+    /community/governing-documents
+      Title: Villas at the Boulders - Governing Documents
+      Content: ~1977 chars, 0 embedded docs
+      Links: 72 internal, 6 Drive, 0 other external
+      Drive links:
+        "Articles of Incorporation" → https://drive.google.com/file/d/1nPUlf3ZMDxuC01QBSwpNhX_hgUtHj_0X/view?usp=shari
+        "Colorado Certificate" → https://drive.google.com/file/d/1t1PbQG7ZtR9gU4g6uUPQcGupkYIqf5dT/view?usp=shari
+        ""Declaration of Covenants, Conditions and Restrictions"" → https://drive.google.com/file/d/18yMYm_-w0egzRQn9dv1B5SDDAxJqEy4j/view?usp=drive
+        "Covenants" → https://drive.google.com/file/d/18yMYm_-w0egzRQn9dv1B5SDDAxJqEy4j/view?usp=drive
+        "Amendment to the Covenants" → https://drive.google.com/file/d/18CbXaVwhasENdTlsaMGigOeHRdCPoRfO/view?usp=shari
+        "Bylaws" → https://drive.google.com/file/d/1nPUlf3ZMDxuC01QBSwpNhX_hgUtHj_0X/view?usp=shari
+
+      /community/governing-documents/policies
+        Title: Villas at the Boulders - Policies
+        Content: ~1737 chars, 0 embedded docs
+        Links: 70 internal, 14 Drive, 0 other external
+        Drive links:
+          "Adoption and Amendment of Policies, Procedures and Rules" → https://drive.google.com/file/d/1fQHR2xWD12nLrf2G4utcxCgs6oOGJOQc/view?usp=shari
+          "Alternative Dispute Resolution" → https://drive.google.com/file/d/1srP4059YBPrX1hZFkYLFF566z6slQ0fn/view?usp=shari
+          "Association Directors and Officers" → https://drive.google.com/file/d/1ltdSmPja3G5HLeDozHuKWAHcWIGyb8Os/view?usp=shari
+          "Collection of Unpaid Assessments" → https://drive.google.com/file/d/1AS2nIZdbVY1WmUsIcRFvBICPKRIMxJj7/view?usp=shari
+          "Committee Authorities" → https://drive.google.com/file/d/1CUFcSczO4FiRp5ifoHe5GYYMQL3V6SHy/view?usp=shari
+          "Conduct of Meetings" → https://drive.google.com/file/d/1acFiQ_dMqAtOQIqn89pxm5biePX9Y6bu/view?usp=shari
+          "Covenant Enforcement" → https://drive.google.com/file/d/1wvKcRSP8M-kZGOfrN-eIouLRyoftqglf/view?usp=shari
+          "Director Conflict of Interest" → https://drive.google.com/file/d/1cxg048xj9eUzGMkrKOMrZZyHWdM64Znb/view?usp=shari
+          "Homeowner Paid Planting and Removal" → https://drive.google.com/file/d/1p_e5f_uzWkq7j9QQxuuRuaNfL8vtmTHg/view?usp=shari
+          "Inspection and Copying of Association Records" → https://drive.google.com/file/d/1b9W3FcgdZAd3nrfqOanhhPI_lW3smVLX/view?usp=shari
+          "Investment of Reserve Funds" → https://drive.google.com/file/d/1f5dQOSjKfQ9vDHsg6kVHgKY-SAalcdME/view?usp=shari
+          "Reserve Requirements" → https://drive.google.com/file/d/1Iyt-B8hadGUvDy55xUEcuX4Wa_KX7fbh/view?usp=shari
+          "Responsibility for Deductible Portion of Insurance Claim" → https://drive.google.com/file/d/1hZndWB3N6p8ng1bA90IDqlkIozcmO42B/view?usp=shari
+          "Snow Removal" → https://drive.google.com/file/d/1mswSXKtJ9mLX0dw7DxS-5LSEioi2ugRJ/view?usp=shari
+
+    /community/houses
+      Title: Villas at the Boulders - Houses
+      Content: ~2292 chars, 0 embedded docs
+      Links: 70 internal, 1 Drive, 0 other external
+      Drive links:
+        "document here" → https://drive.google.com/file/d/1pF9aNzJHBXrAP7X-wYEc0b91jNZCLRko/view?usp=drive
+
+    /community/local-contractors
+      Title: Villas at the Boulders - Local Contractors
+      Content: ~1298 chars, 1 embedded docs
+      Links: 70 internal, 1 Drive, 0 other external
+      Drive links:
+        "[no text]" → https://docs.google.com/forms/d/e/1FAIpQLSe9zovnZicuIvjuyKDM92JoQNbjRXB5h80AbfiS
+
+    /community/streets
+      Title: Villas at the Boulders - Streets
+      Content: ~1920 chars, 0 embedded docs
+      Links: 70 internal, 0 Drive, 0 other external
+
+    /community/the-association
+      Title: Villas at the Boulders - The Association
+      Content: ~1668 chars, 0 embedded docs
+      Links: 74 internal, 1 Drive, 0 other external
+      Drive links:
+        "Non-Profit Association" → https://drive.google.com/file/d/1nPUlf3ZMDxuC01QBSwpNhX_hgUtHj_0X/view?usp=shari
+
+    /community/the-broadlands
+      Title: Villas at the Boulders - The Broadlands
+      Content: ~1920 chars, 0 embedded docs
+      Links: 70 internal, 0 Drive, 1 other external
+      External links:
+        "The Broadlands" → https://www.cdgcolorado.com/communities/broadlands
+
+    /community/the-management-company
+      Title: Villas at the Boulders - The Management Company
+      Content: ~1881 chars, 0 embedded docs
+      Links: 70 internal, 0 Drive, 1 other external
+      External links:
+        "Keystone Pacific Property Management" → https://www.kppmdenver.com
+
+    /community/trails
+      Title: Villas at the Boulders - Trails
+      Content: ~1509 chars, 0 embedded docs
+      Links: 70 internal, 0 Drive, 0 other external
+
+    /community/villas-geography
+      Title: Villas at the Boulders - Villas Geography
+      Content: ~1948 chars, 0 embedded docs
+      Links: 70 internal, 2 Drive, 3 other external
+      Drive links:
+        "Map of the Villas at the Boulders" → https://drive.google.com/file/d/1zVfswsEQHqcCcgtNUAE902qTXZTwtCIm/view?usp=shari
+        "The Original Plat" → https://drive.google.com/file/d/1VvA3-SWt7havg2WslyLmljG6XDfXLydq/view?usp=shari
+      External links:
+        "The Indoor Activity Center" → https://share.google/RddJdltZiPixqRUZu
+        "Broomfield's Trails Map" → https://www.broomfield.org/3577/Broomfield-Trails-Map
+        "The "Condos"" → https://www.zillow.com/b/the-condominiums-at-the-boulders-broomfield-co-5hPncs
+
+    /community/whats-nearby
+      Title: Villas at the Boulders - What's Nearby
+      Content: ~1748 chars, 0 embedded docs
+      Links: 71 internal, 0 Drive, 3 other external
+      External links:
+        "Legacy High" → https://legacy.adams12.org
+        "Westlake Middle" → https://westlake.adams12.org
+        "Meridian Elem" → https://meridian.adams12.org
+
+  /contacts
+    Title: Villas at the Boulders - Contacts
+    Content: ~1207 chars, 0 embedded docs
+    Links: 70 internal, 0 Drive, 0 other external
+
+  /description-of-services
+    Title: Villas at the Boulders - Description of Services
+    Content: ~1509 chars, 0 embedded docs
+    Links: 82 internal, 0 Drive, 0 other external
+
+    /description-of-services/community-cleanup-day
+      Title: Villas at the Boulders - Community Cleanup Day
+      Content: ~1356 chars, 0 embedded docs
+      Links: 70 internal, 0 Drive, 0 other external
+
+    /description-of-services/dues-payment
+      Title: Villas at the Boulders - Dues Payment
+      Content: ~1651 chars, 0 embedded docs
+      Links: 72 internal, 0 Drive, 2 other external
+      External links:
+        "Keystone website" → https://kppm.cincwebaxis.com
+        "register" → https://kppm.cincwebaxis.com/p9060/register
+
+    /description-of-services/gutter-cleaning
+      Title: Villas at the Boulders - Gutter Cleaning
+      Content: ~1846 chars, 0 embedded docs
+      Links: 71 internal, 0 Drive, 0 other external
+
+    /description-of-services/landscaping
+      Title: Villas at the Boulders - Landscaping
+      Content: ~2010 chars, 0 embedded docs
+      Links: 72 internal, 0 Drive, 0 other external
+
+    /description-of-services/light-replacement
+      Title: Villas at the Boulders - Light Replacement
+      Content: ~1477 chars, 0 embedded docs
+      Links: 71 internal, 0 Drive, 0 other external
+
+    /description-of-services/mail
+      Title: Villas at the Boulders - Mail
+      Content: ~1473 chars, 0 embedded docs
+      Links: 70 internal, 0 Drive, 0 other external
+
+    /description-of-services/parking
+      Title: Villas at the Boulders - Parking
+      Content: ~1466 chars, 0 embedded docs
+      Links: 71 internal, 0 Drive, 0 other external
+
+    /description-of-services/repair-requests
+      Title: Villas at the Boulders - Repair Requests
+      Content: ~1598 chars, 1 embedded docs
+      Links: 70 internal, 1 Drive, 1 other external
+      Drive links:
+        "[no text]" → https://docs.google.com/forms/d/e/1FAIpQLSe-eeQJelGiZIsOUhOKvQ7TbfFinC3S0NwEJiDh
+      External links:
+        "Keystone Pacific Portal" → https://kppm.cincwebaxis.com
+
+    /description-of-services/snow-removal
+      Title: Villas at the Boulders - Snow Removal
+      Content: ~2416 chars, 0 embedded docs
+      Links: 71 internal, 1 Drive, 0 other external
+      Drive links:
+        "Snow Removal" → https://drive.google.com/file/d/1mswSXKtJ9mLX0dw7DxS-5LSEioi2ugRJ/view?usp=shari
+
+    /description-of-services/snow-removal_1
+      Title: Villas at the Boulders - Snow Removal
+      Content: ~2158 chars, 0 embedded docs
+      Links: 71 internal, 1 Drive, 0 other external
+      Drive links:
+        "Snow Removal Policy" → https://drive.google.com/file/d/1TdeqabI_X6DYlrSi-Hitug9N2PCtQdqh/view?usp=drive
+
+    /description-of-services/trash-pickup
+      Title: Villas at the Boulders - Trash Pickup
+      Content: ~1526 chars, 0 embedded docs
+      Links: 70 internal, 0 Drive, 1 other external
+      External links:
+        "Waste Management website" → https://www.wm.com/us/en/mywm/my-services/view-pickup-eta
+
+    /description-of-services/water-sewer
+      Title: Villas at the Boulders - Water & Sewer
+      Content: ~1647 chars, 0 embedded docs
+      Links: 70 internal, 1 Drive, 0 other external
+      Drive links:
+        "Landscape Beautification Committee" → https://drive.google.com/a/villasboulders.org/open?id=1leTPh9CAQvayTYWPQEh_XIBg_
+
+    /description-of-services/website-links
+      Title: Villas at the Boulders - Website Links
+      Content: ~1584 chars, 0 embedded docs
+      Links: 70 internal, 0 Drive, 2 other external
+      External links:
+        "Keystone Pacific" → https://kppm.cincwebaxis.com
+        "Broomfield City and County" → https://www.broomfield.org
+
+  /email-addresses
+    Title: Villas at the Boulders - Email Addresses
+    Content: ~1972 chars, 0 embedded docs
+    Links: 70 internal, 0 Drive, 0 other external
+
+  /faq
+    Title: Villas at the Boulders - FAQ
+    Content: ~10093 chars, 0 embedded docs
+    Links: 72 internal, 4 Drive, 0 other external
+    Drive links:
+      "Declaration of Covenants, Conditions, and Restrictions (DCCRs)" → https://drive.google.com/file/d/1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin/view?usp=drive
+      "amendment" → https://drive.google.com/file/d/18CbXaVwhasENdTlsaMGigOeHRdCPoRfO/view?usp=shari
+      "Bylaws" → https://drive.google.com/file/d/1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L/view?usp=drive
+      "policies" → https://drive.google.com/drive/folders/1BXhPNd_rC8Y_Lln6Jhvpcq49BmaUVMSP?usp=sha
+
+  /forms
+    Title: Villas at the Boulders - Forms
+    Content: ~1307 chars, 0 embedded docs
+    Links: 76 internal, 1 Drive, 0 other external
+    Drive links:
+      "Property Report Request" → https://docs.google.com/forms/d/e/1FAIpQLSepG0_rv0TFzODCHMtL3oH0kEXoiXmhdIPlxCnY
+
+    /forms/annual-meeting-proxy-form
+      Title: Villas at the Boulders - Annual Meeting Proxy Form
+      Content: ~1329 chars, 1 embedded docs
+      Links: 70 internal, 1 Drive, 0 other external
+      Drive links:
+        "[no text]" → https://docs.google.com/forms/d/e/1FAIpQLSe-6k8SfAYMXDvyOqHhAisLoTgtrMSSiG-ct97x
+
+    /forms/architectural-review-request
+      Title: Villas at the Boulders - Architectural Review Request
+      Content: ~1417 chars, 1 embedded docs
+      Links: 70 internal, 2 Drive, 0 other external
+      Drive links:
+        "ARC Design Guidelines" → https://drive.google.com/file/d/1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG/view?usp=drive
+        "[no text]" → https://docs.google.com/forms/d/e/1FAIpQLSd-roOGwFLe7sSqdPki31zxtGCqntyLHmnooPsk
+
+    /forms/homeowner-paid-planting
+      Title: Villas at the Boulders - Homeowner Paid Planting
+      Content: ~2119 chars, 1 embedded docs
+      Links: 70 internal, 2 Drive, 0 other external
+      Drive links:
+        "Homeowner Paid Planting and Removal" → https://drive.google.com/file/d/1p_e5f_uzWkq7j9QQxuuRuaNfL8vtmTHg/view?usp=shari
+        "[no text]" → https://docs.google.com/forms/d/e/1FAIpQLSdePB2ZRaJ-V-9kCYH65oAJMALS0NNDx7L_LSdK
+
+    /forms/overnight-parking-request
+      Title: Villas at the Boulders - Overnight Parking Request
+      Content: ~1293 chars, 1 embedded docs
+      Links: 70 internal, 1 Drive, 0 other external
+      Drive links:
+        "[no text]" → https://docs.google.com/forms/d/e/1FAIpQLSfPEnzCYuTr48_5n6-cwBfG0bQTRiuPx7nhKigG
+
+    /forms/volunteer-expense-reimbursement
+      Title: Villas at the Boulders - Volunteer Expense Reimbursement
+      Content: ~1140 chars, 1 embedded docs
+      Links: 70 internal, 1 Drive, 0 other external
+      Drive links:
+        "[no text]" → https://docs.google.com/forms/d/e/1FAIpQLSfUZqlnmkBo1oa1KIJqNWPVeYCKJogQGYlCAJU4
+
+    /forms/volunteer-form
+      Title: Villas at the Boulders - Volunteer Form
+      Content: ~2069 chars, 1 embedded docs
+      Links: 70 internal, 1 Drive, 0 other external
+      Drive links:
+        "[no text]" → https://docs.google.com/forms/d/e/1FAIpQLSdoo_vzIL4GqrMFo38aAxcE2rXGfv-mPxvhLPY-
+
+  /home
+    Title: Villas at the Boulders
+    Content: ~2309 chars, 0 embedded docs
+    Links: 97 internal, 8 Drive, 1 other external
+    Drive links:
+      "2026 Budget" → https://drive.google.com/file/d/16j2aJXvQLHF7PaM5d4BR4vCO1jNF3PNY/view?usp=drive
+      "2025 Financials" → https://drive.google.com/drive/folders/1h7tstUX0s6VAjdEdMf7UKdfNEdSZsYLn?usp=sha
+      "Newsletters" → https://drive.google.com/drive/folders/1jenRK6zqDrqXJYF_vw9Dfe2z24RqHXeo?usp=dri
+      "Policy Directory" → https://drive.google.com/file/d/1dyAdDg9vza7vIQfbTm1i9jOcte5R4Hnr/view?usp=shari
+      "Covenants" → https://drive.google.com/file/d/18yMYm_-w0egzRQn9dv1B5SDDAxJqEy4j/view?usp=drive
+      "Bylaws" → https://drive.google.com/file/d/1BptCNP1WyqW2IHgXJD1roD0kohfF2TSM/view?usp=drive
+      "Survey: Do you think this website will be useful?" → https://docs.google.com/forms/d/e/1FAIpQLSdjCQc3Iq9ZAUJVT-L6VwSr8wsKDkNChpF44Sts
+      "Take a survey: How's the Board doing so far?" → https://docs.google.com/forms/d/e/1FAIpQLSfKOd4g1pkW5yWjM5O3HrblVzPBMlTc1ZLVFTJb
+    External links:
+      "Property Report Request" → https://script.google.com/macros/s/AKfycbxvKgAmbdtBie6WumLoI_7NC7OscV3LmjORbvV7M
+
+    /home/google-account-for-access
+      Title: Villas at the Boulders - Google Account for Access
+      Content: ~2353 chars, 0 embedded docs
+      Links: 70 internal, 0 Drive, 1 other external
+      External links:
+        "google.com" → http://google.com
+
+    /home/how-you-can-help
+      Title: Villas at the Boulders - How you can help
+      Content: ~2165 chars, 0 embedded docs
+      Links: 70 internal, 0 Drive, 0 other external
+
+  /privacy-policy
+    Title: Villas at the Boulders - Privacy Policy
+    Content: ~2509 chars, 0 embedded docs
+    Links: 70 internal, 0 Drive, 0 other external
+
+  /rules
+    Title: Villas at the Boulders - Rules
+    Content: ~3608 chars, 0 embedded docs
+    Links: 72 internal, 5 Drive, 2 other external
+    Drive links:
+      "Articles of Incorporation" → https://drive.google.com/file/d/1nPUlf3ZMDxuC01QBSwpNhX_hgUtHj_0X/view?usp=drive
+      "Declaration of Covenants, Conditions and Restrictions" → https://drive.google.com/file/d/1w0QpFQHc9zQlORNKxdSSvyo3L-g4rAin/view?usp=drive
+      "Amendment" → https://drive.google.com/file/d/18CbXaVwhasENdTlsaMGigOeHRdCPoRfO/view?usp=drive
+      "Bylaws" → https://drive.google.com/file/d/1bjoZLU2hAVZOpMo2VJwNZzP73zXLS3_L/view?usp=drive
+      "ARC Guidelines" → https://drive.google.com/file/d/1aX1kP741jWARBx3tU5KXWiCtnzm3OSpG/view?usp=drive
+    External links:
+      "Colorado Revised Nonprofit Corporation Act" → https://dre.colorado.gov/sites/dre/files/documents/2024%20Colorado%20Revised%20N
+      "Colorado Common Interest Ownership Act" → https://dre.colorado.gov/ccioa-and-other-state-local-and-federal-laws
+
+    /rules/covenant-reality
+      Title: Villas at the Boulders - Covenant Reality
+      Content: ~2036 chars, 0 embedded docs
+      Links: 70 internal, 0 Drive, 0 other external
+
+    /rules/summary-of-rules
+      Title: Villas at the Boulders - Summary of Rules
+      Content: ~3936 chars, 0 embedded docs
+      Links: 76 internal, 0 Drive, 0 other external
+
+  /volunteering
+    Title: Villas at the Boulders - Volunteering
+    Content: ~1904 chars, 0 embedded docs
+    Links: 71 internal, 0 Drive, 0 other external
+
+    /volunteering/reimbursement
+      Title: Villas at the Boulders - Reimbursement
+      Content: ~2112 chars, 0 embedded docs
+      Links: 70 internal, 1 Drive, 0 other external
+      Drive links:
+        "this form" → https://docs.google.com/forms/d/e/1FAIpQLSfUZqlnmkBo1oa1KIJqNWPVeYCKJogQGYlCAJU4
+
+    /volunteering/volunteer-corps
+      Title: Villas at the Boulders - Volunteer Corps
+      Content: ~2015 chars, 0 embedded docs
+      Links: 71 internal, 0 Drive, 0 other external
+

@@ -34,7 +34,17 @@ STATUS_COLORS = {
 }
 
 
+def fetch_profiles(sheets_service):
+    result = sheets_service.spreadsheets().values().get(
+        spreadsheetId=SPREADSHEET_ID,
+        range='Profiles!A:C'
+    ).execute()
+    rows = result.get('values', [])
+    return {row[0]: row[2] for row in rows[1:] if len(row) >= 3}
+
+
 def fetch_work_orders(sheets_service):
+    profiles = fetch_profiles(sheets_service)
     result = sheets_service.spreadsheets().values().get(
         spreadsheetId=SPREADSHEET_ID,
         range='WorkOrders!A:F'
@@ -45,8 +55,10 @@ def fetch_work_orders(sheets_service):
         status = row[5].strip() if len(row) > 5 else ''
         if not status or status == 'Closed':
             continue
+        address = row[0] if len(row) > 0 else ''
         orders.append({
-            'address':     row[0] if len(row) > 0 else '',
+            'address':     address,
+            'owner':       profiles.get(address, ''),
             'wo_number':   row[1] if len(row) > 1 else '',
             'date':        row[2] if len(row) > 2 else '',
             'description': row[3] if len(row) > 3 else '',
@@ -74,7 +86,8 @@ def format_text(orders):
         lines.append(f"  {status.upper()}  ({len(items)})")
         lines.append('=' * 60)
         for wo in items:
-            lines.append(f"  WO#{wo['wo_number']}  {wo['address']}  [{wo['date']}]")
+            owner = f"  {wo['owner']}" if wo['owner'] else ''
+            lines.append(f"  WO#{wo['wo_number']}  {wo['address']}{owner}  [{wo['date']}]")
             lines.append(f"    {wo['description']}")
             if wo['vendor']:
                 lines.append(f"    Vendor: {wo['vendor']}")
@@ -101,10 +114,11 @@ def format_html(orders):
         rows = []
         for wo in items:
             vendor_html = f'<br><span style="color:#555;font-size:13px;">Vendor: {wo["vendor"]}</span>' if wo['vendor'] else ''
+            owner_html  = f'<br><span style="color:#555;font-size:12px;">{wo["owner"]}</span>' if wo['owner'] else ''
             rows.append(f'''
             <tr>
               <td style="padding:8px 12px;font-weight:bold;white-space:nowrap;">WO#{wo['wo_number']}</td>
-              <td style="padding:8px 12px;font-weight:bold;">{wo['address']}</td>
+              <td style="padding:8px 12px;font-weight:bold;white-space:nowrap;">{wo['address']}{owner_html}</td>
               <td style="padding:8px 12px;color:#555;">{wo['date']}</td>
               <td style="padding:8px 12px;">{wo['description']}{vendor_html}</td>
             </tr>''')
@@ -118,7 +132,7 @@ def format_html(orders):
             <thead>
               <tr style="background:#f5f5f5;color:#777;font-size:12px;text-transform:uppercase;">
                 <th style="padding:6px 12px;text-align:left;">WO #</th>
-                <th style="padding:6px 12px;text-align:left;">Address</th>
+                <th style="padding:6px 12px;text-align:left;">Address / Owner</th>
                 <th style="padding:6px 12px;text-align:left;">Date</th>
                 <th style="padding:6px 12px;text-align:left;">Description</th>
               </tr>

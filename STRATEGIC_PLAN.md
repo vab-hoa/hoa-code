@@ -206,10 +206,9 @@ exist yet is the human-readable operations manual.
 
 These are real HOA needs but they don't have to happen right now:
 
-- **Work orders tracking** — currently no system for this. Simplest
-  approach: Google Form + spreadsheet. Could upgrade to AppSheet later.
-  (Detailed spec exists in FUTURE_APPSHEET_PLAN.md.)
-- **ARC request tracking** — same approach.
+- **Work orders / ARC request forms** — RESOLVED 2026-04-26. Using JotForm
+  with simple text-box signatures (legally binding, no e-signature complexity).
+  Already mobile-friendly. AppSheet approach was abandoned — wrong tool.
 - **Additional report sections** — concrete, window wells. The
   section-based architecture makes this straightforward (add a config
   entry + SectionXYZ.js file).
@@ -297,6 +296,7 @@ Only these exact scopes work (no readonly variants):
 | Feb 23 | Section-based PropertyReport | Add sections via config, not monolith surgery |
 | Feb 23 | OAuth web app (server-side redirect) | Client-side auth impossible on googleusercontent.com |
 | Feb 23 | Google Doc links, not PDF attachments | Simpler, handles photos, no size limits |
+| Apr 26 | JotForm for work orders/ARC forms, not AppSheet | JotForm already mobile-friendly, text-box signatures sufficient, no custom code needed |
 | Feb 16 | Finish current system before AppSheet | Deliver value now, modernize later |
 | Feb 15 | HOALibrary as shared Apps Script library | Reuse address standardization across projects |
 | Feb 15 | Jane handles infrastructure, Claude Code handles code | Right tool for each job |
