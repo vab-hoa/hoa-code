@@ -1,0 +1,1417 @@
+{
+  "timestamp": "2026-05-02T13:18:21.570317",
+  "dry_run": false,
+  "shortcuts_trashed": [
+    {
+      "id": "1JwJXMOv30CHSTdhKhW1NUTXfJ8dI64b_",
+      "name": "December 2025 Newsletter.pdf"
+    },
+    {
+      "id": "12eR-DQ2MfC5eJty905OgDHn8oeyrJUtq",
+      "name": "Special.2025.pdf"
+    },
+    {
+      "id": "19iXTk9bIuremUK9AROrIL6mZwMZuGmFY",
+      "name": "October.2025.pdf"
+    },
+    {
+      "id": "16be9A3S2mrNUb-vYEy2LffG6U8eLJavu",
+      "name": "November.2025.pdf"
+    },
+    {
+      "id": "1Fv-naRBC-o4qdGRfDdBkvnQ7w_qukTnY",
+      "name": "September.2025.pdf"
+    },
+    {
+      "id": "1d7HkT2LLEraqWcXReZZ3v0g930Y9ytNK",
+      "name": "Policy Directory.pdf"
+    },
+    {
+      "id": "11HTQD0TkXCfx2OVvJJ67MKpmwxYIXGPt",
+      "name": "Directors and Officers.pdf"
+    },
+    {
+      "id": "1gkyx_oWaWqqcaG5m_14yHYsycL0BaqCV",
+      "name": "Capital Budget Notes (2025) Updated at Budget Meeting.docx"
+    },
+    {
+      "id": "19vNEkiV7j_aES8N1chJNIjCbAoneEx83",
+      "name": "2024 11 18 Financial presentation.pdf"
+    },
+    {
+      "id": "1VmVI_h9USPln2V0GPRvgTKu1MSOgr07c",
+      "name": "2025 VATB Budget.pdf"
+    },
+    {
+      "id": "1oxRJmTJ1kNXF24bDwojKxiRdEU3J2QYr",
+      "name": "Capital Budget Notes (2025).docx"
+    },
+    {
+      "id": "1gJkBQTeDo7CGSv6mMRDsbzZ1a8eec3nZ",
+      "name": "2023 11 20 Board meeting.pdf"
+    },
+    {
+      "id": "1-YKrclVwNDukFxAnABGEo-O-uOrcoKoU",
+      "name": "VATB 2024 Budget.pdf"
+    },
+    {
+      "id": "14rOniNkuIus7aQlMTOJCLxWBldSXHNp4",
+      "name": "Capital Budget Notes.odt"
+    },
+    {
+      "id": "1sCusyxbK8g2ls__FE_0AEp-3-vu6DumR",
+      "name": "2026 VATB Budget.pdf"
+    },
+    {
+      "id": "1YMpUCZKpQlwRGEoUHMRziC_ExK4wBGh0",
+      "name": "2025 11 17 Budget meeting.pdf"
+    },
+    {
+      "id": "1n5e_lAqAgNuM0ZvJ8BlaLNCCNfpZ0HrQ",
+      "name": "28837-0-ReserveStudy (1).pdf"
+    },
+    {
+      "id": "1MtXV-dBt9bxRsVmHTxC0oaLjgn4Wy0Jo",
+      "name": "SBSA Reserve Study 151109 Revised.pdf"
+    },
+    {
+      "id": "1E8BYmqUj5q35NSdytE8ahQFQsFjZVMCQ",
+      "name": "SBSA Reserve Study Proposal - Executed.pdf"
+    },
+    {
+      "id": "1YfZSMyDeupWJI1s9XU6WJ4TOjCa9PiqS",
+      "name": "2006-10-30 - Final Reserve Study - Villas at the Boulders.pdf"
+    },
+    {
+      "id": "1d2gGAS5cft2SerpP0X4DbhwziK1iShLf",
+      "name": "Aurora - Owners Monthly Report 1125.pdf"
+    },
+    {
+      "id": "1CUHG8bVgBCZUjQfwsvA2S8xrI5uO9441",
+      "name": "Aurora - Owners Monthly Report 1025.pdf"
+    },
+    {
+      "id": "111LxYxAcyogDwAm4Y1yDsl-f_REFjNpF",
+      "name": "Aurora - Owners Monthly Report 0925.pdf"
+    },
+    {
+      "id": "1zy9lkaxcoO4zFzI-DB8tuu0o6habQ1Or",
+      "name": "Aurora - Owners Monthly Report 0825-1.pdf"
+    },
+    {
+      "id": "1vDi4Mhox2sdanUwpOAbnmnzzFN3OjZw_",
+      "name": "Aurora - Owners Monthly Report 0725.pdf"
+    },
+    {
+      "id": "1068WGRKH8QBB2o-cgqbO_9HWubx8txfq",
+      "name": "Aurora - Owners Monthly Report 0625.pdf"
+    },
+    {
+      "id": "10Up16ZXZJ_wyKfgZYuFerFVnHTiiF39H",
+      "name": "Aurora - Owners Monthly Report 0525.pdf"
+    },
+    {
+      "id": "1t1uOEixaom8Pmu78pQ8ic-xCpCJHkXGV",
+      "name": "Aurora - Owners Monthly Report 0425.pdf"
+    },
+    {
+      "id": "1QRrDG3C0z0sb3u8hkJoSdNNTGf6JIMuk",
+      "name": "Aurora - Owners Monthly Report 0325.pdf"
+    },
+    {
+      "id": "1-Kc3GH9ssSZGV1QD6Qwor_eZecj2oRXu",
+      "name": "Aurora - Owners Monthly Report 0225-1.pdf"
+    },
+    {
+      "id": "1MFCULbtLc5wHlBFvvhMhPQ_PdACV9OgV",
+      "name": "Aurora - Owners Monthly Report 0125.pdf"
+    },
+    {
+      "id": "1twVcZFlh5R5f4PMOqFLNzjpY0HHUENVI",
+      "name": "BOD Update Packet 2.19.pdf"
+    },
+    {
+      "id": "123Oj_XZjP01sjLK7mqUZjnT1ouDx7ESJ",
+      "name": "VAB Roofing Project Presentation_20211027.pdf"
+    },
+    {
+      "id": "1kctUTR8cthAI_efJQn2g6bTbXPfoSASG",
+      "name": "ANNOUNCEMENT- VAB ROOFING PROJECT_10.14.2021 A.pdf"
+    },
+    {
+      "id": "1qJ6O6malW665KV9HSYX_mnvW5Dx1vB8t",
+      "name": "Articles of Incorporation 2002.pdf"
+    },
+    {
+      "id": "1lnhSqYNwZlDPk-8hvCEnK-Pw6jUh1NuX",
+      "name": "ARC Design Guidelines (current).pdf"
+    },
+    {
+      "id": "1iwCFgT5BJwGUCfTLc2qpnnr8fhKI31K3",
+      "name": "Covenants.Amendment"
+    },
+    {
+      "id": "1zYY0t6kq_3TCE5HmMU4vfytQILbAvODM",
+      "name": "ByLaws.Current"
+    },
+    {
+      "id": "1kJvCMWADLLaVe8sLiRhctWM40Txler0W",
+      "name": "Covenants.Current"
+    },
+    {
+      "id": "1fpcz6HCBaQSIcC4UD2Cwzn5Hi6V2gu4T",
+      "name": "Colorado Certificate.pdf"
+    },
+    {
+      "id": "1XHPcdRn91Ia-OMXGD-WOXyd9SH_Xl0hn",
+      "name": "Snow Removal.pdf"
+    },
+    {
+      "id": "1mAV8YssQLBAGSg-HU5LlKPQ_GaGmsllo",
+      "name": "Responsibility for Deductible Portion of Insurance Claim.pdf"
+    },
+    {
+      "id": "1vF45JkdeCaLH9Zes6f8L7_1BhPU-el0V",
+      "name": "Reserve Requirements.pdf"
+    },
+    {
+      "id": "1r-hv6kzLUzqJaO7mgQzVqKdPgIpnLBhR",
+      "name": "Investment of Reserve Funds.pdf"
+    },
+    {
+      "id": "1T8fXLuz5AflS5z-xaa6xX1rUx7G62DEz",
+      "name": "Inspection and Copying of Association Records.pdf"
+    },
+    {
+      "id": "1U9T3yN3bRqO0s0VUr454WEZAj75R0e0d",
+      "name": "Homeowner Paid Planting and Removal.pdf"
+    },
+    {
+      "id": "1pkifR_kn43gC_UeUgqZMLu-FUyE7u54N",
+      "name": "Director Conflict of Interest.pdf"
+    },
+    {
+      "id": "1FeEaFVjdAm1jzKDC8-qFpRpBO-iyB0qj",
+      "name": "Covenant Enforcement.pdf"
+    },
+    {
+      "id": "1dn7sbiPFcDhaMrxKq0W4e5hAGiYN7d-q",
+      "name": "Conduct of Meetings.pdf"
+    },
+    {
+      "id": "18QldrPubb61xYcraHwfNAgCGa-OHOkmy",
+      "name": "Committee Authorities Policy.pdf"
+    },
+    {
+      "id": "1hfJdDaCX4Vlge-g5_U7GtloNBYmhgh2R",
+      "name": "Collection of Unpaid Assessments.pdf"
+    },
+    {
+      "id": "18nfSUCOpy_whQaaoym4hoLCI28ReOkSX",
+      "name": "Association Directors and Officers.pdf"
+    },
+    {
+      "id": "13XWCUhDYATKL5jhJ4-hP4Wr-DusKvzDq",
+      "name": "Alternative Dispute Resolution.pdf"
+    },
+    {
+      "id": "15mxCo4uI_Zbhd3URmNuMeWGY6yU6W10d",
+      "name": "Adoption and Amendment of Policies, Procedures and Rules.pdf"
+    },
+    {
+      "id": "1wQd9YXQMP5YpuejIf2yDtK-TlFvRjWT8",
+      "name": "Villas_Models_Units.xlsx"
+    },
+    {
+      "id": "1inBzhskcaCVkj9cK-MI3YirZqAeVZXXw",
+      "name": "VaB_community..png"
+    },
+    {
+      "id": "1LUhDLqOhgW3vzcaXquhq40NEKSQlmBTZ",
+      "name": "VaB_community..xcf"
+    },
+    {
+      "id": "1g8Fo9LAPXS7VqtgvHbX3-XKL4bFmGcBQ",
+      "name": "Scanned VaB Layout.pdf"
+    },
+    {
+      "id": "1hxh2Fdi-CPk_nIEnj5Ti6D5WKB7AncZ9",
+      "name": "VaB.odg"
+    },
+    {
+      "id": "1a7JqlmHiGZqY0G16UTqoD7mfFvkoH8tQ",
+      "name": "VaB.png"
+    },
+    {
+      "id": "1cpgPPsRhxSzGwqFhKhUGk3N6dOtDKSbx",
+      "name": "Villas_Models_Units.xlsx"
+    },
+    {
+      "id": "1bPYy_CxbdNYxrveO0LJC3EzdE-cgKVCA",
+      "name": "Villas Models Map013.jpg"
+    },
+    {
+      "id": "1skJrKZSoH1KJff1fyDR9kwiIwYnQqo_M",
+      "name": "Villas Models Map013.png"
+    },
+    {
+      "id": "1IxEYxOAYH3QHrKJBOxUhAjnFE8WNQ6XY",
+      "name": "Villas Models Map013.pdf"
+    },
+    {
+      "id": "16XDtlAtua6kZCYTut8fLCHlrmLXfjXK0",
+      "name": "VBDR Villas Models Map013.jpg"
+    },
+    {
+      "id": "1UJAUvcJkev1Sf7a6LFInKeZfiKhqeO9t",
+      "name": "VBDR Villas Models Map013.pdf"
+    },
+    {
+      "id": "11nB-5lCiqZC45iwAbyhaFVPvgE2-7Kuv",
+      "name": "Model Map.jpg"
+    },
+    {
+      "id": "1mhkUt1xFljmoL2yJdpcnBR4EHxoc2KPo",
+      "name": "11x17 Scan 2.PDF"
+    },
+    {
+      "id": "1to1apGS8_2AjON8EY1RAGJg8ER5pXNH6",
+      "name": "11x17 Scan 1.PDF"
+    },
+    {
+      "id": "14DPZs7QVVg7QR9TilKpR9mxpdofBK6Co",
+      "name": "Sheet L2-8.pdf"
+    },
+    {
+      "id": "1MMTRR7nCd9SemiRc2XV9QdyBLL1l0QIT",
+      "name": "Sheet L2-10.pdf"
+    },
+    {
+      "id": "16H5oS8D6ZQF3UbsFehnR73ycgrdBnnZR",
+      "name": "Sheet L2-2.pdf"
+    },
+    {
+      "id": "135UZUfYSONrwZMtzG8_8Km_cbKUTkee1",
+      "name": "Sheet L2-5.pdf"
+    },
+    {
+      "id": "12o5XDCgELr3cPctCO5eomtyy2z1QVFVs",
+      "name": "Sheet L2-6.pdf"
+    },
+    {
+      "id": "1uMeswM_RJx2UIUVzGna-SWraKIIQ3QOo",
+      "name": "Sheet L2-7.pdf"
+    },
+    {
+      "id": "1VCeRNtwUfIR7KREngT_31qQgNh-js546",
+      "name": "scan_20251206123658.pdf"
+    },
+    {
+      "id": "1CfIg5oc1IWX87cZdwfDEhhK4j4FTk8oZ",
+      "name": "Sheet L2-9.pdf"
+    },
+    {
+      "id": "1C_URwvPhskvijWJa0-lYlmvvW7-KFMwe",
+      "name": "scan_20251206123417.pdf"
+    },
+    {
+      "id": "1VCTR_-SvfLYFDd6CcKw81MjrDqm7pfNn",
+      "name": "Sheet L1-6.pdf"
+    },
+    {
+      "id": "1e6SiHD1z6efd3LV4oQZYUGUFhuf68AgA",
+      "name": "Elevations Page A4 (MSO).pdf"
+    },
+    {
+      "id": "1WN8VWaBDnmYFleOLK4ZH1rE_3UNHWHwm",
+      "name": "Elevations Page A3 (RSA).pdf"
+    },
+    {
+      "id": "1VTssS4oVjNt0rL-HqLV47a0mcKY0NXAQ",
+      "name": "Elevations Page A2 (MSA).pdf"
+    },
+    {
+      "id": "1rX76Ylw5VQeTI5MHlDU6Crlu_XH2Mxpm",
+      "name": "Elevations Page A1 (RSO).pdf"
+    },
+    {
+      "id": "1-T3qA6r72gtQzdZkzgzkU23xXiiWijoE",
+      "name": "Boulder Point.2025.11.20.pdf"
+    },
+    {
+      "id": "1mkONU1CI4S5hhigL-TAFL2PKwNGKdKvw",
+      "name": "Boulder Point.2025.11.20.odg"
+    },
+    {
+      "id": "1darRe1SgSzFO3p1_fu9Nvl53ImcQpf0E",
+      "name": "Boulder Point.2022.12.19.pdf"
+    },
+    {
+      "id": "1cgb2hZrGzFunB8im4HU1audVC3MVQOuQ",
+      "name": "Boulder Point.2022.12.19.odg"
+    },
+    {
+      "id": "1ddTR68UBwT8wZVxY-I-ZxWtK9zojLNkK",
+      "name": "Boulder Point 2.pdf"
+    },
+    {
+      "id": "1LWhJ2a3CNjfGFsZN85PC4qXTNS-n3YRU",
+      "name": "Boulder Point 2.odg"
+    },
+    {
+      "id": "1DSmeZljsUIffnWN_xnI1FTPIXXX3rjeC",
+      "name": "Boulder Point 2.png"
+    },
+    {
+      "id": "1denmINzPllhSxeJkPECMwZ3wMJwQV_xH",
+      "name": "Boulder Point 1.xcf"
+    },
+    {
+      "id": "1ggyNWWtgT3Oz0_HoMsYmAeUO7CHDs9FQ",
+      "name": "Boulder Point 1.png"
+    },
+    {
+      "id": "1oSe2Qit77s4bdVrBtId8VuVfOTQ_IMr7",
+      "name": "Boulder Point 1.pdf"
+    },
+    {
+      "id": "1fe7oiQ5M0CVAOFJnyA0mSluVKB7dQ3wD",
+      "name": "Boulder Point.2025.10.24.odg"
+    },
+    {
+      "id": "1wFCqYD5UByh09yQS4QDw478VdhKtrKLO",
+      "name": "Boulder Point.2025.10.24.pdf"
+    },
+    {
+      "id": "1nfRiQ_Xx327qqhorJjjIVIDbtcw1ee8r",
+      "name": "Plaster Point 2022.12.19.odg"
+    },
+    {
+      "id": "1xwk5LELQKGSfSN_93c-PPFoNrOrAiXmL",
+      "name": "Plaster Point 2022.12.19.pdf"
+    },
+    {
+      "id": "1VgZWaiw_tPMkjipnWMOXukcW_zTNHQ1c",
+      "name": "Plaster Point Base.odg"
+    },
+    {
+      "id": "1QJ7gm8lSTy3EJ3Z2_08fSk8iaGZ-NFtO",
+      "name": "Plaster Point 2023.06.18.odg"
+    },
+    {
+      "id": "1SxHSddclSIUtaDLVcgCNxYnYNdaHY_36",
+      "name": "Plaster Point 2023.06.18.pdf"
+    },
+    {
+      "id": "1BfacCfw7hvFM5siI-iYA0eB2QeunWIkF",
+      "name": "Plaster Point 2025.10.22.pdf"
+    },
+    {
+      "id": "1VQ9DSvV5Y9eSWbXFBP9xRISu91VNPIxq",
+      "name": "Plaster Point 2025.10.22.odg"
+    },
+    {
+      "id": "1aoSq2YtBuQaE_BdBlgICwTZ0us1PY5pR",
+      "name": "Boulder Circle 2025.10.23.odg"
+    },
+    {
+      "id": "1R0Z4Z0aR6uupn96dP6STpu8yX2Xj32YL",
+      "name": "Boulder Circle 2025.10.23.pdf"
+    },
+    {
+      "id": "1brVmFix-dK0YXIqt5ch5mHtsi16N1ph_",
+      "name": "Boulder Circle.odg"
+    },
+    {
+      "id": "19YlpbYmhqkhBss71DT6NvwfE048jpVuF",
+      "name": "Boulder Circle Map.png"
+    },
+    {
+      "id": "1h9IHdZIqEoApfRyofGGK6PNfQa-THcOb",
+      "name": "Boulder Circle.pdf"
+    },
+    {
+      "id": "1NBtD7-JxCeuJ7bQx6Dmq-unpSy7hnZW2",
+      "name": "Boulder Circle 2022.12.20.pdf"
+    },
+    {
+      "id": "1t6vksNrRjvSdBKwINKbwU2sffTS7RVTg",
+      "name": "Boulder Circle 2022.12.20.odg"
+    },
+    {
+      "id": "1TOI1v3xkt-q8qAeTO2UjPLfpinvwy5JB",
+      "name": "Boulder Circle 2023.09.16.odg"
+    },
+    {
+      "id": "1Nb_nAkVPFh7ZTY66Lb4ojkEUdsQGY1na",
+      "name": "Boulder Circle 2023.09.16.pdf"
+    },
+    {
+      "id": "1ls1oSlD5gyPfUkjqw5Cau2YY_3F7STku",
+      "name": "Stone Circle 2025.10.12.pdf"
+    },
+    {
+      "id": "1mRKHRATUx-S1VwKWkrMEipvMVlWYnzoS",
+      "name": "Stone Circle 2025.10.12.odg"
+    },
+    {
+      "id": "1fNyEa2T6e5nx4owO_DQPrARtTJRa71XU",
+      "name": "Stone Circle 2024.06.24.pdf"
+    },
+    {
+      "id": "1ZAh2oiHw_tHSfTrP3YrSSl4y0TYgK9Cl",
+      "name": "Stone Circle 2024.06.24.odg"
+    },
+    {
+      "id": "197uWlmqxLFkYMIDWIV8u2gqPlC7cm0ZH",
+      "name": "Stone Circle 2023.06.18.pdf"
+    },
+    {
+      "id": "1tiJODU7OTXaVWLN63P81xFwDII-XD5hA",
+      "name": "Stone Circle 2023.06.18.odg"
+    },
+    {
+      "id": "1Gtnx2jEvCWuYzcBLZfG3LZeati-7SaXk",
+      "name": "Stone Circle.png"
+    },
+    {
+      "id": "1mDet0vECgs9FnHeHnhbT8aLOqPE4-bZ0",
+      "name": "Stone Circle 2023.06.22.odg"
+    },
+    {
+      "id": "1LqcfDLSrFLL-JSqljtEyL8kGBMlpja9P",
+      "name": "Stone Circle 2023.06.22.pdf"
+    },
+    {
+      "id": "12Gz3UoA9M8hS0DcGJJQEV946RYSLGyp-",
+      "name": "Stone Circle 2023.07.14.pdf"
+    },
+    {
+      "id": "1y3_P7u3LpJsi3TcL0IaeLvztbttJGQam",
+      "name": "Stone Circle 2023.07.14.odg"
+    },
+    {
+      "id": "1q-9bTDtLFnPf0AgK0gRqDAMNflPxO_gs",
+      "name": "Stone Circle 2023.08.16.odg"
+    },
+    {
+      "id": "1D562bltmPyxdAMwrSXR-RNvcayvWTSSz",
+      "name": "Stone Circle 2023.08.16.pdf"
+    },
+    {
+      "id": "1UhjWzLEgxu1rz9zIuv24de_cxm7Tn-5K",
+      "name": "Stone Circle 2023.11.13.pdf"
+    },
+    {
+      "id": "10XHCRnZpEAIaQt2_4xVipG5C5Ifbk_D6",
+      "name": "Stone Circle 2023.11.13.odg"
+    },
+    {
+      "id": "1lgRO3vV67aloEH4Op2E75VuvZ7GWZqq2",
+      "name": "villas - Stone Circle (2023.04.29).pdf"
+    },
+    {
+      "id": "15mR6Ijo6lbw3RnzDHtVyQbACxnfshg8r",
+      "name": "villas - Stone Circle.pdf"
+    },
+    {
+      "id": "1t9-eM-MRjRrqc9XRYcEpgk1TgcWFbcWo",
+      "name": "Stone Circle Neighborhood Map.xcf"
+    },
+    {
+      "id": "1jfcthSaqA6eeOrQ39gvDWWd-Doz2fjeG",
+      "name": "stonecircle.pdf"
+    },
+    {
+      "id": "1SU1idYrSLNzo_PSeoUs_cPzxcGXau8FC",
+      "name": "Broadlands Lane 2025.10.10.pdf"
+    },
+    {
+      "id": "1vd48JnkZQfFsnnu07E22GIT_mt3SE0O1",
+      "name": "Broadlands Lane 2025.10.10.odg"
+    },
+    {
+      "id": "1fH7Tlv9h7MIAjW_IhARTooVDpyGnNXiG",
+      "name": "Broadlands Lane Map 2.jpg"
+    },
+    {
+      "id": "14JnMIyU2ZCs-pd2hO-8j4IZ1OcFjp5uW",
+      "name": "Broadlands Lane 2.pdf"
+    },
+    {
+      "id": "1ACnRwUmtg24jt61iXx8CYS2qn_xuHeKR",
+      "name": "BroadlandsLane 3.png"
+    },
+    {
+      "id": "1N7anL8KXwyC3YVvsgysPRm4aOu40iFzK",
+      "name": "BroadlandsLane 2.jpg"
+    },
+    {
+      "id": "1emWWY_kMTjHpDaHt5EcaqOSj7uCDuoBp",
+      "name": "BroadlandsLane 2.png"
+    },
+    {
+      "id": "1J8uGExxoWV7c5_BvDnEgpGnNClK-WyUt",
+      "name": "Broadlands Lane.odg"
+    },
+    {
+      "id": "1a2QEudySARCLvKjknE49-RaYK2Zu8I4P",
+      "name": "BroadlandsLane.png"
+    },
+    {
+      "id": "19x0cX3rN9Vm40id0QNBJpId5XFyEo_Bo",
+      "name": "Broadlands Lane 2022.12.19.pdf"
+    },
+    {
+      "id": "1XnxHzRcWqzRaTYgI0PDMNf1Q3wWcfQP7",
+      "name": "Broadlands Lane 2023.04.17.pdf"
+    },
+    {
+      "id": "1cXk_q2svLj9vTQ7cwN1iafYQa7RjP2ca",
+      "name": "Broadlands Lane 2.odg"
+    },
+    {
+      "id": "1atJgK081LEHjqnKmMFAoqH3v66DH3J0A",
+      "name": "Broadlands Lane 2023.06.18.pdf"
+    },
+    {
+      "id": "1nYujgSXxNTpRkYo0T4x_vANtXwqKqLCr",
+      "name": "Broadlands Lane 3.odg"
+    },
+    {
+      "id": "1foNKe5EiaskZ4b7c4LK7LGI_LRmTGgTX",
+      "name": "Broadlands Lane 2023.11.12.pdf"
+    },
+    {
+      "id": "1Q3JFLThVYzayeLXLdUtOXcQJQVKgbqOn",
+      "name": "Broadlands Lane 2023.11.12.odg"
+    },
+    {
+      "id": "1R1BEad5UhoHH-3akxitjU9_wQ1RcgXTQ",
+      "name": "Villas Map.zip"
+    },
+    {
+      "id": "15w7G1i7lugBS1rmc3rtR3y47GtkXp3pT",
+      "name": "Site Analysis Plan.svg"
+    },
+    {
+      "id": "1LsfLdiUySK75BlCUo5sO68HKP5Hz-1pt",
+      "name": "ODG Map Basic Cleaned.2025.12.30.pdf"
+    },
+    {
+      "id": "12X5ddiSI-jTdeJfLKcQ8HGVmSAJiwmZP",
+      "name": "ODG Map Basic Cleaned.2025.12.30.png"
+    },
+    {
+      "id": "1VEeJc7_SatJ4kPFMztOOwliS4mUUvTrG",
+      "name": "Map 2026.01.05.xcf"
+    },
+    {
+      "id": "1hLBefb3sxB7XX2mjnVALAxu3ZQcrfDXl",
+      "name": "ODG Map Basic Cleaned.2025.12.30.xcf"
+    },
+    {
+      "id": "1b_8Qcrs4-vWxN5DvqC0bkp8S1XXepvOT",
+      "name": "ODG Map Basic Cleaned.2025.10.14.pdf"
+    },
+    {
+      "id": "1sAcq4yyVStC9J4lDmXJu1rjrn8Lb-XBu",
+      "name": "ODG Map Basic Cleaned.2025.10.14.png"
+    },
+    {
+      "id": "1yQkvE4v5uUL42SoIi7PJ6OT0iwZ7MfNQ",
+      "name": "ODG Map Basic Cleaned.2025.10.14.xcf"
+    },
+    {
+      "id": "1LHAQ28Ulc4-7-j8zJB89TR1F_C-pUG5S",
+      "name": "ODG Map Basic Cleaned.2025.10.13.xcf"
+    },
+    {
+      "id": "1SGgrc375JSDnocmhIu-555ommdz7tHKI",
+      "name": "ODG Map Basic Cleaned.xcf"
+    },
+    {
+      "id": "1Gyx7mQkRjhWFe0T42HAJRN2mwFJHojYF",
+      "name": "Villas at the Boulders - Landscape Site Analysis Plan - For Export - 10-06-25.xcf"
+    },
+    {
+      "id": "1PXbVf1ilr8lo8Nj76hvtPJTonmGabtHs",
+      "name": "Rock Point 2023.07.28.pics.pdf"
+    },
+    {
+      "id": "1SN63jgqqtDaQxRlHP8TGAcc3IgXtUvNi",
+      "name": "Rock Point 2023.07.28.pics.odg"
+    },
+    {
+      "id": "1Pit512zCQ0QuGla6ftCh5QXov_fuJSeD",
+      "name": "Rock Point 2023.07.26.pdf"
+    },
+    {
+      "id": "1U2PndhscXJ3EurmQd0ulj3LGOncAxMZ-",
+      "name": "Rock Point 2023.07.26.odg"
+    },
+    {
+      "id": "1GMoPuqZBwWhhka5TtL1wmX3zDF7GXIur",
+      "name": "Rock Point 2023.06.18.pdf"
+    },
+    {
+      "id": "1xOVMz0uQLiHi6l0n1eyXU-Qk34eLSmTd",
+      "name": "Rock Point 2023.06.18.odg"
+    },
+    {
+      "id": "1nnwGHCTGdcywwdK7oCPU12WGJ1LLo098",
+      "name": "Rock Point 2022.12.19.pdf"
+    },
+    {
+      "id": "1hV7ucIxY-4cyhZvR0dA52SedU5D131gr",
+      "name": "Rock Point 2022.12.19.odg"
+    },
+    {
+      "id": "1dMo5kOWYPNIhv88jum5mVQA2TZ9aVvcM",
+      "name": "Rock Point Start.odg"
+    },
+    {
+      "id": "1zNFSWraiVHkV5lafJmpNsmXkyObcDcWX",
+      "name": "Rock Point Neighborhood 2022.6.2 cropped.xcf"
+    },
+    {
+      "id": "1_5BhFzThZhdYFgHBnqgwFAAejNnGxv8m",
+      "name": "Rock Point Neighborhood 2023.3.17 cropped.png"
+    },
+    {
+      "id": "1cIr6VQ9YK23-qcO-5LO9SXIun4oBKg5g",
+      "name": "Rock Point Neighborhood 2022.6.3 cropped.png"
+    },
+    {
+      "id": "1B5TEtAaQcMRVLNMmX-tGO2kztOml377D",
+      "name": "Rock Point Neighborhood 2022.6.2 cropped.png"
+    },
+    {
+      "id": "1ycF7hklZiPG5oPpDs1r2oCbZmcxxowPn",
+      "name": "Rock Point Neighborhood 2021.9.1 cropped.xcf"
+    },
+    {
+      "id": "17iWstmiAVx--xjsrSALddacjbBPr1vXM",
+      "name": "Rock Point Neighborhood 2022.6.1 cropped.png"
+    },
+    {
+      "id": "1wVHY2k79dOL1Z8ZkiVW8ZoK_G6Txi-NK",
+      "name": "Rock Point Neighborhood 090121.docx"
+    },
+    {
+      "id": "1iRK4L8qLBUls4ctWXHCPzR2ddGCv3Rnz",
+      "name": "Rock Point Neighborhood 2021.9.1 cropped.png"
+    },
+    {
+      "id": "1DbsFmV3yLjv7YvpU8FRyppzxkQuP8Y3x",
+      "name": "Rock Point Neighborhood 2021.8.30 cropped.png"
+    },
+    {
+      "id": "1ijllXHdEl-f9yGjIiBuU0mBfPn2lLv-N",
+      "name": "Rock Point Neighborhood 2021.8.30 cropped.xcf"
+    },
+    {
+      "id": "1vF2EZIuyY5jJnjtwPOzcuUBJLG0ePwt_",
+      "name": "Rock Point Neighborhood 2020.10.29 cropped.png"
+    },
+    {
+      "id": "1we4iY3eIQG3O1hbz2EmSDQPe0RZyUsLL",
+      "name": "Rock Point Neighborhood 2020.10.29 cropped.xcf"
+    },
+    {
+      "id": "1I6pZJsa5xeB9PesNzDSsX3M4aM4AM1Md",
+      "name": "Rock Point Neighborhood 2019.07.05 cropped.png"
+    },
+    {
+      "id": "13c5d-zX9aJbMPugC7ZiFj0Y_wk8OeIZv",
+      "name": "Rock Point Neighborhood 2019.07.05 cropped.xcf"
+    },
+    {
+      "id": "10ZaaMmRIdP8BpCDJM2ptacDqlnDCc_5c",
+      "name": "Rock Point Neighborhood 2019.03.05.png"
+    },
+    {
+      "id": "1U9BQWz_PxZDU1VO-voWLDMx2n1wltOIy",
+      "name": "Rock Point Neighborhood 2018 cropped.xcf"
+    },
+    {
+      "id": "1fd5DSY8lvcIMlhrmYdsMnZIfP30sV7-N",
+      "name": "Rock Point Neighborhood 2018 cropped.png"
+    },
+    {
+      "id": "14X20oXW1ov4dqpZJrCnO7c_WDskIitcm",
+      "name": "Rock Point Neighborhood.xcf"
+    },
+    {
+      "id": "1S35_4HiB5wLgvVRhOt-2igwQ3eE6Em4C",
+      "name": "Rock Point Neighborhood (reduced).xcf"
+    },
+    {
+      "id": "1n3XB5CZ_Vj3djoCTMt9xQKZKkgkYyzd5",
+      "name": "Rock Point Neighborhood (reduced).png"
+    },
+    {
+      "id": "1jjEHfkISk-8BrF762TRJyjZ-SwznYfqb",
+      "name": "BROADLANDS_FILING_12_FINAL_PLAT.pdf"
+    },
+    {
+      "id": "10jnibqAhJftWzksUBwDUQ6jsYsmff2Zc",
+      "name": "villas map.jpg"
+    },
+    {
+      "id": "1326g6eh22fSSYLKE1nIwMXiLxSWGUOwY",
+      "name": "original plat info.pdf"
+    },
+    {
+      "id": "1DogCTiBmOAfQVIT23N49M2JPRatarbk2",
+      "name": "102025 VBDR Minutes.pdf"
+    },
+    {
+      "id": "1HmCL3tz1RvW95SYpvUsxTlfSqCbQRmgM",
+      "name": "092225 VATB Board Minutes.pdf"
+    },
+    {
+      "id": "1bawOINefEDluX0OuFYANSuiGXjGMd3qn",
+      "name": "090325 VBDR Minutes.pdf"
+    },
+    {
+      "id": "1sQquaPDG1zxxfHr1fwsQZsTKYW0jUlFR",
+      "name": "081825 VBDR Minutes.pdf"
+    },
+    {
+      "id": "1WsYUFnthLwFlxDdg6PBKTxYk6MpxFeBd",
+      "name": "072125 VBDR Minutes.pdf"
+    },
+    {
+      "id": "10VIQuA4Dvk3uuOwEwR4bvKCDkghX132A",
+      "name": "061625 VBDR Minutes.pdf"
+    },
+    {
+      "id": "12zn6xcpJoBLK3xGeVhxxCSaz3dpia42L",
+      "name": "051925 VBDR Minutes.pdf"
+    },
+    {
+      "id": "1-pfPGbPOL0dFTX3GAAMk8cqn5t_FnB6j",
+      "name": "042125 VBDR Minutes.pdf"
+    },
+    {
+      "id": "1n1o7yRcE0yMOi7pLvytQlcOORauRH8cU",
+      "name": "032425 VBDR Minutes.pdf"
+    },
+    {
+      "id": "1xG5Midct-0j1I5wQ55ooSrt9Y-31CnSZ",
+      "name": "021725 VBDR Minutes.pdf"
+    },
+    {
+      "id": "1PnTzXiSzNmWOi8gnb-kj0E47-P52-5bY",
+      "name": "012025 VBDR Minutes.pdf"
+    },
+    {
+      "id": "1lAahRXny_w1cRqNcrMSXEoCYYPDkbLH4",
+      "name": "2021 Proposal - Villas at the Boulders.pdf"
+    },
+    {
+      "id": "1neMjLuO-G2lEgBUPLwACGLzYKmJY1kY_",
+      "name": "Post Marshall File Insurance Update.pdf"
+    },
+    {
+      "id": "1G611663Jf4WYecbL52q7mF1pSa9IgtWV",
+      "name": "2021 GRC endorsement.pdf"
+    },
+    {
+      "id": "1zvYA7YO0JRgHSNvmeJuAGY32oR0eGP5Z",
+      "name": "VBDR COI Exp 071222.pdf"
+    },
+    {
+      "id": "1aow6KoWQCijKJcMwNMDLD2G8ugrk5qV6",
+      "name": "2022 09 14 Amendment to Declaration.docx"
+    },
+    {
+      "id": "10vfmEm0cQCqFvdse3QeBdWI7v5YUkIzs",
+      "name": "Guide to the Insurance Documents.docx"
+    },
+    {
+      "id": "17N7DEptk47sKs_uuftEHFDpIw59tfsnO",
+      "name": "Unit Coverage Analysis.docx"
+    },
+    {
+      "id": "1kNGHE7rmG8mMz6JiOmufsyRw0BMwf2fQ",
+      "name": "Residential Community Association form.pdf"
+    },
+    {
+      "id": "1jYQBne39-KBBOe1KpN6RBRyae2__22I-",
+      "name": "Businessowners Coverage form.pdf"
+    },
+    {
+      "id": "1CQQT6uBPTGXZ8undy5jRCwVp5XAWLdRb",
+      "name": "coverage summary.pdf"
+    },
+    {
+      "id": "14rLna9THmEUjK6XF4AWTbKIhReYnyglw",
+      "name": "Special Letter on Loss Assessment Coverage (d).pdf"
+    },
+    {
+      "id": "1t4WxmHeqpUnemQ1tXcrrW62fAC366VxH",
+      "name": "Special Letter on Loss Assessment Coverage (d).docx"
+    },
+    {
+      "id": "1WFUS02NpePZJPfI7pdep3Z3FoZeGU9Uc",
+      "name": "Special Letter on Loss Assessment Coverage (c).docx"
+    },
+    {
+      "id": "1afFDvI0MIQAgKoPw-log01PRqTq2RiUh",
+      "name": "Special Letter on Loss Assessment Coverage (b).docx"
+    },
+    {
+      "id": "1NbLlF-qfQbRIY_vWYcSFZNGKhkrhCLK9",
+      "name": "Special Letter on Loss Assessment Coverage.docx"
+    },
+    {
+      "id": "13fwTFbbQJBbNZcqAO1ubUsrBkGlJcIkR",
+      "name": "2020 Proposal - Villas at the Boulders.pdf"
+    },
+    {
+      "id": "1ULtLI6S7PTGLiZBZ28mtuyhN1wRc03Xm",
+      "name": "Scan 2020-7-6 16.07.20.pdf"
+    },
+    {
+      "id": "1b_8ylM6vzpdf4rW6OIFODNwGdQdUAKYZ",
+      "name": "Pages 1 to 7 MiddleOak letter of April 27 2020.pdf"
+    },
+    {
+      "id": "159Oya_TolbDQamsGHBSg26F4ABKM2Cgx",
+      "name": "Middle Oak Policy Documents(2018-2019).pdf"
+    },
+    {
+      "id": "1gcphpaHGafCt_hnXYgYOnIJrRDN4z55-",
+      "name": "NOTICE OF ANNUAL MEETING - 111725 VATB Annual Mtg Mailer.pdf"
+    },
+    {
+      "id": "1ak0QpSn13fvqEWovoZ57Lco-YiPcFIxR",
+      "name": "5 - 112023 VATB Proxy Annual & Budget Ratification.pdf"
+    },
+    {
+      "id": "1b6SXOJxNPhNgs09NGtGD8j_LTdze4zNO",
+      "name": "Proxy.pdf"
+    },
+    {
+      "id": "1hvG1HYDZHMmzL85xQaSvHJRj7hWkF8xi",
+      "name": "Proxy.jpg"
+    },
+    {
+      "id": "1UQEJLfs4C1dFfASjorBg6YmN2Tcbqp5W",
+      "name": "Proxy.tiff"
+    },
+    {
+      "id": "1TD74gRlxQCJOiDPfghHslsII6UNteaT1",
+      "name": "5 - 111621 VBDR Proxy.pdf"
+    },
+    {
+      "id": "1Qub4jhJSjvivptzrtl-V6QVNOIiA00uO",
+      "name": "Current.pdf"
+    },
+    {
+      "id": "1zigH6Xspv7XtHisfJhYLB9aSzTWqQIZo",
+      "name": "LBC Homeowner Paid Planting and Removal Application (2020).docx"
+    },
+    {
+      "id": "11qP2wc-PIv8796VuPwZWHeyrFb1YZtKX",
+      "name": "LBC Homeowner Paid Planting and Removal Application (2020).pdf"
+    },
+    {
+      "id": "1GgYMHlEGpqH9sxWx4v6WvppS0NIAC-et",
+      "name": "Homeowner Paid Removal Planting Application (2021c).pdf"
+    },
+    {
+      "id": "12aCYTHLPU8W2ZcH79qIlfQ7kbpwsa2jz",
+      "name": "Homeowner Paid Removal Planting Application (2021c).docx"
+    },
+    {
+      "id": "1HJ7lz2qUzNl2XsXrbJEm9Sil-zLDJcuK",
+      "name": "Homeowner Paid Removal Planting Application (2023c).pdf"
+    },
+    {
+      "id": "1UhfNrTOejENfb9Dpg66_hYsRWi3KYm3u",
+      "name": "Homeowner Paid Removal Planting Application (2023b).pdf"
+    },
+    {
+      "id": "1RduHXW52LTaxU_IKqsZolgDomiIzUA4X",
+      "name": "Homeowner Paid Removal Planting Application (2023b).docx"
+    },
+    {
+      "id": "1fDxTE9K3vnRoBH4IEl-q_deqEYCBDAC_",
+      "name": "Homeowner Paid Removal Planting Application (2023a).pdf"
+    },
+    {
+      "id": "1BwR1QSMf8oiEe9xdjBf5EezYinryukUs",
+      "name": "Homeowner Paid Removal Planting Application (2023a).docx"
+    },
+    {
+      "id": "1Nt0QkoQe1IYl84RTlqRAGPyXAW-WOA2G",
+      "name": "Homeowner Paid Removal Planting Application (2025b).pdf"
+    },
+    {
+      "id": "11Mad3yfbuyeZ9KUnGWnvmUmcuf46lOsl",
+      "name": "Homeowner Paid Removal Planting Application (2025a).pdf"
+    },
+    {
+      "id": "1u79RwQny1BiNLmCGE98XblXP8BwhYY5_",
+      "name": "Homeowner Paid Removal Planting Application.pdf"
+    },
+    {
+      "id": "17x3HzMw6OiXFVhkh9PVNGAbDkKstBGXn",
+      "name": "Statement of Interest Form - Fillable - use for website and email.pdf"
+    },
+    {
+      "id": "1ehcB12fNObRdXqXtxmbXdfuflyrXRB16",
+      "name": "6 - 111621 VBDR Statement of Interest Form.pdf"
+    },
+    {
+      "id": "1R0a4A6Dwpg6sWRE1SOs2M7LUzNcFRwqG",
+      "name": "Signing Forms with Adobe Fill&Sign.pdf"
+    },
+    {
+      "id": "1sltIV3TUCg5Ee2RdqfaD9FecM2y6u5eY",
+      "name": "Signing Forms with Adobe Fill&Sign.docx"
+    },
+    {
+      "id": "1Nnjy0P_8aqWk0E_nInQdaJIyjXFufZbo",
+      "name": "How to add a PDF signature on a Mac.pdf"
+    },
+    {
+      "id": "1jx1qoIVPM1zdD7I8JgOjEwslMkNwoWj5",
+      "name": "How to add a PDF signature on a Mac.docx"
+    },
+    {
+      "id": "1wGe7lThL1xRhqtXFsyh-EaE5Kr3qA2CX",
+      "name": "Form Instructions.pdf"
+    },
+    {
+      "id": "1ZZibcJJFrPCCeAn9lu8usEyTB8jbre3f",
+      "name": "Form Instructions.docx"
+    },
+    {
+      "id": "1Kt1AKvvvrX9EnjQzErM0BaGD6aw_km6b",
+      "name": "Signing Forms with Adobe Fill&Sign.odt"
+    },
+    {
+      "id": "1p6d-fZpi5PLNxuV_GwxB2hxI2Fu0Cz-Q",
+      "name": "How to sign PDFs with Adobe Acrobat Reader on Windows 10.docx"
+    },
+    {
+      "id": "1VYcU-4Ph0-HPqvkv8L7kYowhnxbZfDmm",
+      "name": "ARC Improvement Application 2025.0908.pdf"
+    },
+    {
+      "id": "1hRvnSMCHeirTYD6DmxDTLcaCOZ4YmUkl",
+      "name": "ARC Improvement Application 2023.pdf"
+    },
+    {
+      "id": "15cGyca9-l4z104bq0256RTQsDW17HzW6",
+      "name": "ARC Improvement Application 2023.docx"
+    },
+    {
+      "id": "1GTZsNQKrRnkNl2jbqMRGBWj0vUog0o4R",
+      "name": "ARC Improvement Application 2021.c.pdf"
+    },
+    {
+      "id": "1XCKTcM3jBUk68Hbbu-TlSURXkllStZLz",
+      "name": "ARC Improvement Application 2021.docx"
+    },
+    {
+      "id": "1Rs2XFmjuuie5yPSl-1cfYdiaGk9WOldK",
+      "name": "ARC Improvement Application 2024.docx"
+    },
+    {
+      "id": "15AbioDgqmXMM2zNCOegsF57JgU40A9Fy",
+      "name": "ARC Improvements Application 2020.pdf"
+    },
+    {
+      "id": "1ckQRn2soFJlOYQieUQcKCHSCZ-T6Dpgt",
+      "name": "ARC_Improvement_Application.4.pdf"
+    },
+    {
+      "id": "1SDcMA1Dh7R5ULpiAZQ8CjEY_s58EGOIC",
+      "name": "ARC_Improvement_Application.3.pdf"
+    },
+    {
+      "id": "1HgCBeZ1T8pNVxHXF7vwvWkiwf6DS4B6n",
+      "name": "ARC Improvement Application 2020.docx"
+    },
+    {
+      "id": "1IO_ChgETzYPqdzWzcFRtEJpww4YtnXJ6",
+      "name": "ARC_Improvement_Application.2.pdf"
+    },
+    {
+      "id": "1V80LD1VQNcFFd_Mhp2uC5CpKEXVwRWFE",
+      "name": "ARC_Improvement_Application.1.pdf"
+    }
+  ],
+  "files_copied": [
+    "Budgets/2025/2024 11 18 Financial presentation.pdf",
+    "Budgets/2025/2025 VATB Budget.pdf",
+    "Budgets/2024/VATB 2024 Budget.pdf",
+    "Budgets/2026/2025 11 17 Budget meeting.pdf",
+    "Budgets/2026/2026 VATB Budget.pdf",
+    "Budgets/2022/Villas Financials_Budget_2022-2026_Rev1C1_$1.5M Prroject.pdf",
+    "Budgets/2022/4 VATB 2022 Budget.pdf",
+    "Budgets/2022/VAB 2022 Budget Model - Key Assumptions A_10.14.2021.pdf",
+    "Budgets/2021/CHART_Villas Dues Breakdown_2021 Operating Budget.pdf",
+    "Budgets/2021/Villas 2021 Reserve Budget_Rev1C_20200925.pdf",
+    "Budgets/2021/Villas_at_the_Boulder-Final_Summary.pdf",
+    "Budgets/2019/Villas_at_the_Boulder-Final_Summary.pdf",
+    "Financials/2026/Financial - 0326.pdf",
+    "Financials/2026/Financial - 0226.pdf",
+    "Financials/2026/Financial - 0126.pdf",
+    "Financials/2025/Aurora - Financial - 1225.pdf",
+    "Financials/2025/Aurora - Owners Monthly Report 1125.pdf",
+    "Financials/2025/Aurora - Owners Monthly Report 1025.pdf",
+    "Financials/2025/Aurora - Owners Monthly Report 0925.pdf",
+    "Financials/2025/Aurora - Owners Monthly Report 0825-1.pdf",
+    "Financials/2025/Aurora - Owners Monthly Report 0725.pdf",
+    "Financials/2025/Aurora - Owners Monthly Report 0625.pdf",
+    "Financials/2025/Aurora - Owners Monthly Report 0525.pdf",
+    "Financials/2025/Aurora - Owners Monthly Report 0425.pdf",
+    "Financials/2025/Aurora - Owners Monthly Report 0325.pdf",
+    "Financials/2025/Aurora - Owners Monthly Report 0225-1.pdf",
+    "Financials/2025/Aurora - Owners Monthly Report 0125.pdf",
+    "Forms/ARC Improvement Application/PDF Form Versions/ARC Improvement Application 2025.0908.pdf",
+    "Forms/ARC Improvement Application/PDF Form Versions/ARC Improvement Application 2023.pdf",
+    "Forms/ARC Improvement Application/PDF Form Versions/ARC Improvement Application 2023.docx",
+    "Forms/ARC Improvement Application/PDF Form Versions/ARC Improvement Application 2021.c.pdf",
+    "Forms/ARC Improvement Application/PDF Form Versions/ARC Improvement Application 2021.docx",
+    "Forms/ARC Improvement Application/Static Versions/ARC Improvement Application 2024.docx",
+    "Forms/ARC Improvement Application/Static Versions/ARC Improvements Application 2020.pdf",
+    "Forms/ARC Improvement Application/Static Versions/ARC_Improvement_Application.4.pdf",
+    "Forms/ARC Improvement Application/Static Versions/ARC_Improvement_Application.3.pdf",
+    "Forms/ARC Improvement Application/Static Versions/ARC Improvement Application 2020.docx",
+    "Forms/ARC Improvement Application/Static Versions/ARC_Improvement_Application.2.pdf",
+    "Forms/ARC Improvement Application/Static Versions/ARC_Improvement_Application.1.pdf",
+    "Forms/LBC Homeowner Paid Planting and Removal Application/2020/LBC Homeowner Paid Planting and Removal Application (2020).docx",
+    "Forms/LBC Homeowner Paid Planting and Removal Application/2020/LBC Homeowner Paid Planting and Removal Application (2020).pdf",
+    "Forms/LBC Homeowner Paid Planting and Removal Application/2021/Homeowner Paid Removal Planting Application (2021c).pdf",
+    "Forms/LBC Homeowner Paid Planting and Removal Application/2021/Homeowner Paid Removal Planting Application (2021c).docx",
+    "Forms/LBC Homeowner Paid Planting and Removal Application/2023/Homeowner Paid Removal Planting Application (2023c).pdf",
+    "Forms/LBC Homeowner Paid Planting and Removal Application/2023/Homeowner Paid Removal Planting Application (2023b).pdf",
+    "Forms/LBC Homeowner Paid Planting and Removal Application/2023/Homeowner Paid Removal Planting Application (2023b).docx",
+    "Forms/LBC Homeowner Paid Planting and Removal Application/2023/Homeowner Paid Removal Planting Application (2023a).pdf",
+    "Forms/LBC Homeowner Paid Planting and Removal Application/2023/Homeowner Paid Removal Planting Application (2023a).docx",
+    "Forms/LBC Homeowner Paid Planting and Removal Application/2025/Homeowner Paid Removal Planting Application (2025b).pdf",
+    "Forms/LBC Homeowner Paid Planting and Removal Application/2025/Homeowner Paid Removal Planting Application (2025a).pdf",
+    "Forms/LBC Homeowner Paid Planting and Removal Application/Old Stuff/Homeowner Paid Removal Planting Application.pdf",
+    "Forms/LBC Homeowner Paid Planting and Removal Application/Current.pdf",
+    "Forms/Annual Meeting Proxy Forms/NOTICE OF ANNUAL MEETING - 111725 VATB Annual Mtg Mailer.pdf",
+    "Forms/Annual Meeting Proxy Forms/5 - 112023 VATB Proxy Annual & Budget Ratification.pdf",
+    "Forms/Annual Meeting Proxy Forms/Proxy.pdf",
+    "Forms/Annual Meeting Proxy Forms/Proxy.jpg",
+    "Forms/Annual Meeting Proxy Forms/Proxy.tiff",
+    "Forms/Annual Meeting Proxy Forms/5 - 111621 VBDR Proxy.pdf",
+    "Governing Documents/ByLaws.Current.pdf",
+    "Governing Documents/Covenants.Current.pdf",
+    "Governing Documents/Covenants.Amendment.1.2022.pdf",
+    "Governing Documents/Articles of Incorporation 2002.pdf",
+    "Governing Documents/Colorado Certificate.pdf",
+    "Governing Documents/ARC Design Guidelines (current).pdf",
+    "Insurance/2025-2026/Guide to the Insurance Documents.docx",
+    "Insurance/2025-2026/Unit Coverage Analysis.docx",
+    "Insurance/2025-2026/Residential Community Association form.pdf",
+    "Insurance/2025-2026/Businessowners Coverage form.pdf",
+    "Insurance/2025-2026/coverage summary.pdf",
+    "Insurance/2025-2026/Special Letter on Loss Assessment Coverage (d).pdf",
+    "Insurance/2025-2026/Special Letter on Loss Assessment Coverage (d).docx",
+    "Insurance/2025-2026/Special Letter on Loss Assessment Coverage (c).docx",
+    "Insurance/2025-2026/Special Letter on Loss Assessment Coverage (b).docx",
+    "Insurance/2025-2026/Special Letter on Loss Assessment Coverage.docx",
+    "Insurance/2022 09 14 Amendment to Declaration.docx",
+    "Insurance/2021-2922/2021 Proposal - Villas at the Boulders.pdf",
+    "Insurance/2021-2922/Post Marshall File Insurance Update.pdf",
+    "Insurance/2021-2922/2021 GRC endorsement.pdf",
+    "Insurance/2021-2922/VBDR COI Exp 071222.pdf",
+    "Insurance/2020-2021/2020 Proposal - Villas at the Boulders.pdf",
+    "Insurance/2020-2021/Scan 2020-7-6 16.07.20.pdf",
+    "Insurance/2018-2019/Pages 1 to 7 MiddleOak letter of April 27 2020.pdf",
+    "Insurance/2018-2019/Middle Oak Policy Documents(2018-2019).pdf",
+    "Maps/GIS Data/Parcels/Parcels.dbf",
+    "Maps/GIS Data/Parcels/Parcels.shp",
+    "Maps/GIS Data/Parcels/Parcels.shx",
+    "Maps/GIS Data/Parcels/Parcels.xml",
+    "Maps/GIS Data/Parcels/Parcels.cpg",
+    "Maps/GIS Data/Parcels/Parcels.prj",
+    "Maps/GIS Data/Parcels.geojson",
+    "Maps/Rock Point/Rock Point 2025.01.10.odg",
+    "Maps/Rock Point/Rock Point 2026.01.10.pdf",
+    "Maps/Rock Point/Rock Point 2023.07.28.pics.pdf",
+    "Maps/Rock Point/Rock Point 2023.07.28.pics.odg",
+    "Maps/Rock Point/Rock Point 2023.07.26.pdf",
+    "Maps/Rock Point/Rock Point 2023.07.26.odg",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2022.6.2 cropped.xcf",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2023.3.17 cropped.png",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2022.6.3 cropped.png",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2022.6.2 cropped.png",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2021.9.1 cropped.xcf",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2022.6.1 cropped.png",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 090121.docx",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2021.9.1 cropped.png",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2021.8.30 cropped.png",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2021.8.30 cropped.xcf",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2020.10.29 cropped.png",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2020.10.29 cropped.xcf",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2019.07.05 cropped.png",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2019.07.05 cropped.xcf",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2019.03.05.png",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2018 cropped.xcf",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood 2018 cropped.png",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood.xcf",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood (reduced).xcf",
+    "Maps/Rock Point/Old Stuff/Rock Point Neighborhood Map (Old see New Rock Point)/Rock Point Neighborhood (reduced).png",
+    "Maps/Rock Point/Rock Point 2023.06.18.pdf",
+    "Maps/Rock Point/Rock Point 2023.06.18.odg",
+    "Maps/Rock Point/Rock Point 2022.12.19.pdf",
+    "Maps/Rock Point/Rock Point 2022.12.19.odg",
+    "Maps/Rock Point/Rock Point Start.odg",
+    "Maps/Boulder Circle/2026.01.06/Boulder Circle 2026.01.05.odg",
+    "Maps/Boulder Circle/2026.01.06/Boulder Circle 2026.01.05.pdf",
+    "Maps/Boulder Circle/2026.01.02/Boulder Circle 2026.01.02.odg",
+    "Maps/Boulder Circle/2026.01.02/Boulder Circle 2026.01.02.pdf",
+    "Maps/Boulder Circle/2025.10.23/Boulder Circle 2025.10.23.odg",
+    "Maps/Boulder Circle/2025.10.23/Boulder Circle 2025.10.23.pdf",
+    "Maps/Boulder Circle/Old Stuff/Boulder Circle.odg",
+    "Maps/Boulder Circle/Old Stuff/Boulder Circle Map.png",
+    "Maps/Boulder Circle/Old Stuff/Boulder Circle.pdf",
+    "Maps/Boulder Circle/2022.12.20/Boulder Circle 2022.12.20.pdf",
+    "Maps/Boulder Circle/2022.12.20/Boulder Circle 2022.12.20.odg",
+    "Maps/Boulder Circle/2023.09.16/Boulder Circle 2023.09.16.odg",
+    "Maps/Boulder Circle/2023.09.16/Boulder Circle 2023.09.16.pdf",
+    "Maps/Stone Circle/2026.02.24/Stone Circle 2026.02.24.pdf",
+    "Maps/Stone Circle/2026.02.24/Stone Circle 2026.02.24.odg",
+    "Maps/Stone Circle/2026.01.01/Stone Circle 2026.01.01..pdf",
+    "Maps/Stone Circle/2026.01.01/Stone Circle 2026.01.01..odg",
+    "Maps/Stone Circle/2025.10.12/Stone Circle 2025.10.12.pdf",
+    "Maps/Stone Circle/2025.10.12/Stone Circle 2025.10.12.odg",
+    "Maps/Stone Circle/2024.06.24/Stone Circle 2024.06.24.pdf",
+    "Maps/Stone Circle/2024.06.24/Stone Circle 2024.06.24.odg",
+    "Maps/Stone Circle/2023.06.18/Stone Circle 2023.06.18.pdf",
+    "Maps/Stone Circle/2023.06.18/Stone Circle 2023.06.18.odg",
+    "Maps/Stone Circle/2023.06.18/Stone Circle.png",
+    "Maps/Stone Circle/2023.06.22/Stone Circle 2023.06.22.odg",
+    "Maps/Stone Circle/2023.06.22/Stone Circle 2023.06.22.pdf",
+    "Maps/Stone Circle/2023.07.14/Stone Circle 2023.07.14.pdf",
+    "Maps/Stone Circle/2023.07.14/Stone Circle 2023.07.14.odg",
+    "Maps/Stone Circle/2023.08.16/Stone Circle 2023.08.16.odg",
+    "Maps/Stone Circle/2023.08.16/Stone Circle 2023.08.16.pdf",
+    "Maps/Stone Circle/2023.11.13/Stone Circle 2023.11.13.pdf",
+    "Maps/Stone Circle/2023.11.13/Stone Circle 2023.11.13.odg",
+    "Maps/Stone Circle/Old Stuff/villas - Stone Circle (2023.04.29).pdf",
+    "Maps/Stone Circle/Old Stuff/villas - Stone Circle.pdf",
+    "Maps/Stone Circle/Old Stuff/Stone Circle Neighborhood Map.xcf",
+    "Maps/Stone Circle/Old Stuff/stonecircle.pdf",
+    "Maps/Boulder Point/2026.01.01/Boulder Point.2026.01.01.pdf",
+    "Maps/Boulder Point/2026.01.01/Boulder Point.2026.01.01.odg",
+    "Maps/Boulder Point/2025.11.20/Boulder Point.2025.11.20.pdf",
+    "Maps/Boulder Point/2025.11.20/Boulder Point.2025.11.20.odg",
+    "Maps/Boulder Point/2022.12.19/Old/Boulder Point 2.pdf",
+    "Maps/Boulder Point/2022.12.19/Old/Boulder Point 2.odg",
+    "Maps/Boulder Point/2022.12.19/Old/Boulder Point 2.png",
+    "Maps/Boulder Point/2022.12.19/Old/Boulder Point 1.xcf",
+    "Maps/Boulder Point/2022.12.19/Old/Boulder Point 1.png",
+    "Maps/Boulder Point/2022.12.19/Old/Boulder Point 1.pdf",
+    "Maps/Boulder Point/2022.12.19/Boulder Point.2022.12.19.pdf",
+    "Maps/Boulder Point/2022.12.19/Boulder Point.2022.12.19.odg",
+    "Maps/Boulder Point/2025.10.24/Boulder Point.2025.10.24.odg",
+    "Maps/Boulder Point/2025.10.24/Boulder Point.2025.10.24.pdf",
+    "Maps/Model Map Information/Villas_Models_Units.xlsx",
+    "Maps/Model Map Information/Old Model Map Diagram/Villas Models Map013.jpg",
+    "Maps/Model Map Information/Old Model Map Diagram/Villas Models Map013.png",
+    "Maps/Model Map Information/Old Model Map Diagram/Villas Models Map013.pdf",
+    "Maps/Model Map Information/Old Model Map Diagram/VBDR Villas Models Map013.jpg",
+    "Maps/Model Map Information/Old Model Map Diagram/VBDR Villas Models Map013.pdf",
+    "Maps/Model Map Information/Old Model Map Diagram/Model Map.jpg",
+    "Maps/Backflow valve map.pdf",
+    "Maps/Scans from Plat 2025.12.06/Plantings/Sheet L2-8.pdf",
+    "Maps/Scans from Plat 2025.12.06/Plantings/Sheet L2-10.pdf",
+    "Maps/Scans from Plat 2025.12.06/Plantings/Sheet L2-2.pdf",
+    "Maps/Scans from Plat 2025.12.06/Plantings/Sheet L2-5.pdf",
+    "Maps/Scans from Plat 2025.12.06/Plantings/Sheet L2-6.pdf",
+    "Maps/Scans from Plat 2025.12.06/Plantings/Sheet L2-7.pdf",
+    "Maps/Scans from Plat 2025.12.06/Plantings/scan_20251206123658.pdf",
+    "Maps/Scans from Plat 2025.12.06/Plantings/Sheet L2-9.pdf",
+    "Maps/Scans from Plat 2025.12.06/Plantings/scan_20251206123417.pdf",
+    "Maps/Scans from Plat 2025.12.06/Plantings/Sheet L1-6.pdf",
+    "Maps/Scans from Plat 2025.12.06/11x17 Scan 2.PDF",
+    "Maps/Scans from Plat 2025.12.06/11x17 Scan 1.PDF",
+    "Maps/Elevations&Plans/Elevations Page A4 (MSO).pdf",
+    "Maps/Elevations&Plans/Elevations Page A3 (RSA).pdf",
+    "Maps/Elevations&Plans/Elevations Page A2 (MSA).pdf",
+    "Maps/Elevations&Plans/Elevations Page A1 (RSO).pdf",
+    "Maps/Plaster Point/2022.12.19/Plaster Point 2022.12.19.odg",
+    "Maps/Plaster Point/2022.12.19/Plaster Point 2022.12.19.pdf",
+    "Maps/Plaster Point/2022.12.19/Plaster Point Base.odg",
+    "Maps/Plaster Point/2023.06.18/Plaster Point 2023.06.18.odg",
+    "Maps/Plaster Point/2023.06.18/Plaster Point 2023.06.18.pdf",
+    "Maps/Plaster Point/2025.10.22/Plaster Point 2025.10.22.pdf",
+    "Maps/Plaster Point/2025.10.22/Plaster Point 2025.10.22.odg",
+    "Maps/Villas_Models_Units.xlsx",
+    "Maps/Broadlands Lane/2025.10.10/Broadlands Lane 2025.10.10.pdf",
+    "Maps/Broadlands Lane/2025.10.10/Broadlands Lane 2025.10.10.odg",
+    "Maps/Broadlands Lane/Older/Broadlands Lane Map 2.jpg",
+    "Maps/Broadlands Lane/Older/Broadlands Lane 2.pdf",
+    "Maps/Broadlands Lane/Older/BroadlandsLane 3.png",
+    "Maps/Broadlands Lane/Older/BroadlandsLane 2.jpg",
+    "Maps/Broadlands Lane/Older/BroadlandsLane 2.png",
+    "Maps/Broadlands Lane/Older/Broadlands Lane.odg",
+    "Maps/Broadlands Lane/Older/BroadlandsLane.png",
+    "Maps/Broadlands Lane/2022.12.19/Broadlands Lane 2022.12.19.pdf",
+    "Maps/Broadlands Lane/2023.04.17/Broadlands Lane 2023.04.17.pdf",
+    "Maps/Broadlands Lane/2023.04.17/Broadlands Lane 2.odg",
+    "Maps/Broadlands Lane/2023.06.18/Broadlands Lane 2023.06.18.pdf",
+    "Maps/Broadlands Lane/2023.06.18/Broadlands Lane 3.odg",
+    "Maps/Broadlands Lane/2023.11.12/Broadlands Lane 2023.11.12.pdf",
+    "Maps/Broadlands Lane/2023.11.12/Broadlands Lane 2023.11.12.odg",
+    "Maps/ODG Maps/Villas Map/ODG Map Basic Cleaned.2025.12.30.pdf",
+    "Maps/ODG Maps/Villas Map/ODG Map Basic Cleaned.2025.12.30.png",
+    "Maps/ODG Maps/Villas Map/Map 2026.01.05.xcf",
+    "Maps/ODG Maps/Villas Map/ODG Map Basic Cleaned.2025.12.30.xcf",
+    "Maps/ODG Maps/Villas Map/ODG Map Basic Cleaned.2025.10.14.pdf",
+    "Maps/ODG Maps/Villas Map/ODG Map Basic Cleaned.2025.10.14.xcf",
+    "Maps/ODG Maps/Villas Map/ODG Map Basic Cleaned.2025.10.13.xcf",
+    "Maps/ODG Maps/Villas Map/ODG Map Basic Cleaned.xcf",
+    "Maps/ODG Maps/Villas Map/Villas at the Boulders - Landscape Site Analysis Plan - For Export - 10-06-25.xcf",
+    "Maps/ODG Maps/Villas Map.zip",
+    "Maps/ODG Maps/Site Analysis Plan.svg",
+    "Maps/VaB_community..png",
+    "Maps/VaB_community..xcf",
+    "Maps/Scanned VaB Layout.pdf",
+    "Maps/Villas at the Boulders Plat/BROADLANDS_FILING_12_FINAL_PLAT.pdf",
+    "Maps/Villas at the Boulders Plat/villas map.jpg",
+    "Maps/Villas at the Boulders Plat/original plat info.pdf",
+    "Maps/VaB.odg",
+    "Maps/VaB.png",
+    "Meetings/2020/Agenda Planning.pdf",
+    "Meetings/2021/2021 Meeting Schedule.pdf",
+    "Meetings/2025/102025 VBDR Minutes.pdf",
+    "Meetings/2025/092225 VATB Board Minutes.pdf",
+    "Meetings/2025/090325 VBDR Minutes.pdf",
+    "Meetings/2025/081825 VBDR Minutes.pdf",
+    "Meetings/2025/072125 VBDR Minutes.pdf",
+    "Meetings/2025/061625 VBDR Minutes.pdf",
+    "Meetings/2025/051925 VBDR Minutes.pdf",
+    "Meetings/2025/042125 VBDR Minutes.pdf",
+    "Meetings/2025/032425 VBDR Minutes.pdf",
+    "Meetings/2025/021725 VBDR Minutes.pdf",
+    "Meetings/2025/012025 VBDR Minutes.pdf",
+    "Meetings/Hybrid Meeting Setup/Layout of hybrid meeting 2.pdf",
+    "Meetings/Hybrid Meeting Setup/Layout of hybrid meeting.pdf",
+    "Newsletters/2017/12.pdf",
+    "Newsletters/2018/03.pdf",
+    "Newsletters/2018/08.pdf",
+    "Newsletters/2018/07.pdf",
+    "Newsletters/2018/10.pdf",
+    "Newsletters/2018/04.pdf",
+    "Newsletters/2018/02.pdf",
+    "Newsletters/2019/12.pdf",
+    "Newsletters/2019/04.pdf",
+    "Newsletters/2019/08.pdf",
+    "Newsletters/2019/01.pdf",
+    "Newsletters/2019/07.pdf",
+    "Newsletters/2019/06.pdf",
+    "Newsletters/2019/03.pdf",
+    "Newsletters/2019/05.pdf",
+    "Newsletters/2019/11.pdf",
+    "Newsletters/2019/10.pdf",
+    "Newsletters/2019/09.pdf",
+    "Newsletters/2020/12.pdf",
+    "Newsletters/2020/11.pdf",
+    "Newsletters/2020/10.pdf",
+    "Newsletters/2020/9.pdf",
+    "Newsletters/2020/8.pdf",
+    "Newsletters/2020/7.pdf",
+    "Newsletters/2020/6.pdf",
+    "Newsletters/2020/5.pdf",
+    "Newsletters/2020/4.pdf",
+    "Newsletters/2020/3.pdf",
+    "Newsletters/2020/2.pdf",
+    "Newsletters/2020/1.pdf",
+    "Newsletters/2021/12.pdf",
+    "Newsletters/2021/11.pdf",
+    "Newsletters/2021/10.pdf",
+    "Newsletters/2021/9.pdf",
+    "Newsletters/2021/8.pdf",
+    "Newsletters/2021/7.pdf",
+    "Newsletters/2021/6.pdf",
+    "Newsletters/2021/5.pdf",
+    "Newsletters/2021/4.pdf",
+    "Newsletters/2021/3.pdf",
+    "Newsletters/2021/2.pdf",
+    "Newsletters/2021/1.pdf",
+    "Newsletters/2022/11-12.pdf",
+    "Newsletters/2022/10.pdf",
+    "Newsletters/2022/9.pdf",
+    "Newsletters/2022/7.1.pdf",
+    "Newsletters/2022/5-6.1.pdf",
+    "Newsletters/2022/4.1.pdf",
+    "Newsletters/2022/3.pdf",
+    "Newsletters/2022/2.1.pdf",
+    "Newsletters/2022/1.3 with insurance update.pdf",
+    "Newsletters/2022/1.2.pdf",
+    "Newsletters/2022/Insurance Update - Villas at the Boulders.pdf",
+    "Newsletters/2023/Q4.pdf",
+    "Newsletters/2023/Q3.pdf",
+    "Newsletters/2023/Q2.pdf",
+    "Newsletters/2023/2.pdf",
+    "Newsletters/2023/1.pdf",
+    "Newsletters/2025/December 2025 Newsletter.pdf",
+    "Newsletters/2025/October 2025 HOA Newsletter.a.pdf",
+    "Newsletters/2025/November 2025 HOA Newsletter (2).pdf",
+    "Newsletters/2025/September 2025 HOA Newsletter.pdf",
+    "Policies/Snow Removal.pdf",
+    "Policies/Responsibility for Deductible Portion of Insurance Claim.pdf",
+    "Policies/Reserve Requirements.pdf",
+    "Policies/Investment of Reserve Funds.pdf",
+    "Policies/Inspection and Copying of Association Records.pdf",
+    "Policies/Homeowner Paid Planting and Removal.pdf",
+    "Policies/Director Conflict of Interest.pdf",
+    "Policies/Covenant Enforcement.pdf",
+    "Policies/Conduct of Meetings.pdf",
+    "Policies/Committee Authorities Policy.pdf",
+    "Policies/Collection of Unpaid Assessments.pdf",
+    "Policies/Alternative Dispute Resolution.pdf",
+    "Policies/Adoption and Amendment of Policies, Procedures and Rules.pdf",
+    "Reserve Studies/2022/28837-0-ReserveStudy (1).pdf",
+    "Reserve Studies/2015/SBSA Reserve Study Proposal - Executed.pdf",
+    "Reserve Studies/2015/SBSA Reserve Study 151109 Revised.pdf",
+    "Reserve Studies/2006/2006-10-30 - Final Reserve Study - Villas at the Boulders.pdf",
+    "Directors and Officers.pdf",
+    "Policy Directory.pdf"
+  ],
+  "folders_created": [
+    "Budgets/Reserve Budget/",
+    "Budgets/Reserve Budget/2026/",
+    "Budgets/2023/",
+    "Budgets/2022/",
+    "Budgets/2021/",
+    "Budgets/2019/",
+    "Financials/2026/",
+    "Insurance/2021-2922/",
+    "Maps/GIS Data/",
+    "Maps/GIS Data/Parcels/",
+    "Maps/Boulder Circle/2026.01.06/",
+    "Maps/Boulder Circle/2026.01.02/",
+    "Maps/Stone Circle/2026.02.24/",
+    "Maps/Stone Circle/2026.01.01/",
+    "Maps/Boulder Point/2026.01.01/",
+    "Meetings/2019/",
+    "Meetings/2020/",
+    "Meetings/2021/",
+    "Meetings/2022/",
+    "Meetings/2023/",
+    "Meetings/2026/",
+    "Meetings/Hybrid Meeting Setup/",
+    "Newsletters/2017/",
+    "Newsletters/2018/",
+    "Newsletters/2019/",
+    "Newsletters/2020/",
+    "Newsletters/2021/",
+    "Newsletters/2022/",
+    "Newsletters/2023/"
+  ]
+}
