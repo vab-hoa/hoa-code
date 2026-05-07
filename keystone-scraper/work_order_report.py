@@ -154,8 +154,23 @@ def format_html(orders):
 
 
 def generate_pdf(html_body):
-    from weasyprint import HTML
-    return HTML(string=html_body).write_pdf()
+    import subprocess, tempfile, os
+    with tempfile.NamedTemporaryFile(suffix='.html', delete=False, mode='w') as f:
+        f.write(html_body)
+        html_file = f.name
+    pdf_file = html_file.replace('.html', '.pdf')
+    try:
+        subprocess.run(
+            ['/usr/bin/python3', '-c',
+             f'from weasyprint import HTML; HTML(filename="{html_file}").write_pdf("{pdf_file}")'],
+            check=True
+        )
+        with open(pdf_file, 'rb') as f:
+            return f.read()
+    finally:
+        os.unlink(html_file)
+        if os.path.exists(pdf_file):
+            os.unlink(pdf_file)
 
 
 def send_email(gmail_service, subject, html_body, text_body, pdf_bytes, pdf_filename,
