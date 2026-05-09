@@ -51,7 +51,7 @@ function executeCommunitySync() {
 
 function syncLabelMembers(labelName, groupEmail, contactGroups) {
   const targetLabel = contactGroups.find(g => g.name === labelName);
-  
+
   if (!targetLabel) return;
 
   const membersList = People.ContactGroups.get(targetLabel.resourceName, { maxMembers: 1000 });
@@ -59,21 +59,29 @@ function syncLabelMembers(labelName, groupEmail, contactGroups) {
 
   console.log(`Processing ${labelName}...`);
 
-  membersList.memberResourceNames.forEach(resName => {
-    // This "sleep" prevents the Quota Exceeded error
-    Utilities.sleep(200); 
-    
+  const resourceNames = membersList.memberResourceNames;
+  const BATCH_SIZE = 10;
+
+  for (let i = 0; i < resourceNames.length; i += BATCH_SIZE) {
+    Utilities.sleep(1000); // 1 second between batches → max 60 contact-reads/min, well under quota
+    const batch = resourceNames.slice(i, i + BATCH_SIZE);
     try {
-      const person = People.People.get(resName, { personFields: 'emailAddresses' });
-      if (person.emailAddresses && person.emailAddresses.length > 0) {
-        const email = person.emailAddresses[0].value;
-        try {
-          AdminDirectory.Members.insert({ email: email, role: 'MEMBER' }, groupEmail);
-          console.log(`Added: ${email}`);
-        } catch (e) { /* Already in group */ }
-      }
+      const response = People.People.getBatchGet({
+        resourceNames: batch,
+        personFields: 'emailAddresses'
+      });
+      (response.responses || []).forEach(r => {
+        const person = r.person;
+        if (person && person.emailAddresses && person.emailAddresses.length > 0) {
+          const email = person.emailAddresses[0].value;
+          try {
+            AdminDirectory.Members.insert({ email, role: 'MEMBER' }, groupEmail);
+            console.log(`Added: ${email}`);
+          } catch (e) { /* Already a member */ }
+        }
+      });
     } catch (e) {
-      console.error(`Skipped a contact due to error: ${e.message}`);
+      console.error(`Batch error for ${labelName} (batch ${i}): ${e.message}`);
     }
-  });
+  }
 }
