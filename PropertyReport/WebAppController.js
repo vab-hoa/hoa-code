@@ -14,11 +14,13 @@
 var OAUTH_CONFIG = {
   clientId: '527585908490-r4vvrctanip4lv39v7bgj9m28ksom342.apps.googleusercontent.com',
   clientSecret: '[REDACTED-EXPOSED-SECRET]',
-  scopes: 'email profile',
-  // Dynamic redirect URI — always matches whatever deployment is running this script.
-  // No hardcoded URL means this never gets out of sync when deployments change.
-  get redirectUri() { return ScriptApp.getService().getUrl(); }
+  scopes: 'email profile'
 };
+
+// Always returns the URL of the current deployment — never gets out of sync.
+function getRedirectUri() {
+  return ScriptApp.getService().getUrl();
+}
 
 /**
  * Main entry point for the web app.
@@ -36,7 +38,7 @@ function doGet(e) {
 
   if (!userEmail) {
     // No session - show sign-in page with link
-    var redirectUri = OAUTH_CONFIG.redirectUri;
+    var redirectUri = getRedirectUri();
     var state = Utilities.getUuid();
     CacheService.getUserCache().put('oauth_state_' + state, 'pending', 3600); // 1 hour
 
@@ -80,7 +82,7 @@ function doGet(e) {
  */
 function startOAuthFlow() {
   var state = Utilities.getUuid();
-  var redirectUri = OAUTH_CONFIG.redirectUri;
+  var redirectUri = getRedirectUri();
 
   // Store state for CSRF protection
   CacheService.getUserCache().put('oauth_state_' + state, 'pending', 3600); // 1 hour
@@ -121,7 +123,7 @@ function handleOAuthCallback(code, state) {
     cache.remove('oauth_state_' + state);
 
     // Exchange code for tokens
-    var redirectUri = OAUTH_CONFIG.redirectUri;
+    var redirectUri = getRedirectUri();
     var tokenResponse = UrlFetchApp.fetch('https://oauth2.googleapis.com/token', {
       method: 'post',
       contentType: 'application/x-www-form-urlencoded',
@@ -169,7 +171,7 @@ function handleOAuthCallback(code, state) {
       '<body style="font-family:Arial,sans-serif;padding:40px;text-align:center;">' +
       '<h2 style="color:#2e7d32;">Sign-in Successful!</h2>' +
       '<p>Signed in as: <strong>' + userInfo.email + '</strong></p>' +
-      '<p style="margin-top:20px;"><a href="' + OAUTH_CONFIG.redirectUri + '" style="background:#1a73e8;color:#fff;padding:12px 24px;border-radius:4px;text-decoration:none;">Continue to App</a></p>' +
+      '<p style="margin-top:20px;"><a href="' + getRedirectUri() + '" style="background:#1a73e8;color:#fff;padding:12px 24px;border-radius:4px;text-decoration:none;">Continue to App</a></p>' +
       '</body></html>'
     ).setTitle('Success');
 
@@ -254,7 +256,7 @@ function showError(message) {
     '<body style="font-family:Arial,sans-serif;padding:40px;text-align:center;">' +
     '<h2 style="color:#c62828;">Error</h2>' +
     '<p>' + message + '</p>' +
-    '<p><a href="' + OAUTH_CONFIG.redirectUri + '">Try again</a></p>' +
+    '<p><a href="' + getRedirectUri() + '">Try again</a></p>' +
     '</body></html>'
   ).setTitle('Error');
 }
