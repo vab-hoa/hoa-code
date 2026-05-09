@@ -15,8 +15,9 @@ var OAUTH_CONFIG = {
   clientId: '527585908490-r4vvrctanip4lv39v7bgj9m28ksom342.apps.googleusercontent.com',
   clientSecret: '[REDACTED-EXPOSED-SECRET]',
   scopes: 'email profile',
-  // Hardcoded redirect URI without domain (for external user access)
-  redirectUri: 'https://script.google.com/macros/s/AKfycbxvKgAmbdtBie6WumLoI_7NC7OscV3LmjORbvV7Mag6tDBM6JoQa_FwTe8v7n16R92PIQ/exec'
+  // Dynamic redirect URI — always matches whatever deployment is running this script.
+  // No hardcoded URL means this never gets out of sync when deployments change.
+  get redirectUri() { return ScriptApp.getService().getUrl(); }
 };
 
 /**
