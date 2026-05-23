@@ -31,3 +31,4 @@ Thumbs.db
 
 # Logs
 *.log
+!keystone-scraper/broadlands_manifest.json
