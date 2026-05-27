@@ -209,7 +209,7 @@ def main():
                 'full_addr':  dir_entry['full_addr'],
                 'last_name':  family or dir_entry['last_name'],
                 'first_name': given,
-                'phone1':     phones[0] if phones else '',
+                'phone1':     phones[0] if phones else dir_entry['ks_phone'],
                 'phone2':     phones[1] if len(phones) > 1 else '',
                 'email':      emails[0] if emails else '',
                 'source':     'Both',
@@ -233,8 +233,16 @@ def main():
         output.append(row)
 
     # ── Add unmatched directory entries (Keystone only) ───────────────────────
+    # Build set of (street_num, unit, norm_street) already covered by 'Both' rows
+    both_addr_keys = {
+        (r['street_num'], r['unit'], norm_street(r['street']))
+        for r in output if r['source'] == 'Both'
+    }
     for key, d in dir_index.items():
         if key not in matched_dir_keys:
+            # Skip if a 'Both' row already covers this address (duplicate guard)
+            if key in both_addr_keys:
+                continue
             output.append({
                 'street':     d['street'],
                 'street_num': d['street_num'],
