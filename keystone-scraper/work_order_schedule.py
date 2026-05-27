@@ -41,10 +41,11 @@ MONTHLY_KEYWORDS  = ('worksession', 'quarterly', 'annual')
 CHECKIN_KEYWORD   = 'check-in'
 
 
-def log(msg):
+def log(msg, quiet=False):
     ts = datetime.now().strftime('%Y-%m-%d %H:%M')
     line = f'[{ts}] {msg}'
-    print(line)
+    if not quiet:
+        print(line)
     with open(LOG_FILE, 'a') as f:
         f.write(line + '\n')
 
@@ -144,7 +145,7 @@ def main():
             log(f'Wednesday: no check-in found for {thursday} — no report sent')
         return
 
-    log(f'No send condition met today ({today}, weekday={weekday})')
+    log(f'No send condition met today ({today}, weekday={weekday})', quiet=True)
 
 
 if __name__ == '__main__':
