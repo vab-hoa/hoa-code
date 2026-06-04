@@ -40,7 +40,7 @@ function doGet(e) {
     // No session - show sign-in page with link
     var redirectUri = getRedirectUri();
     var state = Utilities.getUuid();
-    CacheService.getUserCache().put('oauth_state_' + state, 'pending', 3600); // 1 hour
+    CacheService.getScriptCache().put('oauth_state_' + state, 'pending', 3600); // 1 hour
 
     var authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' +
       'client_id=' + encodeURIComponent(OAUTH_CONFIG.clientId) +
@@ -84,8 +84,8 @@ function startOAuthFlow() {
   var state = Utilities.getUuid();
   var redirectUri = getRedirectUri();
 
-  // Store state for CSRF protection
-  CacheService.getUserCache().put('oauth_state_' + state, 'pending', 3600); // 1 hour
+  // Store state for CSRF protection — use script cache so it persists across browser tabs
+  CacheService.getScriptCache().put('oauth_state_' + state, 'pending', 3600); // 1 hour
 
   var authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' +
     'client_id=' + encodeURIComponent(OAUTH_CONFIG.clientId) +
@@ -96,15 +96,14 @@ function startOAuthFlow() {
     '&access_type=online' +
     '&prompt=select_account';
 
-  // Return a page that redirects to Google OAuth
+  // Use a clickable link — meta-refresh fails inside Apps Script's sandboxed iframe
   return HtmlService.createHtmlOutput(
-    '<!DOCTYPE html><html><head>' +
-    '<meta http-equiv="refresh" content="0;url=' + authUrl + '">' +
-    '</head><body style="font-family:Arial,sans-serif;padding:40px;text-align:center;">' +
-    '<p>Redirecting to Google Sign-In...</p>' +
-    '<p><a href="' + authUrl + '">Click here if not redirected</a></p>' +
+    '<!DOCTYPE html><html><head></head>' +
+    '<body style="font-family:Arial,sans-serif;padding:40px;text-align:center;">' +
+    '<p>Sign-in session expired or could not be verified.</p>' +
+    '<p><a href="' + authUrl + '" target="_top" style="display:inline-block;background:#1a73e8;color:#fff;padding:12px 24px;border-radius:4px;text-decoration:none;font-weight:600;">Sign in with Google</a></p>' +
     '</body></html>'
-  ).setTitle('Signing In...');
+  ).setTitle('Sign In');
 }
 
 /**
@@ -113,7 +112,7 @@ function startOAuthFlow() {
 function handleOAuthCallback(code, state) {
   try {
     // Verify state for CSRF protection
-    var cache = CacheService.getUserCache();
+    var cache = CacheService.getScriptCache();
     var storedState = cache.get('oauth_state_' + state);
 
     if (!storedState) {
