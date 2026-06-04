@@ -28,6 +28,9 @@ const CONFIG = {
   woodTrimSheetId: '1Eu0y6O8Uco6VZ1mYcB2ehDXwE_EV_NJHV_M5Ji6Mts0',  // JPEG converted 2026-02-23
   keystoneCacheSheetId: '1TBC1B2V_yzZaost6r7IGWWqiEebEcQwMp5DknahwYuQ',
   
+  // Window Wells installation sheet (Board Documents/Project/2026/Window Wells)
+  windowWellsSheetId: '1jShPXcgTiErKDQzZPlKfg_ByzS9b1AlrZcfCVoYtnjA',
+
   // Gutter Pictures folder (on VaB Board Documents shared drive, under Gutters/)
   gutterPicturesFolderId: '1dWjvxclLYYeP8yP8fIyIySVrnoa5psrs',
   // Wood Trim Photos folder (on VaB Board Documents shared drive, under Wood Trim Damage Repair/Wood Trim Project/)
@@ -157,6 +160,7 @@ function gatherReportData(email, standardizedAddress, displayAddress, originalAd
     generatedAt: new Date().toLocaleString(),
     gutters: null,
     woodTrim: null,
+    windowWells: null,
     keystone: null,
     gutterFolderImages: null,
     woodTrimFolderImages: null
@@ -218,6 +222,16 @@ function gatherReportData(email, standardizedAddress, displayAddress, originalAd
     data.woodTrimFolderImages = null;
   }
 
+  // Get Window Wells data (unit-level match)
+  try {
+    console.log('Fetching window wells data...');
+    data.windowWells = getWindowWellsData(standardizedAddress);
+    console.log('Window wells: ' + (data.windowWells ? data.windowWells.length + ' records' : 'none'));
+  } catch (error) {
+    console.error('Error getting window wells data: ' + error.toString());
+    data.windowWells = null;
+  }
+
   // Get Keystone data (using standardized address)
   try {
     console.log('Fetching Keystone data...');
@@ -271,6 +285,36 @@ function getKeystoneData(address) {
       archReviews: []
     };
   }
+}
+
+/**
+ * Get window well installation records for a specific unit.
+ * Returns array of {date, location, notes} objects, or null if none found.
+ */
+function getWindowWellsData(address) {
+  var ss = SpreadsheetApp.openById(CONFIG.windowWellsSheetId);
+  var sheet = ss.getSheets()[0];
+  var rows = sheet.getDataRange().getValues();
+  if (rows.length < 2) return null;
+
+  var targetStd = HOALibrary.standardizeHOAAddress(address);
+  var results = [];
+
+  for (var i = 1; i < rows.length; i++) {
+    var row = rows[i];
+    var rowAddr = row[0];
+    if (!rowAddr) continue;
+    var rowStd = HOALibrary.standardizeHOAAddress(String(rowAddr));
+    if (rowStd === targetStd) {
+      results.push({
+        date: String(row[1] || '').trim(),
+        location: String(row[2] || '').trim(),
+        notes: String(row[3] || '').trim()
+      });
+    }
+  }
+
+  return results.length > 0 ? results : null;
 }
 
 /**

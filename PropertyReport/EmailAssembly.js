@@ -24,6 +24,8 @@ function generateAllSections(address, displayAddress, data) {
         result = generateSectionGutters(address, displayAddress, data);
       } else if (sectionConfig.type === 'woodTrim') {
         result = generateSectionWoodTrim(address, displayAddress, data);
+      } else if (sectionConfig.type === 'windowWells') {
+        result = generateSectionWindowWells(address, displayAddress, data);
       } else {
         console.warn('Unknown section type: ' + sectionConfig.type);
         return;

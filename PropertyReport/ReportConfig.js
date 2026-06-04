@@ -34,8 +34,12 @@ const REPORT_CONFIG = {
       label: 'January 2026 Wood Trim Rot Evaluation',
       active: true
     },
+    {
+      type: 'windowWells',
+      label: 'Window Well Installations',
+      active: true
+    },
     // Future sections (set active: true when ready):
-    // { type: 'concrete',    label: '2026 Concrete Evaluation',    active: false },
-    // { type: 'windowWells', label: '2026 Window Well Evaluation', active: false },
+    // { type: 'concrete', label: '2026 Concrete Evaluation', active: false },
   ]
 };
