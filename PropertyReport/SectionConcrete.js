@@ -1,6 +1,6 @@
 /**
  * Concrete & Asphalt Section Generator
- * Displays concrete repair history for a property (unit-specific and common areas).
+ * Displays concrete repair history for a property (unit-specific only).
  * Data source: VBB Concrete Work History (Board Documents/Projects/Active/Concrete-Asphalt)
  */
 
@@ -34,21 +34,59 @@ function generateSectionConcrete(address, displayAddress, data) {
 
     body.appendParagraph('');
 
-    var concrete = data.concrete;
+    var unitRecords = (data.concrete && data.concrete.unitRecords) ? data.concrete.unitRecords : [];
 
-    // --- Unit-specific records ---
-    body.appendParagraph('Your Property')
-      .setHeading(DocumentApp.ParagraphHeading.HEADING3)
-      .setForegroundColor('#1a3c5e');
+    if (unitRecords.length > 0) {
+      body.appendParagraph('Repair Records')
+        .setHeading(DocumentApp.ParagraphHeading.HEADING3)
+        .setForegroundColor('#1a3c5e');
 
-    if (concrete && concrete.unitRecords && concrete.unitRecords.length > 0) {
       body.appendParagraph('Concrete and asphalt work scheduled or completed at this unit.')
         .setFontSize(9)
         .setItalic(true)
         .setForegroundColor('#666666');
+
       body.appendParagraph('');
 
-      appendConcreteTable(body, concrete.unitRecords, false);
+      // Table
+      var table = body.appendTable();
+      table.setBorderWidth(1);
+      table.setBorderColor('#dddddd');
+
+      // Header row
+      var hdr = table.appendTableRow();
+      ['Year', 'Location', 'Work', 'Status', 'Severity'].forEach(function(label) {
+        var cell = hdr.appendTableCell(label);
+        cell.setBackgroundColor('#1a3c5e');
+        cell.getChild(0).asParagraph()
+          .setBold(true)
+          .setFontSize(10)
+          .setForegroundColor('#ffffff');
+        cell.setPaddingTop(6);
+        cell.setPaddingBottom(6);
+        cell.setPaddingLeft(8);
+        cell.setPaddingRight(8);
+      });
+
+      // Data rows
+      for (var i = 0; i < unitRecords.length; i++) {
+        var rec = unitRecords[i];
+        var dataRow = table.appendTableRow();
+        var bg = (i % 2 === 0) ? '#ffffff' : '#f8f8f8';
+
+        [rec.year, rec.location, rec.work, rec.status, rec.severity].forEach(function(val) {
+          var cell = dataRow.appendTableCell(val || '');
+          cell.setBackgroundColor(bg);
+          cell.getChild(0).asParagraph()
+            .setFontSize(10)
+            .setForegroundColor('#333333');
+          cell.setPaddingTop(5);
+          cell.setPaddingBottom(5);
+          cell.setPaddingLeft(8);
+          cell.setPaddingRight(8);
+        });
+      }
+
     } else {
       body.appendParagraph('No concrete or asphalt work on record for this unit.')
         .setItalic(true)
@@ -56,31 +94,9 @@ function generateSectionConcrete(address, displayAddress, data) {
     }
 
     body.appendParagraph('');
-
-    // --- Common areas ---
-    body.appendParagraph('Common Areas')
-      .setHeading(DocumentApp.ParagraphHeading.HEADING3)
-      .setForegroundColor('#1a3c5e');
-
-    if (concrete && concrete.commonRecords && concrete.commonRecords.length > 0) {
-      body.appendParagraph('Concrete and asphalt work in shared driveways, walkways, and other common areas.')
-        .setFontSize(9)
-        .setItalic(true)
-        .setForegroundColor('#666666');
-      body.appendParagraph('');
-
-      appendConcreteTable(body, concrete.commonRecords, true);
-    } else {
-      body.appendParagraph('No common area records found.')
-        .setItalic(true)
-        .setForegroundColor('#666666');
-    }
-
-    // Note about historical data
-    body.appendParagraph('');
     body.appendParagraph(
       'Note: Records prior to 2025 are reconstructed from HOA documents and may be incomplete. ' +
-      'For questions about this history, contact manager@villasboulders.org.'
+      'Contact manager@villasboulders.org with questions.'
     )
       .setFontSize(9)
       .setItalic(true)
@@ -105,49 +121,5 @@ function generateSectionConcrete(address, displayAddress, data) {
   } catch (e) {
     console.error('Error generating Concrete section: ' + e.toString());
     throw e;
-  }
-}
-
-function appendConcreteTable(body, records, isCommon) {
-  var table = body.appendTable();
-  table.setBorderWidth(1);
-  table.setBorderColor('#dddddd');
-
-  // Header row
-  var headers = isCommon
-    ? ['Year', 'Location', 'Work', 'Status', 'Severity']
-    : ['Year', 'Location', 'Work', 'Status', 'Severity'];
-
-  var hdr = table.appendTableRow();
-  headers.forEach(function(label) {
-    var cell = hdr.appendTableCell(label);
-    cell.setBackgroundColor('#1a3c5e');
-    cell.getChild(0).asParagraph()
-      .setBold(true)
-      .setFontSize(10)
-      .setForegroundColor('#ffffff');
-    cell.setPaddingTop(6);
-    cell.setPaddingBottom(6);
-    cell.setPaddingLeft(8);
-    cell.setPaddingRight(8);
-  });
-
-  // Data rows
-  for (var i = 0; i < records.length; i++) {
-    var rec = records[i];
-    var dataRow = table.appendTableRow();
-    var bg = (i % 2 === 0) ? '#ffffff' : '#f8f8f8';
-
-    [rec.year, rec.location, rec.work, rec.status, rec.severity].forEach(function(val) {
-      var cell = dataRow.appendTableCell(val || '');
-      cell.setBackgroundColor(bg);
-      cell.getChild(0).asParagraph()
-        .setFontSize(10)
-        .setForegroundColor('#333333');
-      cell.setPaddingTop(5);
-      cell.setPaddingBottom(5);
-      cell.setPaddingLeft(8);
-      cell.setPaddingRight(8);
-    });
   }
 }

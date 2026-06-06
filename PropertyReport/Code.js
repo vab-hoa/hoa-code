@@ -384,32 +384,8 @@ function getConcreteData(address) {
     }
   }
 
-  // --- Common Areas tab ---
-  var commonRecords = [];
-  var caSheet = ss.getSheetByName('Common Areas');
-  if (caSheet) {
-    var caData = caSheet.getDataRange().getValues();
-    if (caData.length > 1) {
-      var ch = caData[0];
-      var cCols = {
-        year:     colIdx(ch, 'year'),
-        location: colIdx(ch, 'location'),
-        work:     colIdx(ch, 'work'),
-        status:   colIdx(ch, 'status'),
-        estCost:  colIdx(ch, 'est cost'),
-        severity: colIdx(ch, 'severity'),
-        source:   colIdx(ch, 'source')
-      };
-      for (var j = 1; j < caData.length; j++) {
-        var crow = caData[j];
-        if (!crow[cCols.year] && !crow[cCols.work]) continue;
-        commonRecords.push(rowToObj(crow, ch, cCols));
-      }
-    }
-  }
-
-  if (unitRecords.length === 0 && commonRecords.length === 0) return null;
-  return { unitRecords: unitRecords, commonRecords: commonRecords };
+  if (unitRecords.length === 0) return null;
+  return { unitRecords: unitRecords };
 }
 
 /**
