@@ -8,8 +8,6 @@
  * Returns array of {label, url} objects for inclusion in the email.
  */
 function generateAllSections(address, displayAddress, data) {
-  console.log('generateAllSections BUILD:20260606-C');
-  console.log('Sections in config: ' + REPORT_CONFIG.sections.map(function(s){return s.type;}).join(', '));
   console.log('Generating all sections for ' + address);
   const sections = [];
 
@@ -18,7 +16,6 @@ function generateAllSections(address, displayAddress, data) {
 
     try {
       var result = null;
-      console.log('Starting section: ' + sectionConfig.type);
       if (sectionConfig.type === 'hoaAccount') {
         result = generateSectionHOAAccount(address, displayAddress, data);
       } else if (sectionConfig.type === 'propertyActivity') {

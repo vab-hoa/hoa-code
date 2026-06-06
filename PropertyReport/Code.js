@@ -164,7 +164,6 @@ function gatherReportData(email, standardizedAddress, displayAddress, originalAd
     gutters: null,
     woodTrim: null,
     windowWells: null,
-    concrete: null,
     keystone: null,
     gutterFolderImages: null,
     woodTrimFolderImages: null
@@ -234,16 +233,6 @@ function gatherReportData(email, standardizedAddress, displayAddress, originalAd
   } catch (error) {
     console.error('Error getting window wells data: ' + error.toString());
     data.windowWells = null;
-  }
-
-  // Get Concrete repair history (unit-level + common areas)
-  try {
-    console.log('Fetching concrete data...');
-    data.concrete = getConcreteData(standardizedAddress);
-    console.log('Concrete: ' + (data.concrete ? data.concrete.unitRecords.length + ' unit records' : 'none'));
-  } catch (error) {
-    console.error('Error getting concrete data: ' + error.toString());
-    data.concrete = null;
   }
 
   // Get Keystone data (using standardized address)
@@ -329,63 +318,6 @@ function getWindowWellsData(address) {
   }
 
   return results.length > 0 ? results : null;
-}
-
-/**
- * Get concrete repair history for a unit.
- * Reads "Scheduled Work" tab (unit-specific) and "Common Areas" tab (everyone).
- * Returns {unitRecords, commonRecords} or null.
- */
-function getConcreteData(address) {
-  var ss = SpreadsheetApp.openById(CONFIG.concreteSheetId);
-  var targetStd = HOALibrary.standardizeHOAAddress(address);
-
-  function colIdx(headers, name) {
-    var n = name.toLowerCase();
-    for (var i = 0; i < headers.length; i++) {
-      if (headers[i].toString().toLowerCase() === n) return i;
-    }
-    return -1;
-  }
-
-  function rowToObj(row, headers, cols) {
-    var obj = {};
-    for (var k in cols) {
-      obj[k] = cols[k] !== -1 ? String(row[cols[k]] || '').trim() : '';
-    }
-    return obj;
-  }
-
-  // --- Scheduled Work tab (unit-specific) ---
-  var unitRecords = [];
-  var swSheet = ss.getSheetByName('Scheduled Work');
-  if (swSheet) {
-    var swData = swSheet.getDataRange().getValues();
-    if (swData.length > 1) {
-      var h = swData[0];
-      var cols = {
-        year:     colIdx(h, 'year'),
-        location: colIdx(h, 'location'),
-        work:     colIdx(h, 'work'),
-        status:   colIdx(h, 'status'),
-        estCost:  colIdx(h, 'est cost'),
-        severity: colIdx(h, 'severity'),
-        source:   colIdx(h, 'source'),
-        address:  colIdx(h, 'address')
-      };
-      for (var i = 1; i < swData.length; i++) {
-        var row = swData[i];
-        if (!row[cols.address]) continue;
-        var rowStd = HOALibrary.standardizeHOAAddress(String(row[cols.address]));
-        if (rowStd === targetStd) {
-          unitRecords.push(rowToObj(row, h, cols));
-        }
-      }
-    }
-  }
-
-  if (unitRecords.length === 0) return null;
-  return { unitRecords: unitRecords };
 }
 
 /**
