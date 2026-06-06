@@ -96,6 +96,21 @@ function processReportAsync(e) {
       reportData
     );
 
+    // Explicit call — bypasses cached EmailAssembly/ReportConfig bytecode
+    if (!sections.some(function(s) { return s.label === 'Concrete & Asphalt Repair History'; })) {
+      try {
+        var concreteResult = generateSectionConcrete(
+          jobData.standardizedAddress, jobData.displayAddress, reportData
+        );
+        if (concreteResult && concreteResult.url) {
+          sections.push({ label: 'Concrete & Asphalt Repair History', url: concreteResult.url });
+          console.log('Concrete section added directly from WebAppTrigger');
+        }
+      } catch (concreteErr) {
+        console.error('Error generating concrete section: ' + concreteErr.toString());
+      }
+    }
+
     sendPropertyReportEmail(jobData.recipientEmail, jobData.displayAddress, sections);
 
     // Notify manager if a board member requested a report for another address

@@ -109,10 +109,13 @@ function generateSectionConcrete(address, displayAddress, data) {
   }
 }
 
+// Hardcoded so this file works independently of any cached Code.js version
+var CONCRETE_SHEET_ID = '1lW1CwzKp0uQuBce2MozmZtuPQV3Gp6mkTiGjR8KM2Bs';
+
 function loadConcreteRecords(address) {
   try {
     var targetStd = HOALibrary.standardizeHOAAddress(address);
-    var ss = SpreadsheetApp.openById(CONFIG.concreteSheetId);
+    var ss = SpreadsheetApp.openById(CONCRETE_SHEET_ID);
     var sheet = ss.getSheetByName('Scheduled Work');
     if (!sheet) return [];
 
