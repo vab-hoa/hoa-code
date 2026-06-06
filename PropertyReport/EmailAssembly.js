@@ -16,6 +16,7 @@ function generateAllSections(address, displayAddress, data) {
 
     try {
       var result = null;
+      console.log('Starting section: ' + sectionConfig.type);
       if (sectionConfig.type === 'hoaAccount') {
         result = generateSectionHOAAccount(address, displayAddress, data);
       } else if (sectionConfig.type === 'propertyActivity') {

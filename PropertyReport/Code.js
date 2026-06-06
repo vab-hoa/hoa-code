@@ -240,7 +240,7 @@ function gatherReportData(email, standardizedAddress, displayAddress, originalAd
   try {
     console.log('Fetching concrete data...');
     data.concrete = getConcreteData(standardizedAddress);
-    console.log('Concrete: ' + (data.concrete ? data.concrete.unitRecords.length + ' unit, ' + data.concrete.commonRecords.length + ' common' : 'none'));
+    console.log('Concrete: ' + (data.concrete ? data.concrete.unitRecords.length + ' unit records' : 'none'));
   } catch (error) {
     console.error('Error getting concrete data: ' + error.toString());
     data.concrete = null;
