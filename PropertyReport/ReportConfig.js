@@ -39,7 +39,10 @@ const REPORT_CONFIG = {
       label: 'Window Well Installations',
       active: true
     },
-    // Future sections (set active: true when ready):
-    // { type: 'concrete', label: '2026 Concrete Evaluation', active: false },
+    {
+      type: 'concrete',
+      label: 'Concrete & Asphalt Repair History',
+      active: true
+    },
   ]
 };

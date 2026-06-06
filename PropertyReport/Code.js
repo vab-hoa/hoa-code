@@ -28,8 +28,11 @@ const CONFIG = {
   woodTrimSheetId: '1Eu0y6O8Uco6VZ1mYcB2ehDXwE_EV_NJHV_M5Ji6Mts0',  // JPEG converted 2026-02-23
   keystoneCacheSheetId: '1TBC1B2V_yzZaost6r7IGWWqiEebEcQwMp5DknahwYuQ',
   
-  // Window Wells installation sheet (Board Documents/Project/2026/Window Wells)
+  // Window Wells installation sheet (Board Documents/Projects/Active/Window Wells)
   windowWellsSheetId: '1jShPXcgTiErKDQzZPlKfg_ByzS9b1AlrZcfCVoYtnjA',
+
+  // Concrete repair history (Board Documents/Projects/Active/Concrete-Asphalt)
+  concreteSheetId: '1lW1CwzKp0uQuBce2MozmZtuPQV3Gp6mkTiGjR8KM2Bs',
 
   // Gutter Pictures folder (on VaB Board Documents shared drive, under Gutters/)
   gutterPicturesFolderId: '1dWjvxclLYYeP8yP8fIyIySVrnoa5psrs',
@@ -161,6 +164,7 @@ function gatherReportData(email, standardizedAddress, displayAddress, originalAd
     gutters: null,
     woodTrim: null,
     windowWells: null,
+    concrete: null,
     keystone: null,
     gutterFolderImages: null,
     woodTrimFolderImages: null
@@ -230,6 +234,16 @@ function gatherReportData(email, standardizedAddress, displayAddress, originalAd
   } catch (error) {
     console.error('Error getting window wells data: ' + error.toString());
     data.windowWells = null;
+  }
+
+  // Get Concrete repair history (unit-level + common areas)
+  try {
+    console.log('Fetching concrete data...');
+    data.concrete = getConcreteData(standardizedAddress);
+    console.log('Concrete: ' + (data.concrete ? data.concrete.unitRecords.length + ' unit, ' + data.concrete.commonRecords.length + ' common' : 'none'));
+  } catch (error) {
+    console.error('Error getting concrete data: ' + error.toString());
+    data.concrete = null;
   }
 
   // Get Keystone data (using standardized address)
@@ -315,6 +329,87 @@ function getWindowWellsData(address) {
   }
 
   return results.length > 0 ? results : null;
+}
+
+/**
+ * Get concrete repair history for a unit.
+ * Reads "Scheduled Work" tab (unit-specific) and "Common Areas" tab (everyone).
+ * Returns {unitRecords, commonRecords} or null.
+ */
+function getConcreteData(address) {
+  var ss = SpreadsheetApp.openById(CONFIG.concreteSheetId);
+  var targetStd = HOALibrary.standardizeHOAAddress(address);
+
+  function colIdx(headers, name) {
+    var n = name.toLowerCase();
+    for (var i = 0; i < headers.length; i++) {
+      if (headers[i].toString().toLowerCase() === n) return i;
+    }
+    return -1;
+  }
+
+  function rowToObj(row, headers, cols) {
+    var obj = {};
+    for (var k in cols) {
+      obj[k] = cols[k] !== -1 ? String(row[cols[k]] || '').trim() : '';
+    }
+    return obj;
+  }
+
+  // --- Scheduled Work tab (unit-specific) ---
+  var unitRecords = [];
+  var swSheet = ss.getSheetByName('Scheduled Work');
+  if (swSheet) {
+    var swData = swSheet.getDataRange().getValues();
+    if (swData.length > 1) {
+      var h = swData[0];
+      var cols = {
+        year:     colIdx(h, 'year'),
+        location: colIdx(h, 'location'),
+        work:     colIdx(h, 'work'),
+        status:   colIdx(h, 'status'),
+        estCost:  colIdx(h, 'est cost'),
+        severity: colIdx(h, 'severity'),
+        source:   colIdx(h, 'source'),
+        address:  colIdx(h, 'address')
+      };
+      for (var i = 1; i < swData.length; i++) {
+        var row = swData[i];
+        if (!row[cols.address]) continue;
+        var rowStd = HOALibrary.standardizeHOAAddress(String(row[cols.address]));
+        if (rowStd === targetStd) {
+          unitRecords.push(rowToObj(row, h, cols));
+        }
+      }
+    }
+  }
+
+  // --- Common Areas tab ---
+  var commonRecords = [];
+  var caSheet = ss.getSheetByName('Common Areas');
+  if (caSheet) {
+    var caData = caSheet.getDataRange().getValues();
+    if (caData.length > 1) {
+      var ch = caData[0];
+      var cCols = {
+        year:     colIdx(ch, 'year'),
+        location: colIdx(ch, 'location'),
+        work:     colIdx(ch, 'work'),
+        status:   colIdx(ch, 'status'),
+        estCost:  colIdx(ch, 'est cost'),
+        severity: colIdx(ch, 'severity'),
+        source:   colIdx(ch, 'source')
+      };
+      for (var j = 1; j < caData.length; j++) {
+        var crow = caData[j];
+        if (!crow[cCols.year] && !crow[cCols.work]) continue;
+        commonRecords.push(rowToObj(crow, ch, cCols));
+      }
+    }
+  }
+
+  if (unitRecords.length === 0 && commonRecords.length === 0) return null;
+  return { unitRecords: unitRecords, commonRecords: commonRecords };
 }
 
 /**
