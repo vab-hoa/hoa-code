@@ -60,7 +60,10 @@ Only these exact scopes work with impersonation (no readonly variants):
 
 ## Key Spreadsheets
 - Keystone Cache: `1TBC1B2V_yzZaost6r7IGWWqiEebEcQwMp5DknahwYuQ`
-- Gutters/Wood Trim: IDs in PropertyReport CONFIG (see Code.js)
+- Gutters: `10UiY9SiZLIAhyV85vBGQuHqeDxwNSu6NQEzlXfwoz_A` (in PropertyReport `CONFIG.guttersSheetId`)
+- Wood Trim (current, JPEG photos): `1Eu0y6O8Uco6VZ1mYcB2ehDXwE_EV_NJHV_M5Ji6Mts0` — this is what the property report uses (`CONFIG.woodTrimSheetId`)
+- Wood Trim (original, HEIC photos): `1K9OlpqGkrYzXGXjd2fssPmvPuCDE2YAqCNuXyu8JmoE` — legacy source sheet; iPhone photos in HEIF/HEIC format that Google Docs cannot render. `HeifConverter.js` reads from this sheet, converts photos to JPEG, and writes results to the current sheet above. Do not use for reporting.
+- Window Wells: `1jShPXcgTiErKDQzZPlKfg_ByzS9b1AlrZcfCVoYtnjA` (in PropertyReport `CONFIG.windowWellsSheetId`)
 
 ## Key Drive Folders
 - Code backup: `1VH1UQdEQYDY3cSXVEjIhWxq7r6x3wmvm`

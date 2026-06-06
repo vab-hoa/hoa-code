@@ -131,9 +131,6 @@ function getKeystoneViolations(address) {
       return [];
     }
 
-    // For violations, match at building level (violations apply to entire building)
-    var searchBuilding = getBuildingAddress(searchAddress);
-
     // Open the cache spreadsheet
     var ss = SpreadsheetApp.openById(KEYSTONE_CACHE_SHEET_ID);
     var sheet = ss.getSheetByName('Violations');
@@ -174,10 +171,10 @@ function getKeystoneViolations(address) {
         continue;
       }
 
-      var rowBuilding = getBuildingAddress(row[addressCol]);
+      var rowAddress = standardizeHOAAddress(row[addressCol]);
 
-      // Match on building address
-      if (rowBuilding === searchBuilding) {
+      // Match on exact unit address
+      if (rowAddress === searchAddress) {
         violations.push({
           date: dateCol !== -1 ? String(row[dateCol] || '') : '',
           description: descCol !== -1 ? String(row[descCol] || '') : '',
@@ -333,9 +330,6 @@ function getKeystoneArchReviews(address, status) {
       return [];
     }
 
-    // For arch reviews, match at building level
-    var searchBuilding = getBuildingAddress(searchAddress);
-
     // Open the cache spreadsheet
     var ss = SpreadsheetApp.openById(KEYSTONE_CACHE_SHEET_ID);
     var sheet = ss.getSheetByName('ArchReviews');
@@ -377,10 +371,10 @@ function getKeystoneArchReviews(address, status) {
         continue;
       }
 
-      var rowBuilding = getBuildingAddress(row[addressCol]);
+      var rowAddress = standardizeHOAAddress(row[addressCol]);
 
-      // Match on building address
-      if (rowBuilding === searchBuilding) {
+      // Match on exact unit address
+      if (rowAddress === searchAddress) {
         var reviewStatus = statusCol !== -1 ? String(row[statusCol] || '') : '';
 
         // Apply status filter if provided

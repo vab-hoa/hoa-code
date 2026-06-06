@@ -414,13 +414,19 @@ class KeystoneScraperSelenium:
             self.driver.get(violations_url)
             time.sleep(3)
 
+            # Save page source and screenshot for column-mapping inspection
+            with open('/tmp/keystone_violations_source.html', 'w', encoding='utf-8') as f:
+                f.write(self.driver.page_source)
+            self.driver.save_screenshot('/tmp/keystone_violations_loaded.png')
+            logger.info(f"Violations page source saved to /tmp/keystone_violations_source.html")
+
             violations = []
 
             # Try to find the violations table
             try:
                 rows = self.driver.find_elements(By.CSS_SELECTOR, "table tbody tr")
 
-                for row in rows:
+                for row_idx, row in enumerate(rows):
                     try:
                         cells = row.find_elements(By.CSS_SELECTOR, "td")
 
@@ -433,16 +439,36 @@ class KeystoneScraperSelenium:
                         if 'no data' in row_text or not cells[0].text.strip():
                             continue
 
-                        # Columns: Date, Description, Status
+                        # Log all cell contents for first few rows so we can confirm
+                        # date/status column indices from tonight's log
+                        if row_idx < 5:
+                            cell_texts = [f"[{i}]={repr(c.text.strip()[:40])}" for i, c in enumerate(cells)]
+                            logger.info(f"Violation row {row_idx} ({len(cells)} cells): {', '.join(cell_texts)}")
+
+                        # Known column layout (confirmed by portal inspection):
+                        #   [0] Account
+                        #   [1] Homeowner (name)
+                        #   [2] Address  e.g. "13685 Stone Circle #101"
+                        #   [3] Violation Detail (description text)
+                        #   [4] Details button (popup) — not a text field, skip
+                        if len(cells) < 4:
+                            continue
+
+                        raw_address = cells[2].text.strip()
+                        standardized_addr, _ = self._parse_work_location(raw_address) if raw_address else (None, None)
+                        if not standardized_addr:
+                            standardized_addr = raw_address
+
                         violation = {
-                            'address': '',  # Address not shown in violations table
-                            'date': cells[0].text.strip(),
-                            'description': cells[1].text.strip() if len(cells) > 1 else '',
-                            'status': cells[2].text.strip() if len(cells) > 2 else ''
+                            'address': standardized_addr,
+                            'date': '',
+                            'description': cells[3].text.strip(),
+                            'status': ''
                         }
 
                         # Only add if we have at least a description
                         if violation['description']:
+                            logger.info(f"Violation: addr='{violation['address']}' date='{violation['date']}' desc='{violation['description'][:40]}' status='{violation['status']}'")
                             violations.append(violation)
 
                     except Exception as e:
