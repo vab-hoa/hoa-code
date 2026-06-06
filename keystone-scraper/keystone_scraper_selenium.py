@@ -408,78 +408,105 @@ class KeystoneScraperSelenium:
         """
         logger.info("Scraping Violations...")
         try:
-            # Navigate directly to violations URL
-            violations_url = f"{KEYSTONE_URL}/p9060/violations/"
+            # Use board-level violations review (all units), not homeowner view (/p9060/violations/)
+            violations_url = f"{KEYSTONE_URL}/p9060/violations-review/"
             logger.info(f"Navigating to {violations_url}")
             self.driver.get(violations_url)
-            time.sleep(3)
+            time.sleep(4)
 
-            # Save page source and screenshot for column-mapping inspection
             with open('/tmp/keystone_violations_source.html', 'w', encoding='utf-8') as f:
                 f.write(self.driver.page_source)
             self.driver.save_screenshot('/tmp/keystone_violations_loaded.png')
-            logger.info(f"Violations page source saved to /tmp/keystone_violations_source.html")
+            logger.info("Violations page source saved to /tmp/keystone_violations_source.html")
 
             violations = []
 
-            # Try to find the violations table
+            # Find the DevExpress grid — log its ID from the page source if unknown
             try:
-                rows = self.driver.find_elements(By.CSS_SELECTOR, "table tbody tr")
-
-                for row_idx, row in enumerate(rows):
-                    try:
-                        cells = row.find_elements(By.CSS_SELECTOR, "td")
-
-                        # Skip if not enough cells or is a "No data" message
-                        if len(cells) < 3:
-                            continue
-
-                        # Check if it's a "no data" row
-                        row_text = row.text.strip().lower()
-                        if 'no data' in row_text or not cells[0].text.strip():
-                            continue
-
-                        # Log all cell contents for first few rows so we can confirm
-                        # date/status column indices from tonight's log
-                        if row_idx < 5:
-                            cell_texts = [f"[{i}]={repr(c.text.strip()[:40])}" for i, c in enumerate(cells)]
-                            logger.info(f"Violation row {row_idx} ({len(cells)} cells): {', '.join(cell_texts)}")
-
-                        # Known column layout (confirmed by portal inspection):
-                        #   [0] Account
-                        #   [1] Homeowner (name)
-                        #   [2] Address  e.g. "13685 Stone Circle #101"
-                        #   [3] Violation Detail (description text)
-                        #   [4] Details button (popup) — not a text field, skip
-                        if len(cells) < 4:
-                            continue
-
-                        raw_address = cells[2].text.strip()
-                        standardized_addr, _ = self._parse_work_location(raw_address) if raw_address else (None, None)
-                        if not standardized_addr:
-                            standardized_addr = raw_address
-
-                        violation = {
-                            'address': standardized_addr,
-                            'date': '',
-                            'description': cells[3].text.strip(),
-                            'status': ''
-                        }
-
-                        # Only add if we have at least a description
-                        if violation['description']:
-                            logger.info(f"Violation: addr='{violation['address']}' date='{violation['date']}' desc='{violation['description'][:40]}' status='{violation['status']}'")
-                            violations.append(violation)
-
-                    except Exception as e:
-                        logger.debug(f"Error parsing violation row: {e}")
-                        continue
-
-                logger.info(f"Found {len(violations)} violations")
-
+                grid_elements = self.driver.find_elements(
+                    By.CSS_SELECTOR, "tr[id*='_DXDataRow']"
+                )
+                if grid_elements:
+                    sample_id = grid_elements[0].get_attribute('id')
+                    grid_prefix = sample_id.rsplit('_DXDataRow', 1)[0]
+                    logger.info(f"Detected violations grid prefix: '{grid_prefix}'")
+                else:
+                    logger.warning("No DXDataRow elements found on violations-review page")
+                    grid_prefix = None
             except Exception as e:
-                logger.warning(f"Could not find violations table: {e}")
-                self.driver.save_screenshot('/tmp/keystone_violations_notfound.png')
+                logger.warning(f"Could not detect grid prefix: {e}")
+                grid_prefix = None
+
+            if grid_prefix:
+                try:
+                    page_num = 0
+                    while True:
+                        page_num += 1
+                        data_rows = self.driver.find_elements(
+                            By.CSS_SELECTOR, f"tr[id^='{grid_prefix}_DXDataRow']"
+                        )
+                        logger.info(f"Found {len(data_rows)} violation rows on page {page_num}")
+
+                        if not data_rows:
+                            break
+
+                        for idx, row in enumerate(data_rows):
+                            try:
+                                cells = row.find_elements(By.CSS_SELECTOR, "td")
+
+                                # Log first few rows to confirm column layout
+                                if idx < 3:
+                                    cell_texts = [f"[{i}]={repr(c.text.strip()[:40])}" for i, c in enumerate(cells)]
+                                    logger.info(f"Violation row {idx} ({len(cells)} cells): {', '.join(cell_texts)}")
+
+                                # Known column layout (board violations-review):
+                                #   [0] Account
+                                #   [1] Homeowner (name)
+                                #   [2] Address  e.g. "13685 Stone Circle #101"
+                                #   [3] Violation Detail (description text)
+                                #   [4] Details button (popup) — skip
+                                if len(cells) < 4:
+                                    continue
+
+                                raw_address = cells[2].text.strip()
+                                standardized_addr, _ = self._parse_work_location(raw_address) if raw_address else (None, None)
+                                if not standardized_addr:
+                                    standardized_addr = raw_address
+
+                                violation = {
+                                    'address': standardized_addr,
+                                    'date': '',
+                                    'description': cells[3].text.strip(),
+                                    'status': ''
+                                }
+
+                                if violation['description']:
+                                    logger.info(f"Violation: addr='{violation['address']}' desc='{violation['description'][:40]}'")
+                                    violations.append(violation)
+
+                            except Exception as e:
+                                logger.debug(f"Error parsing violation row {idx}: {e}")
+                                continue
+
+                        # Advance to next page or stop
+                        try:
+                            pager = self.driver.find_element(By.ID, f"{grid_prefix}_DXPagerBottom")
+                            btn_elements = pager.find_elements(
+                                By.XPATH, ".//*[self::a or self::b][contains(@class,'dxp-button')]"
+                            )
+                            if not btn_elements or btn_elements[-1].tag_name.lower() == 'b':
+                                logger.info("Violations: last page reached")
+                                break
+                            self.driver.execute_script("arguments[0].click();", btn_elements[-1])
+                            time.sleep(3)
+                        except NoSuchElementException:
+                            break
+
+                except Exception as e:
+                    logger.warning(f"Could not scrape violations grid: {e}")
+                    self.driver.save_screenshot('/tmp/keystone_violations_notfound.png')
+
+            logger.info(f"Found {len(violations)} violations")
 
             return violations
 
