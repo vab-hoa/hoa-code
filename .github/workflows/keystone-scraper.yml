@@ -1,0 +1,41 @@
+name: Keystone Scraper
+
+on:
+  schedule:
+    # 3 AM MDT (9 AM UTC) — matches previous oregano cron schedule
+    - cron: '0 9 * * *'
+  workflow_dispatch:  # allow manual runs from GitHub Actions UI
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          cd keystone-scraper
+          pip install -r requirements.txt
+
+      - name: Write Google service account credentials
+        run: |
+          mkdir -p ~/.config/openclaw
+          echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}' > ~/.config/openclaw/google-service-account.json
+
+      - name: Run scraper
+        env:
+          KEYSTONE_USERNAME: ${{ secrets.KEYSTONE_USERNAME }}
+          KEYSTONE_PASSWORD: ${{ secrets.KEYSTONE_PASSWORD }}
+          USE_CHROME: 'true'
+          # Helps webdriver-manager avoid GitHub API rate limits
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd keystone-scraper
+          python keystone_scraper_selenium.py
+
