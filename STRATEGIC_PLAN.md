@@ -105,6 +105,30 @@ and GitHub org access — everything else can be regenerated from those.
 | Keystone portal login | Keystone Pacific HOA Portal | `keystone-scraper/.env` | Username/password for kppm.cincwebaxis.com. Used by scraper. |
 | GitHub CLI auth | (same as GitHub org) | `gh` CLI authenticated | `gh auth` handles this. |
 
+#### GitHub Organization Ownership Risk ⚠️ TODO
+
+The vab-hoa GitHub organization is currently owned solely by the `deebuck` personal
+account. This creates a succession risk:
+
+**What keeps working after Dee dies:**
+- GitHub Actions workflows keep running (the last_run.txt commit keeps the schedule active)
+- Apps Script deployments keep running indefinitely — no GitHub involvement needed
+- The code repository remains readable on GitHub
+
+**What breaks:**
+- Nobody can update GitHub Actions secrets (Keystone password, service account key)
+- If the Keystone scraper breaks due to portal changes, nobody can push a fix
+- If the deebuck account is ever compromised, the repo could be deleted
+
+**The fix (not yet done):**
+Add a second owner to the vab-hoa org that is tied to a role, not to Dee personally.
+Best option: create a GitHub account linked to `admin@villasboulders.org` (or a
+dedicated `it@villasboulders.org`), add it as org owner, and store its credentials
+in LastPass under HOA IT — not under Dee Buck personally. That account passes to
+whoever holds the IT Officer role.
+
+**- [ ] TODO: Create role-based GitHub account, add as vab-hoa org owner, store in LastPass**
+
 #### Succession Summary
 
 A successor needs **only the admin@ password and GitHub org access**.
