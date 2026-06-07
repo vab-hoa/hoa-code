@@ -54,7 +54,7 @@ function generateSectionConcrete(address, displayAddress, data) {
       table.setBorderColor('#dddddd');
 
       var hdr = table.appendTableRow();
-      ['Year', 'Location', 'Work', 'Notes', 'Severity Notes'].forEach(function(label) {
+      ['Year', 'Location', 'Work', 'Source', 'Severity Notes'].forEach(function(label) {
         var cell = hdr.appendTableCell(label);
         cell.setBackgroundColor('#1a3c5e');
         cell.getChild(0).asParagraph()
@@ -67,7 +67,7 @@ function generateSectionConcrete(address, displayAddress, data) {
         var rec = unitRecords[i];
         var dataRow = table.appendTableRow();
         var bg = (i % 2 === 0) ? '#ffffff' : '#f8f8f8';
-        [rec.year, rec.location, rec.work, rec.status, rec.severity].forEach(function(val) {
+        [rec.year, rec.location, rec.work, rec.source, rec.severity].forEach(function(val) {
           var cell = dataRow.appendTableCell(val || '');
           cell.setBackgroundColor(bg);
           cell.getChild(0).asParagraph()
@@ -135,7 +135,7 @@ function loadConcreteRecords(address) {
     var addrCol     = colIdx('address');
     var locCol      = colIdx('location');
     var workCol     = colIdx('work');
-    var statusCol   = colIdx('status');
+    var sourceCol   = colIdx('source');
     var severityCol = colIdx('severity');
 
     var results = [];
@@ -148,7 +148,7 @@ function loadConcreteRecords(address) {
           year:     String(row[yearCol]     || '').trim(),
           location: String(row[locCol]      || '').trim(),
           work:     String(row[workCol]     || '').trim(),
-          status:   String(row[statusCol]   || '').trim(),
+          source:   String(row[sourceCol]   || '').trim(),
           severity: String(row[severityCol] || '').trim()
         });
       }
