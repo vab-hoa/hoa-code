@@ -86,7 +86,7 @@ and GitHub org access — everything else can be regenerated from those.
 | What | LastPass Entry | Notes |
 |------|---------------|-------|
 | Google Workspace admin | admin@villasboulders.org | Master key to everything Google. Also logs into Google Cloud Console (console.cloud.google.com). |
-| GitHub org | vab-hoa org, owner: deebuck | Successor must be added as org owner. Code repository. |
+| GitHub org | vab-hoa org — two owners: `vab-it-officer` (admin@villasboulders.org, role-based succession account) and `deebuck` (Dee personally) | Role-based account is the succession key. Code repository. |
 
 #### Google OAuth Clients & Service Account
 
@@ -105,29 +105,16 @@ and GitHub org access — everything else can be regenerated from those.
 | Keystone portal login | Keystone Pacific HOA Portal | `keystone-scraper/.env` | Username/password for kppm.cincwebaxis.com. Used by scraper. |
 | GitHub CLI auth | (same as GitHub org) | `gh` CLI authenticated | `gh auth` handles this. |
 
-#### GitHub Organization Ownership Risk ⚠️ TODO
+#### GitHub Organization Ownership — RESOLVED Jun 2026
 
-The vab-hoa GitHub organization is currently owned solely by the `deebuck` personal
-account. This creates a succession risk:
+The vab-hoa GitHub organization has two owners:
 
-**What keeps working after Dee dies:**
-- GitHub Actions workflows keep running (the last_run.txt commit keeps the schedule active)
-- Apps Script deployments keep running indefinitely — no GitHub involvement needed
-- The code repository remains readable on GitHub
+- **`vab-it-officer`** — linked to `admin@villasboulders.org`. This is the role-based succession account. Whoever controls `admin@villasboulders.org` controls this account and has full org access. Credentials stored in LastPass under HOA IT.
+- **`deebuck`** — Dee's personal account. Not the succession path.
 
-**What breaks:**
-- Nobody can update GitHub Actions secrets (Keystone password, service account key)
-- If the Keystone scraper breaks due to portal changes, nobody can push a fix
-- If the deebuck account is ever compromised, the repo could be deleted
+A successor who has the `admin@villasboulders.org` password can log into GitHub as `vab-it-officer` and push code, update Actions secrets, and manage the org.
 
-**The fix (not yet done):**
-Add a second owner to the vab-hoa org that is tied to a role, not to Dee personally.
-Best option: create a GitHub account linked to `admin@villasboulders.org` (or a
-dedicated `it@villasboulders.org`), add it as org owner, and store its credentials
-in LastPass under HOA IT — not under Dee Buck personally. That account passes to
-whoever holds the IT Officer role.
-
-**- [ ] TODO: Create role-based GitHub account, add as vab-hoa org owner, store in LastPass**
+**- [x] DONE: Role-based GitHub account created (vab-it-officer), added as vab-hoa org owner — Jun 2026**
 
 #### Succession Summary
 
