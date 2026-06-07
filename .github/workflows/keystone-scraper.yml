@@ -41,6 +41,11 @@ jobs:
           cd keystone-scraper
           python keystone_scraper_selenium.py
 
+      - name: Rebuild Full Directory
+        run: |
+          cd keystone-scraper
+          python build_full_directory.py
+
       - name: Record successful run
         if: success()
         run: |
