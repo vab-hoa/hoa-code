@@ -13,7 +13,7 @@ authoritative.
 
 ## Why This System Exists
 
-The Villas at the Boulders is a ~139-homeowner HOA in Broomfield, CO.
+The Villas at the Boulders is a 124-homeowner HOA in Broomfield, CO.
 The HOA has already lost data once — in the 2024 transition from
 AdvanceHOA to Keystone Pacific, historical records were lost because they
 existed only in the management company's portal. That will happen again
@@ -332,7 +332,7 @@ Only these exact scopes work (no readonly variants):
 
 ## Things We're Not Doing (and Why)
 
-- **Firestore/database migration** — Google Sheets works fine for 139
+- **Firestore/database migration** — Google Sheets works fine for 124
   homeowners. No performance problem exists.
 - **CI/CD pipeline** — `clasp push` is fine for a one-person operation.
 - **Custom web portal** — AppSheet or Google Forms cover the need. Custom
