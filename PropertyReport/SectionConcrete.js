@@ -54,7 +54,7 @@ function generateSectionConcrete(address, displayAddress, data) {
       table.setBorderColor('#dddddd');
 
       var hdr = table.appendTableRow();
-      ['Year', 'Location', 'Work', 'Status', 'Severity'].forEach(function(label) {
+      ['Year', 'Location', 'Work', 'Notes', 'Severity Notes'].forEach(function(label) {
         var cell = hdr.appendTableCell(label);
         cell.setBackgroundColor('#1a3c5e');
         cell.getChild(0).asParagraph()
