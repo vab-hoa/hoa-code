@@ -1,7 +1,7 @@
 # HOA Automation — Strategic Plan
 
 **Owner:** Dee Buck, IT Officer, Villas at the Boulders HOA
-**Last Updated:** February 24, 2026
+**Last Updated:** June 7, 2026
 **Status:** LIVING DOCUMENT — revise as we go
 
 This replaces CURRENT_PLAN.md, REFACTORING_ROADMAP.md, and
@@ -44,9 +44,10 @@ These keep running even if Dee's home server dies or is shut down.
 
 | Component | What It Does | State |
 |-----------|-------------|-------|
-| **PropertyReport** (14 Apps Script files) | Homeowner requests a report → system generates Google Docs for gutters, wood trim, account info, property activity → emails links | Deployed, section-based. Untested since Feb 23 refactor. |
-| **HOALibrary** (10 Apps Script files, v5.0.0) | Shared library: address standardization, homeowner lookup, Keystone cache queries | Deployed, stable |
-| **LabelsToGroups** (1 Apps Script file) | Syncs Gmail contact labels → 14 Google Groups for streets and roles | Deployed, daily Apps Script trigger (set up Feb 24) |
+| **PropertyReport** (16 Apps Script files) | Homeowner requests report → generates Google Docs for 6 sections (HOA account, work orders/ARC, gutters, wood trim, window wells, concrete & asphalt) → emails links | Deployed and tested. Production deployment ID in CLAUDE.md. |
+| **HOALibrary** (Apps Script library) | Shared library: address standardization, homeowner lookup, Keystone cache queries | Deployed, stable |
+| **LabelsToGroups** (Apps Script) | Syncs Gmail contact labels → Google Groups for streets and roles | Deployed, daily Apps Script trigger |
+| **Keystone Scraper + Directory Builder** (Python/GitHub Actions) | Logs into Keystone portal nightly, caches profiles/violations/work orders/ARC to Google Sheets; rebuilds Directory and Full Directory tabs from Keystone + Google Contacts | Running nightly via GitHub Actions (moved from oregano June 2026). No local machine dependency. |
 
 ### Runs on Oregano (Single Point of Failure)
 
@@ -55,7 +56,9 @@ ran without them before and could again.
 
 | Component | What It Does | State |
 |-----------|-------------|-------|
-| **Keystone Scraper** (Python/Selenium) | Logs into Keystone portal, caches account numbers and violations to Google Sheets | Working. Cron job set up Feb 24 (3 AM daily, /etc/crontab). |
+| **Drive Link Monitor** (Python) | Checks all HOA website links nightly, emails admin@ on broken links | Working. Cron 3:30 AM daily. |
+| **Work Order Schedule** (Python) | Calendar-aware emailer; sends work order report to board/manager before meetings and check-ins | Working. Cron 7 AM daily. |
+| **Broadlands Doc Sync** (Python) | Monitors Broadlands-related Drive documents for changes | Working. Cron Monday 4:30 AM. |
 | **HEIF Converter** (Python) | Converts iPhone HEIC photos to JPEG in Google Drive | Working, run manually |
 | **Photos-to-Drive** (Python) | Syncs Google Photos albums to Drive folders | Working, run manually |
 | **exif-to-parcel** (Python, v1.0) | Matches GPS-tagged contractor photos to property addresses | Complete, run manually |
@@ -141,12 +144,13 @@ working — Dee has used it. It uses Selenium with Firefox
 browsers were never installed on oregano. Ignore it.)
 
 **Status:**
-- [x] Set up cron job — nightly 3 AM, /etc/crontab, runs as dee (Feb 24)
-- [x] Failure alerts — emails dee@wmbuck.net on error (Feb 24)
-- [ ] Verify cache spreadsheet is being populated (check after first
-  overnight run)
-- [ ] Update scraper to use Accounts Receivable Detail page (cleaner
-  data for account numbers) — not urgent, current scraper works
+- [x] Set up cron job — nightly 3 AM (Feb 24); moved to GitHub Actions (Jun 2026)
+- [x] Failure alerts — GitHub Actions emails on workflow failure
+- [x] Cache spreadsheet being populated — confirmed working
+- [x] Scraper uses Accounts Receivable Detail page — done
+- [x] Violations use board view (violations-review/) not homeowner view — fixed Jun 2026
+- [x] Violations and ARC reviews match by unit (not building) — fixed Jun 2026
+- [x] Directory/Full Directory rebuilt automatically nightly via GitHub Actions — done Jun 2026
 
 ### Priority 2: Verify What's Deployed Works
 
@@ -156,10 +160,10 @@ architecture, OAuth web app). It has not been tested end-to-end since.
 LabelsToGroups runs daily but nobody checks if it's working correctly.
 
 **Status:**
-- [ ] Test PropertyReport: submit form, verify docs generate, verify email
-- [ ] Test web app: OAuth sign-in, request report
-- [x] LabelsToGroups — daily Apps Script trigger set up (Feb 24)
-- [ ] Check what's in the Keystone cache spreadsheet right now
+- [x] PropertyReport tested end-to-end — working as of May/Jun 2026
+- [x] Web app OAuth sign-in working
+- [x] LabelsToGroups — daily Apps Script trigger, working
+- [x] Keystone cache spreadsheet populated nightly
 
 ### Priority 3: Reduce Dependence on Oregano
 
@@ -170,17 +174,18 @@ converter, photos-to-drive, exif-to-parcel) are used occasionally for
 specific projects.
 
 If oregano goes down:
-- PropertyReport keeps working (but Keystone data stops updating)
+- PropertyReport keeps working
 - LabelsToGroups keeps working
-- No new Keystone data gets cached
-- No rclone document sync
+- Keystone data keeps updating (GitHub Actions, no oregano dependency)
+- Directory and Full Directory tabs keep rebuilding nightly
+- Drive link monitor stops (non-critical)
+- Work order schedule emailer stops (non-critical — can email manually)
 - Code is safe on GitHub
 
 **Mitigations:**
-- [ ] Set up rclone sync so documents aren't only on oregano
-- [ ] Ensure code is committed and pushed regularly (GitHub)
-- [ ] Document what oregano does so someone could set it up on another
-  machine (or decide not to)
+- [x] Keystone scraper moved to GitHub Actions — Jun 2026
+- [x] Code committed and pushed to GitHub
+- [ ] Document oregano cron jobs so someone could set them up elsewhere if needed
 
 ### Priority 4: Document for a Successor
 
@@ -206,14 +211,10 @@ exist yet is the human-readable operations manual.
 
 These are real HOA needs but they don't have to happen right now:
 
-- **Work orders / ARC request forms** — RESOLVED 2026-04-26. Using JotForm
-  with simple text-box signatures (legally binding, no e-signature complexity).
-  Already mobile-friendly. AppSheet approach was abandoned — wrong tool.
-- **Additional report sections** — concrete, window wells. The
-  section-based architecture makes this straightforward (add a config
-  entry + SectionXYZ.js file).
-- **Better monitoring** — email alerts for errors, a simple dashboard
-  showing system health.
+- **Work orders / ARC request forms** — RESOLVED 2026-04-26. Using JotForm with simple text-box signatures.
+- **Additional report sections** — DONE. Window wells (May 2026), concrete & asphalt (Jun 2026) added.
+- **Better monitoring** — email alerts for errors. GitHub Actions handles scraper failures. Drive link monitor handles website links. Further dashboard: not prioritized.
+- **Overarching automation guide** — DONE Jun 2026. "Villas at the Boulders HOA — Automation System Guide" in root of Board Documents.
 
 ---
 
@@ -289,17 +290,19 @@ Only these exact scopes work (no readonly variants):
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
-| Feb 24 | Keystone scraper cron on oregano; cloud cron deferred | Pragmatic now, move to cloud when needed for other things |
+| Jun 2026 | Keystone scraper moved to GitHub Actions | Succession: doesn't require oregano to be running |
+| Jun 2026 | clasp push + clasp deploy both required for PropertyReport | Production deployment is pinned to a version; push alone doesn't update it |
+| Jun 2026 | Violations and ARC matched by unit not building | Bug fix: building-level match would show one unit's violations to neighbors |
+| Jun 2026 | Overarching automation guide in Board Documents | Succession: single plain-English entry point for the whole system |
+| Apr 26 | JotForm for work orders/ARC forms, not AppSheet | JotForm already mobile-friendly, text-box signatures sufficient, no custom code needed |
+| Feb 24 | Keystone scraper cron on oregano (since superseded) | Pragmatic at the time |
 | Feb 24 | LabelsToGroups via Apps Script trigger, not cron | Runs in Google's cloud, no oregano dependency |
 | Feb 24 | GitHub (vab-hoa org) for code | Org survives individual. Succession. |
 | Feb 24 | Credentials in .env files, not code | Were in git history — scrubbed with filter-repo |
 | Feb 23 | Section-based PropertyReport | Add sections via config, not monolith surgery |
 | Feb 23 | OAuth web app (server-side redirect) | Client-side auth impossible on googleusercontent.com |
 | Feb 23 | Google Doc links, not PDF attachments | Simpler, handles photos, no size limits |
-| Apr 26 | JotForm for work orders/ARC forms, not AppSheet | JotForm already mobile-friendly, text-box signatures sufficient, no custom code needed |
-| Feb 16 | Finish current system before AppSheet | Deliver value now, modernize later |
 | Feb 15 | HOALibrary as shared Apps Script library | Reuse address standardization across projects |
-| Feb 15 | Jane handles infrastructure, Claude Code handles code | Right tool for each job |
 
 ---
 
@@ -312,9 +315,7 @@ Only these exact scopes work (no readonly variants):
   code is more to maintain.
 - **Full PropertyReport rewrite** — the section-based refactor already
   happened. It works.
-- **Moving Python tools off oregano** — they're useful but not critical.
-  The HOA ran without them before. If oregano dies, the cloud-based
-  systems keep working.
+- **Moving ALL Python tools off oregano** — the Keystone scraper and directory builder moved to GitHub Actions (Jun 2026). Remaining oregano cron jobs (link monitor, work order schedule, Broadlands sync) are non-critical. The HOA ran without them before.
 
 ---
 
