@@ -16,8 +16,10 @@ All Google Apps Script projects deploy to the villasboulders.org Google Workspac
 - **HOALibrary/** - Shared library for address standardization, homeowner lookups. Script ID: `1vxq3cRUqQMvwdmmq_W-FsMGwQqECOpucfIPM5aGDKB_FDyrAZcLOZFzF`
 - **LabelsToGroups/** - Gmail labels to Google Groups sync
 
-### Python Tools (run locally on this machine)
-- **keystone-scraper/** - Selenium scraper for Keystone HOA management portal (account numbers, violations). Writes to Google Sheets.
+### GitHub Actions (cloud-hosted, runs without oregano)
+- **keystone-scraper/** - Selenium scraper for Keystone HOA management portal (violations, work orders, profiles). Runs nightly at 3 AM MDT via `.github/workflows/keystone-scraper.yml`. Writes to Keystone Cache spreadsheet. Credentials stored as GitHub Actions secrets (KEYSTONE_USERNAME, KEYSTONE_PASSWORD, GOOGLE_SERVICE_ACCOUNT_JSON).
+
+### Python Tools (run locally on oregano)
 - **heif-converter/** - Converts HEIF/HEIC photos (iPhone) to JPEG in Google Drive. Also updates spreadsheets with photo references.
 - **photos-to-drive/** - Syncs Google Photos to Google Drive folders
 - **exif-to-parcel/** - GPS-based photo-to-parcel matcher (completed v1.0)
@@ -57,6 +59,10 @@ Only these exact scopes work with impersonation (no readonly variants):
 ### Clasp
 - Auth token: `~/.clasprc.json`
 - Re-login: `clasp login`
+- **IMPORTANT:** `clasp push` alone is not enough for production. The web app runs against a pinned deployment version. After pushing, also run:
+  ```
+  clasp deploy --deploymentId AKfycbx62bPhhAZFwdpQclnb8EuZF92EK5ksXxVosc7xvW6GgbFs3MfJX8x4VKLqP3Csf9JV --description "description"
+  ```
 
 ## Key Spreadsheets
 - Keystone Cache: `1TBC1B2V_yzZaost6r7IGWWqiEebEcQwMp5DknahwYuQ`
