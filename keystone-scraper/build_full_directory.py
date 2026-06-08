@@ -16,7 +16,7 @@ import sys
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
-SA_FILE  = '/home/dee/.config/openclaw/google-service-account.json'
+SA_FILE  = os.path.expanduser('~/.config/openclaw/google-service-account.json')
 SCOPES   = [
     'https://www.googleapis.com/auth/spreadsheets',
     'https://www.googleapis.com/auth/contacts.readonly',
