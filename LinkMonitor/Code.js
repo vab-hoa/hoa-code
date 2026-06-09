@@ -20,8 +20,15 @@ const BASE_URL    = 'https://www.villasboulders.org';
 const ALERT_EMAIL = 'admin@villasboulders.org';
 
 const SKIP_PREFIXES = ['mailto:', 'tel:', 'javascript:', 'data:'];
-const DRIVE_FILE_RE = /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/;
-const DRIVE_OPEN_RE = /drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/;
+// Patterns that extract a Drive/Docs file or folder ID from a Google URL.
+// All of these require Google auth to access, so they must be checked via
+// the Drive API rather than HTTP.
+const GOOGLE_ID_PATTERNS = [
+  /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/,
+  /drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/,
+  /docs\.google\.com\/(?:document|spreadsheets|forms|presentation)\/d\/([a-zA-Z0-9_-]+)/,
+  /drive\.google\.com\/(?:drive\/)?(?:u\/\d+\/)?folders\/([a-zA-Z0-9_-]+)/,
+];
 const FETCH_OPTS    = {
   muteHttpExceptions: true,
   followRedirects: true,
@@ -163,10 +170,11 @@ function isBroken(status) {
 }
 
 function extractDriveId(url) {
-  let m = url.match(DRIVE_FILE_RE);
-  if (m) return m[1];
-  m = url.match(DRIVE_OPEN_RE);
-  return m ? m[1] : null;
+  for (var i = 0; i < GOOGLE_ID_PATTERNS.length; i++) {
+    var m = url.match(GOOGLE_ID_PATTERNS[i]);
+    if (m) return m[1];
+  }
+  return null;
 }
 
 
