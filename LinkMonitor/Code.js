@@ -150,12 +150,7 @@ function checkUrl(url) {
   }
 
   try {
-    let resp = UrlFetchApp.fetch(url, Object.assign({ method: 'head' }, FETCH_OPTS));
-    // Some servers reject HEAD — retry with GET
-    if (resp.getResponseCode() === 405) {
-      resp = UrlFetchApp.fetch(url, FETCH_OPTS);
-    }
-    return resp.getResponseCode();
+    return UrlFetchApp.fetch(url, FETCH_OPTS).getResponseCode();
   } catch (e) {
     return String(e);
   }
