@@ -257,3 +257,25 @@ function clearKnownBroken() {
   PropertiesService.getScriptProperties().deleteProperty('knownBroken');
   Logger.log('Suppression list cleared. Next run will alert on all broken links.');
 }
+
+// Debug: log sample broken/ok links without emailing or changing state
+function debugLinks() {
+  Logger.log('Crawling ' + BASE_URL + '...');
+  const { linkMap, pagesCrawled } = crawlSite();
+  Logger.log('Pages crawled: ' + pagesCrawled + ', unique links: ' + Object.keys(linkMap).length);
+
+  const broken = [];
+  const ok     = [];
+  for (const url in linkMap) {
+    const status = checkUrl(url);
+    if (isBroken(status)) broken.push({ url: url, status: status });
+    else ok.push(url);
+  }
+
+  Logger.log('BROKEN (' + broken.length + ') — first 30:');
+  broken.slice(0, 30).forEach(function(b) {
+    Logger.log('  [' + b.status + '] ' + b.url);
+  });
+  Logger.log('OK (' + ok.length + ') — first 10:');
+  ok.slice(0, 10).forEach(function(u) { Logger.log('  ' + u); });
+}
