@@ -1,7 +1,7 @@
 /**
  * LinkMonitor — Nightly link checker for villasboulders.org
  *
- * Crawls the site, validates all links (Drive links via DriveApp, others via HTTP),
+ * Crawls the site, validates all links (Drive links via Drive Advanced Service, others via HTTP),
  * and emails admin@villasboulders.org when NEW broken links are found.
  *
  * State: known-broken URLs stored in Script Properties so they are suppressed
@@ -136,8 +136,8 @@ function checkUrl(url) {
   const driveId = extractDriveId(url);
   if (driveId) {
     try {
-      const file = DriveApp.getFileById(driveId);
-      return file.isTrashed() ? 'trashed' : 200;
+      const file = Drive.Files.get(driveId, { supportsAllDrives: true, fields: 'id,trashed' });
+      return file.trashed ? 'trashed' : 200;
     } catch (e) {
       return 404;
     }
@@ -198,6 +198,7 @@ function makeAbsolute(url, base) {
 
 function sendAlert(newBroken, totalBroken, pagesCrawled, linksChecked) {
   const subject = 'villasboulders.org: ' + newBroken.length + ' NEW broken link(s) found';
+  const MAX_LISTED = 25;
 
   const lines = [
     'Link monitor report for villasboulders.org',
@@ -209,7 +210,8 @@ function sendAlert(newBroken, totalBroken, pagesCrawled, linksChecked) {
     '',
   ];
 
-  newBroken.forEach(function(b) {
+  const listed = newBroken.slice(0, MAX_LISTED);
+  listed.forEach(function(b) {
     lines.push('  ' + b.url);
     lines.push('    Status: ' + b.status);
     b.pages.forEach(function(page) {
@@ -217,6 +219,11 @@ function sendAlert(newBroken, totalBroken, pagesCrawled, linksChecked) {
     });
     lines.push('');
   });
+
+  if (newBroken.length > MAX_LISTED) {
+    lines.push('  ... and ' + (newBroken.length - MAX_LISTED) + ' more (check Apps Script logs for full list).');
+    lines.push('');
+  }
 
   lines.push('Previously known broken links are suppressed. To reset the suppression');
   lines.push('list, run clearKnownBroken() in the Apps Script editor for this project.');
