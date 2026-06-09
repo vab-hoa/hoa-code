@@ -116,10 +116,16 @@ function crawlSite() {
 }
 
 function extractLinks(html, pageUrl) {
+  // Strip script and style blocks first — their content often contains
+  // href/src string literals that aren't real page links.
+  const stripped = html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '');
+
   const links = [];
   const re    = /(?:href|src)=["']([^"'#][^"']*)["']/gi;
   let match;
-  while ((match = re.exec(html)) !== null) {
+  while ((match = re.exec(stripped)) !== null) {
     const raw = match[1].trim();
     if (!raw) continue;
     if (SKIP_PREFIXES.some(function(p) { return raw.indexOf(p) === 0; })) continue;
