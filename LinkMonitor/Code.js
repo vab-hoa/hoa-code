@@ -53,7 +53,7 @@ function checkLinks() {
   const broken = [];
   for (const url in linkMap) {
     const status = checkUrl(url);
-    if (isBroken(status)) {
+    if (isBroken(status, url)) {
       broken.push({ url: url, status: status, pages: linkMap[url] });
     }
   }
@@ -179,9 +179,12 @@ function checkUrl(url) {
   }
 }
 
-function isBroken(status) {
+function isBroken(status, url) {
   if (status === 'trashed') return true;
   if (status === 429) return false;  // rate limited, not broken
+  // Google services return 401 for legitimate content that requires sign-in
+  // (e.g. Forms with file upload fields). Not a broken link.
+  if (status === 401 && url && url.indexOf('.google.com') !== -1) return false;
   if (typeof status === 'number') return status >= 400;
   return true;  // exception string
 }
@@ -294,7 +297,7 @@ function debugLinks() {
   const ok     = [];
   for (const url in linkMap) {
     const status = checkUrl(url);
-    if (isBroken(status)) broken.push({ url: url, status: status });
+    if (isBroken(status, url)) broken.push({ url: url, status: status });
     else ok.push(url);
   }
 
