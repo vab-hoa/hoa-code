@@ -155,14 +155,14 @@ def format_html(orders):
 
 
 def generate_pdf(html_body):
-    import subprocess, tempfile, os
+    import subprocess, tempfile, os, sys
     with tempfile.NamedTemporaryFile(suffix='.html', delete=False, mode='w') as f:
         f.write(html_body)
         html_file = f.name
     pdf_file = html_file.replace('.html', '.pdf')
     try:
         subprocess.run(
-            ['/usr/bin/python3', '-c',
+            [sys.executable, '-c',
              f'from weasyprint import HTML; HTML(filename="{html_file}").write_pdf("{pdf_file}")'],
             check=True
         )
