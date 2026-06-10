@@ -14,6 +14,7 @@ Calendar event name matching:
   Check-ins        : contain "Check-In"
 """
 
+import os
 import sys
 from datetime import date, timedelta, datetime, timezone
 from googleapiclient.discovery import build
@@ -24,7 +25,7 @@ from work_order_report import (
     generate_pdf, send_email
 )
 
-SA_FILE   = '/home/dee/.config/openclaw/google-service-account.json'
+SA_FILE   = os.path.expanduser('~/.config/openclaw/google-service-account.json')
 SCOPES    = [
     'https://www.googleapis.com/auth/spreadsheets',
     'https://www.googleapis.com/auth/gmail.send',
@@ -35,7 +36,7 @@ CAL_ID    = ('c_ef1cd4b77ba7d1b4549f254aa0c8aa12ce4c98847b73db8c11cd92c164245c81
 
 BOARD     = 'board@villasboulders.org'
 MANAGER   = 'manager@villasboulders.org'
-LOG_FILE  = '/home/dee/hoa-code/keystone-scraper/schedule.log'
+LOG_FILE  = os.path.join(os.path.dirname(__file__), 'schedule.log')
 
 MONTHLY_KEYWORDS  = ('worksession', 'quarterly', 'annual')
 CHECKIN_KEYWORD   = 'check-in'

@@ -39,9 +39,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.common.exceptions import NoSuchElementException
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.service import Service
+
+USE_CHROME = os.environ.get('USE_CHROME', '').lower() in ('1', 'true', 'yes')
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
@@ -108,14 +111,21 @@ def send_email(subject, body):
 # ── browser setup ─────────────────────────────────────────────────────────────
 
 def init_browser(headless):
-    options = FirefoxOptions()
-    if headless:
-        options.add_argument("--headless")
-    try:
-        service = Service(GeckoDriverManager().install())
-        driver = webdriver.Firefox(service=service, options=options)
-    except Exception:
-        driver = webdriver.Firefox(options=options)
+    if USE_CHROME:
+        options = ChromeOptions()
+        options.add_argument('--headless=new')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        driver = webdriver.Chrome(options=options)
+    else:
+        options = FirefoxOptions()
+        if headless:
+            options.add_argument("--headless")
+        try:
+            service = Service(GeckoDriverManager().install())
+            driver = webdriver.Firefox(service=service, options=options)
+        except Exception:
+            driver = webdriver.Firefox(options=options)
     driver.set_page_load_timeout(30)
     driver.implicitly_wait(5)
     return driver

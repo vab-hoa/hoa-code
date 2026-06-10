@@ -1,0 +1,34 @@
+name: Work Order Schedule
+
+on:
+  schedule:
+    # 7 AM MDT (13:00 UTC) — matches previous oregano cron schedule
+    - cron: '0 13 * * *'
+  workflow_dispatch:  # allow manual runs from GitHub Actions UI
+
+jobs:
+  schedule:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          cd keystone-scraper
+          pip install -r requirements.txt
+
+      - name: Write Google service account credentials
+        run: |
+          mkdir -p ~/.config/openclaw
+          echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}' > ~/.config/openclaw/google-service-account.json
+
+      - name: Run work order schedule
+        run: |
+          cd keystone-scraper
+          python work_order_schedule.py

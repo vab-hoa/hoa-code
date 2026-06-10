@@ -57,8 +57,8 @@ ran without them before and could again.
 
 | Component | What It Does | State |
 |-----------|-------------|-------|
-| **Work Order Schedule** (Python) | Calendar-aware emailer; sends work order report to board/manager before meetings and check-ins | Working. Cron 7 AM daily. |
-| **Broadlands Doc Sync** (Python) | Monitors Broadlands-related Drive documents for changes | Working. Cron Monday 4:30 AM. |
+| **Work Order Schedule** (Python) | Calendar-aware emailer; sends work order report to board/manager before meetings and check-ins | Running via GitHub Actions daily 7 AM MDT (moved from oregano Jun 2026). |
+| **Broadlands Doc Sync** (Python) | Monitors Broadlands-related Drive documents for changes | Running via GitHub Actions Monday 4:30 AM MDT (moved from oregano Jun 2026). |
 | **HEIF Converter** (Python) | Converts iPhone HEIC photos to JPEG in Google Drive | Working, run manually |
 | **Photos-to-Drive** (Python) | Syncs Google Photos albums to Drive folders | Working, run manually |
 | **exif-to-parcel** (Python, v1.0) | Matches GPS-tagged contractor photos to property addresses | Complete, run manually |
@@ -190,13 +190,15 @@ If oregano goes down:
 - Keystone data keeps updating (GitHub Actions, no oregano dependency)
 - Directory and Full Directory tabs keep rebuilding nightly
 - Drive link monitor keeps running (Apps Script, no oregano dependency)
-- Work order schedule emailer stops (non-critical — can email manually)
+- Work order schedule emailer keeps running (GitHub Actions, no oregano dependency)
+- Broadlands doc sync keeps running (GitHub Actions, no oregano dependency)
 - Code is safe on GitHub
 
 **Mitigations:**
 - [x] Keystone scraper moved to GitHub Actions — Jun 2026
+- [x] Work order schedule moved to GitHub Actions — Jun 2026
+- [x] Broadlands doc sync moved to GitHub Actions — Jun 2026
 - [x] Code committed and pushed to GitHub
-- [ ] Document oregano cron jobs so someone could set them up elsewhere if needed
 
 ### Priority 4: Document for a Successor
 
@@ -301,6 +303,7 @@ Only these exact scopes work (no readonly variants):
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
+| Jun 2026 | All scheduled HOA jobs moved to GitHub Actions | Succession: oregano has zero HOA automation dependencies |
 | Jun 2026 | Keystone scraper moved to GitHub Actions | Succession: doesn't require oregano to be running |
 | Jun 2026 | clasp push + clasp deploy both required for PropertyReport | Production deployment is pinned to a version; push alone doesn't update it |
 | Jun 2026 | Violations and ARC matched by unit not building | Bug fix: building-level match would show one unit's violations to neighbors |
@@ -326,7 +329,7 @@ Only these exact scopes work (no readonly variants):
   code is more to maintain.
 - **Full PropertyReport rewrite** — the section-based refactor already
   happened. It works.
-- **Moving ALL Python tools off oregano** — the Keystone scraper and directory builder moved to GitHub Actions (Jun 2026). Link monitor moved to Apps Script time trigger (Jun 2026). Remaining oregano cron jobs (work order schedule, Broadlands sync) are non-critical. The HOA ran without them before.
+- **Moving ALL Python tools off oregano** — DONE (Jun 2026). Keystone scraper + directory builder, work order schedule, and Broadlands doc sync all moved to GitHub Actions. Link monitor moved to Apps Script time trigger. Oregano has zero HOA automation dependencies. The only remaining oregano cron job is `daily_memory_sync.sh` (AI tooling, not HOA automation).
 
 ---
 

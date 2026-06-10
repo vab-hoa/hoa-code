@@ -1,0 +1,53 @@
+name: Broadlands Document Sync
+
+on:
+  schedule:
+    # 4:30 AM MDT Monday (10:30 UTC) — matches previous oregano cron schedule
+    - cron: '30 10 * * 1'
+  workflow_dispatch:  # allow manual runs from GitHub Actions UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed to commit updated broadlands_manifest.json
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install dependencies
+        run: |
+          cd keystone-scraper
+          pip install -r requirements.txt
+
+      - name: Write Google service account credentials
+        run: |
+          mkdir -p ~/.config/openclaw
+          echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}' > ~/.config/openclaw/google-service-account.json
+
+      - name: Run Broadlands document sync
+        env:
+          KEYSTONE_USERNAME: ${{ secrets.KEYSTONE_USERNAME }}
+          KEYSTONE_PASSWORD: ${{ secrets.KEYSTONE_PASSWORD }}
+          USE_CHROME: 'true'
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd keystone-scraper
+          python broadlands_docs.py
+
+      - name: Commit updated manifest
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add keystone-scraper/broadlands_manifest.json
+          git diff --staged --quiet || git commit -m "chore: broadlands manifest updated $(date -u '+%Y-%m-%d')"
+          git push || true

@@ -4,12 +4,13 @@ Work order status report — excludes Closed, groups by status.
 Usage: python3 work_order_report.py [--email]
 """
 
+import os
 import sys
 from datetime import date
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
 
-SA_FILE = '/home/dee/.config/openclaw/google-service-account.json'
+SA_FILE = os.path.expanduser('~/.config/openclaw/google-service-account.json')
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/gmail.send']
 SPREADSHEET_ID = '1TBC1B2V_yzZaost6r7IGWWqiEebEcQwMp5DknahwYuQ'
