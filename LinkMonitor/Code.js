@@ -267,7 +267,7 @@ function clearKnownBroken() {
   Logger.log('Suppression list cleared. Next run will alert on all broken links.');
 }
 
-// Debug: log sample broken/ok links without emailing or changing state
+// Debug: email all broken links for review (does not change suppression state)
 function debugLinks() {
   Logger.log('Crawling ' + BASE_URL + '...');
   const { linkMap, pagesCrawled } = crawlSite();
@@ -281,10 +281,23 @@ function debugLinks() {
     else ok.push(url);
   }
 
-  Logger.log('BROKEN (' + broken.length + ') — first 30:');
-  broken.slice(0, 30).forEach(function(b) {
-    Logger.log('  [' + b.status + '] ' + b.url);
+  Logger.log('Broken: ' + broken.length + ', OK: ' + ok.length);
+
+  const lines = [
+    'debugLinks() results — ' + pagesCrawled + ' pages, ' + Object.keys(linkMap).length + ' links',
+    'Broken: ' + broken.length + '   OK: ' + ok.length,
+    '',
+    'BROKEN LINKS:',
+    '',
+  ];
+  broken.forEach(function(b) {
+    lines.push('[' + b.status + '] ' + b.url);
+    lines.push('  found on: ' + (linkMap[b.url] || []).join(', '));
   });
-  Logger.log('OK (' + ok.length + ') — first 10:');
-  ok.slice(0, 10).forEach(function(u) { Logger.log('  ' + u); });
+  lines.push('');
+  lines.push('OK (first 20):');
+  ok.slice(0, 20).forEach(function(u) { lines.push('  ' + u); });
+
+  GmailApp.sendEmail(ALERT_EMAIL, 'LinkMonitor debug report', lines.join('\n'));
+  Logger.log('Debug report emailed to ' + ALERT_EMAIL);
 }
