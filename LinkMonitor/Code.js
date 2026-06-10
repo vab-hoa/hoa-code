@@ -20,13 +20,19 @@ const BASE_URL    = 'https://www.villasboulders.org';
 const ALERT_EMAIL = 'admin@villasboulders.org';
 
 const SKIP_PREFIXES = ['mailto:', 'tel:', 'javascript:', 'data:'];
+
+// URL prefixes that always false-positive (bot-blocked embeds/widgets, not user links)
+const SKIP_URL_PREFIXES = [
+  'https://www.google.com/calendar/embed',  // calendar embed widget; works in browser, 401 for bots
+];
 // Patterns that extract a Drive/Docs file or folder ID from a Google URL.
 // All of these require Google auth to access, so they must be checked via
 // the Drive API rather than HTTP.
 const GOOGLE_ID_PATTERNS = [
   /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/,
   /drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/,
-  /docs\.google\.com\/(?:document|spreadsheets|forms|presentation)\/d\/([a-zA-Z0-9_-]+)/,
+  /docs\.google\.com\/(?:document|spreadsheets|presentation)\/d\/([a-zA-Z0-9_-]+)/,
+  /docs\.google\.com\/forms\/d\/(?!e\/)([a-zA-Z0-9_-]+)/,  // forms edit URL (not published /d/e/ path)
   /drive\.google\.com\/(?:drive\/)?(?:u\/\d+\/)?folders\/([a-zA-Z0-9_-]+)/,
 ];
 const FETCH_OPTS    = {
@@ -123,22 +129,32 @@ function crawlSite() {
 }
 
 function extractLinks(html, pageUrl) {
-  // Strip script and style blocks first — their content often contains
-  // href/src string literals that aren't real page links.
   const stripped = html
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '');
 
   const links = [];
-  const re    = /(?:href|src)=["']([^"'#][^"']*)["']/gi;
-  let match;
-  while ((match = re.exec(stripped)) !== null) {
-    const raw = match[1].trim();
-    if (!raw) continue;
-    if (SKIP_PREFIXES.some(function(p) { return raw.indexOf(p) === 0; })) continue;
-    const abs = makeAbsolute(raw, pageUrl);
-    if (abs) links.push(abs);
-  }
+
+  // Only extract <a href> (navigation links) and <iframe src> (embedded content).
+  // Skipping <img src>, <link href>, <script src> eliminates Google Sites image
+  // and font CDN URLs that always 403/exception for bots but are fine in a browser.
+  const patterns = [
+    /<a\s[^>]*\shref=["']([^"'#][^"']*)["']/gi,
+    /<iframe\s[^>]*\ssrc=["']([^"'#][^"']*)["']/gi,
+  ];
+
+  patterns.forEach(function(re) {
+    let m;
+    while ((m = re.exec(stripped)) !== null) {
+      const raw = m[1].trim();
+      if (!raw) continue;
+      if (SKIP_PREFIXES.some(function(p) { return raw.indexOf(p) === 0; })) continue;
+      if (SKIP_URL_PREFIXES.some(function(p) { return raw.indexOf(p) === 0; })) continue;
+      const abs = makeAbsolute(raw, pageUrl);
+      if (abs) links.push(abs);
+    }
+  });
+
   return links;
 }
 
@@ -165,6 +181,7 @@ function checkUrl(url) {
 
 function isBroken(status) {
   if (status === 'trashed') return true;
+  if (status === 429) return false;  // rate limited, not broken
   if (typeof status === 'number') return status >= 400;
   return true;  // exception string
 }
