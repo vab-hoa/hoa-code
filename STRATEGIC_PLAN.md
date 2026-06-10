@@ -47,6 +47,7 @@ These keep running even if Dee's home server dies or is shut down.
 | **PropertyReport** (16 Apps Script files) | Homeowner requests report → generates Google Docs for 6 sections (HOA account, work orders/ARC, gutters, wood trim, window wells, concrete & asphalt) → emails links | Deployed and tested. Production deployment ID in CLAUDE.md. |
 | **HOALibrary** (Apps Script library) | Shared library: address standardization, homeowner lookup, Keystone cache queries | Deployed, stable |
 | **LabelsToGroups** (Apps Script) | Syncs Gmail contact labels → Google Groups for streets and roles | Deployed, daily Apps Script trigger |
+| **LinkMonitor** (Apps Script) | Crawls villasboulders.org nightly, checks all links, emails admin@ on new broken links | Deployed, daily Apps Script trigger 3 AM (moved from oregano Jun 2026). Script ID: `1NDs6kxjB1z4LO8liXNFlNfHkb5o9I6ovYrS2RQtcKGR5tgchpzA5eFPt` |
 | **Keystone Scraper + Directory Builder** (Python/GitHub Actions) | Logs into Keystone portal nightly, caches profiles/violations/work orders/ARC to Google Sheets; rebuilds Directory and Full Directory tabs from Keystone + Google Contacts | Running nightly via GitHub Actions (moved from oregano June 2026). No local machine dependency. |
 
 ### Runs on Oregano (Single Point of Failure)
@@ -56,7 +57,6 @@ ran without them before and could again.
 
 | Component | What It Does | State |
 |-----------|-------------|-------|
-| **Drive Link Monitor** (Python) | Checks all HOA website links nightly, emails admin@ on broken links | Working. Cron 3:30 AM daily. |
 | **Work Order Schedule** (Python) | Calendar-aware emailer; sends work order report to board/manager before meetings and check-ins | Working. Cron 7 AM daily. |
 | **Broadlands Doc Sync** (Python) | Monitors Broadlands-related Drive documents for changes | Working. Cron Monday 4:30 AM. |
 | **HEIF Converter** (Python) | Converts iPhone HEIC photos to JPEG in Google Drive | Working, run manually |
@@ -189,7 +189,7 @@ If oregano goes down:
 - LabelsToGroups keeps working
 - Keystone data keeps updating (GitHub Actions, no oregano dependency)
 - Directory and Full Directory tabs keep rebuilding nightly
-- Drive link monitor stops (non-critical)
+- Drive link monitor keeps running (Apps Script, no oregano dependency)
 - Work order schedule emailer stops (non-critical — can email manually)
 - Code is safe on GitHub
 
@@ -326,7 +326,7 @@ Only these exact scopes work (no readonly variants):
   code is more to maintain.
 - **Full PropertyReport rewrite** — the section-based refactor already
   happened. It works.
-- **Moving ALL Python tools off oregano** — the Keystone scraper and directory builder moved to GitHub Actions (Jun 2026). Remaining oregano cron jobs (link monitor, work order schedule, Broadlands sync) are non-critical. The HOA ran without them before.
+- **Moving ALL Python tools off oregano** — the Keystone scraper and directory builder moved to GitHub Actions (Jun 2026). Link monitor moved to Apps Script time trigger (Jun 2026). Remaining oregano cron jobs (work order schedule, Broadlands sync) are non-critical. The HOA ran without them before.
 
 ---
 
