@@ -19,6 +19,8 @@ All Google Apps Script projects deploy to the villasboulders.org Google Workspac
 
 ### GitHub Actions (cloud-hosted, runs without oregano)
 - **keystone-scraper/** - Selenium scraper for Keystone HOA management portal (violations, work orders, profiles). Runs nightly at 3 AM MDT via `.github/workflows/keystone-scraper.yml`. Writes to Keystone Cache spreadsheet. Credentials stored as GitHub Actions secrets (KEYSTONE_USERNAME, KEYSTONE_PASSWORD, GOOGLE_SERVICE_ACCOUNT_JSON).
+- **work_order_schedule.py** - Calendar-aware work order report emailer. Runs daily 7 AM MDT via `.github/workflows/work-order-schedule.yml`. Sends PDF report to board@+manager@ before monthly meetings, board@ before check-ins. Needs GOOGLE_SERVICE_ACCOUNT_JSON secret.
+- **broadlands_docs.py** - Broadlands Master Association document sync. Runs weekly Monday 4:30 AM MDT via `.github/workflows/broadlands-sync.yml`. Commits updated `broadlands_manifest.json` after each run. Needs KEYSTONE_USERNAME, KEYSTONE_PASSWORD, GOOGLE_SERVICE_ACCOUNT_JSON secrets.
 
 ### Python Tools (run locally on oregano)
 - **heif-converter/** - Converts HEIF/HEIC photos (iPhone) to JPEG in Google Drive. Also updates spreadsheets with photo references.
