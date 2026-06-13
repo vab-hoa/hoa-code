@@ -46,13 +46,23 @@ jobs:
           cd keystone-scraper
           python build_full_directory.py
 
+      - name: Check portal Documents for new files
+        env:
+          KEYSTONE_USERNAME: ${{ secrets.KEYSTONE_USERNAME }}
+          KEYSTONE_PASSWORD: ${{ secrets.KEYSTONE_PASSWORD }}
+          USE_CHROME: 'true'
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd keystone-scraper
+          python keystone_documents.py
+
       - name: Record successful run
         if: success()
         run: |
           echo "Last successful run: $(date -u '+%Y-%m-%d %H:%M UTC')" > keystone-scraper/last_run.txt
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add keystone-scraper/last_run.txt
+          git add keystone-scraper/last_run.txt keystone-scraper/keystone_docs_manifest.json
           git commit -m "chore: keystone scraper ran $(date -u '+%Y-%m-%d')"
           git push
 

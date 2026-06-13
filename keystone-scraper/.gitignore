@@ -29,6 +29,10 @@ credentials.json
 service-account.json
 google-service-account.json
 
+# Manifests (tracked despite *.json above)
+!broadlands_manifest.json
+!keystone_docs_manifest.json
+
 # Logs
 *.log
 
