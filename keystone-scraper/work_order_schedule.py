@@ -92,6 +92,7 @@ def send_report(gmail, sheets, subject_suffix, recipients):
 def main():
     today    = date.today()
     dry_run  = '--dry-run' in sys.argv
+    force    = '--force' in sys.argv
     weekday  = today.weekday()   # 0=Mon … 6=Sun
 
     creds    = service_account.Credentials.from_service_account_file(SA_FILE, scopes=SCOPES)
@@ -99,6 +100,15 @@ def main():
     cal      = build('calendar', 'v3', credentials=delegated)
     sheets   = build('sheets',   'v4', credentials=delegated)
     gmail    = build('gmail',    'v1', credentials=delegated)
+
+    # ── Force send (manual override) ─────────────────────────────────────────
+    if force:
+        log(f'--force: sending to {BOARD} regardless of calendar')
+        if not dry_run:
+            send_report(gmail, sheets, subject_suffix=' (on demand)', recipients=[BOARD])
+        else:
+            log(f'DRY RUN — would send to {BOARD}')
+        return
 
     # ── Check 1: monthly meeting exactly 2 days away ──────────────────────────
     target = today + timedelta(days=2)

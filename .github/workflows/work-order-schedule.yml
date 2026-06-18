@@ -31,4 +31,9 @@ jobs:
       - name: Run work order schedule
         run: |
           cd keystone-scraper
-          python work_order_schedule.py
+          # Pass --force when triggered manually so it always sends
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python work_order_schedule.py --force
+          else
+            python work_order_schedule.py
+          fi
