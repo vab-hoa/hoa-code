@@ -14,13 +14,14 @@ All Google Apps Script projects deploy to the villasboulders.org Google Workspac
 ### Apps Script (deployed via `clasp push`)
 - **PropertyReport/** - Property report generator. Web app with OAuth sign-in. Generates section-based Google Doc reports (gutters, wood trim, HOA account, property activity) and emails links to homeowners. Script ID: `15Ey8ZSROvVPF2sYXhnLfypi2ppl3C8F5W3icGbofezWMM_iOq9dVdahz`
 - **HOALibrary/** - Shared library for address standardization, homeowner lookups. Script ID: `1vxq3cRUqQMvwdmmq_W-FsMGwQqECOpucfIPM5aGDKB_FDyrAZcLOZFzF`
-- **LabelsToGroups/** - Gmail labels to Google Groups sync
+- **LabelsToGroups/** - RETIRED Apps Script. Replaced by labels_to_groups.py (GitHub Actions). Keep directory for history; run deleteTriggers() from the Apps Script editor once to remove the daily trigger.
 - **LinkMonitor/** - Nightly website link checker. Crawls villasboulders.org, checks all links, emails admin@ on new broken links. Time trigger 3 AM daily. Script ID: `1NDs6kxjB1z4LO8liXNFlNfHkb5o9I6ovYrS2RQtcKGR5tgchpzA5eFPt`
 
 ### GitHub Actions (cloud-hosted, runs without oregano)
 - **keystone-scraper/** - Selenium scraper for Keystone HOA management portal (violations, work orders, profiles). Runs nightly at 3 AM MDT via `.github/workflows/keystone-scraper.yml`. Writes to Keystone Cache spreadsheet. Credentials stored as GitHub Actions secrets (KEYSTONE_USERNAME, KEYSTONE_PASSWORD, GOOGLE_SERVICE_ACCOUNT_JSON).
 - **work_order_schedule.py** - Calendar-aware work order report emailer. Runs daily 7 AM MDT via `.github/workflows/work-order-schedule.yml`. Sends PDF report to board@+manager@ before monthly meetings, board@ before check-ins. Needs GOOGLE_SERVICE_ACCOUNT_JSON secret.
 - **broadlands_docs.py** - Broadlands Master Association document sync. Runs weekly Monday 4:30 AM MDT via `.github/workflows/broadlands-sync.yml`. Commits updated `broadlands_manifest.json` after each run. Needs KEYSTONE_USERNAME, KEYSTONE_PASSWORD, GOOGLE_SERVICE_ACCOUNT_JSON secrets.
+- **labels_to_groups.py** - Gmail contact group labels to Google Groups sync. Runs daily at 3 AM MDT via `.github/workflows/labels-to-groups.yml`. Can be triggered on demand from GitHub Actions UI. Script in `keystone-scraper/`. Needs GOOGLE_SERVICE_ACCOUNT_JSON secret.
 
 ### Python Tools (run locally on oregano)
 - **heif-converter/** - Converts HEIF/HEIC photos (iPhone) to JPEG in Google Drive. Also updates spreadsheets with photo references.

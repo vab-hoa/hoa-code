@@ -1,0 +1,34 @@
+name: Labels to Groups Sync
+
+on:
+  schedule:
+    # 3 AM MDT daily (9:00 UTC) — same window as keystone scraper
+    - cron: '0 9 * * *'
+  workflow_dispatch:  # allow manual runs from GitHub Actions UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          cd keystone-scraper
+          pip install -r requirements.txt
+
+      - name: Write Google service account credentials
+        run: |
+          mkdir -p ~/.config/openclaw
+          echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}' > ~/.config/openclaw/google-service-account.json
+
+      - name: Run labels to groups sync
+        run: |
+          cd keystone-scraper
+          python labels_to_groups.py

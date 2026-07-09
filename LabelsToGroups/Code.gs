@@ -1,3 +1,14 @@
+// ============================================================
+// RETIRED — 2026-07-09
+// This script has been replaced by keystone-scraper/labels_to_groups.py
+// which runs daily via GitHub Actions (.github/workflows/labels-to-groups.yml)
+// and can be triggered on demand from the GitHub Actions UI.
+//
+// ACTION REQUIRED (one time): Run deleteTriggers() from this editor
+// to remove the daily time trigger so this script stops running.
+// After that, this file is kept only for historical reference.
+// ============================================================
+
 const DOMAIN = "villasboulders.org";
 const ADMIN_EMAIL = "admin@villasboulders.org";
 
@@ -108,4 +119,14 @@ function syncLabelMembers(labelName, groupEmail, contactGroups) {
     });
     pageToken = currentMembers.nextPageToken;
   } while (pageToken);
+}
+
+// Run this function once from the Apps Script editor to remove the daily time
+// trigger. After it runs successfully, this script is fully retired.
+function deleteTriggers() {
+  ScriptApp.getProjectTriggers().forEach(t => {
+    console.log(`Deleting trigger: ${t.getHandlerFunction()}`);
+    ScriptApp.deleteTrigger(t);
+  });
+  console.log("All triggers deleted. LabelsToGroups Apps Script is now retired.");
 }
