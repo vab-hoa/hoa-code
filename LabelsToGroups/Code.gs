@@ -59,6 +59,8 @@ function syncLabelMembers(labelName, groupEmail, contactGroups) {
 
   console.log(`Processing ${labelName}...`);
 
+  // Build set of emails that should be in the group, and add any missing ones
+  const shouldBeMembers = new Set();
   const resourceNames = membersList.memberResourceNames;
   const BATCH_SIZE = 10;
 
@@ -73,7 +75,8 @@ function syncLabelMembers(labelName, groupEmail, contactGroups) {
       (response.responses || []).forEach(r => {
         const person = r.person;
         if (person && person.emailAddresses && person.emailAddresses.length > 0) {
-          const email = person.emailAddresses[0].value;
+          const email = person.emailAddresses[0].value.toLowerCase();
+          shouldBeMembers.add(email);
           try {
             AdminDirectory.Members.insert({ email, role: 'MEMBER' }, groupEmail);
             console.log(`Added: ${email}`);
@@ -84,4 +87,25 @@ function syncLabelMembers(labelName, groupEmail, contactGroups) {
       console.error(`Batch error for ${labelName} (batch ${i}): ${e.message}`);
     }
   }
+
+  // Remove members no longer in the label
+  let pageToken = null;
+  do {
+    const params = { maxResults: 200 };
+    if (pageToken) params.pageToken = pageToken;
+    const currentMembers = AdminDirectory.Members.list(groupEmail, params);
+    (currentMembers.members || []).forEach(member => {
+      const email = member.email.toLowerCase();
+      if (email === ADMIN_EMAIL.toLowerCase()) return; // never remove the admin owner
+      if (!shouldBeMembers.has(email)) {
+        try {
+          AdminDirectory.Members.remove(groupEmail, email);
+          console.log(`Removed: ${email}`);
+        } catch (e) {
+          console.warn(`Could not remove ${email} from ${groupEmail}: ${e.message}`);
+        }
+      }
+    });
+    pageToken = currentMembers.nextPageToken;
+  } while (pageToken);
 }
