@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(curl * memory.wmbuck.net*)",
-      "Bash(curl * villasboulders.org*)"
-    ]
-  }
-}
