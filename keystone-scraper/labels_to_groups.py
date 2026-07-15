@@ -189,7 +189,19 @@ def sync_group(people, directory, label_name, group_email, dry_run):
                 ).execute()
                 print(f"  Added: {email}")
             except HttpError as e:
-                print(f"  ERROR adding {email}: {e}")
+                if e.resp.status == 409:
+                    # Member already exists under a different email alias.
+                    # Look up what address the group has them under so the
+                    # contact data can be corrected.
+                    try:
+                        member = directory.members().get(
+                            groupKey=group_email, memberKey=email
+                        ).execute()
+                        print(f"  Already a member as: {member['email']} (contact has: {email})")
+                    except HttpError:
+                        print(f"  Already a member (contact has: {email}, could not look up alias)")
+                else:
+                    print(f"  ERROR adding {email}: {e}")
 
     for email in sorted(to_remove):
         if dry_run:
