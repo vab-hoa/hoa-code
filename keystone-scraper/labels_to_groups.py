@@ -83,7 +83,7 @@ def get_contact_group_emails(people, label_name):
     """Return set of lowercase email addresses in the named contact group."""
     result = people.contactGroups().list(pageSize=200).execute()
     groups = result.get("contactGroups", [])
-    target = next((g for g in groups if g["name"] == label_name), None)
+    target = next((g for g in groups if g["name"].lower() == label_name.lower()), None)
     if not target:
         print(f"  Contact group '{label_name}' not found — skipping.")
         return set()
