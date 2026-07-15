@@ -93,7 +93,7 @@ def get_contact_group_emails(people, label_name):
         for r in resp.get("responses", []):
             addrs = r.get("person", {}).get("emailAddresses", [])
             if addrs:
-                emails.add(addrs[0]["value"].lower())
+                emails.add(addrs[0]["value"].strip().lower())
         if i + 50 < len(resource_names):
             time.sleep(0.5)
 
