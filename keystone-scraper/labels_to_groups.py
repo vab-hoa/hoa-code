@@ -60,9 +60,10 @@ def normalize_email(email):
     add/remove churn when contacts and group members use different forms.
     """
     local, _, domain = email.partition('@')
-    if domain.lower() in ('gmail.com', 'googlemail.com'):
+    domain = domain.lower()
+    if domain in ('gmail.com', 'googlemail.com'):
         local = local.replace('.', '')
-    return f"{local}@{domain.lower()}"
+    return f"{local.lower()}@{domain}"
 
 
 def build_services():
