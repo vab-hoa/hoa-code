@@ -52,6 +52,19 @@ SYNC_LIST = [
 ]
 
 
+def normalize_email(email):
+    """Normalize Gmail addresses by removing dots from the local part.
+
+    Gmail treats dots as insignificant (john.doe == johndoe), but the
+    Directory API treats them as distinct strings, causing spurious
+    add/remove churn when contacts and group members use different forms.
+    """
+    local, _, domain = email.partition('@')
+    if domain.lower() in ('gmail.com', 'googlemail.com'):
+        local = local.replace('.', '')
+    return f"{local}@{domain.lower()}"
+
+
 def build_services():
     sa_json = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
     if sa_json:
@@ -93,7 +106,7 @@ def get_contact_group_emails(people, label_name):
         for r in resp.get("responses", []):
             addrs = r.get("person", {}).get("emailAddresses", [])
             if addrs:
-                emails.add(addrs[0]["value"].strip().lower())
+                emails.add(normalize_email(addrs[0]["value"].strip()))
         if i + 50 < len(resource_names):
             time.sleep(0.5)
 
@@ -115,7 +128,7 @@ def get_group_members(directory, group_email):
                 return None
             raise
         for m in result.get("members", []):
-            members.add(m["email"].lower())
+            members.add(normalize_email(m["email"]))
         page_token = result.get("nextPageToken")
         if not page_token:
             break
