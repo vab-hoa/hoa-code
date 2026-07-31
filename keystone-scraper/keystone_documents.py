@@ -67,15 +67,32 @@ ALERT_EMAILS = [
     "admin@villasboulders.org",
 ]
 
-# Maps portal path (relative to Documents root) → Google Drive folder ID.
-# Path is the folder hierarchy as it appears in the portal, joined with '/'.
-# A mapping covers that folder and any sub-folders beneath it.
+# Maps portal path patterns to Google Drive destinations with year-based routing.
+# Folders are on shared drives, so we include the shared drive ID for proper queries.
 #
-# Run --explore to discover the actual paths in the portal.
-# Run --init after populating this dict to baseline the manifest without alerts.
+# Format: {
+#   "parent": folder_id,
+#   "shared_drive": shared_drive_id,
+#   "intermediate": "folder_name" (optional)
+# }
+#
+# The script extracts YYYY from the path and finds: parent → [intermediate] → year
 DOCUMENT_MAPPINGS = {
-    "Board - Financials/2025": "1h7tstUX0s6VAjdEdMf7UKdfNEdSZsYLn",  # Homeowner Docs/Financials/2025
-    "Board - Financials/2026": "1FXlQsFWghGZtcYad5Iu5fDERIGtJ4B61",  # Homeowner Docs/Financials/2026
+    "Board - Financials": {
+        "parent": "1MUlUcjTZ506AOifBThfuzhZmViUbHW2Q",  # Homeowner Docs/Financials
+        "shared_drive": "0ALIbXXUEyG4GUk9PVA",  # VaB Homeowner Documents
+        "intermediate": "Keystone Financial Reports"
+    },
+    "Financials": {
+        "parent": "1MUlUcjTZ506AOifBThfuzhZmViUbHW2Q",  # Same destination as Board - Financials
+        "shared_drive": "0ALIbXXUEyG4GUk9PVA",
+        "intermediate": "Keystone Financial Reports"
+    },
+    "General Session Minutes": {
+        "parent": "1I-A7N2b2tO-DD2nofyUd7Efhd19D2d4y",  # Homeowner Docs/Meetings
+        "shared_drive": "0ALIbXXUEyG4GUk9PVA",
+        "intermediate": None  # Year folders are direct children
+    },
 }
 
 # ── helpers ────────────────────────────────────────────────────────────────────
@@ -211,13 +228,21 @@ def discover_folder_tree(driver):
 def scrape_folder_docs(driver, folder_id):
     """
     Click a folder and return {filename: doc_id} for the documents that appear.
+    Ensures the folder's content has loaded before scraping.
     """
     try:
         trigger = driver.find_element(
             By.XPATH, f"//*[contains(@onclick,'GetDocumentFiles({folder_id})')]")
         driver.execute_script("arguments[0].click();", trigger)
-        time.sleep(2)
-    except NoSuchElementException:
+        time.sleep(1)
+
+        # Wait for document list to load/update (has onclick with GetDocumentFiles)
+        # This ensures we're seeing the current folder's files, not stale ones from previous folder
+        wait = WebDriverWait(driver, 10)
+        wait.until(EC.presence_of_all_elements_located(
+            (By.CSS_SELECTOR, "a.document-file-anchor-color")))
+        time.sleep(1)  # Extra buffer after elements appear
+    except (NoSuchElementException, TimeoutException):
         return {}
 
     docs = {}
@@ -227,6 +252,12 @@ def scrape_folder_docs(driver, folder_id):
         name = a.text.strip()
         if not href or not name:
             continue
+
+        # Skip generic junk entries (size indicators, timestamps, etc.)
+        # These appear to be rendering artifacts from the Keystone portal
+        if re.match(r'^(\d+\s*(MB|KB|GB)|[\d/\-:]+\s*(AM|PM|UTC)?)$', name):
+            continue
+
         m = re.search(r'/account/d/(\d+)', href)
         if not m:
             continue
@@ -342,11 +373,85 @@ def send_alert_email(gmail, unmapped_new):
 
 # ── main logic ─────────────────────────────────────────────────────────────────
 
-def find_drive_folder_for_path(path):
-    """Return Drive folder ID if path matches a mapping, else None."""
-    for mapped_path, folder_id in DOCUMENT_MAPPINGS.items():
-        if path == mapped_path or path.startswith(mapped_path + '/'):
-            return folder_id
+def find_drive_folder_for_path(path, drive=None):
+    """
+    Return Drive folder ID if path matches a mapping, else None.
+
+    Supports dynamic year-based routing with intermediate folders:
+    - Path "Financials/2026/file.pdf" matches mapping "Financials"
+    - Extracts year (2026)
+    - If intermediate folder specified, finds: parent → intermediate → year
+    - If no intermediate, finds: parent → year
+    - Returns the year-specific subfolder ID
+    """
+    path_parts = path.split('/')
+
+    # Try pattern matches with year extraction (order matters - longest patterns first)
+    for mapped_pattern in sorted(DOCUMENT_MAPPINGS.keys(), key=len, reverse=True):
+        mapping = DOCUMENT_MAPPINGS[mapped_pattern]
+        pattern_parts = mapped_pattern.split('/')
+
+        # Check if path starts with this pattern
+        if len(path_parts) >= len(pattern_parts):
+            if path_parts[:len(pattern_parts)] == pattern_parts:
+                # Pattern matched!
+                # Try to extract year from remaining path
+                if len(path_parts) > len(pattern_parts):
+                    potential_year = path_parts[len(pattern_parts)]
+                    # Check if this looks like a year (4 digits, 19xx or 20xx or 21xx)
+                    year_match = re.match(r'^(19|20|21)\d{2}$', potential_year)
+                    if year_match and drive:
+                        parent_id = mapping.get("parent")
+                        intermediate = mapping.get("intermediate")
+
+                        try:
+                            shared_drive = mapping.get("shared_drive")
+
+                            # Step 1: If intermediate folder exists, find it first
+                            search_in = parent_id
+                            if intermediate:
+                                query = f"name='{intermediate}' and mimeType='application/vnd.google-apps.folder' and '{parent_id}' in parents and trashed=false"
+                                results = drive.files().list(
+                                    q=query,
+                                    spaces='drive',
+                                    pageSize=1,
+                                    corpora='drive',
+                                    driveId=shared_drive,
+                                    includeItemsFromAllDrives=True,
+                                    supportsAllDrives=True,
+                                    fields='files(id)'
+                                ).execute()
+                                intermediate_folders = results.get('files', [])
+                                if not intermediate_folders:
+                                    log(f"WARNING: Intermediate folder '{intermediate}' not found in {parent_id}")
+                                    return parent_id
+                                search_in = intermediate_folders[0]['id']
+
+                            # Step 2: Find the year folder inside parent (or intermediate)
+                            query = f"name='{potential_year}' and mimeType='application/vnd.google-apps.folder' and '{search_in}' in parents and trashed=false"
+                            results = drive.files().list(
+                                q=query,
+                                spaces='drive',
+                                pageSize=1,
+                                corpora='drive',
+                                driveId=shared_drive,
+                                includeItemsFromAllDrives=True,
+                                supportsAllDrives=True,
+                                fields='files(id)'
+                            ).execute()
+                            year_folders = results.get('files', [])
+                            if year_folders:
+                                year_folder_id = year_folders[0]['id']
+                                return year_folder_id
+                            else:
+                                log(f"WARNING: Year folder '{potential_year}' not found in {search_in}")
+
+                        except Exception as e:
+                            log(f"WARNING: Error looking up year folder {potential_year}: {e}")
+
+                    # If year lookup failed, return parent (fallback)
+                    return mapping.get("parent")
+
     return None
 
 def run(headless=True, dry_run=False, init_mode=False, explore_mode=False):
@@ -386,7 +491,9 @@ def run(headless=True, dry_run=False, init_mode=False, explore_mode=False):
 
     # Compare against manifest
     known_files = manifest.get('files', {})
-    drive = None
+
+    # Initialize drive service early so we can do year lookups
+    drive = init_drive()
     gmail = None
     unmapped_new = []  # (path, filename)
     synced = []        # (path, filename, drive_link)
@@ -398,7 +505,7 @@ def run(headless=True, dry_run=False, init_mode=False, explore_mode=False):
                 continue
 
             log(f"  NEW: {path}/{filename}")
-            drive_folder_id = find_drive_folder_for_path(path)
+            drive_folder_id = find_drive_folder_for_path(path, drive)
 
             if drive_folder_id:
                 if not dry_run:
