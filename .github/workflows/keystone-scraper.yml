@@ -46,6 +46,11 @@ jobs:
           cd keystone-scraper
           python build_full_directory.py
 
+      - name: Build per-street member directories
+        run: |
+          cd keystone-scraper
+          python build_street_directories.py
+
       - name: Check portal Documents for new files
         env:
           KEYSTONE_USERNAME: ${{ secrets.KEYSTONE_USERNAME }}
