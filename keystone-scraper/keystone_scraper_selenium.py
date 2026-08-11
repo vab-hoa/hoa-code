@@ -358,7 +358,7 @@ class KeystoneScraperSelenium:
                         # Parse "Boulder Circle #102" -> street_name="Boulder Circle", unit="102"
                         unit = ''
                         street_name = street_and_unit
-                        unit_match = _re.search(r'#\s*(\d+)\s*$', street_and_unit)
+                        unit_match = _re.search(r'#?\s*(\d{3})\s*$', street_and_unit)
                         if unit_match:
                             unit = unit_match.group(1)
                             street_name = street_and_unit[:unit_match.start()].strip()
