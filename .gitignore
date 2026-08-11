@@ -33,3 +33,9 @@ Thumbs.db
 *.log
 !keystone-scraper/broadlands_manifest.json
 !keystone-scraper/keystone_docs_manifest.json
+
+# Node.js / Next.js
+hoa-tracker-dashboard/node_modules/
+hoa-tracker-dashboard/.next/
+hoa-tracker-dashboard/.env.local
+hoa-tracker-dashboard/.env*.local

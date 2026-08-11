@@ -23,6 +23,9 @@ All Google Apps Script projects deploy to the villasboulders.org Google Workspac
 - **broadlands_docs.py** - Broadlands Master Association document sync. Runs weekly Monday 4:30 AM MDT via `.github/workflows/broadlands-sync.yml`. Commits updated `broadlands_manifest.json` after each run. Needs KEYSTONE_USERNAME, KEYSTONE_PASSWORD, GOOGLE_SERVICE_ACCOUNT_JSON secrets.
 - **labels_to_groups.py** - Gmail contact group labels to Google Groups sync. Runs daily at 3 AM MDT via `.github/workflows/labels-to-groups.yml`. Can be triggered on demand from GitHub Actions UI. Script in `keystone-scraper/`. Needs GOOGLE_SERVICE_ACCOUNT_JSON secret.
 
+### Next.js Dashboard (Vercel deployment)
+- **hoa-tracker-dashboard/** - Issue tracker dashboard for HOA board. Read-only dashboard displaying work items, ARC requests, violations, correspondence, and email activity from a Supabase database. Phase 1 (no editing, no auth). Deployed to `tracker.villasboulders.org` via Vercel with Root Directory set to `hoa-tracker-dashboard/`. See `hoa-tracker-dashboard/README.md` for local development and Vercel deployment instructions.
+
 ### Python Tools (run locally on oregano)
 - **heif-converter/** - Converts HEIF/HEIC photos (iPhone) to JPEG in Google Drive. Also updates spreadsheets with photo references.
 - **photos-to-drive/** - Syncs Google Photos to Google Drive folders
