@@ -11,11 +11,19 @@
  */
 
 // OAuth Configuration
+// clientSecret is stored in ScriptProperties (not in git) for security
 var OAUTH_CONFIG = {
   clientId: '527585908490-r4vvrctanip4lv39v7bgj9m28ksom342.apps.googleusercontent.com',
-  clientSecret: '[REDACTED-EXPOSED-SECRET]',
   scopes: 'email profile'
 };
+
+function getOAuthSecret() {
+  var secret = PropertiesService.getScriptProperties().getProperty('OAUTH_CLIENT_SECRET');
+  if (!secret) {
+    throw new Error('OAUTH_CLIENT_SECRET not set in Script Properties. See OAUTH_SECURITY.md for setup instructions.');
+  }
+  return secret;
+}
 
 // Always returns the URL of the current deployment — never gets out of sync.
 function getRedirectUri() {
@@ -129,7 +137,7 @@ function handleOAuthCallback(code, state) {
       payload: {
         code: code,
         client_id: OAUTH_CONFIG.clientId,
-        client_secret: OAUTH_CONFIG.clientSecret,
+        client_secret: getOAuthSecret(),
         redirect_uri: redirectUri,
         grant_type: 'authorization_code'
       },
