@@ -1,21 +1,21 @@
 export const STATUS_COLORS: Record<string, string> = {
-  new: 'bg-blue-100 text-blue-800 border-blue-200',
-  assigned: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-  in_progress: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  awaiting_quote: 'bg-orange-100 text-orange-800 border-orange-200',
-  awaiting_board_approval: 'bg-purple-100 text-purple-800 border-purple-200',
-  service_request: 'bg-cyan-100 text-cyan-800 border-cyan-200',
-  scheduled: 'bg-green-100 text-green-800 border-green-200',
-  on_hold: 'bg-gray-100 text-gray-800 border-gray-200',
-  pending_board_review: 'bg-red-100 text-red-800 border-red-200',
-  approved: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-  approved_with_conditions: 'bg-amber-100 text-amber-800 border-amber-200',
-  under_review_with_architect: 'bg-violet-100 text-violet-800 border-violet-200',
-  denied: 'bg-rose-100 text-rose-800 border-rose-200',
-  completed: 'bg-stone-100 text-stone-800 border-stone-200',
-  closed: 'bg-stone-50 text-stone-600 border-stone-200',
-  monitored: 'bg-teal-100 text-teal-800 border-teal-200',
-  cancelled: 'bg-stone-50 text-stone-500 border-stone-200',
+  new: 'bg-blue-500/10 text-blue-300 border border-blue-500/30',
+  assigned: 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/30',
+  in_progress: 'bg-yellow-500/10 text-yellow-300 border border-yellow-500/30',
+  awaiting_quote: 'bg-orange-500/10 text-orange-300 border border-orange-500/30',
+  awaiting_board_approval: 'bg-purple-500/10 text-purple-300 border border-purple-500/30',
+  service_request: 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/30',
+  scheduled: 'bg-green-500/10 text-green-300 border border-green-500/30',
+  on_hold: 'bg-gray-500/10 text-gray-300 border border-gray-500/30',
+  pending_board_review: 'bg-red-500/10 text-red-300 border border-red-500/30',
+  approved: 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30',
+  approved_with_conditions: 'bg-amber-500/10 text-amber-300 border border-amber-500/30',
+  under_review_with_architect: 'bg-violet-500/10 text-violet-300 border border-violet-500/30',
+  denied: 'bg-rose-500/10 text-rose-300 border border-rose-500/30',
+  completed: 'bg-stone-500/10 text-stone-300 border border-stone-500/30',
+  closed: 'bg-gray-500/5 text-gray-400 border border-gray-500/20',
+  monitored: 'bg-teal-500/10 text-teal-300 border border-teal-500/30',
+  cancelled: 'bg-gray-500/5 text-gray-400 border border-gray-500/20',
 }
 
 export const STATUS_LABELS: Record<string, string> = {
@@ -39,19 +39,19 @@ export const STATUS_LABELS: Record<string, string> = {
 }
 
 export const CATEGORY_COLORS: Record<string, string> = {
-  arc_request: 'bg-violet-100 text-violet-800',
-  work_order: 'bg-blue-100 text-blue-800',
-  violation: 'bg-red-100 text-red-800',
-  landscaping: 'bg-green-100 text-green-800',
-  gutter: 'bg-cyan-100 text-cyan-800',
-  roofing: 'bg-amber-100 text-amber-800',
-  siding: 'bg-orange-100 text-orange-800',
-  irrigation: 'bg-teal-100 text-teal-800',
-  drainage: 'bg-indigo-100 text-indigo-800',
-  painting: 'bg-pink-100 text-pink-800',
-  general_repair: 'bg-stone-100 text-stone-800',
-  governance: 'bg-purple-100 text-purple-800',
-  other: 'bg-gray-100 text-gray-800',
+  arc_request: 'bg-violet-500/10 text-violet-300',
+  work_order: 'bg-blue-500/10 text-blue-300',
+  violation: 'bg-red-500/10 text-red-300',
+  landscaping: 'bg-green-500/10 text-green-300',
+  gutter: 'bg-cyan-500/10 text-cyan-300',
+  roofing: 'bg-amber-500/10 text-amber-300',
+  siding: 'bg-orange-500/10 text-orange-300',
+  irrigation: 'bg-teal-500/10 text-teal-300',
+  drainage: 'bg-indigo-500/10 text-indigo-300',
+  painting: 'bg-pink-500/10 text-pink-300',
+  general_repair: 'bg-stone-500/10 text-stone-300',
+  governance: 'bg-purple-500/10 text-purple-300',
+  other: 'bg-gray-500/10 text-gray-300',
 }
 
 export const CATEGORY_LABELS: Record<string, string> = {
@@ -71,12 +71,12 @@ export const CATEGORY_LABELS: Record<string, string> = {
 }
 
 export const DECISION_COLORS: Record<string, string> = {
-  approved: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-  approved_with_conditions: 'bg-amber-100 text-amber-800 border-amber-200',
-  denied: 'bg-rose-100 text-rose-800 border-rose-200',
-  no_approval_needed: 'bg-blue-100 text-blue-800 border-blue-200',
-  pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  info_requested: 'bg-orange-100 text-orange-800 border-orange-200',
+  approved: 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30',
+  approved_with_conditions: 'bg-amber-500/10 text-amber-300 border border-amber-500/30',
+  denied: 'bg-rose-500/10 text-rose-300 border border-rose-500/30',
+  no_approval_needed: 'bg-blue-500/10 text-blue-300 border border-blue-500/30',
+  pending: 'bg-yellow-500/10 text-yellow-300 border border-yellow-500/30',
+  info_requested: 'bg-orange-500/10 text-orange-300 border border-orange-500/30',
 }
 
 export const DECISION_LABELS: Record<string, string> = {

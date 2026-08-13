@@ -4,8 +4,10 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import { StatusBadge } from './status-badge'
+import { DecisionBadge } from './decision-badge'
 import { CategoryBadge } from './category-badge'
 import { PriorityBadge } from './priority-badge'
+import { getEffectiveBadge } from '@/lib/work-item-helpers'
 import type { OpenWorkItem } from '@/lib/types'
 
 interface WorkItemListProps {
@@ -54,17 +56,17 @@ export function WorkItemList({ items }: WorkItemListProps) {
 
   return (
     <div className="mb-6">
-      <h2 className="text-base font-bold text-gray-900 mb-3">Open Work Items</h2>
-      <div className="space-y-0 border border-gray-200 rounded">
+      <h2 className="text-base font-bold text-ink mb-3">Open Work Items</h2>
+      <div className="space-y-0 border border-edge rounded">
         {sortedStatuses.map((status, idx) => {
           const workItems = grouped.get(status) || []
           const isExpanded = expandedStatuses.has(status)
 
           return (
-            <div key={status} className={idx > 0 ? 'border-t border-gray-200' : ''}>
+            <div key={status} className={idx > 0 ? 'border-t border-edge' : ''}>
               <button
                 onClick={() => toggleStatus(status)}
-                className="w-full px-4 py-2 text-left font-medium text-gray-900 bg-gray-50 hover:bg-gray-100 flex items-center justify-between text-sm"
+                className="w-full px-4 py-2 text-left font-medium text-ink bg-edge/25 hover:bg-edge/50 flex items-center justify-between text-sm transition-colors"
               >
                 <span>
                   <StatusBadge status={status} size="sm" /> ({workItems.length})
@@ -77,28 +79,36 @@ export function WorkItemList({ items }: WorkItemListProps) {
               </button>
 
               {isExpanded && (
-                <div className="divide-y divide-gray-100">
-                  {workItems.map(item => (
-                    <Link
-                      key={item.id}
-                      href={`/work-items/${item.id}`}
-                      className="block px-4 py-2 hover:bg-blue-50 text-sm"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-gray-900 truncate">{item.title}</div>
-                          <div className="text-xs text-gray-600 mt-1">
-                            {item.address || item.parcel_code || '—'}
-                          </div>
-                          <div className="flex gap-2 mt-1 flex-wrap">
-                            <CategoryBadge category={item.category} size="sm" />
-                            {item.priority && <PriorityBadge priority={item.priority} />}
-                            {item.vendor && <span className="text-xs text-gray-500">{item.vendor}</span>}
+                <div className="divide-y divide-edge">
+                  {workItems.map(item => {
+                    const badge = getEffectiveBadge(item)
+                    return (
+                      <Link
+                        key={item.id}
+                        href={`/work-items/${item.id}`}
+                        className="block px-4 py-2 hover:bg-edge/50 text-sm transition-colors"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-ink truncate">{item.title}</div>
+                            <div className="text-xs text-mute mt-1">
+                              {item.parcel_code || '—'}
+                            </div>
+                            <div className="flex gap-2 mt-1 flex-wrap">
+                              <CategoryBadge category={item.category} size="sm" />
+                              {badge.kind === 'decision' ? (
+                                <DecisionBadge decision={badge.value} />
+                              ) : (
+                                <StatusBadge status={badge.value} size="sm" />
+                              )}
+                              {item.priority && <PriorityBadge priority={item.priority} />}
+                              {item.vendor && <span className="text-xs text-mute">{item.vendor}</span>}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    )
+                  })}
                 </div>
               )}
             </div>

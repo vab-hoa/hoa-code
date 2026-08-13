@@ -43,10 +43,9 @@ export default function PropertyDetail({ params }: { params: Promise<{ id: strin
         ← Back to properties
       </Link>
 
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">{property.address}</h1>
-        <p className="text-gray-600 font-mono text-sm">{property.parcel_code}</p>
-        <div className="mt-4 space-y-2 text-sm">
+      <div className="bg-surface border border-edge rounded-lg p-6 mb-6">
+        <h1 className="text-2xl font-bold text-ink mb-2">{property.parcel_code}</h1>
+        <div className="mt-4 space-y-2 text-sm text-mute">
           {property.owner_name && <p>Owner: {property.owner_name}</p>}
           {property.owner_email && <p>Email: {property.owner_email}</p>}
           {property.owner_phone && <p>Phone: {property.owner_phone}</p>}
@@ -54,26 +53,26 @@ export default function PropertyDetail({ params }: { params: Promise<{ id: strin
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-4">Work Items ({workItems.length})</h2>
+      <div className="bg-surface border border-edge rounded-lg p-6 mb-6">
+        <h2 className="text-lg font-bold text-ink mb-4">Work Items ({workItems.length})</h2>
         {workItems.length === 0 ? (
-          <p className="text-gray-500 text-sm">No work items for this property</p>
+          <p className="text-mute text-sm">No work items for this property</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-edge/50 border-b border-edge">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Title</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Category</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Status</th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Created</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-ink">Title</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-ink">Category</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-ink">Status</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-ink">Created</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-edge">
                 {workItems.map(wi => (
-                  <tr key={wi.id} className="hover:bg-blue-50">
+                  <tr key={wi.id} className="hover:bg-edge/25 transition-colors">
                     <td className="px-3 py-2">
-                      <Link href={`/work-items/${wi.id}`} className="text-blue-600 hover:underline text-sm">
+                      <Link href={`/work-items/${wi.id}`} className="text-blue-300 hover:underline text-sm">
                         {wi.title}
                       </Link>
                     </td>
@@ -83,7 +82,7 @@ export default function PropertyDetail({ params }: { params: Promise<{ id: strin
                     <td className="px-3 py-2">
                       <StatusBadge status={wi.status} />
                     </td>
-                    <td className="px-3 py-2 text-xs text-gray-600">{formatDate(wi.created_date)}</td>
+                    <td className="px-3 py-2 text-xs text-mute">{formatDate(wi.created_date)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -93,7 +92,7 @@ export default function PropertyDetail({ params }: { params: Promise<{ id: strin
       </div>
 
       {sourceDocuments.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-surface border border-edge rounded-lg p-6">
           <h2 className="text-lg font-bold text-gray-900 mb-4">Source Documents</h2>
           <div className="space-y-3 text-sm">
             {sourceDocuments.map(doc => (

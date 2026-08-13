@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { isTerminalArcDecision } from './work-item-helpers'
 import type {
   DashboardSummary, OpenWorkItem, AgingWorkItem,
   WorkItem, Property, CorrespondenceEntry, EmailMessage,
@@ -22,7 +23,26 @@ export async function getAgingWorkItems(): Promise<AgingWorkItem[]> {
     .select('*')
     .order('days_open', { ascending: false })
   if (error) { console.error('getAgingWorkItems:', error); return [] }
-  return data || []
+
+  const items = data || []
+  if (items.length === 0) return []
+
+  // Fetch decisions for aging items (aging view doesn't include decision)
+  const { data: decisions, error: decisionError } = await supabase
+    .from('work_items')
+    .select('id,decision,category')
+    .in('id', items.map(i => i.id))
+
+  if (decisionError) { console.error('getAgingWorkItems decisions:', decisionError); return items }
+
+  const decisionMap = new Map(decisions?.map(d => [d.id, d]) || [])
+
+  // Filter out ARC requests with approved/approved_with_conditions decisions
+  return items.filter(item => {
+    const decision = decisionMap.get(item.id)
+    if (!decision) return true // Keep if no decision found
+    return !isTerminalArcDecision(decision)
+  })
 }
 
 export async function getOpenWorkItems(): Promise<OpenWorkItem[]> {
@@ -31,7 +51,9 @@ export async function getOpenWorkItems(): Promise<OpenWorkItem[]> {
     .select('*')
     .order('priority', { ascending: false })
   if (error) { console.error('getOpenWorkItems:', error); return [] }
-  return data || []
+  const items = data || []
+  // Filter out ARC requests with approved/approved_with_conditions decisions
+  return items.filter(item => !isTerminalArcDecision(item))
 }
 
 export async function getRecentCorrespondence(limit: number = 10) {

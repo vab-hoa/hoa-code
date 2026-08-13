@@ -29,11 +29,11 @@ export function RecentActivity({ entries }: RecentActivityProps) {
             <div
               key={entry.id}
               className={clsx(
-                'border-l-4 pl-3 py-2 text-xs bg-white border-b border-gray-100',
+                'border-l-4 pl-3 py-2 text-xs bg-surface border-b border-edge',
                 getBorderColor(entry.entry_type)
               )}
             >
-              <div className="font-medium text-gray-900">
+              <div className="font-medium text-ink">
                 {entry.author_name} ({entry.author_role}) →{' '}
                 {entry.work_items ? (
                   <Link
@@ -46,8 +46,8 @@ export function RecentActivity({ entries }: RecentActivityProps) {
                   <span>Work Item {entry.work_item_id}</span>
                 )}
               </div>
-              <div className="text-gray-600 mt-1">{truncate(entry.content, 150)}</div>
-              <div className="text-gray-400 mt-1">
+              <div className="text-mute mt-1">{truncate(entry.content, 150)}</div>
+              <div className="text-mute/60 mt-1">
                 {formatRelative(entry.entry_date)}
                 {entry.old_status && entry.new_status && (
                   <span className="ml-2">
