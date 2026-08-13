@@ -1521,6 +1521,137 @@ All hooks return `{ data, loading, error }`.
 
 ---
 
+## 14.5 Phase 2: Work Item Type Separation, Soft-Delete, and Terminal-Status Fixes
+
+### 14.5.1 Work Item Types
+
+The dashboard now separates work items by **type** rather than treating them as one undifferentiated pool. Four distinct types exist, each with its own status lifecycle and terminal-status vocabulary:
+
+#### Types and Terminal Statuses
+
+1. **ARC Requests** (`arc_request`)
+   - Terminal statuses: `closed`, `approved`, `approved_with_conditions`, `denied`
+   - Lifecycle: new → under_review_with_architect → (approved/approved_with_conditions/denied/closed)
+   - Source: Jotform ARC submissions from homeowners, reviewed by Josh Hall
+
+2. **Work Orders** (umbrella category with sub-types: `work_order`, `gutter`, `roofing`, `siding`, `irrigation`, `drainage`, `painting`, `general_repair`, `governance`, `other`)
+   - Terminal statuses: `closed`, `cancelled`, `denied`
+   - Lifecycle: new → assigned → in_progress → awaiting_quote → scheduled → closed
+   - Source: Keystone Pacific work order system, WO status emails
+
+3. **Violations** (`violation`)
+   - Terminal statuses: `closed`, `resolved`, `dismissed`
+   - Lifecycle: new → monitored → (closed/resolved/dismissed)
+   - Source: HOA enforcement notices for code violations (e.g., outdoor storage, landscaping violations)
+
+4. **Landscaping Requests** (`landscaping`)
+   - Terminal statuses: `closed`, `cancelled`, `denied`
+   - Lifecycle: new → assigned → in_progress → closed
+   - Source: Homeowner planting/removal requests (currently miscategorized as ARC in legacy data)
+
+#### Function: `isTerminalStatus(item)`
+
+Located in `src/lib/work-item-helpers.ts`:
+
+```typescript
+export function isTerminalStatus(item: { category: string; status: string }): boolean {
+  const terminal = TERMINAL_STATUSES_BY_CATEGORY[item.category] ?? DEFAULT_TERMINAL
+  return terminal.includes(item.status)
+}
+```
+
+This function is used in `getAgingWorkItems()` and `getOpenWorkItems()` to filter out terminal items, ensuring that approved/approved_with_conditions ARC requests no longer incorrectly appear as "aging" even after decisions are made.
+
+### 14.5.2 Type-Grouped Dashboard Views
+
+**Aging Alerts** (`src/components/aging-alerts.tsx`) and **Open Work Items** (`src/components/work-item-list.tsx`) now display type-grouping with show/hide toggles:
+
+- A row of toggle chips at the top: `ARC Requests | Landscape | Work Orders | Violations`
+- Each chip shows the count of items for that type
+- Clicking a chip toggles visibility of that type's section
+- Multiple sections render below the chips, one per visible type
+- Within each type section, items are still grouped by status (for Aging Alerts) or status collapsibility (for Open Work Items)
+
+This prevents the previous mixing of incompatible workflows (e.g., ARC approvals mixed with work order assignments).
+
+### 14.5.3 Soft-Delete / Exclusion Mechanism
+
+A new reversible data exclusion feature allows marking stale or incorrect work items without permanent deletion (to preserve data history).
+
+#### Database Schema (schema_v4.sql)
+
+Three new columns on `work_items` table:
+- `excluded_at TIMESTAMPTZ` — timestamp when the item was excluded (NULL = not excluded)
+- `excluded_by TEXT` — name of the person who excluded it (no auth, free-text field)
+- `excluded_reason TEXT` — human-readable reason for exclusion
+
+All Supabase views (`v_open_work_items`, `v_aging_work_items`, etc.) have been updated to filter `WHERE excluded_at IS NULL`, so excluded items automatically disappear from the dashboard.
+
+#### UI: "Mark as Excluded" Button
+
+Work Item Detail page (`src/app/work-items/[id]/page.tsx`) has a red "Mark as excluded" button at top-right that opens a dialog:
+
+```
+Dialog:
+  Your name: [text input]
+  Reason: [textarea]
+  [Cancel] [Exclude] buttons
+```
+
+Clicking Exclude updates the work item with the current timestamp and reason, then redirects to dashboard home.
+
+#### Recovery
+
+Excluded items are soft-deleted, not hard-deleted. If a reason turns out to be wrong, a simple Supabase query can un-exclude:
+
+```sql
+UPDATE work_items SET excluded_at = NULL WHERE id = '...';
+```
+
+No "un-exclude" UI exists in Phase 2; it's a manual operation if needed.
+
+### 14.5.4 Known Data-Quality Issue: Landscape Miscategorization
+
+**Situation:** The Keystone property manager currently files landscape requests through the ARC Jotform because Keystone's system doesn't have a native landscaping request category. As a result, 6 landscape requests exist in the database as `category = 'arc_request'` with `title` containing "Landscape" or similar.
+
+**Expected behavior:** Going forward, the email processor pipeline (`email_processor.py`, Jane's responsibility) should categorize new landscape requests correctly as `category = 'landscaping'` rather than funneling them through the ARC form.
+
+**Dashboard impact:** The Landscape section in Aging Alerts and Open Work Items will remain empty until real landscape data arrives (i.e., until the pipeline categorizes them correctly). This is expected and not a dashboard bug.
+
+**Cleanup:** The 6 misclassified landscape ARC items should be marked as excluded (using the new "Mark as excluded" feature) to keep the dashboard clean while the pipeline fix is being implemented.
+
+### 14.5.5 Removed: Decision-Based Logic
+
+**What changed:** Phase 1.5 added broken logic that tried to filter ARC requests using a `decision` column. Investigation revealed:
+- The `decision` column exists in the database but is NULL on all 146 work items
+- ARC request outcomes are recorded directly in the `status` field (approved, approved_with_conditions, closed, denied), not in a separate decision column
+- The Phase 1.5 filter checking `decision === 'approved'` never matched anything
+
+**What was removed:**
+- `isTerminalArcDecision()` helper (was consulting a NULL column)
+- `getEffectiveBadge()` helper (was trying to show decision vs. status as alternative badges)
+- Special-case badge logic in `work-item-list.tsx` (was rendering decision badges)
+- Decision-based counts from `DashboardSummary` type (decision_approved, decision_approved_conditions, etc.)
+
+**Why:** These were built on a false premise. The correct approach is per-type terminal-status mappings (`isTerminalStatus()`), which consult the actual data structure (status field, by category).
+
+### 14.5.6 Views Updated (schema_v4.sql)
+
+All Supabase views now filter `excluded_at IS NULL`:
+
+- `v_open_work_items` — filters terminal items by type, excludes soft-deleted items
+- `v_aging_work_items` — same filters
+- `v_latest_correspondence` — excludes soft-deleted items
+- `v_dashboard_summary` — counts exclude soft-deleted items
+
+### 14.5.7 Queries Updated (src/lib/queries.ts)
+
+- `getAgingWorkItems()` — simplified to use `isTerminalStatus()` filter (removed broken follow-up decision lookup)
+- `getOpenWorkItems()` — uses `isTerminalStatus()` instead of broken `isTerminalArcDecision()`
+- `getPropertyWorkItems()` — added `.is('excluded_at', null)` filter
+
+---
+
 ## 15. Deployment
 
 ### 15.1 GitHub Repo Setup

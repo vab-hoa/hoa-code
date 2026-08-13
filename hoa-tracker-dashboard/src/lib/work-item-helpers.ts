@@ -1,21 +1,34 @@
-import type { OpenWorkItem, AgingWorkItem, DashboardSummary } from './types'
+import type { OpenWorkItem, DashboardSummary } from './types'
 
-export function isTerminalArcDecision(item: { category: string; decision: string | null }): boolean {
-  return (
-    item.category === 'arc_request' &&
-    (item.decision === 'approved' || item.decision === 'approved_with_conditions')
-  )
+export const TERMINAL_STATUSES_BY_CATEGORY: Record<string, string[]> = {
+  arc_request: ['closed', 'approved', 'approved_with_conditions', 'denied'],
+  work_order: ['closed', 'cancelled', 'denied'],
+  violation: ['closed', 'resolved', 'dismissed'],
+  landscaping: ['closed', 'cancelled', 'denied'],
+}
+const DEFAULT_TERMINAL = ['closed', 'cancelled', 'denied']
+
+export function isTerminalStatus(item: { category: string; status: string }): boolean {
+  const terminal = TERMINAL_STATUSES_BY_CATEGORY[item.category] ?? DEFAULT_TERMINAL
+  return terminal.includes(item.status)
 }
 
-export function getEffectiveBadge(item: {
-  category: string
-  status: string
-  decision: string | null
-}): { kind: 'status' | 'decision'; value: string } {
-  if (isTerminalArcDecision(item)) {
-    return { kind: 'decision', value: item.decision! }
+export const WORK_ITEM_TYPES = [
+  { key: 'arc_request', label: 'ARC Requests', categories: ['arc_request'] },
+  { key: 'landscaping', label: 'Landscape', categories: ['landscaping'] },
+  { key: 'violation', label: 'Violations', categories: ['violation'] },
+  {
+    key: 'work_order',
+    label: 'Work Orders',
+    categories: ['work_order', 'gutter', 'roofing', 'siding', 'irrigation', 'drainage', 'painting', 'general_repair', 'governance', 'other'],
+  },
+]
+
+export function getWorkItemType(category: string): string {
+  for (const type of WORK_ITEM_TYPES) {
+    if (type.categories.includes(category)) return type.key
   }
-  return { kind: 'status', value: item.status }
+  return 'work_order'
 }
 
 export function computeSummaryCounts(items: OpenWorkItem[]): DashboardSummary {
@@ -37,18 +50,6 @@ export function computeSummaryCounts(items: OpenWorkItem[]): DashboardSummary {
       i => i.status === 'approved_with_conditions'
     ).length,
     denied_count: items.filter(i => i.status === 'denied').length,
-    decision_approved: items.filter(i => i.decision === 'approved').length,
-    decision_approved_conditions: items.filter(
-      i => i.decision === 'approved_with_conditions'
-    ).length,
-    decision_denied: items.filter(i => i.decision === 'denied').length,
-    decision_no_approval_needed: items.filter(
-      i => i.decision === 'no_approval_needed'
-    ).length,
-    decision_pending: items.filter(i => i.decision === 'pending').length,
-    decision_info_requested: items.filter(
-      i => i.decision === 'info_requested'
-    ).length,
     total_all_time: items.length,
   }
 }

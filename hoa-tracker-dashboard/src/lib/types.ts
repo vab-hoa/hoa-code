@@ -138,12 +138,6 @@ export interface DashboardSummary {
   approved_count: number
   approved_with_conditions_count: number
   denied_count: number
-  decision_approved: number
-  decision_approved_conditions: number
-  decision_denied: number
-  decision_no_approval_needed: number
-  decision_pending: number
-  decision_info_requested: number
   total_all_time: number
 }
 
