@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import { isTerminalArcDecision } from './work-item-helpers'
+import { isTerminalStatus } from './work-item-helpers'
 import type {
   DashboardSummary, OpenWorkItem, AgingWorkItem,
   WorkItem, Property, CorrespondenceEntry, EmailMessage,
@@ -25,24 +25,7 @@ export async function getAgingWorkItems(): Promise<AgingWorkItem[]> {
   if (error) { console.error('getAgingWorkItems:', error); return [] }
 
   const items = data || []
-  if (items.length === 0) return []
-
-  // Fetch decisions for aging items (aging view doesn't include decision)
-  const { data: decisions, error: decisionError } = await supabase
-    .from('work_items')
-    .select('id,decision,category')
-    .in('id', items.map(i => i.id))
-
-  if (decisionError) { console.error('getAgingWorkItems decisions:', decisionError); return items }
-
-  const decisionMap = new Map(decisions?.map(d => [d.id, d]) || [])
-
-  // Filter out ARC requests with approved/approved_with_conditions decisions
-  return items.filter(item => {
-    const decision = decisionMap.get(item.id)
-    if (!decision) return true // Keep if no decision found
-    return !isTerminalArcDecision(decision)
-  })
+  return items.filter(item => !isTerminalStatus(item))
 }
 
 export async function getOpenWorkItems(): Promise<OpenWorkItem[]> {
@@ -52,8 +35,7 @@ export async function getOpenWorkItems(): Promise<OpenWorkItem[]> {
     .order('priority', { ascending: false })
   if (error) { console.error('getOpenWorkItems:', error); return [] }
   const items = data || []
-  // Filter out ARC requests with approved/approved_with_conditions decisions
-  return items.filter(item => !isTerminalArcDecision(item))
+  return items.filter(item => !isTerminalStatus(item))
 }
 
 export async function getRecentCorrespondence(limit: number = 10) {
@@ -143,6 +125,7 @@ export async function getPropertyWorkItems(propertyId: string): Promise<WorkItem
     .from('work_items')
     .select('*')
     .eq('property_id', propertyId)
+    .is('excluded_at', null)
     .order('created_date', { ascending: false })
   if (error) { console.error('getPropertyWorkItems:', error); return [] }
   return data as any || []

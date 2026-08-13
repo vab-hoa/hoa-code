@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import clsx from 'clsx'
 import { StatusBadge } from './status-badge'
@@ -7,6 +8,7 @@ import { CategoryBadge } from './category-badge'
 import { SortableTh } from './sortable-th'
 import { formatDate, formatDays } from '@/lib/format'
 import { useSortableData } from '@/hooks/useSortableData'
+import { WORK_ITEM_TYPES, getWorkItemType } from '@/lib/work-item-helpers'
 import type { AgingWorkItem } from '@/lib/types'
 
 interface AgingAlertsProps {
@@ -18,6 +20,10 @@ interface SortableAgingItem extends AgingWorkItem {
 }
 
 export function AgingAlerts({ items }: AgingAlertsProps) {
+  const [visibleTypes, setVisibleTypes] = useState<Set<string>>(
+    new Set(['arc_request', 'work_order', 'violation', 'landscaping'])
+  )
+
   if (items.length === 0) {
     return (
       <div className="mb-6 p-4 bg-green-500/10 border border-green-500/30 rounded">
@@ -26,7 +32,82 @@ export function AgingAlerts({ items }: AgingAlertsProps) {
     )
   }
 
-  // Precompute overBy for each item
+  // Group items by type
+  const itemsByType = new Map<string, AgingWorkItem[]>()
+  for (const item of items) {
+    const type = getWorkItemType(item.category)
+    if (!itemsByType.has(type)) {
+      itemsByType.set(type, [])
+    }
+    itemsByType.get(type)!.push(item)
+  }
+
+  const toggleType = (typeKey: string) => {
+    const newVisibleTypes = new Set(visibleTypes)
+    if (newVisibleTypes.has(typeKey)) {
+      newVisibleTypes.delete(typeKey)
+    } else {
+      newVisibleTypes.add(typeKey)
+    }
+    setVisibleTypes(newVisibleTypes)
+  }
+
+  return (
+    <div className="mb-6">
+      <h2 className="text-lg font-bold text-red-300 mb-3 flex items-center gap-2">
+        ⚠️ Aging Alerts
+      </h2>
+
+      {/* Type toggle chips */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {WORK_ITEM_TYPES.map(type => {
+          const typeItems = itemsByType.get(type.key) || []
+          if (typeItems.length === 0) return null
+
+          const isVisible = visibleTypes.has(type.key)
+          return (
+            <button
+              key={type.key}
+              onClick={() => toggleType(type.key)}
+              className={clsx(
+                'px-3 py-1 rounded text-sm font-medium transition-colors',
+                isVisible
+                  ? 'bg-blue-500/30 border border-blue-500 text-blue-200'
+                  : 'bg-edge/50 border border-edge text-mute hover:bg-edge/70'
+              )}
+            >
+              {type.label} ({typeItems.length})
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Tables per type */}
+      <div className="space-y-6">
+        {WORK_ITEM_TYPES.map(type => {
+          const typeItems = itemsByType.get(type.key) || []
+          if (typeItems.length === 0 || !visibleTypes.has(type.key)) return null
+
+          return (
+            <AgingAlertsTypeSection
+              key={type.key}
+              typeLabel={type.label}
+              items={typeItems}
+            />
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function AgingAlertsTypeSection({
+  typeLabel,
+  items,
+}: {
+  typeLabel: string
+  items: AgingWorkItem[]
+}) {
   const itemsWithOverBy: SortableAgingItem[] = items.map(item => ({
     ...item,
     overBy: item.days_open - item.max_days,
@@ -38,10 +119,10 @@ export function AgingAlerts({ items }: AgingAlertsProps) {
   )
 
   return (
-    <div className="mb-6">
-      <h2 className="text-lg font-bold text-red-300 mb-3 flex items-center gap-2">
-        ⚠️ Aging Alerts
-      </h2>
+    <div className="bg-surface rounded border border-edge">
+      <div className="px-4 py-2 bg-edge/25 border-b border-edge">
+        <p className="text-sm font-semibold text-ink">{typeLabel} ({items.length})</p>
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
