@@ -3,7 +3,7 @@ import { isTerminalStatus } from './work-item-helpers'
 import type {
   DashboardSummary, OpenWorkItem, AgingWorkItem,
   WorkItem, Property, CorrespondenceEntry, EmailMessage,
-  IssueEmailLink, WoStatusSnapshot, SourceDocument, EmailThread,
+  IssueEmailLink, WoStatusSnapshot, SourceDocument, EmailThread, WorkItemDocument,
 } from './types'
 
 // === Dashboard Home ===
@@ -96,6 +96,79 @@ export async function getWorkItemStatusHistory(workItemId: string) {
     .order('entry_date', { ascending: true })
   if (error) { console.error('getWorkItemStatusHistory:', error); return [] }
   return data || []
+}
+
+export async function getWorkItemDocuments(workItemId: string): Promise<WorkItemDocument[]> {
+  const { data, error } = await supabase
+    .from('work_item_documents')
+    .select('*')
+    .eq('work_item_id', workItemId)
+    .order('uploaded_at', { ascending: false })
+  if (error) { console.error('getWorkItemDocuments:', error); return [] }
+  return data || []
+}
+
+export async function uploadWorkItemDocument(
+  workItemId: string,
+  file: File,
+  title: string | null,
+  uploadedBy: string
+): Promise<WorkItemDocument | null> {
+  try {
+    const fileName = file.name
+    const storagePath = `${workItemId}/${crypto.randomUUID()}-${fileName}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('work-item-documents')
+      .upload(storagePath, file)
+
+    if (uploadError) {
+      console.error('Storage upload error:', uploadError)
+      return null
+    }
+
+    const { data, error: insertError } = await supabase
+      .from('work_item_documents')
+      .insert({
+        work_item_id: workItemId,
+        title: title || null,
+        file_name: fileName,
+        storage_path: storagePath,
+        content_type: file.type || null,
+        file_size_bytes: file.size,
+        uploaded_by: uploadedBy,
+      })
+      .select()
+      .single()
+
+    if (insertError) {
+      console.error('Database insert error:', insertError)
+      return null
+    }
+
+    return data
+  } catch (e) {
+    console.error('uploadWorkItemDocument error:', e)
+    return null
+  }
+}
+
+export async function updateWorkItemDocumentTitle(documentId: string, title: string | null): Promise<boolean> {
+  const { error } = await supabase
+    .from('work_item_documents')
+    .update({ title })
+    .eq('id', documentId)
+
+  if (error) {
+    console.error('updateWorkItemDocumentTitle:', error)
+    return false
+  }
+  return true
+}
+
+export function getWorkItemDocumentUrl(storagePath: string): string {
+  const { data } = supabase.storage.from('work-item-documents').getPublicUrl(storagePath)
+  return data.publicUrl
 }
 
 // === Property Detail ===
