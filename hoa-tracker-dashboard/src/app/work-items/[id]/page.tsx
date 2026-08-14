@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useWorkItem } from '@/hooks/useWorkItem'
 import { supabase } from '@/lib/supabase'
+import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl } from '@/lib/queries'
 import { Loading } from '@/components/loading'
 import { StatusBadge } from '@/components/status-badge'
 import { CategoryBadge } from '@/components/category-badge'
@@ -15,11 +16,26 @@ import { formatDate, formatCurrency } from '@/lib/format'
 export default function WorkItemDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params)
   const router = useRouter()
-  const { item, correspondence, emails, statusHistory, loading, error } = useWorkItem(id)
+  const { item, correspondence, emails, statusHistory, documents, loading, error } = useWorkItem(id)
+
   const [showExclusionDialog, setShowExclusionDialog] = useState(false)
   const [exclusionReason, setExclusionReason] = useState('')
   const [excludingName, setExcludingName] = useState('')
   const [isExcluding, setIsExcluding] = useState(false)
+
+  const [showUploadDialog, setShowUploadDialog] = useState(false)
+  const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [uploadTitle, setUploadTitle] = useState('')
+  const [uploadedBy, setUploadedBy] = useState('')
+  const [isUploading, setIsUploading] = useState(false)
+  const [localDocuments, setLocalDocuments] = useState(documents)
+
+  const [editingDocId, setEditingDocId] = useState<string | null>(null)
+  const [editingDocTitle, setEditingDocTitle] = useState('')
+
+  React.useEffect(() => {
+    setLocalDocuments(documents)
+  }, [documents])
 
   const handleExclude = async () => {
     if (!exclusionReason.trim() || !excludingName.trim()) {
@@ -48,6 +64,44 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
     router.push('/')
   }
 
+  const handleUpload = async () => {
+    if (!uploadFile) {
+      alert('Please select a file')
+      return
+    }
+
+    setIsUploading(true)
+    const result = await uploadWorkItemDocument(
+      id,
+      uploadFile,
+      uploadTitle || null,
+      uploadedBy || 'Unknown'
+    )
+    setIsUploading(false)
+
+    if (result) {
+      setLocalDocuments([result, ...localDocuments])
+      setUploadFile(null)
+      setUploadTitle('')
+      setUploadedBy('')
+      setShowUploadDialog(false)
+    } else {
+      alert('Error uploading document')
+    }
+  }
+
+  const handleSaveTitle = async (docId: string, newTitle: string) => {
+    const success = await updateWorkItemDocumentTitle(docId, newTitle || null)
+    if (success) {
+      setLocalDocuments(
+        localDocuments.map(d => (d.id === docId ? { ...d, title: newTitle || null } : d))
+      )
+      setEditingDocId(null)
+    } else {
+      alert('Error updating title')
+    }
+  }
+
   if (loading) return <Loading />
   if (error) return <div className="p-6 text-red-400">Error: {error}</div>
   if (!item) return <div className="p-6 text-mute">Work item not found</div>
@@ -69,15 +123,22 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
               </div>
 
               {item.property_id && (
-                <p className="text-sm text-mute mb-4">
-                  Property:{' '}
-                  <Link
-                    href={`/properties/${item.property_id}`}
-                    className="text-blue-300 hover:underline"
-                  >
-                    {(item as any).properties?.parcel_code || 'View property'}
-                  </Link>
-                </p>
+                <>
+                  <p className="text-sm text-mute mb-2">
+                    Property:{' '}
+                    <Link
+                      href={`/properties/${item.property_id}`}
+                      className="text-blue-300 hover:underline"
+                    >
+                      {(item as any).properties?.parcel_code || 'View property'}
+                    </Link>
+                  </p>
+                  {(item as any).properties?.owner_name && (
+                    <p className="text-sm text-mute mb-4">
+                      Owner: {(item as any).properties.owner_name}
+                    </p>
+                  )}
+                </>
               )}
 
               {item.description && (
@@ -162,12 +223,6 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                   <dd className="text-ink">{formatDate(item.closed_date)}</dd>
                 </div>
               )}
-            </dl>
-          </div>
-
-          <div className="bg-surface border border-edge rounded-lg p-4">
-            <h3 className="font-bold text-ink mb-3">Financials</h3>
-            <dl className="space-y-2 text-sm">
               {item.estimated_cost && (
                 <div>
                   <dt className="text-mute">Estimated Cost</dt>
@@ -183,6 +238,83 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                 </div>
               )}
             </dl>
+          </div>
+
+          <div className="bg-surface border border-edge rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold text-ink">Documents</h3>
+              <button
+                onClick={() => setShowUploadDialog(true)}
+                className="px-2 py-1 text-xs bg-blue-500/20 border border-blue-500/50 text-blue-300 rounded hover:bg-blue-500/30 transition-colors"
+              >
+                + Upload
+              </button>
+            </div>
+
+            {localDocuments.length === 0 ? (
+              <p className="text-sm text-mute italic">No documents yet</p>
+            ) : (
+              <div className="space-y-3">
+                {localDocuments.map(doc => (
+                  <div key={doc.id} className="border-l-2 border-edge/50 pl-3 py-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        {editingDocId === doc.id ? (
+                          <div className="flex gap-1 mb-1">
+                            <input
+                              type="text"
+                              value={editingDocTitle}
+                              onChange={e => setEditingDocTitle(e.target.value)}
+                              placeholder="Document title"
+                              className="flex-1 px-2 py-1 text-xs bg-edge border border-edge text-ink rounded"
+                            />
+                            <button
+                              onClick={() => handleSaveTitle(doc.id, editingDocTitle)}
+                              className="px-2 py-1 text-xs bg-green-500/20 text-green-300 rounded hover:bg-green-500/30"
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={() => setEditingDocId(null)}
+                              className="px-2 py-1 text-xs bg-edge text-mute rounded hover:bg-edge/70"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 mb-1">
+                            <a
+                              href={getWorkItemDocumentUrl(doc.storage_path)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-300 hover:underline text-sm font-medium truncate"
+                            >
+                              {doc.title || <span className="italic text-mute">Untitled document</span>}
+                            </a>
+                            <button
+                              onClick={() => {
+                                setEditingDocId(doc.id)
+                                setEditingDocTitle(doc.title || '')
+                              }}
+                              className="text-mute hover:text-ink text-xs"
+                              title="Edit title"
+                            >
+                              ✎
+                            </button>
+                          </div>
+                        )}
+                        <div className="text-xs text-mute">
+                          {doc.file_name}
+                        </div>
+                        <div className="text-xs text-mute/60">
+                          {formatDate(doc.uploaded_at)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -203,6 +335,75 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                   <span className="text-mute">by {entry.author_name}</span>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Upload dialog */}
+        {showUploadDialog && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-surface border border-edge rounded-lg p-6 max-w-sm w-full">
+              <h3 className="text-lg font-bold text-ink mb-4">Upload document</h3>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-1">
+                    Select file (PDF, JPG, PNG)
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={e => setUploadFile(e.target.files?.[0] || null)}
+                    className="w-full px-3 py-2 bg-edge border border-edge text-ink rounded text-sm"
+                  />
+                  {uploadFile && (
+                    <p className="text-xs text-mute mt-1">{uploadFile.name}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-1">
+                    Title (optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={uploadTitle}
+                    onChange={e => setUploadTitle(e.target.value)}
+                    placeholder="e.g., ARC Request Form"
+                    className="w-full px-3 py-2 bg-edge border border-edge text-ink rounded text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-1">
+                    Your name
+                  </label>
+                  <input
+                    type="text"
+                    value={uploadedBy}
+                    onChange={e => setUploadedBy(e.target.value)}
+                    placeholder="e.g., Dee Buck"
+                    className="w-full px-3 py-2 bg-edge border border-edge text-ink rounded text-sm"
+                  />
+                </div>
+
+                <div className="flex gap-3 justify-end">
+                  <button
+                    onClick={() => setShowUploadDialog(false)}
+                    disabled={isUploading}
+                    className="px-3 py-2 bg-edge border border-edge text-ink rounded text-sm hover:bg-edge/70 transition-colors disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleUpload}
+                    disabled={isUploading || !uploadFile}
+                    className="px-3 py-2 bg-blue-500/20 border border-blue-500 text-blue-300 rounded text-sm hover:bg-blue-500/30 transition-colors disabled:opacity-50"
+                  >
+                    {isUploading ? 'Uploading...' : 'Upload'}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}

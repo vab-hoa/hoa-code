@@ -123,6 +123,18 @@ export interface AgingConfig {
   alert_action: string | null
 }
 
+export interface WorkItemDocument {
+  id: string
+  work_item_id: string
+  title: string | null
+  file_name: string
+  storage_path: string
+  content_type: string | null
+  file_size_bytes: number | null
+  uploaded_by: string | null
+  uploaded_at: string
+}
+
 // === Views ===
 
 export interface DashboardSummary {

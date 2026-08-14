@@ -1652,6 +1652,98 @@ All Supabase views now filter `excluded_at IS NULL`:
 
 ---
 
+## 14.6 Phase 3: Document Attachments & Homeowner Name
+
+### Context
+
+Live testing of Phase 2 revealed two critical gaps:
+
+1. **Homeowner name is not visible** on work item detail pages — users can see the property link but don't know who owns it at a glance.
+2. **No document storage exists.** Every ARC Request will normally arrive with a signed form plus supporting photos/PDFs. The system had no way to store, link, or retrieve these files.
+
+### 14.6.1 Database Schema (schema_v5.sql)
+
+New table for work item documents:
+
+```sql
+CREATE TABLE IF NOT EXISTS work_item_documents (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  work_item_id UUID NOT NULL REFERENCES work_items(id) ON DELETE CASCADE,
+  title TEXT,                          -- optional, user-editable description
+  file_name TEXT NOT NULL,             -- original filename
+  storage_path TEXT NOT NULL,          -- path in Supabase Storage
+  content_type TEXT,                   -- MIME type (e.g. application/pdf, image/jpeg)
+  file_size_bytes BIGINT,              -- file size in bytes
+  uploaded_by TEXT,                    -- free-text name, no auth yet
+  uploaded_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_work_item_documents_work_item
+  ON work_item_documents(work_item_id);
+```
+
+**Storage bucket:** `work-item-documents` (public, S3-compatible via Supabase Storage). File path scheme: `{work_item_id}/{uuid}-{filename}` to avoid collisions.
+
+**Design note:** Files stored in object storage (not database blobs) keeps the architecture flexible for future migration to alternative backends.
+
+### 14.6.2 Document Queries (src/lib/queries.ts)
+
+- `getWorkItemDocuments(workItemId)` — fetch all documents linked to a work item, ordered by upload date descending
+- `uploadWorkItemDocument(workItemId, file, title, uploadedBy)` — upload file to Supabase Storage, create document record in database
+- `updateWorkItemDocumentTitle(documentId, title)` — edit document title after upload (allows null for untitled documents)
+- `getWorkItemDocumentUrl(storagePath)` — returns public URL for opening document in browser tab
+
+### 14.6.3 Work Item Hook (src/hooks/useWorkItem.ts)
+
+Extended `useWorkItem()` to fetch documents alongside correspondence, emails, and status history. Added `documents` to hook return value.
+
+### 14.6.4 Work Item Detail Page (src/app/work-items/[id]/page.tsx)
+
+**Major changes:**
+
+1. **Homeowner name in header** — added after property link: "Owner: {owner_name or —}"
+2. **Replaced Financials block with Documents block:**
+   - Shows all uploaded documents as a clickable list
+   - Each document row: title (or "Untitled document" if null) + filename + upload date
+   - Each title is editable inline (pencil icon → text input → save/cancel)
+   - Clicking title/filename opens document in new browser tab (PDF/JPEG/PNG render natively)
+   - "Upload document" button at top of block opens inline form
+3. **Moved financial fields into Details block** — estimated_cost and bid_amount still visible, just de-prioritized under Details instead of a dedicated Financials column
+
+**Upload form:**
+- File picker (`<input type="file" accept=".pdf,.jpg,.jpeg,.png">`)
+- Optional title field
+- "Uploaded by" name field (matches exclusion dialog pattern, no auth)
+- Cancel/Upload buttons
+- Closes automatically on successful upload, document appears at top of list
+
+**Note:** Document upload is available on all three work item types (ARC Requests, Work Orders, Violations) — same UI component, no branching by category.
+
+### 14.6.5 Email Processor Integration (Jane's responsibility)
+
+When Jane's email processor extracts attachments from incoming emails:
+
+1. Upload file to Supabase Storage bucket `work-item-documents`, path: `{work_item_id}/{uuid}-{filename}`
+2. Create a row in `work_item_documents` table with:
+   - `work_item_id` (the work item the email created/updated)
+   - `file_name` (original filename)
+   - `storage_path` (returned from storage upload)
+   - `content_type` (MIME type, e.g. application/pdf)
+   - `file_size_bytes` (optional)
+   - `uploaded_by` (can be null or "email_processor")
+   - `title` (leave null — users will add titles later if desired via the dashboard UI)
+
+Once this pipeline is live, documents will automatically populate in the dashboard with no additional work needed.
+
+### 14.6.6 Known Limitations & Future Work
+
+- **No authentication:** Document URLs are public (same board-only trust model as rest of app). Secure access can be added when auth is implemented.
+- **No document deletion:** UI has no delete button. If a document needs removal, it requires a manual Supabase query.
+- **No file versioning:** Each upload is a new document. Overwriting is not supported.
+- **Title mandatory at submission time (forms):** ARC and WO forms don't yet have a "document title" field. This is a JotForm/Google Forms builder configuration (out-of-repo). Users can always add titles later via the dashboard UI.
+
+---
+
 ## 15. Deployment
 
 ### 15.1 GitHub Repo Setup
