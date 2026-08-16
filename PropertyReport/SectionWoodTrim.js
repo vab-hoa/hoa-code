@@ -3,11 +3,12 @@
  * Generates a Google Doc section for wood trim assessment data and photos
  *
  * Follows the standard report section format - see REPORT_FORMAT_GUIDE.md
+ * Phase 2: Narrative paragraphs + 2-column photo table layout
  */
 
-// Photo sizing constants for 2 photos per page
-var WOODTRIM_PHOTO_MAX_WIDTH = 350;   // ~4.9 inches
-var WOODTRIM_PHOTO_MAX_HEIGHT = 250;  // ~3.5 inches - allows 2 per page with captions
+// Photo sizing constants for 2-column table layout
+var WOODTRIM_PHOTO_MAX_WIDTH = 300;   // ~4.2 inches per column (fits 2 in 8.5" page)
+var WOODTRIM_PHOTO_MAX_HEIGHT = 250;  // ~3.5 inches - maintains aspect ratio
 
 function generateSectionWoodTrim(address, displayAddress, data) {
   const sectionLabel = 'Wood Trim Evaluation';
@@ -24,7 +25,7 @@ function generateSectionWoodTrim(address, displayAddress, data) {
     // Set default font
     body.setFontFamily('Arial');
 
-    // === PAGE 1: Header and Data Table ===
+    // === PAGE 1: Header and Narrative ===
 
     // Header
     body.appendParagraph(sectionLabel)
@@ -44,20 +45,13 @@ function generateSectionWoodTrim(address, displayAddress, data) {
 
     // Assessment Data Section
     var allPhotos = [];
+    var narrativeData = null;
+
     if (data.woodTrim && data.woodTrim.rows.length > 0) {
-      body.appendParagraph('Assessment Summary')
-        .setHeading(DocumentApp.ParagraphHeading.HEADING3)
-        .setForegroundColor('#1a3c5e');
-
-      body.appendParagraph('Data shown for entire building (' + (data.buildingAddress || displayAddress) + ')')
-        .setFontSize(9)
-        .setItalic(true)
-        .setForegroundColor('#666666');
-
-      body.appendParagraph('');
-
-      // Format wood trim data - collect photos for later
-      allPhotos = formatWoodTrimDataTable(body, data.woodTrim);
+      // Extract narrative data and photos from spreadsheet
+      var result = buildWoodTrimNarrative(body, data.woodTrim);
+      allPhotos = result.photos;
+      narrativeData = result.narrative;
 
       // === PAGE 2+: Photos Section ===
       if (allPhotos && allPhotos.length > 0) {
@@ -70,9 +64,8 @@ function generateSectionWoodTrim(address, displayAddress, data) {
 
         body.appendParagraph('');
 
-        for (var i = 0; i < allPhotos.length; i++) {
-          addWoodTrimPhoto(body, allPhotos[i], 'Photo ' + (i + 1));
-        }
+        // Display photos in 2-column table layout
+        displayPhotosIn2ColumnTable(body, allPhotos);
       }
 
     } else {
@@ -123,70 +116,58 @@ function generateSectionWoodTrim(address, displayAddress, data) {
 }
 
 /**
- * Format wood trim data as clean 2-column tables
- * Returns array of photo objects to be displayed after page break
+ * Build narrative paragraphs and extract photos from wood trim data
+ * Returns {photos: [], narrative: {trimRepair: [], trimReplacement: []}}
  */
-function formatWoodTrimDataTable(body, woodTrimData) {
-  if (!woodTrimData || !woodTrimData.headers || !woodTrimData.rows) return [];
+function buildWoodTrimNarrative(body, woodTrimData) {
+  if (!woodTrimData || !woodTrimData.headers || !woodTrimData.rows) {
+    return { photos: [], narrative: { trimRepair: [], trimReplacement: [] } };
+  }
 
   var allPhotos = [];
+  var trimRepairPhotos = [];
+  var trimReplacementPhotos = [];
+  var photoCounter = 1;
 
+  // Find column indices for the two special columns
+  var trimRepairColIndex = -1;
+  var trimReplacementColIndex = -1;
+
+  for (var c = 0; c < woodTrimData.headers.length; c++) {
+    var header = String(woodTrimData.headers[c] || '').toLowerCase();
+    if (header.includes('trim repair') && header.includes('sand') && header.includes('paint')) {
+      trimRepairColIndex = c;
+    }
+    if (header.includes('trim replacement')) {
+      trimReplacementColIndex = c;
+    }
+  }
+
+  console.log('Found trim repair column at index: ' + trimRepairColIndex);
+  console.log('Found trim replacement column at index: ' + trimReplacementColIndex);
+
+  // Process each row
   for (var r = 0; r < woodTrimData.rows.length; r++) {
     var row = woodTrimData.rows[r];
 
-    if (r > 0) {
-      body.appendParagraph('');
-      body.appendHorizontalRule();
-      body.appendParagraph('');
+    // Extract photo numbers from the two special columns
+    if (trimRepairColIndex >= 0 && row[trimRepairColIndex]) {
+      var repairPhotos = extractPhotoNumbers(String(row[trimRepairColIndex]));
+      trimRepairPhotos = trimRepairPhotos.concat(repairPhotos);
+      console.log('Row ' + r + ' trim repair photos: ' + repairPhotos.join(', '));
     }
 
-    // Create a 2-column table for this record's data
-    var table = body.appendTable();
-    table.setBorderWidth(1);
-    table.setBorderColor('#dddddd');
-
-    // Collect non-empty, non-image fields (columns 1-10, skip column 0 which is often address)
-    var fields = [];
-    for (var c = 1; c < Math.min(11, woodTrimData.headers.length); c++) {
-      var value = row[c];
-      if (value) {
-        fields.push({
-          label: woodTrimData.headers[c] || 'Field ' + (c + 1),
-          value: String(value)
-        });
-      }
+    if (trimReplacementColIndex >= 0 && row[trimReplacementColIndex]) {
+      var replacementPhotos = extractPhotoNumbers(String(row[trimReplacementColIndex]));
+      trimReplacementPhotos = trimReplacementPhotos.concat(replacementPhotos);
+      console.log('Row ' + r + ' trim replacement photos: ' + replacementPhotos.join(', '));
     }
 
-    // Add fields to table
-    for (var f = 0; f < fields.length; f++) {
-      var tableRow = table.appendTableRow();
+    // Collect all image column references (excluding the two special narrative columns)
+    for (var imgCol = 0; imgCol < woodTrimData.headers.length; imgCol++) {
+      // Skip the narrative columns
+      if (imgCol === trimRepairColIndex || imgCol === trimReplacementColIndex) continue;
 
-      // Label cell (gray background)
-      var labelCell = tableRow.appendTableCell(fields[f].label);
-      labelCell.setWidth(150);
-      labelCell.setBackgroundColor('#f5f5f5');
-      labelCell.getChild(0).asParagraph()
-        .setBold(true)
-        .setFontSize(10)
-        .setForegroundColor('#333333');
-      labelCell.setPaddingTop(6);
-      labelCell.setPaddingBottom(6);
-      labelCell.setPaddingLeft(8);
-      labelCell.setPaddingRight(8);
-
-      // Value cell
-      var valueCell = tableRow.appendTableCell(fields[f].value);
-      valueCell.getChild(0).asParagraph()
-        .setFontSize(10)
-        .setForegroundColor('#333333');
-      valueCell.setPaddingTop(6);
-      valueCell.setPaddingBottom(6);
-      valueCell.setPaddingLeft(8);
-      valueCell.setPaddingRight(8);
-    }
-
-    // Collect photos from columns 11+ for display after page break
-    for (var imgCol = 11; imgCol < woodTrimData.headers.length; imgCol++) {
       var cellValue = row[imgCol];
       if (cellValue && typeof cellValue === 'string') {
         var fileId = extractDriveFileId(cellValue);
@@ -194,21 +175,199 @@ function formatWoodTrimDataTable(body, woodTrimData) {
           allPhotos.push({
             fileId: fileId,
             label: woodTrimData.headers[imgCol] || 'Photo',
+            photoNumber: photoCounter,
             recordIndex: r + 1
           });
+          photoCounter++;
         }
       }
     }
   }
 
-  return allPhotos;
+  // Remove duplicates from photo number lists
+  trimRepairPhotos = trimRepairPhotos.filter(function(item, pos) {
+    return trimRepairPhotos.indexOf(item) === pos;
+  }).sort(function(a, b) { return a - b; });
+
+  trimReplacementPhotos = trimReplacementPhotos.filter(function(item, pos) {
+    return trimReplacementPhotos.indexOf(item) === pos;
+  }).sort(function(a, b) { return a - b; });
+
+  // Build and display the three narrative paragraphs
+  body.appendParagraph('Assessment Summary')
+    .setHeading(DocumentApp.ParagraphHeading.HEADING3)
+    .setForegroundColor('#1a3c5e');
+
+  body.appendParagraph('Data shown for entire building')
+    .setFontSize(9)
+    .setItalic(true)
+    .setForegroundColor('#666666');
+
+  body.appendParagraph('');
+
+  // Paragraph 1: Photo categorization
+  var para1Text = 'These are photographs taken by volunteers of potential issues with the trim on this unit. ' +
+    'The photos have been initially divided (by inspection of the photos) into those which can probably be repaired, ' +
+    'and those which will probably require board replacement. ';
+
+  if (trimRepairPhotos.length > 0) {
+    para1Text += 'These photos appear to have issues which can probably be repaired by sanding, caulking and painting: ' +
+      trimRepairPhotos.join(', ') + '. ';
+  }
+
+  if (trimReplacementPhotos.length > 0) {
+    para1Text += 'These photos appear to require full or partial board replacement: ' +
+      trimReplacementPhotos.join(', ') + '.';
+  }
+
+  body.appendParagraph(para1Text)
+    .setFontSize(11)
+    .setForegroundColor('#333333')
+    .setSpacingAfter(12);
+
+  // Paragraph 2: RFP and contractor work
+  var para2Text = 'An RFP has been issued by the board for bids from contractors to undertake the board replacement ' +
+    'portion of this task. Depending on the responses, and the costs, we will likely contract for that work, which is ' +
+    'more urgent, to begin. As the contractors work they will be better able to evaluate the condition of other boards ' +
+    'than volunteers were able to do from the ground, and may recommend change orders to the contract as the work proceeds.';
+
+  body.appendParagraph(para2Text)
+    .setFontSize(11)
+    .setForegroundColor('#333333')
+    .setSpacingAfter(12);
+
+  // Paragraph 3: Repair timeline
+  var para3Text = 'The Trim Repair section is less urgent, and some part of those repairs can probably be done either ' +
+    'by volunteers (if they are close to the ground), or by the handyman contractors. Some will have to be done in another ' +
+    'round of General Contractor work in following years.';
+
+  body.appendParagraph(para3Text)
+    .setFontSize(11)
+    .setForegroundColor('#333333')
+    .setSpacingAfter(12);
+
+  body.appendParagraph('');
+
+  return {
+    photos: allPhotos,
+    narrative: {
+      trimRepair: trimRepairPhotos,
+      trimReplacement: trimReplacementPhotos
+    }
+  };
 }
 
 /**
- * Add a single wood trim photo with caption, sized for 2 per page
+ * Extract photo numbers from text (handles "1, 2, 3" or "1 2 3" or mixed formats)
  */
-function addWoodTrimPhoto(body, photo, caption) {
-  addScaledPhoto_(body, photo.fileId, caption + (photo.label && photo.label !== 'Photo' ? ' - ' + photo.label : ''));
+function extractPhotoNumbers(text) {
+  if (!text || typeof text !== 'string') return [];
+
+  // Match all numbers in the text
+  var matches = text.match(/\d+/g);
+  if (!matches) return [];
+
+  // Convert to integers and return
+  return matches.map(function(n) { return parseInt(n); });
+}
+
+/**
+ * Display photos in a 2-column table layout for responsive mobile viewing
+ * Table structure: 2 columns, alternating images and captions
+ */
+function displayPhotosIn2ColumnTable(body, allPhotos) {
+  if (!allPhotos || allPhotos.length === 0) return;
+
+  // Create table with 2 columns
+  var table = body.appendTable();
+  table.setBorderWidth(0);
+  table.setBorderColor('#ffffff');
+
+  // Set column widths (equal columns, ~4.25" each for 8.5" page)
+  var colWidths = [300, 300];
+
+  // Process photos in pairs
+  for (var i = 0; i < allPhotos.length; i += 2) {
+    var tableRow = table.appendTableRow();
+
+    // Left cell (photo + caption)
+    var leftCell = tableRow.appendTableCell('');
+    leftCell.setWidth(colWidths[0]);
+    leftCell.setPaddingTop(10);
+    leftCell.setPaddingBottom(10);
+    leftCell.setPaddingLeft(5);
+    leftCell.setPaddingRight(5);
+
+    addPhotoToCell(leftCell, allPhotos[i]);
+
+    // Right cell (photo + caption if exists)
+    var rightCell = tableRow.appendTableCell('');
+    rightCell.setWidth(colWidths[1]);
+    rightCell.setPaddingTop(10);
+    rightCell.setPaddingBottom(10);
+    rightCell.setPaddingLeft(5);
+    rightCell.setPaddingRight(5);
+
+    if (i + 1 < allPhotos.length) {
+      addPhotoToCell(rightCell, allPhotos[i + 1]);
+    }
+  }
+}
+
+/**
+ * Add a single photo to a table cell with caption
+ */
+function addPhotoToCell(cell, photoData) {
+  if (!photoData) return;
+
+  try {
+    var imageFile = DriveApp.getFileById(photoData.fileId);
+    var imageBlob = imageFile.getBlob();
+    var convertedBlob = convertHeifToJpeg(imageBlob, 'photo.jpg');
+
+    if (convertedBlob) {
+      // Clear cell and add image
+      var paragraph = cell.getChild(0);
+      if (paragraph.getType() === DocumentApp.ElementType.PARAGRAPH) {
+        paragraph.clear();
+      } else {
+        paragraph = cell.appendParagraph('');
+      }
+
+      var inlineImage = cell.appendImage(convertedBlob);
+
+      // Scale image to fit column width
+      var width = inlineImage.getWidth();
+      var height = inlineImage.getHeight();
+      var widthRatio = WOODTRIM_PHOTO_MAX_WIDTH / width;
+      var heightRatio = WOODTRIM_PHOTO_MAX_HEIGHT / height;
+      var ratio = Math.min(widthRatio, heightRatio, 1);
+
+      if (ratio < 1) {
+        inlineImage.setWidth(Math.round(width * ratio));
+        inlineImage.setHeight(Math.round(height * ratio));
+      }
+
+      // Add caption paragraph below image
+      var captionPara = cell.appendParagraph(
+        'Photo ' + photoData.photoNumber +
+        (photoData.label && photoData.label !== 'Photo' ? ' - ' + photoData.label : '')
+      );
+      captionPara.setAlignment(DocumentApp.HorizontalAlignment.CENTER)
+        .setFontSize(9)
+        .setItalic(true)
+        .setForegroundColor('#666666')
+        .setSpacingBefore(6)
+        .setSpacingAfter(0);
+    } else {
+      var para = cell.appendParagraph('[HEIF image could not be displayed]');
+      para.setItalic(true).setForegroundColor('#999999');
+    }
+  } catch (error) {
+    console.error('Error adding photo to cell: ' + error.toString());
+    var errorPara = cell.appendParagraph('[Could not load image]');
+    errorPara.setItalic(true).setForegroundColor('#999999');
+  }
 }
 
 /**
