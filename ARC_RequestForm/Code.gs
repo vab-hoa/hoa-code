@@ -590,10 +590,11 @@ function handleFormSubmission(formData) {
     const pdfBlob = generateArcPdf(formData);
     sendSubmissionEmail(formData, pdfBlob, processedFiles);
     archivePdfToDrive(formData, pdfBlob);
-    return { success: true };
+    return { success: true, message: 'Form submitted successfully' };
   } catch (error) {
-    Logger.log('Error in handleFormSubmission: ' + error);
-    throw new Error(error.message);
+    const errorMsg = error.message || String(error);
+    Logger.log('Error in handleFormSubmission: ' + errorMsg + ' | Stack: ' + error.stack);
+    throw new Error('SUBMISSION ERROR: ' + errorMsg);
   }
 }
 
