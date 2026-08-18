@@ -239,20 +239,27 @@ const HTML_FORM = `<!DOCTYPE html>
         }
 
         .alert {
-            padding: 12px;
+            padding: 15px;
             border-radius: 4px;
             margin-bottom: 15px;
             display: none;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-weight: bold;
+            z-index: 1000;
         }
 
         .alert.show {
             display: block;
+            visibility: visible;
+            opacity: 1;
         }
 
         .alert.success {
             background: #d4edda;
             color: #155724;
-            border: 1px solid #c3e6cb;
+            border: 2px solid #28a745;
         }
 
         .alert.error {
