@@ -782,6 +782,15 @@ function addArcActionSection(body) {
 
   const reasonsPlaceholder = body.appendParagraph('\n\n\n');
   reasonsPlaceholder.setFontSize(10);
+  reasonsPlaceholder.setSpacingAfter(15);
+
+  const signatureLabel = body.appendParagraph('ARC Committee Signature');
+  signatureLabel.setBold(true);
+  signatureLabel.setFontSize(11);
+  signatureLabel.setSpacingAfter(2);
+
+  const signatureLine = body.appendParagraph('_________________________________________     Date: _______________');
+  signatureLine.setFontSize(11);
 }
 
 function formatDateString(dateObj) {
