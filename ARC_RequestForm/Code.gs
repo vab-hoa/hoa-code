@@ -557,12 +557,18 @@ const HTML_FORM = `<!DOCTYPE html>
                 formData.files = await Promise.all(filePromises);
 
                 google.script.run
-                    .withSuccessHandler(() => {
-                        showAlert('✓ Request submitted successfully! Check your email for confirmation.', 'success');
-                        arcForm.reset();
-                        uploadedFiles = [];
-                        renderFileList();
-                        setTimeout(() => alertDiv.classList.remove('show'), 5000);
+                    .withSuccessHandler((response) => {
+                        console.log('Response:', response);
+                        if (response.success) {
+                            showAlert('✓ Request submitted successfully! Check your email for confirmation.', 'success');
+                            arcForm.reset();
+                            uploadedFiles = [];
+                            renderFileList();
+                            setTimeout(() => alertDiv.classList.remove('show'), 5000);
+                        } else {
+                            console.error('Backend error:', response);
+                            showAlert(\`Error: \${response.message}\\n\\nDebug: \${response.debug}\`, 'error');
+                        }
                     })
                     .withFailureHandler((error) => {
                         console.error('Submission error:', error);
@@ -584,17 +590,63 @@ function doGet(e) {
 }
 
 function handleFormSubmission(formData) {
+  const startTime = new Date();
+  const log = [];
+  let processedFiles;
+  let pdfBlob;
+
   try {
-    validateFormData(formData);
-    const processedFiles = processFiles(formData.files || []);
-    const pdfBlob = generateArcPdf(formData);
-    sendSubmissionEmail(formData, pdfBlob, processedFiles);
-    archivePdfToDrive(formData, pdfBlob);
-    return { success: true, message: 'Form submitted successfully' };
+    log.push('START at ' + startTime.toISOString());
+
+    try {
+      validateFormData(formData);
+      log.push('Validation OK');
+    } catch (e) {
+      log.push('VALIDATION FAILED: ' + e.message);
+      throw e;
+    }
+
+    try {
+      processedFiles = processFiles(formData.files || []);
+      log.push('Files processed: ' + processedFiles.length);
+    } catch (e) {
+      log.push('FILE PROCESSING FAILED: ' + e.message);
+      throw e;
+    }
+
+    try {
+      pdfBlob = generateArcPdf(formData);
+      log.push('PDF generated at ' + new Date().toISOString());
+    } catch (e) {
+      log.push('PDF GENERATION FAILED: ' + e.message);
+      throw e;
+    }
+
+    try {
+      log.push('Attempting email to: ' + CONFIG.ARC_RECIPIENT);
+      sendSubmissionEmail(formData, pdfBlob, processedFiles);
+      log.push('Email sent OK at ' + new Date().toISOString());
+    } catch (e) {
+      log.push('EMAIL FAILED: ' + e.message);
+      throw e;
+    }
+
+    try {
+      log.push('Attempting Drive archive');
+      archivePdfToDrive(formData, pdfBlob);
+      log.push('Drive archive OK at ' + new Date().toISOString());
+    } catch (e) {
+      log.push('DRIVE FAILED: ' + e.message);
+      throw e;
+    }
+
+    log.push('SUCCESS at ' + new Date().toISOString());
+    return { success: true, message: 'Form submitted successfully', debug: log.join(' | ') };
+
   } catch (error) {
     const errorMsg = error.message || String(error);
-    Logger.log('Error in handleFormSubmission: ' + errorMsg + ' | Stack: ' + error.stack);
-    throw new Error('SUBMISSION ERROR: ' + errorMsg);
+    log.push('EXCEPTION: ' + errorMsg);
+    return { success: false, message: 'SUBMISSION ERROR: ' + errorMsg, debug: log.join(' | ') };
   }
 }
 
@@ -829,7 +881,8 @@ ${processedFiles.map(f => '• ' + f.name).join('\n')}
 ---
 PDF form attached. All supporting documents and photos included as attachments.`;
 
-  const attachments = [pdfBlob.setName(`ARC_Request_${formatFilenameFriendly(formData.unitAddress)}_${getTodayDate()}.pdf`)];
+  const emailFileName = `ARC_Request_${formatFilenameFriendly(formData.unitAddress)}_${getTodayDate()}.pdf`;
+  const attachments = [pdfBlob.setName(emailFileName)];
   attachments.push(...processedFiles.map(f => f.blob));
 
   GmailApp.sendEmail(
@@ -847,7 +900,7 @@ function archivePdfToDrive(formData, pdfBlob) {
   try {
     const folder = DriveApp.getFolderById(CONFIG.ARCHIVE_FOLDER_ID);
     const fileName = `${formatFilenameFriendly(formData.name)}_${formatFilenameFriendly(formData.unitAddress)}_${getTodayDate()}.pdf`;
-    const file = folder.createFile(pdfBlob.setName(fileName));
+    const file = folder.createFile(pdfBlob, fileName);
 
     Logger.log('Archived PDF to Drive: ' + file.getUrl());
   } catch (error) {
