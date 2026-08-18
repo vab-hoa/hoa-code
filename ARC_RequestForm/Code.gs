@@ -908,7 +908,8 @@ PDF form attached. All supporting documents and photos included as attachments.`
 function archivePdfToDrive(formData, pdfBlob) {
   const folder = DriveApp.getFolderById(CONFIG.ARCHIVE_FOLDER_ID);
   const fileName = `${formatFilenameFriendly(formData.name)}_${formatFilenameFriendly(formData.unitAddress)}_${getTodayDate()}.pdf`;
-  const file = folder.createFile(pdfBlob, fileName);
+  const file = folder.createFile(pdfBlob);
+  file.setName(fileName);
   Logger.log('Archived PDF to Drive: ' + file.getUrl());
 }
 
