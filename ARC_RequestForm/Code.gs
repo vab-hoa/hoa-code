@@ -670,8 +670,10 @@ function generateArcPdf(formData) {
 function addPdfHeader(body, completionDate) {
   const dateTable = body.appendTable([[formatDateString(new Date())]]);
   const dateCell = dateTable.getCell(0, 0);
-  dateCell.getParagraph(0).setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
-  dateCell.getParagraph(0).setFontSize(11);
+  dateCell.setText('');
+  const dateP = dateCell.appendParagraph(formatDateString(new Date()));
+  dateP.setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
+  dateP.setFontSize(11);
 
   body.appendParagraph('');
 
