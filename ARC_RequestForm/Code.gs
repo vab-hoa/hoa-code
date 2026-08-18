@@ -242,16 +242,18 @@ const HTML_FORM = `<!DOCTYPE html>
             padding: 15px;
             border-radius: 4px;
             margin-bottom: 15px;
-            display: none;
+            margin-top: 0;
             visibility: hidden;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
             font-weight: bold;
             z-index: 1000;
+            position: relative;
+            height: auto;
+            overflow: visible;
         }
 
         .alert.show {
-            display: block;
             visibility: visible;
             opacity: 1;
         }
@@ -565,9 +567,9 @@ const HTML_FORM = `<!DOCTYPE html>
 
                 google.script.run
                     .withSuccessHandler((response) => {
-                        console.log('Response:', response);
                         if (response.success) {
                             showAlert('✓ Request submitted successfully! Check your email for confirmation.', 'success');
+                            window.scrollTo(0, 0);
                             arcForm.reset();
                             uploadedFiles = [];
                             renderFileList();
@@ -904,15 +906,10 @@ PDF form attached. All supporting documents and photos included as attachments.`
 }
 
 function archivePdfToDrive(formData, pdfBlob) {
-  try {
-    const folder = DriveApp.getFolderById(CONFIG.ARCHIVE_FOLDER_ID);
-    const fileName = `${formatFilenameFriendly(formData.name)}_${formatFilenameFriendly(formData.unitAddress)}_${getTodayDate()}.pdf`;
-    const file = folder.createFile(pdfBlob, fileName);
-
-    Logger.log('Archived PDF to Drive: ' + file.getUrl());
-  } catch (error) {
-    Logger.log('Warning: Failed to archive to Drive: ' + error.message);
-  }
+  const folder = DriveApp.getFolderById(CONFIG.ARCHIVE_FOLDER_ID);
+  const fileName = `${formatFilenameFriendly(formData.name)}_${formatFilenameFriendly(formData.unitAddress)}_${getTodayDate()}.pdf`;
+  const file = folder.createFile(pdfBlob, fileName);
+  Logger.log('Archived PDF to Drive: ' + file.getUrl());
 }
 
 function formatFilenameFriendly(text) {
