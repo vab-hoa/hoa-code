@@ -153,6 +153,14 @@ ARC_RequestForm/
 - Volunteer interest intake form
 - Work request submission form
 
+## Deployment Info
+
+**Deployment ID:** `AKfycbwRHiLqZYDS9WqIFLK-bLd-75VBOUBzB-AdJLLyuuUdlUIcyRAZvthqFcxwLr7jG3jfsA`
+
+**Public URL:** https://script.google.com/macros/s/AKfycbwRHiLqZYDS9WqIFLK-bLd-75VBOUBzB-AdJLLyuuUdlUIcyRAZvthqFcxwLr7jG3jfsA/exec
+
+**Test it:** Open the public URL in a browser to verify the form loads and works on mobile.
+
 ## Author
 
 Claude Code  
@@ -161,5 +169,6 @@ For: Dee Buck, Villas at the Boulders HOA President
 
 ---
 
-**Deployment URL:** Update after deploying to Apps Script  
-**Embedded Location:** https://www.villasboulders.org/forms/architectural-review-request
+**Live Form URL:** https://script.google.com/macros/s/AKfycbwRHiLqZYDS9WqIFLK-bLd-75VBOUBzB-AdJLLyuuUdlUIcyRAZvthqFcxwLr7jG3jfsA/exec
+
+**Website Embed Location:** https://www.villasboulders.org/forms/architectural-review-request

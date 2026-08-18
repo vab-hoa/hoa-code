@@ -1,0 +1,17 @@
+VaB ARC Request Form - Deployment Info
+======================================
+
+Deployment ID:
+AKfycbwRHiLqZYDS9WqIFLK-bLd-75VBOUBzB-AdJLLyuuUdlUIcyRAZvthqFcxwLr7jG3jfsA
+
+Public URL (click or paste in browser):
+https://script.google.com/macros/s/AKfycbwRHiLqZYDS9WqIFLK-bLd-75VBOUBzB-AdJLLyuuUdlUIcyRAZvthqFcxwLr7jG3jfsA/exec
+
+Website Embed (iframe for https://www.villasboulders.org/forms/architectural-review-request):
+<iframe
+  src="https://script.google.com/macros/s/AKfycbwRHiLqZYDS9WqIFLK-bLd-75VBOUBzB-AdJLLyuuUdlUIcyRAZvthqFcxwLr7jG3jfsA/exec"
+  width="100%"
+  height="1200"
+  frameborder="0"
+  style="border: none; padding: 0; margin: 0;">
+</iframe>
