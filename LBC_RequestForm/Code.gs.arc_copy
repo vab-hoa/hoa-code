@@ -3,10 +3,10 @@
 
 const CONFIG = {
   // Email recipient
-  LBC_RECIPIENT: 'lbcformrecipients@villasboulders.org',
+  ARC_RECIPIENT: 'arcformrecipients@villasboulders.org',
 
   // Drive folder for archiving (HOA Board Documents > ARC Request Forms)
-  ARCHIVE_FOLDER_ID: '12LnOEsFn4I032iFWp6Wwm5que68Hmn0A',
+  ARCHIVE_FOLDER_ID: '1-laNaFpH1eWuEs0f6_OtJ5Y0LkWXuUs7',
 
   // Manager contact
   MANAGER_EMAIL: 'manager@villasboulders.org',
@@ -18,7 +18,7 @@ const HTML_FORM = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VaB Landscape Request</title>
+    <title>VaB Architectural Review Request</title>
     <style>
         * {
             margin: 0;
@@ -307,7 +307,7 @@ const HTML_FORM = `<!DOCTYPE html>
 <body>
     <div class="container">
         <div class="header">
-            <h1>VaB Landscape Request</h1>
+            <h1>VaB Architectural Review Request</h1>
             <p>Submit improvements for committee review</p>
         </div>
 
@@ -632,7 +632,7 @@ function handleFormSubmission(formData) {
     }
 
     try {
-      log.push('Attempting email to: ' + CONFIG.LBC_RECIPIENT);
+      log.push('Attempting email to: ' + CONFIG.ARC_RECIPIENT);
       sendSubmissionEmail(formData, pdfBlob, processedFiles);
       log.push('Email sent OK at ' + new Date().toISOString());
     } catch (e) {
@@ -750,7 +750,7 @@ function addPdfHeader(body, completionDate) {
   decoration.setFontSize(8);
 
   // Add title
-  const titleParagraph = body.appendParagraph('VaB Landscape Request');
+  const titleParagraph = body.appendParagraph('VaB Architectural Review Request');
   titleParagraph.setFontSize(20);
   titleParagraph.setBold(true);
   titleParagraph.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
@@ -1002,7 +1002,7 @@ PDF form attached. All supporting documents and photos included as attachments.`
   attachments.push(...processedFiles.map(f => f.blob));
 
   GmailApp.sendEmail(
-    CONFIG.LBC_RECIPIENT,
+    CONFIG.ARC_RECIPIENT,
     subject,
     body,
     {
