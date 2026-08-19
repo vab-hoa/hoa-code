@@ -865,11 +865,11 @@ function addFormFields(body, formData) {
     labelCell.setPaddingRight(5);
     const labelPara = labelCell.appendParagraph(field.label);
     labelPara.setBold(true);
-    labelPara.setFontSize(10);
+    labelPara.setFontSize(9);
     labelPara.setForegroundColor('#1a3a52');
     labelPara.setSpacingBefore(0);
     labelPara.setSpacingAfter(0);
-    labelPara.setLineSpacing(0.8);
+    labelPara.setLineSpacing(0.7);
 
     const valueCell = fieldTable.getCell(0, 1);
     valueCell.clear();
@@ -878,8 +878,8 @@ function addFormFields(body, formData) {
     valueCell.setPaddingLeft(5);
     valueCell.setPaddingRight(5);
     const valuePara = valueCell.appendParagraph(field.value);
-    valuePara.setFontSize(10);
-    valuePara.setLineSpacing(0.8);
+    valuePara.setFontSize(9);
+    valuePara.setLineSpacing(0.7);
     valuePara.setSpacingBefore(0);
     valuePara.setSpacingAfter(0);
 
@@ -944,11 +944,11 @@ function addSignatureSection(body, formData) {
   subLabelCell.setPaddingRight(5);
   const subLabelPara = subLabelCell.appendParagraph('Submission Date');
   subLabelPara.setBold(true);
-  subLabelPara.setFontSize(11);
+  subLabelPara.setFontSize(9);
   subLabelPara.setForegroundColor('#1a3a52');
   subLabelPara.setSpacingBefore(0);
   subLabelPara.setSpacingAfter(0);
-  subLabelPara.setLineSpacing(0.8);
+  subLabelPara.setLineSpacing(0.7);
 
   const subValueCell = submissionTable.getCell(0, 1);
   subValueCell.clear();
@@ -957,10 +957,10 @@ function addSignatureSection(body, formData) {
   subValueCell.setPaddingLeft(5);
   subValueCell.setPaddingRight(5);
   const subValuePara = subValueCell.appendParagraph(formatDateString(new Date()));
-  subValuePara.setFontSize(11);
+  subValuePara.setFontSize(9);
   subValuePara.setSpacingBefore(0);
   subValuePara.setSpacingAfter(0);
-  subValuePara.setLineSpacing(0.8);
+  subValuePara.setLineSpacing(0.7);
 
   submissionTable.setColumnWidth(0, 150);
   submissionTable.setColumnWidth(1, 300);
@@ -975,11 +975,11 @@ function addSignatureSection(body, formData) {
   sigLabelCell.setPaddingRight(5);
   const sigLabelPara = sigLabelCell.appendParagraph('Your Signature');
   sigLabelPara.setBold(true);
-  sigLabelPara.setFontSize(11);
+  sigLabelPara.setFontSize(9);
   sigLabelPara.setForegroundColor('#1a3a52');
   sigLabelPara.setSpacingBefore(0);
   sigLabelPara.setSpacingAfter(0);
-  sigLabelPara.setLineSpacing(0.8);
+  sigLabelPara.setLineSpacing(0.7);
 
   const sigValueCell = signatureTable.getCell(0, 1);
   sigValueCell.clear();
@@ -988,10 +988,10 @@ function addSignatureSection(body, formData) {
   sigValueCell.setPaddingLeft(5);
   sigValueCell.setPaddingRight(5);
   const sigValuePara = sigValueCell.appendParagraph(formData.signature);
-  sigValuePara.setFontSize(11);
+  sigValuePara.setFontSize(9);
   sigValuePara.setSpacingBefore(0);
   sigValuePara.setSpacingAfter(0);
-  sigValuePara.setLineSpacing(0.8);
+  sigValuePara.setLineSpacing(0.7);
 
   signatureTable.setColumnWidth(0, 150);
   signatureTable.setColumnWidth(1, 300);
