@@ -931,9 +931,7 @@ function addSignatureSection(body, formData) {
   signatureTable.setColumnWidth(1, 300);
   signatureTable.setBorderColor('#e8e8e8');
 
-  const underline = body.appendParagraph('');
-  underline.setBorderBottom(1);
-  underline.setSpacingAfter(15);
+  body.appendParagraph('').setSpacingAfter(8);
 }
 
 function addContactSection(body) {
@@ -941,9 +939,7 @@ function addContactSection(body) {
   contactParagraph.setFontSize(10);
   contactParagraph.setForegroundColor('#1a3a52');
 
-  const underline = body.appendParagraph('');
-  underline.setBorderBottom(1);
-  underline.setSpacingAfter(15);
+  body.appendParagraph('').setSpacingAfter(8);
 }
 
 function addLbcActionSection(body) {
