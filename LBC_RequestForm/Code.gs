@@ -45,13 +45,13 @@ const HTML_FORM = `<!DOCTYPE html>
         .header {
             background: linear-gradient(135deg, #1a3a52 0%, #2d5f3f 100%);
             color: white;
-            padding: 8px 15px;
+            padding: 15px 20px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 22px;
-            margin-bottom: 1px;
+            font-size: 28px;
+            margin-bottom: 5px;
             font-weight: bold;
         }
 
@@ -61,18 +61,18 @@ const HTML_FORM = `<!DOCTYPE html>
         }
 
         .form-content {
-            padding: 8px 15px;
+            padding: 15px 20px;
         }
 
         .form-group {
-            margin-bottom: 3px;
+            margin-bottom: 10px;
         }
 
         label {
             display: block;
             font-weight: bold;
             color: #1a3a52;
-            margin-bottom: 2px;
+            margin-bottom: 5px;
             font-size: 14px;
         }
 
@@ -82,7 +82,7 @@ const HTML_FORM = `<!DOCTYPE html>
         input[type="date"],
         textarea {
             width: 100%;
-            padding: 4px;
+            padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-family: Arial, sans-serif;
@@ -198,12 +198,12 @@ const HTML_FORM = `<!DOCTYPE html>
         .form-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 5px;
-            margin-top: 3px;
+            gap: 10px;
+            margin-top: 15px;
         }
 
         button {
-            padding: 6px 12px;
+            padding: 10px 15px;
             border: none;
             border-radius: 4px;
             font-size: 14px;
