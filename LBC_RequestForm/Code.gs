@@ -781,7 +781,6 @@ function generateLbcPdf(formData) {
 
     addAdmonitionText(body);
     addSignatureSection(body, formData);
-    addContactSection(body);
     addLbcActionSection(body);
 
     doc.saveAndClose();
