@@ -802,29 +802,37 @@ function generateLbcPdf(formData) {
 function addPdfHeader(body) {
   const dateTable = body.appendTable([[formatDateString(new Date())]]);
   const dateCell = dateTable.getCell(0, 0);
-  dateCell.setText('');
+  dateCell.clear();
+  dateCell.setPaddingRight(20);
   const dateP = dateCell.appendParagraph(formatDateString(new Date()));
   dateP.setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
-  dateP.setFontSize(11);
+  dateP.setFontSize(10);
+  dateP.setForegroundColor('#666');
 
-  const tableBorders = dateTable.setBorderColor('#ffffff');
-  dateTable.setColumnWidth(0, 400);
+  dateTable.setBorderColor('#ffffff');
+  dateTable.setWidth(100);
+  dateTable.setColumnWidth(0, 450);
 
   const decorativeLine = body.appendParagraph('');
-  decorativeLine.setSpacingAfter(0);
+  decorativeLine.setSpacingAfter(12);
+  decorativeLine.setSpacingBefore(6);
   const decoration = decorativeLine.editAsText();
-  decoration.setText('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  decoration.setText('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   decoration.setForegroundColor('#2d7d3a');
-  decoration.setFontSize(8);
+  decoration.setFontSize(9);
 
   const titleParagraph = body.appendParagraph('Homeowner Paid Planting or Removal Request');
-  titleParagraph.setFontSize(20);
+  titleParagraph.setFontSize(22);
   titleParagraph.setBold(true);
   titleParagraph.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-  titleParagraph.setSpacingAfter(12);
+  titleParagraph.setSpacingAfter(8);
   titleParagraph.setForegroundColor('#1a3a52');
 
-  body.appendParagraph('').setSpacingAfter(8);
+  const subtitleParagraph = body.appendParagraph('Landscape & Beautification Committee');
+  subtitleParagraph.setFontSize(12);
+  subtitleParagraph.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  subtitleParagraph.setSpacingAfter(16);
+  subtitleParagraph.setForegroundColor('#2d5f3f');
 }
 
 function addFormFields(body, formData) {
@@ -842,9 +850,12 @@ function addFormFields(body, formData) {
 
   fields.forEach((field, index) => {
     const fieldTable = body.appendTable([[field.label, field.value]]);
+    fieldTable.setWidth(100);
 
     const labelCell = fieldTable.getCell(0, 0);
     labelCell.clear();
+    labelCell.setPaddingTop(6);
+    labelCell.setPaddingBottom(6);
     const labelPara = labelCell.appendParagraph(field.label);
     labelPara.setBold(true);
     labelPara.setFontSize(11);
@@ -852,52 +863,74 @@ function addFormFields(body, formData) {
 
     const valueCell = fieldTable.getCell(0, 1);
     valueCell.clear();
+    valueCell.setPaddingTop(6);
+    valueCell.setPaddingBottom(6);
     const valuePara = valueCell.appendParagraph(field.value);
     valuePara.setFontSize(11);
-    valuePara.setLineSpacing(1.2);
+    valuePara.setLineSpacing(1.3);
 
     fieldTable.setColumnWidth(0, 150);
     fieldTable.setColumnWidth(1, 300);
 
-    fieldTable.setBorderColor('#e8e8e8');
+    fieldTable.setBorderColor('#ddd');
 
     if (index < fields.length - 1) {
-      body.appendParagraph('').setSpacingAfter(8);
+      body.appendParagraph('').setSpacingAfter(6);
     }
   });
 
-  body.appendParagraph('').setSpacingAfter(12);
+  body.appendParagraph('').setSpacingAfter(16);
 }
 
 function addSupportingDocumentation(body, files) {
   const label = body.appendParagraph('Supporting Documentation');
   label.setBold(true);
-  label.setFontSize(11);
-  label.setSpacingAfter(5);
+  label.setFontSize(12);
+  label.setForegroundColor('#1a3a52');
+  label.setSpacingAfter(8);
 
   files.forEach(file => {
-    const fileParagraph = body.appendParagraph('• ' + file.name);
+    const fileParagraph = body.appendParagraph('📎 ' + file.name);
     fileParagraph.setFontSize(10);
-    fileParagraph.setSpacingAfter(3);
+    fileParagraph.setForegroundColor('#333');
+    fileParagraph.setSpacingAfter(4);
   });
 
-  body.appendParagraph('');
+  body.appendParagraph('').setSpacingAfter(12);
 }
 
 function addAdmonitionText(body) {
+  const admonitionLabel = body.appendParagraph('Important Agreement & Acknowledgment');
+  admonitionLabel.setBold(true);
+  admonitionLabel.setFontSize(11);
+  admonitionLabel.setForegroundColor('#1a3a52');
+  admonitionLabel.setSpacingAfter(8);
+
   const admonitionText = 'I have read the Homeowner Paid Removal and Planting Policy and will provide initial care and watering for new plants as recommended by the landscaping company. For trees, I understand that I accept this responsibility for a period of not less than 3 years until the tree is deemed viable by the LBC. I understand and agree that I am responsible for removal of this plant if it fails to survive.';
 
   const admonitionParagraph = body.appendParagraph(admonitionText);
   admonitionParagraph.setItalic(true);
   admonitionParagraph.setFontSize(10);
   admonitionParagraph.setLineSpacing(1.4);
-  admonitionParagraph.setSpacingAfter(15);
+  admonitionParagraph.setSpacingAfter(16);
+  admonitionParagraph.setForegroundColor('#333');
 }
 
 function addSignatureSection(body, formData) {
+  body.appendParagraph('').setSpacingBefore(12);
+
+  const sectionTitle = body.appendParagraph('Homeowner Signature and Submission');
+  sectionTitle.setBold(true);
+  sectionTitle.setFontSize(13);
+  sectionTitle.setForegroundColor('#1a3a52');
+  sectionTitle.setSpacingAfter(12);
+
   const submissionTable = body.appendTable([['Submission Date', formatDateString(new Date())]]);
+  submissionTable.setWidth(100);
   const subLabelCell = submissionTable.getCell(0, 0);
   subLabelCell.clear();
+  subLabelCell.setPaddingTop(6);
+  subLabelCell.setPaddingBottom(6);
   const subLabelPara = subLabelCell.appendParagraph('Submission Date');
   subLabelPara.setBold(true);
   subLabelPara.setFontSize(11);
@@ -905,18 +938,23 @@ function addSignatureSection(body, formData) {
 
   const subValueCell = submissionTable.getCell(0, 1);
   subValueCell.clear();
+  subValueCell.setPaddingTop(6);
+  subValueCell.setPaddingBottom(6);
   const subValuePara = subValueCell.appendParagraph(formatDateString(new Date()));
   subValuePara.setFontSize(11);
 
   submissionTable.setColumnWidth(0, 150);
   submissionTable.setColumnWidth(1, 300);
-  submissionTable.setBorderColor('#e8e8e8');
+  submissionTable.setBorderColor('#ddd');
 
-  body.appendParagraph('').setSpacingAfter(10);
+  body.appendParagraph('').setSpacingAfter(8);
 
   const signatureTable = body.appendTable([['Your Signature', formData.signature]]);
+  signatureTable.setWidth(100);
   const sigLabelCell = signatureTable.getCell(0, 0);
   sigLabelCell.clear();
+  sigLabelCell.setPaddingTop(6);
+  sigLabelCell.setPaddingBottom(6);
   const sigLabelPara = sigLabelCell.appendParagraph('Your Signature');
   sigLabelPara.setBold(true);
   sigLabelPara.setFontSize(11);
@@ -924,30 +962,52 @@ function addSignatureSection(body, formData) {
 
   const sigValueCell = signatureTable.getCell(0, 1);
   sigValueCell.clear();
+  sigValueCell.setPaddingTop(6);
+  sigValueCell.setPaddingBottom(6);
   const sigValuePara = sigValueCell.appendParagraph(formData.signature);
   sigValuePara.setFontSize(11);
 
   signatureTable.setColumnWidth(0, 150);
   signatureTable.setColumnWidth(1, 300);
-  signatureTable.setBorderColor('#e8e8e8');
+  signatureTable.setBorderColor('#ddd');
 
-  body.appendParagraph('').setSpacingAfter(8);
+  body.appendParagraph('').setSpacingAfter(16);
 }
 
 function addContactSection(body) {
+  body.appendParagraph('').setSpacingBefore(6);
+
+  const contactLabel = body.appendParagraph('Questions or Support');
+  contactLabel.setBold(true);
+  contactLabel.setFontSize(11);
+  contactLabel.setForegroundColor('#1a3a52');
+  contactLabel.setSpacingAfter(6);
+
   const contactParagraph = body.appendParagraph(`Direct questions to the LBC (Landscape & Beautification Committee) or HOA manager: ${CONFIG.MANAGER_EMAIL} or ${CONFIG.MANAGER_PHONE}`);
   contactParagraph.setFontSize(10);
-  contactParagraph.setForegroundColor('#1a3a52');
+  contactParagraph.setForegroundColor('#666');
+  contactParagraph.setLineSpacing(1.2);
 
-  body.appendParagraph('').setSpacingAfter(8);
+  body.appendParagraph('').setSpacingAfter(12);
 }
 
 function addLbcActionSection(body) {
-  const actionTitle = body.appendParagraph('LBC Committee Action:');
+  body.appendParagraph('').setSpacingBefore(12);
+
+  const divider = body.appendParagraph('');
+  divider.setSpacingAfter(0);
+  const dividerText = divider.editAsText();
+  dividerText.setText('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  dividerText.setForegroundColor('#ddd');
+  dividerText.setFontSize(9);
+
+  body.appendParagraph('').setSpacingAfter(12);
+
+  const actionTitle = body.appendParagraph('LBC Committee Action & Review');
   actionTitle.setBold(true);
-  actionTitle.setFontSize(12);
+  actionTitle.setFontSize(13);
   actionTitle.setForegroundColor('#1a3a52');
-  actionTitle.setSpacingAfter(10);
+  actionTitle.setSpacingAfter(12);
 
   const checkboxesText = '☐ Approved     ☐ Needs Modification     ☐ Not Approved';
   const checkboxesParagraph = body.appendParagraph(checkboxesText);
@@ -956,22 +1016,24 @@ function addLbcActionSection(body) {
 
   const reasonsLabel = body.appendParagraph('Comments or requirements:');
   reasonsLabel.setFontSize(11);
-  reasonsLabel.setBold(false);
+  reasonsLabel.setBold(true);
+  reasonsLabel.setForegroundColor('#1a3a52');
   reasonsLabel.setSpacingAfter(8);
 
   const reasonsTable = body.appendTable([['']]);
+  reasonsTable.setWidth(100);
   const reasonsCell = reasonsTable.getCell(0, 0);
   reasonsCell.clear();
 
   const reasonsPara1 = reasonsCell.appendParagraph('');
   const reasonsPara2 = reasonsCell.appendParagraph('');
   const reasonsPara3 = reasonsCell.appendParagraph('');
-  const reasonsPara4 = reasonsCell.appendParagraph('');
 
-  reasonsCell.setBackgroundColor('#f0f0f0');
+  reasonsCell.setBackgroundColor('#f8f9fa');
+  reasonsCell.setPadding(8);
 
   reasonsTable.setColumnWidth(0, 450);
-  reasonsTable.setBorderColor('#cccccc');
+  reasonsTable.setBorderColor('#ccc');
 
   body.appendParagraph('').setSpacingAfter(12);
 
@@ -979,10 +1041,11 @@ function addLbcActionSection(body) {
   signatureLabel.setBold(true);
   signatureLabel.setFontSize(11);
   signatureLabel.setForegroundColor('#1a3a52');
-  signatureLabel.setSpacingAfter(5);
+  signatureLabel.setSpacingAfter(6);
 
   const signatureLine = body.appendParagraph('_________________________________________     Date: _______________');
-  signatureLine.setFontSize(11);
+  signatureLine.setFontSize(10);
+  signatureLine.setSpacingAfter(12);
 }
 
 function formatDateString(dateObj) {
