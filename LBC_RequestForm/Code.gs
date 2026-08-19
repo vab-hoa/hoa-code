@@ -669,12 +669,16 @@ function doGet(e) {
 }
 
 function handleFormSubmission(formData) {
+  Logger.log('=== handleFormSubmission called ===');
+  Logger.log('formData keys: ' + Object.keys(formData).join(', '));
+
   const startTime = new Date();
   const log = [];
   let processedFiles;
   let pdfBlob;
 
   try {
+    Logger.log('Entering try block');
     log.push('START at ' + startTime.toISOString());
 
     try {
@@ -730,17 +734,24 @@ function handleFormSubmission(formData) {
 }
 
 function validateFormData(data) {
+  Logger.log('Validating form data...');
   const required = ['firstName', 'lastName', 'unitAddress', 'phone', 'email', 'location', 'plantSpecies', 'completionDate', 'signature', 'plantingRequest', 'plantType'];
 
   for (const field of required) {
     if (!data[field] || data[field].trim() === '') {
-      throw new Error(`Required field missing: ${field}`);
+      const err = 'Required field missing: ' + field;
+      Logger.log('VALIDATION ERROR: ' + err);
+      throw new Error(err);
     }
   }
 
   if (!data.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-    throw new Error('Invalid email format');
+    const err = 'Invalid email format';
+    Logger.log('EMAIL VALIDATION ERROR: ' + err);
+    throw new Error(err);
   }
+
+  Logger.log('Validation passed');
 }
 
 function processFiles(encodedFiles) {
