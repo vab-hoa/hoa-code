@@ -810,7 +810,6 @@ function addPdfHeader(body) {
   dateP.setForegroundColor('#666666');
 
   dateTable.setBorderColor('#ffffff');
-  dateTable.setWidth(100);
   dateTable.setColumnWidth(0, 450);
 
   const decorativeLine = body.appendParagraph('');
@@ -850,7 +849,6 @@ function addFormFields(body, formData) {
 
   fields.forEach((field, index) => {
     const fieldTable = body.appendTable([[field.label, field.value]]);
-    fieldTable.setWidth(100);
 
     const labelCell = fieldTable.getCell(0, 0);
     labelCell.clear();
@@ -926,7 +924,6 @@ function addSignatureSection(body, formData) {
   sectionTitle.setSpacingAfter(12);
 
   const submissionTable = body.appendTable([['Submission Date', formatDateString(new Date())]]);
-  submissionTable.setWidth(100);
   const subLabelCell = submissionTable.getCell(0, 0);
   subLabelCell.clear();
   subLabelCell.setPaddingTop(6);
@@ -950,7 +947,6 @@ function addSignatureSection(body, formData) {
   body.appendParagraph('').setSpacingAfter(8);
 
   const signatureTable = body.appendTable([['Your Signature', formData.signature]]);
-  signatureTable.setWidth(100);
   const sigLabelCell = signatureTable.getCell(0, 0);
   sigLabelCell.clear();
   sigLabelCell.setPaddingTop(6);
@@ -1021,7 +1017,6 @@ function addLbcActionSection(body) {
   reasonsLabel.setSpacingAfter(8);
 
   const reasonsTable = body.appendTable([['']]);
-  reasonsTable.setWidth(100);
   const reasonsCell = reasonsTable.getCell(0, 0);
   reasonsCell.clear();
 
