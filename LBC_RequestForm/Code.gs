@@ -855,38 +855,31 @@ function addFormFields(body, formData) {
   ];
 
   fields.forEach((field, index) => {
-    const fieldTable = body.appendTable([[field.label, field.value]]);
+    // Create a single row table for each field to get minimal cell height
+    const row = body.appendTable([[field.label + '  ' + field.value]]);
+    const cell = row.getCell(0, 0);
+    cell.clear();
+    cell.setPaddingTop(0);
+    cell.setPaddingBottom(0);
+    cell.setPaddingLeft(5);
+    cell.setPaddingRight(5);
 
-    const labelCell = fieldTable.getCell(0, 0);
-    labelCell.clear();
-    labelCell.setPaddingTop(0);
-    labelCell.setPaddingBottom(0);
-    labelCell.setPaddingLeft(5);
-    labelCell.setPaddingRight(5);
-    const labelPara = labelCell.appendParagraph(field.label);
-    labelPara.setBold(true);
-    labelPara.setFontSize(8);
-    labelPara.setForegroundColor('#1a3a52');
-    labelPara.setSpacingBefore(0);
-    labelPara.setSpacingAfter(0);
-    labelPara.setLineSpacing(0.5);
+    const labelText = cell.appendParagraph(field.label);
+    labelText.setBold(true);
+    labelText.setFontSize(7);
+    labelText.setForegroundColor('#1a3a52');
+    labelText.setSpacingBefore(0);
+    labelText.setSpacingAfter(0);
+    labelText.setLineSpacing(0.4);
 
-    const valueCell = fieldTable.getCell(0, 1);
-    valueCell.clear();
-    valueCell.setPaddingTop(0);
-    valueCell.setPaddingBottom(0);
-    valueCell.setPaddingLeft(5);
-    valueCell.setPaddingRight(5);
-    const valuePara = valueCell.appendParagraph(field.value);
-    valuePara.setFontSize(8);
-    valuePara.setLineSpacing(0.5);
-    valuePara.setSpacingBefore(0);
-    valuePara.setSpacingAfter(0);
+    const valueText = cell.appendParagraph(field.value);
+    valueText.setFontSize(7);
+    valueText.setLineSpacing(0.4);
+    valueText.setSpacingBefore(0);
+    valueText.setSpacingAfter(0);
 
-    fieldTable.setColumnWidth(0, 150);
-    fieldTable.setColumnWidth(1, 300);
-
-    fieldTable.setBorderColor('#dddddd');
+    row.setColumnWidth(0, 450);
+    row.setBorderColor('#dddddd');
   });
 }
 
@@ -935,66 +928,52 @@ function addSignatureSection(body, formData) {
   sectionTitle.setSpacingBefore(0);
   sectionTitle.setSpacingAfter(2);
 
-  const submissionTable = body.appendTable([['Submission Date', formatDateString(new Date())]]);
-  const subLabelCell = submissionTable.getCell(0, 0);
-  subLabelCell.clear();
-  subLabelCell.setPaddingTop(0);
-  subLabelCell.setPaddingBottom(0);
-  subLabelCell.setPaddingLeft(5);
-  subLabelCell.setPaddingRight(5);
-  const subLabelPara = subLabelCell.appendParagraph('Submission Date');
+  const submissionTable = body.appendTable([['']]);
+  const subCell = submissionTable.getCell(0, 0);
+  subCell.clear();
+  subCell.setPaddingTop(0);
+  subCell.setPaddingBottom(0);
+  subCell.setPaddingLeft(5);
+  subCell.setPaddingRight(5);
+  const subLabelPara = subCell.appendParagraph('Submission Date');
   subLabelPara.setBold(true);
-  subLabelPara.setFontSize(8);
+  subLabelPara.setFontSize(7);
   subLabelPara.setForegroundColor('#1a3a52');
   subLabelPara.setSpacingBefore(0);
   subLabelPara.setSpacingAfter(0);
-  subLabelPara.setLineSpacing(0.5);
+  subLabelPara.setLineSpacing(0.4);
 
-  const subValueCell = submissionTable.getCell(0, 1);
-  subValueCell.clear();
-  subValueCell.setPaddingTop(0);
-  subValueCell.setPaddingBottom(0);
-  subValueCell.setPaddingLeft(5);
-  subValueCell.setPaddingRight(5);
-  const subValuePara = subValueCell.appendParagraph(formatDateString(new Date()));
-  subValuePara.setFontSize(8);
+  const subValuePara = subCell.appendParagraph(formatDateString(new Date()));
+  subValuePara.setFontSize(7);
   subValuePara.setSpacingBefore(0);
   subValuePara.setSpacingAfter(0);
-  subValuePara.setLineSpacing(0.5);
+  subValuePara.setLineSpacing(0.4);
 
-  submissionTable.setColumnWidth(0, 150);
-  submissionTable.setColumnWidth(1, 300);
+  submissionTable.setColumnWidth(0, 450);
   submissionTable.setBorderColor('#dddddd');
 
-  const signatureTable = body.appendTable([['Your Signature', formData.signature]]);
-  const sigLabelCell = signatureTable.getCell(0, 0);
-  sigLabelCell.clear();
-  sigLabelCell.setPaddingTop(0);
-  sigLabelCell.setPaddingBottom(0);
-  sigLabelCell.setPaddingLeft(5);
-  sigLabelCell.setPaddingRight(5);
-  const sigLabelPara = sigLabelCell.appendParagraph('Your Signature');
+  const signatureTable = body.appendTable([['']]);
+  const sigCell = signatureTable.getCell(0, 0);
+  sigCell.clear();
+  sigCell.setPaddingTop(0);
+  sigCell.setPaddingBottom(0);
+  sigCell.setPaddingLeft(5);
+  sigCell.setPaddingRight(5);
+  const sigLabelPara = sigCell.appendParagraph('Your Signature');
   sigLabelPara.setBold(true);
-  sigLabelPara.setFontSize(8);
+  sigLabelPara.setFontSize(7);
   sigLabelPara.setForegroundColor('#1a3a52');
   sigLabelPara.setSpacingBefore(0);
   sigLabelPara.setSpacingAfter(0);
-  sigLabelPara.setLineSpacing(0.5);
+  sigLabelPara.setLineSpacing(0.4);
 
-  const sigValueCell = signatureTable.getCell(0, 1);
-  sigValueCell.clear();
-  sigValueCell.setPaddingTop(0);
-  sigValueCell.setPaddingBottom(0);
-  sigValueCell.setPaddingLeft(5);
-  sigValueCell.setPaddingRight(5);
-  const sigValuePara = sigValueCell.appendParagraph(formData.signature);
-  sigValuePara.setFontSize(8);
+  const sigValuePara = sigCell.appendParagraph(formData.signature);
+  sigValuePara.setFontSize(7);
   sigValuePara.setSpacingBefore(0);
   sigValuePara.setSpacingAfter(0);
-  sigValuePara.setLineSpacing(0.5);
+  sigValuePara.setLineSpacing(0.4);
 
-  signatureTable.setColumnWidth(0, 150);
-  signatureTable.setColumnWidth(1, 300);
+  signatureTable.setColumnWidth(0, 450);
   signatureTable.setBorderColor('#dddddd');
 }
 
