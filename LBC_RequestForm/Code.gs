@@ -800,25 +800,19 @@ function generateLbcPdf(formData) {
 }
 
 function addPdfHeader(body) {
-  // Try to add logo
-  try {
-    const files = DriveApp.searchFiles('title contains "Villas at the Boulders" AND title contains "logo"');
-    if (files.hasNext()) {
-      const logoFile = files.next();
-      const logoBlob = logoFile.getBlob();
-      const image = body.addImage(logoBlob);
-      image.setWidth(100);
-      body.appendParagraph('').setSpacingAfter(3);
-    }
-  } catch (e) {
-    // Logo not found, continue without it
+  // Add logo - set LOGO_FILE_ID to your logo file ID from Drive
+  const LOGO_FILE_ID = '';
+  if (LOGO_FILE_ID) {
+    try {
+      const logoFile = DriveApp.getFileById(LOGO_FILE_ID);
+      const image = body.addImage(logoFile.getBlob());
+      image.setWidth(120);
+    } catch (e) {}
   }
 
   const decorativeLine = body.appendParagraph('');
-  decorativeLine.setSpacingAfter(2);
-  decorativeLine.setSpacingBefore(0);
   const decoration = decorativeLine.editAsText();
-  decoration.setText('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  decoration.setText('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   decoration.setForegroundColor('#2d7d3a');
   decoration.setFontSize(9);
 
@@ -826,14 +820,11 @@ function addPdfHeader(body) {
   titleParagraph.setFontSize(18);
   titleParagraph.setBold(true);
   titleParagraph.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-  titleParagraph.setSpacingAfter(2);
-  titleParagraph.setSpacingBefore(3);
   titleParagraph.setForegroundColor('#1a3a52');
 
   const subtitleParagraph = body.appendParagraph('Landscape Beautification Committee');
   subtitleParagraph.setFontSize(10);
   subtitleParagraph.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-  subtitleParagraph.setSpacingAfter(6);
   subtitleParagraph.setForegroundColor('#2d5f3f');
 }
 
@@ -876,11 +867,11 @@ function addFormFields(body, formData) {
     fieldTable.setBorderColor('#dddddd');
 
     if (index < fields.length - 1) {
-      body.appendParagraph('').setSpacingAfter(2);
+      body.appendParagraph('');
     }
   });
 
-  body.appendParagraph('').setSpacingAfter(6);
+  body.appendParagraph('');
 }
 
 function addSupportingDocumentation(body, files) {
@@ -888,7 +879,7 @@ function addSupportingDocumentation(body, files) {
   label.setBold(true);
   label.setFontSize(11);
   label.setForegroundColor('#1a3a52');
-  label.setSpacingAfter(4);
+  label;
 
   files.forEach(file => {
     const fileParagraph = body.appendParagraph('📎 ' + file.name);
@@ -897,7 +888,7 @@ function addSupportingDocumentation(body, files) {
     fileParagraph.setSpacingAfter(1);
   });
 
-  body.appendParagraph('').setSpacingAfter(4);
+  body.appendParagraph('');
 }
 
 function addAdmonitionText(body) {
@@ -905,7 +896,7 @@ function addAdmonitionText(body) {
   admonitionLabel.setBold(true);
   admonitionLabel.setFontSize(11);
   admonitionLabel.setForegroundColor('#1a3a52');
-  admonitionLabel.setSpacingAfter(2);
+  admonitionLabel;
 
   const admonitionText = 'I have read the Homeowner Paid Removal and Planting Policy and will provide initial care and watering for new plants as recommended by the landscaping company. For trees, I understand that I accept this responsibility for a period of not less than 3 years until the tree is deemed viable by the LBC. I understand and agree that I am responsible for removal of this plant if it fails to survive.';
 
@@ -913,18 +904,17 @@ function addAdmonitionText(body) {
   admonitionParagraph.setItalic(true);
   admonitionParagraph.setFontSize(10);
   admonitionParagraph.setLineSpacing(1.4);
-  admonitionParagraph.setSpacingAfter(4);
+  admonitionParagraph;
   admonitionParagraph.setForegroundColor('#333333');
 }
 
 function addSignatureSection(body, formData) {
-  body.appendParagraph('').setSpacingBefore(4);
 
   const sectionTitle = body.appendParagraph('Homeowner Signature and Submission');
   sectionTitle.setBold(true);
   sectionTitle.setFontSize(13);
   sectionTitle.setForegroundColor('#1a3a52');
-  sectionTitle.setSpacingAfter(3);
+  sectionTitle;
 
   const submissionTable = body.appendTable([['Submission Date', formatDateString(new Date())]]);
   const subLabelCell = submissionTable.getCell(0, 0);
@@ -947,7 +937,7 @@ function addSignatureSection(body, formData) {
   submissionTable.setColumnWidth(1, 300);
   submissionTable.setBorderColor('#dddddd');
 
-  body.appendParagraph('').setSpacingAfter(2);
+  body.appendParagraph('');
 
   const signatureTable = body.appendTable([['Your Signature', formData.signature]]);
   const sigLabelCell = signatureTable.getCell(0, 0);
@@ -970,7 +960,7 @@ function addSignatureSection(body, formData) {
   signatureTable.setColumnWidth(1, 300);
   signatureTable.setBorderColor('#dddddd');
 
-  body.appendParagraph('').setSpacingAfter(4);
+  body.appendParagraph('');
 }
 
 function addContactSection(body) {
@@ -980,18 +970,16 @@ function addContactSection(body) {
   contactLabel.setBold(true);
   contactLabel.setFontSize(11);
   contactLabel.setForegroundColor('#1a3a52');
-  contactLabel.setSpacingAfter(6);
+  contactLabel;
 
   const contactParagraph = body.appendParagraph(`Direct questions to the LBC (Landscape & Beautification Committee) or HOA manager: ${CONFIG.MANAGER_EMAIL} or ${CONFIG.MANAGER_PHONE}`);
   contactParagraph.setFontSize(10);
   contactParagraph.setForegroundColor('#666666');
   contactParagraph.setLineSpacing(1.2);
 
-  body.appendParagraph('').setSpacingAfter(3);
 }
 
 function addLbcActionSection(body) {
-  body.appendParagraph('').setSpacingBefore(4);
 
   const divider = body.appendParagraph('');
   divider.setSpacingAfter(0);
@@ -1000,24 +988,23 @@ function addLbcActionSection(body) {
   dividerText.setForegroundColor('#dddddd');
   dividerText.setFontSize(9);
 
-  body.appendParagraph('').setSpacingAfter(3);
 
   const actionTitle = body.appendParagraph('LBC Committee Action & Review');
   actionTitle.setBold(true);
   actionTitle.setFontSize(13);
   actionTitle.setForegroundColor('#1a3a52');
-  actionTitle.setSpacingAfter(3);
+  actionTitle;
 
   const checkboxesText = '☐ Approved     ☐ Needs Modification     ☐ Not Approved';
   const checkboxesParagraph = body.appendParagraph(checkboxesText);
   checkboxesParagraph.setFontSize(11);
-  checkboxesParagraph.setSpacingAfter(3);
+  checkboxesParagraph;
 
   const reasonsLabel = body.appendParagraph('Comments or requirements:');
   reasonsLabel.setFontSize(11);
   reasonsLabel.setBold(true);
   reasonsLabel.setForegroundColor('#1a3a52');
-  reasonsLabel.setSpacingAfter(2);
+  reasonsLabel;
 
   const reasonsTable = body.appendTable([['']]);
   const reasonsCell = reasonsTable.getCell(0, 0);
@@ -1032,17 +1019,16 @@ function addLbcActionSection(body) {
   reasonsTable.setColumnWidth(0, 450);
   reasonsTable.setBorderColor('#cccccc');
 
-  body.appendParagraph('').setSpacingAfter(3);
 
   const signatureLabel = body.appendParagraph('LBC Committee Signature');
   signatureLabel.setBold(true);
   signatureLabel.setFontSize(11);
   signatureLabel.setForegroundColor('#1a3a52');
-  signatureLabel.setSpacingAfter(6);
+  signatureLabel;
 
   const signatureLine = body.appendParagraph('_________________________________________     Date: _______________');
   signatureLine.setFontSize(10);
-  signatureLine.setSpacingAfter(3);
+  signatureLine;
 }
 
 function formatDateString(dateObj) {
