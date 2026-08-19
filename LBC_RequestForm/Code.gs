@@ -854,16 +854,23 @@ function addFormFields(body, formData) {
     { label: 'Planned Completion Date', value: formatDateString(new Date(formData.completionDate)) }
   ];
 
-  fields.forEach((field, index) => {
-    const fieldTable = body.appendTable([[field.label, field.value]]);
+  // Create single table with all fields as rows (eliminates inter-table spacing)
+  const rows = fields.map(f => [f.label, f.value]);
+  const fieldTable = body.appendTable(rows);
 
-    const labelCell = fieldTable.getCell(0, 0);
+  fieldTable.setColumnWidth(0, 140);
+  fieldTable.setColumnWidth(1, 310);
+  fieldTable.setBorderColor('#dddddd');
+
+  // Format all cells
+  for (let i = 0; i < fields.length; i++) {
+    const labelCell = fieldTable.getCell(i, 0);
     labelCell.clear();
-    labelCell.setPaddingTop(2);
-    labelCell.setPaddingBottom(2);
+    labelCell.setPaddingTop(1);
+    labelCell.setPaddingBottom(1);
     labelCell.setPaddingLeft(4);
     labelCell.setPaddingRight(4);
-    const labelPara = labelCell.appendParagraph(field.label);
+    const labelPara = labelCell.appendParagraph(fields[i].label);
     labelPara.setBold(true);
     labelPara.setFontSize(9);
     labelPara.setForegroundColor('#1a3a52');
@@ -871,23 +878,18 @@ function addFormFields(body, formData) {
     labelPara.setSpacingAfter(0);
     labelPara.setLineSpacing(1.0);
 
-    const valueCell = fieldTable.getCell(0, 1);
+    const valueCell = fieldTable.getCell(i, 1);
     valueCell.clear();
-    valueCell.setPaddingTop(2);
-    valueCell.setPaddingBottom(2);
+    valueCell.setPaddingTop(1);
+    valueCell.setPaddingBottom(1);
     valueCell.setPaddingLeft(4);
     valueCell.setPaddingRight(4);
-    const valuePara = valueCell.appendParagraph(field.value);
+    const valuePara = valueCell.appendParagraph(fields[i].value);
     valuePara.setFontSize(9);
     valuePara.setLineSpacing(1.0);
     valuePara.setSpacingBefore(0);
     valuePara.setSpacingAfter(0);
-
-    fieldTable.setColumnWidth(0, 140);
-    fieldTable.setColumnWidth(1, 310);
-
-    fieldTable.setBorderColor('#dddddd');
-  });
+  }
 }
 
 function addSupportingDocumentation(body, files) {
