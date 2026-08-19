@@ -807,7 +807,7 @@ function addPdfHeader(body) {
   const dateP = dateCell.appendParagraph(formatDateString(new Date()));
   dateP.setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
   dateP.setFontSize(10);
-  dateP.setForegroundColor('#666');
+  dateP.setForegroundColor('#666666');
 
   dateTable.setBorderColor('#ffffff');
   dateTable.setWidth(100);
@@ -872,7 +872,7 @@ function addFormFields(body, formData) {
     fieldTable.setColumnWidth(0, 150);
     fieldTable.setColumnWidth(1, 300);
 
-    fieldTable.setBorderColor('#ddd');
+    fieldTable.setBorderColor('#dddddd');
 
     if (index < fields.length - 1) {
       body.appendParagraph('').setSpacingAfter(6);
@@ -892,7 +892,7 @@ function addSupportingDocumentation(body, files) {
   files.forEach(file => {
     const fileParagraph = body.appendParagraph('📎 ' + file.name);
     fileParagraph.setFontSize(10);
-    fileParagraph.setForegroundColor('#333');
+    fileParagraph.setForegroundColor('#333333');
     fileParagraph.setSpacingAfter(4);
   });
 
@@ -913,7 +913,7 @@ function addAdmonitionText(body) {
   admonitionParagraph.setFontSize(10);
   admonitionParagraph.setLineSpacing(1.4);
   admonitionParagraph.setSpacingAfter(16);
-  admonitionParagraph.setForegroundColor('#333');
+  admonitionParagraph.setForegroundColor('#333333');
 }
 
 function addSignatureSection(body, formData) {
@@ -945,7 +945,7 @@ function addSignatureSection(body, formData) {
 
   submissionTable.setColumnWidth(0, 150);
   submissionTable.setColumnWidth(1, 300);
-  submissionTable.setBorderColor('#ddd');
+  submissionTable.setBorderColor('#dddddd');
 
   body.appendParagraph('').setSpacingAfter(8);
 
@@ -969,7 +969,7 @@ function addSignatureSection(body, formData) {
 
   signatureTable.setColumnWidth(0, 150);
   signatureTable.setColumnWidth(1, 300);
-  signatureTable.setBorderColor('#ddd');
+  signatureTable.setBorderColor('#dddddd');
 
   body.appendParagraph('').setSpacingAfter(16);
 }
@@ -985,7 +985,7 @@ function addContactSection(body) {
 
   const contactParagraph = body.appendParagraph(`Direct questions to the LBC (Landscape & Beautification Committee) or HOA manager: ${CONFIG.MANAGER_EMAIL} or ${CONFIG.MANAGER_PHONE}`);
   contactParagraph.setFontSize(10);
-  contactParagraph.setForegroundColor('#666');
+  contactParagraph.setForegroundColor('#666666');
   contactParagraph.setLineSpacing(1.2);
 
   body.appendParagraph('').setSpacingAfter(12);
@@ -998,7 +998,7 @@ function addLbcActionSection(body) {
   divider.setSpacingAfter(0);
   const dividerText = divider.editAsText();
   dividerText.setText('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  dividerText.setForegroundColor('#ddd');
+  dividerText.setForegroundColor('#dddddd');
   dividerText.setFontSize(9);
 
   body.appendParagraph('').setSpacingAfter(12);
@@ -1033,7 +1033,7 @@ function addLbcActionSection(body) {
   reasonsCell.setPadding(8);
 
   reasonsTable.setColumnWidth(0, 450);
-  reasonsTable.setBorderColor('#ccc');
+  reasonsTable.setBorderColor('#cccccc');
 
   body.appendParagraph('').setSpacingAfter(12);
 
