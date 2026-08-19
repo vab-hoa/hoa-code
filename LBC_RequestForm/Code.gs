@@ -800,24 +800,15 @@ function generateLbcPdf(formData) {
 }
 
 function addPdfHeader(body) {
-  // Add logo
-  const LOGO_FILE_ID = '1SKxbUvO7YMl0cpYXFYMrdzvtw6sKhotQ';
-  if (LOGO_FILE_ID) {
-    try {
-      const logoFile = DriveApp.getFileById(LOGO_FILE_ID);
-      const image = body.addImage(logoFile.getBlob());
-      image.setWidth(120);
-    } catch (e) {}
-  }
-
   const decorativeLine = body.appendParagraph('');
+  decorativeLine.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
   const decoration = decorativeLine.editAsText();
   decoration.setText('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   decoration.setForegroundColor('#2d7d3a');
   decoration.setFontSize(9);
 
   const titleParagraph = body.appendParagraph('Homeowner Paid Planting or Removal Request');
-  titleParagraph.setFontSize(18);
+  titleParagraph.setFontSize(16);
   titleParagraph.setBold(true);
   titleParagraph.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
   titleParagraph.setForegroundColor('#1a3a52');
@@ -825,7 +816,7 @@ function addPdfHeader(body) {
   const subtitleParagraph = body.appendParagraph('Landscape Beautification Committee');
   subtitleParagraph.setFontSize(10);
   subtitleParagraph.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-  subtitleParagraph.setForegroundColor('#2d5f3f');
+  subtitleParagraph.setForegroundColor('#2d7d3a');
 }
 
 function addFormFields(body, formData) {
@@ -846,8 +837,6 @@ function addFormFields(body, formData) {
 
     const labelCell = fieldTable.getCell(0, 0);
     labelCell.clear();
-    labelCell.setPaddingTop(6);
-    labelCell.setPaddingBottom(6);
     const labelPara = labelCell.appendParagraph(field.label);
     labelPara.setBold(true);
     labelPara.setFontSize(11);
@@ -855,8 +844,6 @@ function addFormFields(body, formData) {
 
     const valueCell = fieldTable.getCell(0, 1);
     valueCell.clear();
-    valueCell.setPaddingTop(6);
-    valueCell.setPaddingBottom(6);
     const valuePara = valueCell.appendParagraph(field.value);
     valuePara.setFontSize(11);
     valuePara.setLineSpacing(1.3);
@@ -919,8 +906,6 @@ function addSignatureSection(body, formData) {
   const submissionTable = body.appendTable([['Submission Date', formatDateString(new Date())]]);
   const subLabelCell = submissionTable.getCell(0, 0);
   subLabelCell.clear();
-  subLabelCell.setPaddingTop(6);
-  subLabelCell.setPaddingBottom(6);
   const subLabelPara = subLabelCell.appendParagraph('Submission Date');
   subLabelPara.setBold(true);
   subLabelPara.setFontSize(11);
@@ -928,8 +913,6 @@ function addSignatureSection(body, formData) {
 
   const subValueCell = submissionTable.getCell(0, 1);
   subValueCell.clear();
-  subValueCell.setPaddingTop(6);
-  subValueCell.setPaddingBottom(6);
   const subValuePara = subValueCell.appendParagraph(formatDateString(new Date()));
   subValuePara.setFontSize(11);
 
@@ -942,8 +925,6 @@ function addSignatureSection(body, formData) {
   const signatureTable = body.appendTable([['Your Signature', formData.signature]]);
   const sigLabelCell = signatureTable.getCell(0, 0);
   sigLabelCell.clear();
-  sigLabelCell.setPaddingTop(6);
-  sigLabelCell.setPaddingBottom(6);
   const sigLabelPara = sigLabelCell.appendParagraph('Your Signature');
   sigLabelPara.setBold(true);
   sigLabelPara.setFontSize(11);
@@ -951,8 +932,6 @@ function addSignatureSection(body, formData) {
 
   const sigValueCell = signatureTable.getCell(0, 1);
   sigValueCell.clear();
-  sigValueCell.setPaddingTop(6);
-  sigValueCell.setPaddingBottom(6);
   const sigValuePara = sigValueCell.appendParagraph(formData.signature);
   sigValuePara.setFontSize(11);
 
