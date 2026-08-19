@@ -897,10 +897,7 @@ function addSignatureSection(body, formData) {
   signatureTable.setColumnWidth(1, 300);
   signatureTable.setBorderColor('#e8e8e8');
 
-  // Add underline after signature section
-  const underline = body.appendParagraph('');
-  underline.setBorderBottom(1);
-  underline.setSpacingAfter(15);
+  body.appendParagraph('').setSpacingAfter(15);
 }
 
 function addContactSection(body) {
@@ -908,10 +905,7 @@ function addContactSection(body) {
   contactParagraph.setFontSize(10);
   contactParagraph.setForegroundColor('#1a3a52');
 
-  // Add underline
-  const underline = body.appendParagraph('');
-  underline.setBorderBottom(1);
-  underline.setSpacingAfter(15);
+  body.appendParagraph('').setSpacingAfter(15);
 }
 
 function addArcActionSection(body) {
