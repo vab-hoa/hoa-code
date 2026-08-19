@@ -1,11 +1,11 @@
-// ARC Request Form - Apps Script Backend
+// LBC Request Form - Apps Script Backend
 // Serves HTML form and processes submissions
 
 const CONFIG = {
   // Email recipient
   LBC_RECIPIENT: 'lbcformrecipients@villasboulders.org',
 
-  // Drive folder for archiving (HOA Board Documents > ARC Request Forms)
+  // Drive folder for archiving (HOA Board Documents > LBC Request Forms)
   ARCHIVE_FOLDER_ID: '12LnOEsFn4I032iFWp6Wwm5que68Hmn0A',
 
   // Manager contact
@@ -307,17 +307,20 @@ const HTML_FORM = `<!DOCTYPE html>
 <body>
     <div class="container">
         <div class="header">
-            <h1>VaB Landscape Request</h1>
-            <p>Submit improvements for committee review</p>
+            <h1>Homeowner Paid Planting or Removal</h1>
+            <p>Submit a request to the Landscape & Beautification Committee</p>
         </div>
 
         <div class="form-content">
             <div id="alert" class="alert"></div>
 
-            <form id="arcForm">
+            <form id="lbcForm">
                 <div class="form-group">
-                    <label for="name" class="required">Name</label>
-                    <input type="text" id="name" name="name" placeholder="Full name" required>
+                    <label class="required">Name</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+                        <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -336,14 +339,61 @@ const HTML_FORM = `<!DOCTYPE html>
                 </div>
 
                 <div class="form-group">
-                    <label for="description" class="required">Description of Improvements</label>
-                    <textarea id="description" name="description" placeholder="Describe your improvements in detail..." required></textarea>
+                    <label class="required">Are you requesting new planting or removal?</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <label style="display: flex; align-items: center; font-weight: normal; margin-bottom: 0;">
+                            <input type="checkbox" id="plantingNew" name="plantingRequest" value="New Planting" style="margin-right: 8px;">
+                            New Planting
+                        </label>
+                        <label style="display: flex; align-items: center; font-weight: normal; margin-bottom: 0;">
+                            <input type="checkbox" id="plantingRemoval" name="plantingRequest" value="Removal" style="margin-right: 8px;">
+                            Removal
+                        </label>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="required">Supporting Documentation</label>
+                    <label for="location" class="required">Location of Proposed Planting or Removal</label>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 10px; font-weight: normal;">
+                        Be as specific as you can (e.g., Front yard rock area just right of sidewalk)
+                    </p>
+                    <textarea id="location" name="location" placeholder="Describe the location..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="required">What type of plant to be added or removed?</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <label style="display: flex; align-items: flex-start; font-weight: normal; margin-bottom: 0;">
+                            <input type="checkbox" id="plantType1" name="plantType" value="Flowers (Annuals/Perennials)" style="margin-right: 8px; margin-top: 2px;">
+                            <span>Flowers (Annuals/Perennials)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; font-weight: normal; margin-bottom: 0;">
+                            <input type="checkbox" id="plantType2" name="plantType" value="Shrubs/Bushes" style="margin-right: 8px; margin-top: 2px;">
+                            <span>Shrubs/Bushes</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; font-weight: normal; margin-bottom: 0;">
+                            <input type="checkbox" id="plantType3" name="plantType" value="Small Tree (Specify species in next question)" style="margin-right: 8px; margin-top: 2px;">
+                            <span>Small Tree (Specify species in next question)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; font-weight: normal; margin-bottom: 0;">
+                            <input type="checkbox" id="plantType4" name="plantType" value="Other (Specify in next question)" style="margin-right: 8px; margin-top: 2px;">
+                            <span>Other (Specify in next question)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="plantSpecies" class="required">List the specific plant species</label>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 10px; font-weight: normal;">
+                        Be as specific as you can. Include common or scientific names if you know them. The LBC reserves the right to reject specific requests and/or to suggest substitutes more suitable to our locale.
+                    </p>
+                    <textarea id="plantSpecies" name="plantSpecies" placeholder="Species details..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Supporting Documentation</label>
                     <p style="font-size: 12px; color: #666; margin-bottom: 10px;">
-                        Upload up to 5 files (images will be auto-compressed). Accepted: JPG, PNG, PDF
+                        Optional: You may optionally attach a sketch or photo showing the proposed planting location and the approximate layout/size of the proposed planting area. Upload up to 5 files (images will be auto-compressed). Accepted: JPG, PNG, PDF
                     </p>
                     <div class="file-upload-wrapper">
                         <label for="fileInput" class="file-upload-label" id="dropZone">
@@ -361,11 +411,14 @@ const HTML_FORM = `<!DOCTYPE html>
                 </div>
 
                 <div class="admonition">
-                    I understand that I must receive approval of the ARC in order to proceed. I understand that ARC approval does not constitute approval of the City and County of Broomfield and that I may be required to obtain a building permit. I understand that my improvements must be completed per specifications or approval, if granted, will be withdrawn. I understand and agree to the provisions of the ARC Design Guidelines of the Villas at the Boulders, including my responsibilities defined in Section II through V. If I am unable to complete my project within 3 months after approval, I understand that I must request an extension from the ARC.
+                    I have read the Homeowner Paid Removal and Planting Policy and will provide initial care and watering for new plants as recommended by the landscaping company. For trees, I understand that I accept this responsibility for a period of not less than 3 years until the tree is deemed viable by the LBC. I understand and agree that I am responsible for removal of this plant if it fails to survive.
                 </div>
 
                 <div class="signature-section">
-                    <label for="signature" class="required">Homeowner Signature</label>
+                    <label for="signature" class="required">Your Signature</label>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 10px; font-weight: normal;">
+                        Typing your name signifies your acceptance and has the same legal force as a signed signature.
+                    </p>
                     <input type="text" id="signature" name="signature" placeholder="Type your full name" required>
                 </div>
 
@@ -389,7 +442,7 @@ const HTML_FORM = `<!DOCTYPE html>
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
         const fileList = document.getElementById('fileList');
-        const arcForm = document.getElementById('arcForm');
+        const lbcForm = document.getElementById('lbcForm');
         const alertDiv = document.getElementById('alert');
 
         dropZone.addEventListener('dragover', (e) => {
@@ -414,13 +467,13 @@ const HTML_FORM = `<!DOCTYPE html>
 
         function handleFiles(newFiles) {
             if (uploadedFiles.length + newFiles.length > MAX_FILES) {
-                showAlert(\`Maximum \${MAX_FILES} files allowed\`, 'error');
+                showAlert('Maximum ' + MAX_FILES + ' files allowed', 'error');
                 return;
             }
 
             newFiles.forEach(file => {
                 if (file.size > MAX_FILE_SIZE) {
-                    showAlert(\`File "\${file.name}" is too large (max 10 MB)\`, 'error');
+                    showAlert('File "' + file.name + '" is too large (max 10 MB)', 'error');
                     return;
                 }
 
@@ -437,7 +490,7 @@ const HTML_FORM = `<!DOCTYPE html>
                         renderFileList();
                     }).catch(err => {
                         console.error('Compression error:', err);
-                        showAlert(\`Failed to compress "\${file.name}"\`, 'error');
+                        showAlert('Failed to compress "' + file.name + '"', 'error');
                     });
                 } else if (file.type === 'application/pdf' || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
                     uploadedFiles.push({
@@ -450,7 +503,7 @@ const HTML_FORM = `<!DOCTYPE html>
                     });
                     renderFileList();
                 } else {
-                    showAlert(\`File type not supported: "\${file.name}"\`, 'error');
+                    showAlert('File type not supported: "' + file.name + '"', 'error');
                 }
             });
         }
@@ -501,11 +554,9 @@ const HTML_FORM = `<!DOCTYPE html>
                 const item = document.createElement('div');
                 item.className = 'file-item';
                 const sizeKb = Math.round(file.compressedSize / 1024);
-                const compressed = file.isImage ? \` (\${Math.round((1 - file.compressedSize / file.originalSize) * 100)}% compressed)\` : '';
-                item.innerHTML = \`
-                    <span>📄 \${file.name} <span class="file-size">\${sizeKb} KB\${compressed}</span></span>
-                    <button type="button" onclick="removeFile(\${index})">Remove</button>
-                \`;
+                const compressed = file.isImage ? ' (' + Math.round((1 - file.compressedSize / file.originalSize) * 100) + '% compressed)' : '';
+                item.innerHTML = '<span>📄 ' + file.name + ' <span class="file-size">' + sizeKb + ' KB' + compressed + '</span></span>' +
+                    '<button type="button" onclick="removeFile(' + index + ')">Remove</button>';
                 fileList.appendChild(item);
             });
         }
@@ -518,26 +569,45 @@ const HTML_FORM = `<!DOCTYPE html>
 
         function showAlert(message, type) {
             alertDiv.textContent = message;
-            alertDiv.className = \`alert show \${type}\`;
+            alertDiv.className = 'alert show ' + type;
             if (type !== 'loading') {
                 setTimeout(() => alertDiv.classList.remove('show'), 5000);
             }
         }
 
-        arcForm.addEventListener('submit', async (e) => {
+        lbcForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            if (!arcForm.checkValidity()) {
+            if (!lbcForm.checkValidity()) {
                 showAlert('Please fill in all required fields', 'error');
                 return;
             }
 
+            // Check that at least one planting request type is selected
+            const plantingRequest = Array.from(document.querySelectorAll('input[name="plantingRequest"]:checked')).map(el => el.value);
+            if (plantingRequest.length === 0) {
+                showAlert('Please select at least one option for planting or removal', 'error');
+                return;
+            }
+
+            // Check that at least one plant type is selected
+            const plantType = Array.from(document.querySelectorAll('input[name="plantType"]:checked')).map(el => el.value);
+            if (plantType.length === 0) {
+                showAlert('Please select at least one plant type', 'error');
+                return;
+            }
+
             const formData = {
-                name: document.getElementById('name').value,
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                name: document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value,
                 unitAddress: document.getElementById('unitAddress').value,
                 phone: document.getElementById('phone').value,
                 email: document.getElementById('email').value,
-                description: document.getElementById('description').value,
+                plantingRequest: plantingRequest.join(', '),
+                location: document.getElementById('location').value,
+                plantType: plantType.join(', '),
+                plantSpecies: document.getElementById('plantSpecies').value,
                 completionDate: document.getElementById('completionDate').value,
                 signature: document.getElementById('signature').value,
                 files: []
@@ -545,7 +615,7 @@ const HTML_FORM = `<!DOCTYPE html>
 
             const filesToProcess = uploadedFiles.length > 0 ? uploadedFiles : [];
 
-            showAlert(\`\${filesToProcess.length > 0 ? 'Processing ' + filesToProcess.length + ' file(s) and ' : ''}submitting form...\`, 'loading');
+            showAlert((filesToProcess.length > 0 ? 'Processing ' + filesToProcess.length + ' file(s) and ' : '') + 'submitting form...', 'loading');
 
             try {
                 const filePromises = filesToProcess.map(file => {
@@ -570,18 +640,18 @@ const HTML_FORM = `<!DOCTYPE html>
                         if (response.success) {
                             showAlert('✓ Request submitted successfully! Check your email for confirmation.', 'success');
                             window.scrollTo(0, 0);
-                            arcForm.reset();
+                            lbcForm.reset();
                             uploadedFiles = [];
                             renderFileList();
                             setTimeout(() => alertDiv.classList.remove('show'), 5000);
                         } else {
                             console.error('Backend error:', response);
-                            showAlert(\`Error: \${response.message}\\n\\nDebug: \${response.debug}\`, 'error');
+                            showAlert('Error: ' + response.message + '\n\nDebug: ' + response.debug, 'error');
                         }
                     })
                     .withFailureHandler((error) => {
                         console.error('Submission error:', error);
-                        showAlert(\`Error: \${error || 'Failed to submit form'}\`, 'error');
+                        showAlert('Error: ' + (error || 'Failed to submit form'), 'error');
                     })
                     .handleFormSubmission(formData);
             } catch (error) {
@@ -624,7 +694,7 @@ function handleFormSubmission(formData) {
     }
 
     try {
-      pdfBlob = generateArcPdf(formData);
+      pdfBlob = generateLbcPdf(formData);
       log.push('PDF generated at ' + new Date().toISOString());
     } catch (e) {
       log.push('PDF GENERATION FAILED: ' + e.message);
@@ -660,7 +730,7 @@ function handleFormSubmission(formData) {
 }
 
 function validateFormData(data) {
-  const required = ['name', 'unitAddress', 'phone', 'email', 'description', 'completionDate', 'signature'];
+  const required = ['firstName', 'lastName', 'unitAddress', 'phone', 'email', 'location', 'plantSpecies', 'completionDate', 'signature', 'plantingRequest', 'plantType'];
 
   for (const field of required) {
     if (!data[field] || data[field].trim() === '') {
@@ -692,8 +762,8 @@ function processFiles(encodedFiles) {
   return processedFiles;
 }
 
-function generateArcPdf(formData) {
-  const doc = DocumentApp.create('ARC_Request_' + Date.now());
+function generateLbcPdf(formData) {
+  const doc = DocumentApp.create('LBC_Request_' + Date.now());
   const docId = doc.getId();
 
   try {
@@ -707,11 +777,10 @@ function generateArcPdf(formData) {
       addSupportingDocumentation(body, formData.files);
     }
 
-    addCompletionDate(body, formData.completionDate);
     addAdmonitionText(body);
     addSignatureSection(body, formData);
     addContactSection(body);
-    addArcActionSection(body);
+    addLbcActionSection(body);
 
     doc.saveAndClose();
 
@@ -750,7 +819,7 @@ function addPdfHeader(body, completionDate) {
   decoration.setFontSize(8);
 
   // Add title
-  const titleParagraph = body.appendParagraph('VaB Landscape Request');
+  const titleParagraph = body.appendParagraph('Homeowner Paid Planting or Removal Request');
   titleParagraph.setFontSize(20);
   titleParagraph.setBold(true);
   titleParagraph.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
@@ -767,7 +836,11 @@ function addFormFields(body, formData) {
     { label: 'Unit Address in the Villas', value: formData.unitAddress },
     { label: 'Phone Number', value: formData.phone },
     { label: 'Email', value: formData.email },
-    { label: 'Description of Improvements', value: formData.description }
+    { label: 'Planting or Removal Request', value: formData.plantingRequest },
+    { label: 'Location of Proposed Planting or Removal', value: formData.location },
+    { label: 'Plant Type', value: formData.plantType },
+    { label: 'Specific Plant Species', value: formData.plantSpecies },
+    { label: 'Planned Completion Date', value: formatDateString(new Date(formData.completionDate)) }
   ];
 
   fields.forEach((field, index) => {
@@ -820,36 +893,8 @@ function addSupportingDocumentation(body, files) {
   body.appendParagraph('');
 }
 
-function addCompletionDate(body, completionDate) {
-  // Create a 2-column table for completion date field
-  const fieldTable = body.appendTable([['Planned (approximate) Completion Date', formatDateString(new Date(completionDate))]]);
-
-  // Left cell (label)
-  const labelCell = fieldTable.getCell(0, 0);
-  labelCell.clear();
-  const labelPara = labelCell.appendParagraph('Planned (approximate) Completion Date');
-  labelPara.setBold(true);
-  labelPara.setFontSize(11);
-  labelPara.setForegroundColor('#1a3a52');
-
-  // Right cell (value)
-  const valueCell = fieldTable.getCell(0, 1);
-  valueCell.clear();
-  const valuePara = valueCell.appendParagraph(formatDateString(new Date(completionDate)));
-  valuePara.setFontSize(11);
-
-  // Set column widths
-  fieldTable.setColumnWidth(0, 150);
-  fieldTable.setColumnWidth(1, 300);
-
-  // Remove borders
-  fieldTable.setBorderColor('#e8e8e8');
-
-  body.appendParagraph('').setSpacingAfter(15);
-}
-
 function addAdmonitionText(body) {
-  const admonitionText = 'I understand that I must receive approval of the ARC in order to proceed. I understand that ARC approval does not constitute approval of the City and County of Broomfield and that I may be required to obtain a building permit. I understand that my improvements must be completed per specifications or approval, if granted, will be withdrawn. I understand and agree to the provisions of the ARC Design Guidelines of the Villas at the Boulders, including my responsibilities defined in Section II through V. If I am unable to complete my project within 3 months after approval, I understand that I must request an extension from the ARC.';
+  const admonitionText = 'I have read the Homeowner Paid Removal and Planting Policy and will provide initial care and watering for new plants as recommended by the landscaping company. For trees, I understand that I accept this responsibility for a period of not less than 3 years until the tree is deemed viable by the LBC. I understand and agree that I am responsible for removal of this plant if it fails to survive.';
 
   const admonitionParagraph = body.appendParagraph(admonitionText);
   admonitionParagraph.setItalic(true);
@@ -880,10 +925,10 @@ function addSignatureSection(body, formData) {
   body.appendParagraph('').setSpacingAfter(10);
 
   // Homeowner Signature field
-  const signatureTable = body.appendTable([['Homeowner Signature', formData.signature]]);
+  const signatureTable = body.appendTable([['Your Signature', formData.signature]]);
   const sigLabelCell = signatureTable.getCell(0, 0);
   sigLabelCell.clear();
-  const sigLabelPara = sigLabelCell.appendParagraph('Homeowner Signature');
+  const sigLabelPara = sigLabelCell.appendParagraph('Your Signature');
   sigLabelPara.setBold(true);
   sigLabelPara.setFontSize(11);
   sigLabelPara.setForegroundColor('#1a3a52');
@@ -904,7 +949,7 @@ function addSignatureSection(body, formData) {
 }
 
 function addContactSection(body) {
-  const contactParagraph = body.appendParagraph(`Direct questions to the HOA manager: ${CONFIG.MANAGER_EMAIL} or ${CONFIG.MANAGER_PHONE}`);
+  const contactParagraph = body.appendParagraph(`Direct questions to the LBC (Landscape & Beautification Committee) or HOA manager: ${CONFIG.MANAGER_EMAIL} or ${CONFIG.MANAGER_PHONE}`);
   contactParagraph.setFontSize(10);
   contactParagraph.setForegroundColor('#1a3a52');
 
@@ -914,22 +959,22 @@ function addContactSection(body) {
   underline.setSpacingAfter(15);
 }
 
-function addArcActionSection(body) {
+function addLbcActionSection(body) {
   // Section title
-  const actionTitle = body.appendParagraph('ARC Committee Action:');
+  const actionTitle = body.appendParagraph('LBC Committee Action:');
   actionTitle.setBold(true);
   actionTitle.setFontSize(12);
   actionTitle.setForegroundColor('#1a3a52');
   actionTitle.setSpacingAfter(10);
 
   // Checkboxes row
-  const checkboxesText = '☐ Approved     ☐ Disapproved     ☐ Final Inspection Required';
+  const checkboxesText = '☐ Approved     ☐ Needs Modification     ☐ Not Approved';
   const checkboxesParagraph = body.appendParagraph(checkboxesText);
   checkboxesParagraph.setFontSize(11);
   checkboxesParagraph.setSpacingAfter(12);
 
   // Reasons label
-  const reasonsLabel = body.appendParagraph('Additional requirements or disapproval reasons:');
+  const reasonsLabel = body.appendParagraph('Comments or requirements:');
   reasonsLabel.setFontSize(11);
   reasonsLabel.setBold(false);
   reasonsLabel.setSpacingAfter(8);
@@ -953,8 +998,8 @@ function addArcActionSection(body) {
 
   body.appendParagraph('').setSpacingAfter(12);
 
-  // ARC Committee Signature line
-  const signatureLabel = body.appendParagraph('ARC Committee Signature');
+  // LBC Committee Signature line
+  const signatureLabel = body.appendParagraph('LBC Committee Signature');
   signatureLabel.setBold(true);
   signatureLabel.setFontSize(11);
   signatureLabel.setForegroundColor('#1a3a52');
@@ -976,9 +1021,9 @@ function formatDateString(dateObj) {
 }
 
 function sendSubmissionEmail(formData, pdfBlob, processedFiles) {
-  const subject = `VaB ARC Request — ${formData.name} — ${formData.unitAddress}`;
+  const subject = `VaB LBC Request — ${formData.name} — ${formData.unitAddress}`;
 
-  const body = `ARC Request Submission
+  const body = `Landscape & Beautification Committee Request Submission
 
 Homeowner: ${formData.name}
 Unit: ${formData.unitAddress}
@@ -986,18 +1031,20 @@ Phone: ${formData.phone}
 Email: ${formData.email}
 Submission Date: ${formatDateString(new Date())}
 
-Description of Improvements:
-${formData.description}
+Request Type: ${formData.plantingRequest}
+Location: ${formData.location}
+Plant Type: ${formData.plantType}
+Specific Species: ${formData.plantSpecies}
 
 Planned Completion: ${formatDateString(new Date(formData.completionDate))}
 
 Supporting Documents:
-${processedFiles.map(f => '• ' + f.name).join('\n')}
+${processedFiles.length > 0 ? processedFiles.map(f => '• ' + f.name).join('\n') : '(None provided)'}
 
 ---
 PDF form attached. All supporting documents and photos included as attachments.`;
 
-  const emailFileName = `ARC_Request_${formatFilenameFriendly(formData.unitAddress)}_${getTodayDate()}.pdf`;
+  const emailFileName = `LBC_Request_${formatFilenameFriendly(formData.unitAddress)}_${getTodayDate()}.pdf`;
   const attachments = [pdfBlob.setName(emailFileName)];
   attachments.push(...processedFiles.map(f => f.blob));
 
