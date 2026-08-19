@@ -805,21 +805,22 @@ function addPdfHeader(body) {
     const logoFile = DriveApp.getFileById('1SKxbUvO7YMl0cpYXFYMrdzvtw6sKhotQ');
     const logoBlob = logoFile.getBlob();
     const logoImage = body.appendImage(logoBlob);
-    const FORM_TABLE_WIDTH = 450; // Same as form field table width (150 + 300)
+    const FORM_TABLE_WIDTH = 450;
     logoImage.setWidth(FORM_TABLE_WIDTH);
     const logoPara = logoImage.getParent();
     logoPara.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
     logoPara.setSpacingBefore(0);
     logoPara.setSpacingAfter(0);
+    logoPara.setLineSpacing(0.5);
   } catch (e) {
-    Logger.log('Logo loading error: ' + e.toString());
     // Logo file not found or not accessible, continue without it
   }
 
   const decorativeLine = body.appendParagraph('');
   decorativeLine.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
   decorativeLine.setSpacingBefore(0);
-  decorativeLine.setSpacingAfter(0);
+  decorativeLine.setSpacingAfter(2);
+  decorativeLine.setLineSpacing(0.5);
   const decoration = decorativeLine.editAsText();
   decoration.setText('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   decoration.setForegroundColor('#2d7d3a');
@@ -937,11 +938,21 @@ function addSignatureSection(body, formData) {
   sectionTitle.setSpacingBefore(0);
   sectionTitle.setSpacingAfter(2);
 
-  const submissionTable = body.appendTable([['Submission Date', formatDateString(new Date())]]);
-  const subLabelCell = submissionTable.getCell(0, 0);
+  // Single table with 2 rows for Submission Date and Signature
+  const sigTable = body.appendTable([
+    ['Submission Date', formatDateString(new Date())],
+    ['Your Signature', formData.signature]
+  ]);
+
+  sigTable.setColumnWidth(0, 140);
+  sigTable.setColumnWidth(1, 310);
+  sigTable.setBorderColor('#dddddd');
+
+  // Format Submission Date row
+  const subLabelCell = sigTable.getCell(0, 0);
   subLabelCell.clear();
-  subLabelCell.setPaddingTop(2);
-  subLabelCell.setPaddingBottom(2);
+  subLabelCell.setPaddingTop(1);
+  subLabelCell.setPaddingBottom(1);
   subLabelCell.setPaddingLeft(4);
   subLabelCell.setPaddingRight(4);
   const subLabelPara = subLabelCell.appendParagraph('Submission Date');
@@ -952,10 +963,10 @@ function addSignatureSection(body, formData) {
   subLabelPara.setSpacingAfter(0);
   subLabelPara.setLineSpacing(1.0);
 
-  const subValueCell = submissionTable.getCell(0, 1);
+  const subValueCell = sigTable.getCell(0, 1);
   subValueCell.clear();
-  subValueCell.setPaddingTop(2);
-  subValueCell.setPaddingBottom(2);
+  subValueCell.setPaddingTop(1);
+  subValueCell.setPaddingBottom(1);
   subValueCell.setPaddingLeft(4);
   subValueCell.setPaddingRight(4);
   const subValuePara = subValueCell.appendParagraph(formatDateString(new Date()));
@@ -964,15 +975,11 @@ function addSignatureSection(body, formData) {
   subValuePara.setSpacingAfter(0);
   subValuePara.setLineSpacing(1.0);
 
-  submissionTable.setColumnWidth(0, 140);
-  submissionTable.setColumnWidth(1, 310);
-  submissionTable.setBorderColor('#dddddd');
-
-  const signatureTable = body.appendTable([['Your Signature', formData.signature]]);
-  const sigLabelCell = signatureTable.getCell(0, 0);
+  // Format Signature row
+  const sigLabelCell = sigTable.getCell(1, 0);
   sigLabelCell.clear();
-  sigLabelCell.setPaddingTop(2);
-  sigLabelCell.setPaddingBottom(2);
+  sigLabelCell.setPaddingTop(1);
+  sigLabelCell.setPaddingBottom(1);
   sigLabelCell.setPaddingLeft(4);
   sigLabelCell.setPaddingRight(4);
   const sigLabelPara = sigLabelCell.appendParagraph('Your Signature');
@@ -983,10 +990,10 @@ function addSignatureSection(body, formData) {
   sigLabelPara.setSpacingAfter(0);
   sigLabelPara.setLineSpacing(1.0);
 
-  const sigValueCell = signatureTable.getCell(0, 1);
+  const sigValueCell = sigTable.getCell(1, 1);
   sigValueCell.clear();
-  sigValueCell.setPaddingTop(2);
-  sigValueCell.setPaddingBottom(2);
+  sigValueCell.setPaddingTop(1);
+  sigValueCell.setPaddingBottom(1);
   sigValueCell.setPaddingLeft(4);
   sigValueCell.setPaddingRight(4);
   const sigValuePara = sigValueCell.appendParagraph(formData.signature);
@@ -994,24 +1001,20 @@ function addSignatureSection(body, formData) {
   sigValuePara.setSpacingBefore(0);
   sigValuePara.setSpacingAfter(0);
   sigValuePara.setLineSpacing(1.0);
-
-  signatureTable.setColumnWidth(0, 140);
-  signatureTable.setColumnWidth(1, 310);
-  signatureTable.setBorderColor('#dddddd');
 }
 
 function addContactSection(body) {
   const contactLabel = body.appendParagraph('Questions or Support');
   contactLabel.setBold(true);
-  contactLabel.setFontSize(11);
+  contactLabel.setFontSize(8);
   contactLabel.setForegroundColor('#1a3a52');
-  contactLabel.setSpacingBefore(4);
-  contactLabel.setSpacingAfter(2);
+  contactLabel.setSpacingBefore(2);
+  contactLabel.setSpacingAfter(1);
 
   const contactParagraph = body.appendParagraph(`Direct questions to the LBC (Landscape & Beautification Committee) or HOA manager: ${CONFIG.MANAGER_EMAIL} or ${CONFIG.MANAGER_PHONE}`);
-  contactParagraph.setFontSize(10);
+  contactParagraph.setFontSize(7);
   contactParagraph.setForegroundColor('#666666');
-  contactParagraph.setLineSpacing(1.2);
+  contactParagraph.setLineSpacing(1.0);
   contactParagraph.setSpacingBefore(0);
   contactParagraph.setSpacingAfter(0);
 
