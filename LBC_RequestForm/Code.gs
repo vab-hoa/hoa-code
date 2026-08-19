@@ -467,13 +467,13 @@ const HTML_FORM = `<!DOCTYPE html>
 
         function handleFiles(newFiles) {
             if (uploadedFiles.length + newFiles.length > MAX_FILES) {
-                showAlert('Maximum ' + MAX_FILES + ' files allowed', 'error');
+                showAlert(\`Maximum \${MAX_FILES} files allowed\`, 'error');
                 return;
             }
 
             newFiles.forEach(file => {
                 if (file.size > MAX_FILE_SIZE) {
-                    showAlert('File "' + file.name + '" is too large (max 10 MB)', 'error');
+                    showAlert(\`File "\${file.name}" is too large (max 10 MB)\`, 'error');
                     return;
                 }
 
@@ -490,7 +490,7 @@ const HTML_FORM = `<!DOCTYPE html>
                         renderFileList();
                     }).catch(err => {
                         console.error('Compression error:', err);
-                        showAlert('Failed to compress "' + file.name + '"', 'error');
+                        showAlert(\`Failed to compress "\${file.name}"\`, 'error');
                     });
                 } else if (file.type === 'application/pdf' || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
                     uploadedFiles.push({
@@ -503,7 +503,7 @@ const HTML_FORM = `<!DOCTYPE html>
                     });
                     renderFileList();
                 } else {
-                    showAlert('File type not supported: "' + file.name + '"', 'error');
+                    showAlert(\`File type not supported: "\${file.name}"\`, 'error');
                 }
             });
         }
@@ -554,9 +554,11 @@ const HTML_FORM = `<!DOCTYPE html>
                 const item = document.createElement('div');
                 item.className = 'file-item';
                 const sizeKb = Math.round(file.compressedSize / 1024);
-                const compressed = file.isImage ? ' (' + Math.round((1 - file.compressedSize / file.originalSize) * 100) + '% compressed)' : '';
-                item.innerHTML = '<span>📄 ' + file.name + ' <span class="file-size">' + sizeKb + ' KB' + compressed + '</span></span>' +
-                    '<button type="button" onclick="removeFile(' + index + ')">Remove</button>';
+                const compressed = file.isImage ? \` (\${Math.round((1 - file.compressedSize / file.originalSize) * 100)}% compressed)\` : '';
+                item.innerHTML = \`
+                    <span>📄 \${file.name} <span class="file-size">\${sizeKb} KB\${compressed}</span></span>
+                    <button type="button" onclick="removeFile(\${index})">Remove</button>
+                \`;
                 fileList.appendChild(item);
             });
         }
@@ -569,7 +571,7 @@ const HTML_FORM = `<!DOCTYPE html>
 
         function showAlert(message, type) {
             alertDiv.textContent = message;
-            alertDiv.className = 'alert show ' + type;
+            alertDiv.className = \`alert show \${type}\`;
             if (type !== 'loading') {
                 setTimeout(() => alertDiv.classList.remove('show'), 5000);
             }
@@ -615,7 +617,7 @@ const HTML_FORM = `<!DOCTYPE html>
 
             const filesToProcess = uploadedFiles.length > 0 ? uploadedFiles : [];
 
-            showAlert((filesToProcess.length > 0 ? 'Processing ' + filesToProcess.length + ' file(s) and ' : '') + 'submitting form...', 'loading');
+            showAlert(\`\${filesToProcess.length > 0 ? 'Processing ' + filesToProcess.length + ' file(s) and ' : ''}submitting form...\`, 'loading');
 
             try {
                 const filePromises = filesToProcess.map(file => {
@@ -646,12 +648,12 @@ const HTML_FORM = `<!DOCTYPE html>
                             setTimeout(() => alertDiv.classList.remove('show'), 5000);
                         } else {
                             console.error('Backend error:', response);
-                            showAlert('Error: ' + response.message + '\n\nDebug: ' + response.debug, 'error');
+                            showAlert(\`Error: \${response.message}\\n\\nDebug: \${response.debug}\`, 'error');
                         }
                     })
                     .withFailureHandler((error) => {
                         console.error('Submission error:', error);
-                        showAlert('Error: ' + (error || 'Failed to submit form'), 'error');
+                        showAlert(\`Error: \${error || 'Failed to submit form'}\`, 'error');
                     })
                     .handleFormSubmission(formData);
             } catch (error) {
@@ -669,16 +671,12 @@ function doGet(e) {
 }
 
 function handleFormSubmission(formData) {
-  Logger.log('=== handleFormSubmission called ===');
-  Logger.log('formData keys: ' + Object.keys(formData).join(', '));
-
   const startTime = new Date();
   const log = [];
   let processedFiles;
   let pdfBlob;
 
   try {
-    Logger.log('Entering try block');
     log.push('START at ' + startTime.toISOString());
 
     try {
@@ -734,24 +732,17 @@ function handleFormSubmission(formData) {
 }
 
 function validateFormData(data) {
-  Logger.log('Validating form data...');
   const required = ['firstName', 'lastName', 'unitAddress', 'phone', 'email', 'location', 'plantSpecies', 'completionDate', 'signature', 'plantingRequest', 'plantType'];
 
   for (const field of required) {
     if (!data[field] || data[field].trim() === '') {
-      const err = 'Required field missing: ' + field;
-      Logger.log('VALIDATION ERROR: ' + err);
-      throw new Error(err);
+      throw new Error(`Required field missing: ${field}`);
     }
   }
 
   if (!data.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-    const err = 'Invalid email format';
-    Logger.log('EMAIL VALIDATION ERROR: ' + err);
-    throw new Error(err);
+    throw new Error('Invalid email format');
   }
-
-  Logger.log('Validation passed');
 }
 
 function processFiles(encodedFiles) {
@@ -781,7 +772,7 @@ function generateLbcPdf(formData) {
     const body = doc.getBody();
     body.clear();
 
-    addPdfHeader(body, formData.completionDate);
+    addPdfHeader(body);
     addFormFields(body, formData);
 
     if (formData.files && formData.files.length > 0) {
@@ -808,8 +799,7 @@ function generateLbcPdf(formData) {
   }
 }
 
-function addPdfHeader(body, completionDate) {
-  // Add date in top right
+function addPdfHeader(body) {
   const dateTable = body.appendTable([[formatDateString(new Date())]]);
   const dateCell = dateTable.getCell(0, 0);
   dateCell.setText('');
@@ -817,11 +807,9 @@ function addPdfHeader(body, completionDate) {
   dateP.setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
   dateP.setFontSize(11);
 
-  // Set table properties for borderless look
   const tableBorders = dateTable.setBorderColor('#ffffff');
   dateTable.setColumnWidth(0, 400);
 
-  // Add decorative header line (green accent)
   const decorativeLine = body.appendParagraph('');
   decorativeLine.setSpacingAfter(0);
   const decoration = decorativeLine.editAsText();
@@ -829,7 +817,6 @@ function addPdfHeader(body, completionDate) {
   decoration.setForegroundColor('#2d7d3a');
   decoration.setFontSize(8);
 
-  // Add title
   const titleParagraph = body.appendParagraph('Homeowner Paid Planting or Removal Request');
   titleParagraph.setFontSize(20);
   titleParagraph.setBold(true);
@@ -837,7 +824,6 @@ function addPdfHeader(body, completionDate) {
   titleParagraph.setSpacingAfter(12);
   titleParagraph.setForegroundColor('#1a3a52');
 
-  // Add spacing
   body.appendParagraph('').setSpacingAfter(8);
 }
 
@@ -855,10 +841,8 @@ function addFormFields(body, formData) {
   ];
 
   fields.forEach((field, index) => {
-    // Create a 2-column table for each field
     const fieldTable = body.appendTable([[field.label, field.value]]);
 
-    // Left cell (label)
     const labelCell = fieldTable.getCell(0, 0);
     labelCell.clear();
     const labelPara = labelCell.appendParagraph(field.label);
@@ -866,21 +850,17 @@ function addFormFields(body, formData) {
     labelPara.setFontSize(11);
     labelPara.setForegroundColor('#1a3a52');
 
-    // Right cell (value) - handle multiline text
     const valueCell = fieldTable.getCell(0, 1);
     valueCell.clear();
     const valuePara = valueCell.appendParagraph(field.value);
     valuePara.setFontSize(11);
     valuePara.setLineSpacing(1.2);
 
-    // Set column widths
     fieldTable.setColumnWidth(0, 150);
     fieldTable.setColumnWidth(1, 300);
 
-    // Remove borders
     fieldTable.setBorderColor('#e8e8e8');
 
-    // Add spacing after each row
     if (index < fields.length - 1) {
       body.appendParagraph('').setSpacingAfter(8);
     }
@@ -915,7 +895,6 @@ function addAdmonitionText(body) {
 }
 
 function addSignatureSection(body, formData) {
-  // Submission Date field
   const submissionTable = body.appendTable([['Submission Date', formatDateString(new Date())]]);
   const subLabelCell = submissionTable.getCell(0, 0);
   subLabelCell.clear();
@@ -935,7 +914,6 @@ function addSignatureSection(body, formData) {
 
   body.appendParagraph('').setSpacingAfter(10);
 
-  // Homeowner Signature field
   const signatureTable = body.appendTable([['Your Signature', formData.signature]]);
   const sigLabelCell = signatureTable.getCell(0, 0);
   sigLabelCell.clear();
@@ -953,55 +931,47 @@ function addSignatureSection(body, formData) {
   signatureTable.setColumnWidth(1, 300);
   signatureTable.setBorderColor('#e8e8e8');
 
-  // Add underline after signature section
   const underline = body.appendParagraph('');
   underline.setBorderBottom(1);
   underline.setSpacingAfter(15);
 }
 
 function addContactSection(body) {
-  const contactParagraph = body.appendParagraph('Direct questions to the LBC (Landscape & Beautification Committee) or HOA manager: ' + CONFIG.MANAGER_EMAIL + ' or ' + CONFIG.MANAGER_PHONE);
+  const contactParagraph = body.appendParagraph(`Direct questions to the LBC (Landscape & Beautification Committee) or HOA manager: ${CONFIG.MANAGER_EMAIL} or ${CONFIG.MANAGER_PHONE}`);
   contactParagraph.setFontSize(10);
   contactParagraph.setForegroundColor('#1a3a52');
 
-  // Add underline
   const underline = body.appendParagraph('');
   underline.setBorderBottom(1);
   underline.setSpacingAfter(15);
 }
 
 function addLbcActionSection(body) {
-  // Section title
   const actionTitle = body.appendParagraph('LBC Committee Action:');
   actionTitle.setBold(true);
   actionTitle.setFontSize(12);
   actionTitle.setForegroundColor('#1a3a52');
   actionTitle.setSpacingAfter(10);
 
-  // Checkboxes row
   const checkboxesText = '☐ Approved     ☐ Needs Modification     ☐ Not Approved';
   const checkboxesParagraph = body.appendParagraph(checkboxesText);
   checkboxesParagraph.setFontSize(11);
   checkboxesParagraph.setSpacingAfter(12);
 
-  // Reasons label
   const reasonsLabel = body.appendParagraph('Comments or requirements:');
   reasonsLabel.setFontSize(11);
   reasonsLabel.setBold(false);
   reasonsLabel.setSpacingAfter(8);
 
-  // Create a box for reasons/notes with light background
   const reasonsTable = body.appendTable([['']]);
   const reasonsCell = reasonsTable.getCell(0, 0);
   reasonsCell.clear();
 
-  // Add multiple empty lines for writing space
   const reasonsPara1 = reasonsCell.appendParagraph('');
   const reasonsPara2 = reasonsCell.appendParagraph('');
   const reasonsPara3 = reasonsCell.appendParagraph('');
   const reasonsPara4 = reasonsCell.appendParagraph('');
 
-  // Set cell background color to light gray
   reasonsCell.setBackgroundColor('#f0f0f0');
 
   reasonsTable.setColumnWidth(0, 450);
@@ -1009,7 +979,6 @@ function addLbcActionSection(body) {
 
   body.appendParagraph('').setSpacingAfter(12);
 
-  // LBC Committee Signature line
   const signatureLabel = body.appendParagraph('LBC Committee Signature');
   signatureLabel.setBold(true);
   signatureLabel.setFontSize(11);
@@ -1032,31 +1001,32 @@ function formatDateString(dateObj) {
 }
 
 function sendSubmissionEmail(formData, pdfBlob, processedFiles) {
-  const subject = 'VaB LBC Request — ' + formData.name + ' — ' + formData.unitAddress;
+  const subject = `VaB LBC Request — ${formData.name} — ${formData.unitAddress}`;
 
-  const body = 'Landscape & Beautification Committee Request Submission\n\n' +
-    'Homeowner: ' + formData.name + '\n' +
-    'Unit: ' + formData.unitAddress + '\n' +
-    'Phone: ' + formData.phone + '\n' +
-    'Email: ' + formData.email + '\n' +
-    'Submission Date: ' + formatDateString(new Date()) + '\n\n' +
-    'Request Type: ' + formData.plantingRequest + '\n' +
-    'Location: ' + formData.location + '\n' +
-    'Plant Type: ' + formData.plantType + '\n' +
-    'Specific Species: ' + formData.plantSpecies + '\n\n' +
-    'Planned Completion: ' + formatDateString(new Date(formData.completionDate)) + '\n\n' +
-    'Supporting Documents:\n' +
-    (processedFiles.length > 0 ? processedFiles.map(f => '• ' + f.name).join('\n') : '(None provided)') + '\n\n' +
-    '---\n' +
-    'PDF form attached. All supporting documents and photos included as attachments.';
+  const body = `Landscape & Beautification Committee Request Submission
 
-  const emailFileName = 'LBC_Request_' + formatFilenameFriendly(formData.unitAddress) + '_' + getTodayDate() + '.pdf';
+Homeowner: ${formData.name}
+Unit: ${formData.unitAddress}
+Phone: ${formData.phone}
+Email: ${formData.email}
+Submission Date: ${formatDateString(new Date())}
+
+Request Type: ${formData.plantingRequest}
+Location: ${formData.location}
+Plant Type: ${formData.plantType}
+Specific Species: ${formData.plantSpecies}
+
+Planned Completion: ${formatDateString(new Date(formData.completionDate))}
+
+Supporting Documents:
+${processedFiles.length > 0 ? processedFiles.map(f => '• ' + f.name).join('\n') : '(None provided)'}
+
+---
+PDF form attached. All supporting documents and photos included as attachments.`;
+
+  const emailFileName = `LBC_Request_${formatFilenameFriendly(formData.unitAddress)}_${getTodayDate()}.pdf`;
   const attachments = [pdfBlob.setName(emailFileName)];
   attachments.push(...processedFiles.map(f => f.blob));
-
-  Logger.log('About to send email to: ' + CONFIG.LBC_RECIPIENT);
-  Logger.log('Subject: ' + subject);
-  Logger.log('Attachments count: ' + attachments.length);
 
   GmailApp.sendEmail(
     CONFIG.LBC_RECIPIENT,
@@ -1067,21 +1037,13 @@ function sendSubmissionEmail(formData, pdfBlob, processedFiles) {
       replyTo: formData.email
     }
   );
-
-  Logger.log('Email sent successfully');
 }
 
 function archivePdfToDrive(formData, pdfBlob) {
-  Logger.log('Attempting to archive to folder: ' + CONFIG.ARCHIVE_FOLDER_ID);
   const folder = DriveApp.getFolderById(CONFIG.ARCHIVE_FOLDER_ID);
-  Logger.log('Folder retrieved: ' + folder.getName());
-
-  const fileName = formatFilenameFriendly(formData.name) + '_' + formatFilenameFriendly(formData.unitAddress) + '_' + getTodayDate() + '.pdf';
-  Logger.log('Creating file with name: ' + fileName);
-
+  const fileName = `${formatFilenameFriendly(formData.name)}_${formatFilenameFriendly(formData.unitAddress)}_${getTodayDate()}.pdf`;
   const file = folder.createFile(pdfBlob);
   file.setName(fileName);
-
   Logger.log('Archived PDF to Drive: ' + file.getUrl());
 }
 
@@ -1097,5 +1059,5 @@ function getTodayDate() {
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, '0');
   const day = String(today.getDate()).padStart(2, '0');
-  return year + '-' + month + '-' + day;
+  return `${year}-${month}-${day}`;
 }
