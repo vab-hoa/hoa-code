@@ -873,7 +873,6 @@ function addFormFields(body, formData) {
 
     fieldTable.setColumnWidth(0, 150);
     fieldTable.setColumnWidth(1, 300);
-    fieldTable.setSpacingAfter(0);
 
     fieldTable.setBorderColor('#dddddd');
   });
@@ -944,7 +943,6 @@ function addSignatureSection(body, formData) {
   submissionTable.setColumnWidth(0, 150);
   submissionTable.setColumnWidth(1, 300);
   submissionTable.setBorderColor('#dddddd');
-  submissionTable.setSpacingAfter(0);
 
   const signatureTable = body.appendTable([['Your Signature', formData.signature]]);
   const sigLabelCell = signatureTable.getCell(0, 0);
@@ -966,7 +964,6 @@ function addSignatureSection(body, formData) {
   signatureTable.setColumnWidth(0, 150);
   signatureTable.setColumnWidth(1, 300);
   signatureTable.setBorderColor('#dddddd');
-  signatureTable.setSpacingAfter(0);
 }
 
 function addContactSection(body) {
@@ -1030,7 +1027,6 @@ function addLbcActionSection(body) {
 
   reasonsTable.setColumnWidth(0, 450);
   reasonsTable.setBorderColor('#cccccc');
-  reasonsTable.setSpacingAfter(0);
 
   const signatureLabel = body.appendParagraph('LBC Committee Signature');
   signatureLabel.setBold(true);
