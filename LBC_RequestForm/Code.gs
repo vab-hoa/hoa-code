@@ -1025,7 +1025,6 @@ function addLbcActionSection(body) {
   const reasonsPara3 = reasonsCell.appendParagraph('');
 
   reasonsCell.setBackgroundColor('#f8f9fa');
-  reasonsCell.setPadding(8);
 
   reasonsTable.setColumnWidth(0, 450);
   reasonsTable.setBorderColor('#cccccc');
