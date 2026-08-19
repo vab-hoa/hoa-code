@@ -800,8 +800,8 @@ function generateLbcPdf(formData) {
 }
 
 function addPdfHeader(body) {
-  // Add logo - set LOGO_FILE_ID to your logo file ID from Drive
-  const LOGO_FILE_ID = '';
+  // Add logo
+  const LOGO_FILE_ID = '1SKxbUvO7YMl0cpYXFYMrdzvtw6sKhotQ';
   if (LOGO_FILE_ID) {
     try {
       const logoFile = DriveApp.getFileById(LOGO_FILE_ID);
