@@ -839,14 +839,14 @@ function addFormFields(body, formData) {
     labelCell.clear();
     const labelPara = labelCell.appendParagraph(field.label);
     labelPara.setBold(true);
-    labelPara.setFontSize(11);
+    labelPara.setFontSize(10);
     labelPara.setForegroundColor('#1a3a52');
 
     const valueCell = fieldTable.getCell(0, 1);
     valueCell.clear();
     const valuePara = valueCell.appendParagraph(field.value);
-    valuePara.setFontSize(11);
-    valuePara.setLineSpacing(1.3);
+    valuePara.setFontSize(10);
+    valuePara.setLineSpacing(1.1);
 
     fieldTable.setColumnWidth(0, 150);
     fieldTable.setColumnWidth(1, 300);
@@ -864,7 +864,7 @@ function addFormFields(body, formData) {
 function addSupportingDocumentation(body, files) {
   const label = body.appendParagraph('Supporting Documentation');
   label.setBold(true);
-  label.setFontSize(11);
+  label.setFontSize(9);
   label.setForegroundColor('#1a3a52');
   label;
 
@@ -881,7 +881,7 @@ function addSupportingDocumentation(body, files) {
 function addAdmonitionText(body) {
   const admonitionLabel = body.appendParagraph('Important Agreement and Acknowledgment');
   admonitionLabel.setBold(true);
-  admonitionLabel.setFontSize(11);
+  admonitionLabel.setFontSize(9);
   admonitionLabel.setForegroundColor('#1a3a52');
   admonitionLabel;
 
@@ -889,8 +889,8 @@ function addAdmonitionText(body) {
 
   const admonitionParagraph = body.appendParagraph(admonitionText);
   admonitionParagraph.setItalic(true);
-  admonitionParagraph.setFontSize(10);
-  admonitionParagraph.setLineSpacing(1.4);
+  admonitionParagraph.setFontSize(8);
+  admonitionParagraph.setLineSpacing(1.0);
   admonitionParagraph;
   admonitionParagraph.setForegroundColor('#333333');
 }
@@ -899,7 +899,7 @@ function addSignatureSection(body, formData) {
 
   const sectionTitle = body.appendParagraph('Homeowner Signature and Submission');
   sectionTitle.setBold(true);
-  sectionTitle.setFontSize(13);
+  sectionTitle.setFontSize(10);
   sectionTitle.setForegroundColor('#1a3a52');
   sectionTitle;
 
@@ -970,7 +970,7 @@ function addLbcActionSection(body) {
 
   const actionTitle = body.appendParagraph('LBC Committee Action & Review');
   actionTitle.setBold(true);
-  actionTitle.setFontSize(13);
+  actionTitle.setFontSize(10);
   actionTitle.setForegroundColor('#1a3a52');
   actionTitle;
 
