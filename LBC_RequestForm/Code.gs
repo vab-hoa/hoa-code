@@ -856,6 +856,10 @@ function addFormFields(body, formData) {
 
     const labelCell = fieldTable.getCell(0, 0);
     labelCell.clear();
+    labelCell.setPaddingTop(5);
+    labelCell.setPaddingBottom(5);
+    labelCell.setPaddingLeft(5);
+    labelCell.setPaddingRight(5);
     const labelPara = labelCell.appendParagraph(field.label);
     labelPara.setBold(true);
     labelPara.setFontSize(10);
@@ -865,6 +869,10 @@ function addFormFields(body, formData) {
 
     const valueCell = fieldTable.getCell(0, 1);
     valueCell.clear();
+    valueCell.setPaddingTop(5);
+    valueCell.setPaddingBottom(5);
+    valueCell.setPaddingLeft(5);
+    valueCell.setPaddingRight(5);
     const valuePara = valueCell.appendParagraph(field.value);
     valuePara.setFontSize(10);
     valuePara.setLineSpacing(1.1);
@@ -926,6 +934,10 @@ function addSignatureSection(body, formData) {
   const submissionTable = body.appendTable([['Submission Date', formatDateString(new Date())]]);
   const subLabelCell = submissionTable.getCell(0, 0);
   subLabelCell.clear();
+  subLabelCell.setPaddingTop(5);
+  subLabelCell.setPaddingBottom(5);
+  subLabelCell.setPaddingLeft(5);
+  subLabelCell.setPaddingRight(5);
   const subLabelPara = subLabelCell.appendParagraph('Submission Date');
   subLabelPara.setBold(true);
   subLabelPara.setFontSize(11);
@@ -935,6 +947,10 @@ function addSignatureSection(body, formData) {
 
   const subValueCell = submissionTable.getCell(0, 1);
   subValueCell.clear();
+  subValueCell.setPaddingTop(5);
+  subValueCell.setPaddingBottom(5);
+  subValueCell.setPaddingLeft(5);
+  subValueCell.setPaddingRight(5);
   const subValuePara = subValueCell.appendParagraph(formatDateString(new Date()));
   subValuePara.setFontSize(11);
   subValuePara.setSpacingBefore(0);
@@ -947,6 +963,10 @@ function addSignatureSection(body, formData) {
   const signatureTable = body.appendTable([['Your Signature', formData.signature]]);
   const sigLabelCell = signatureTable.getCell(0, 0);
   sigLabelCell.clear();
+  sigLabelCell.setPaddingTop(5);
+  sigLabelCell.setPaddingBottom(5);
+  sigLabelCell.setPaddingLeft(5);
+  sigLabelCell.setPaddingRight(5);
   const sigLabelPara = sigLabelCell.appendParagraph('Your Signature');
   sigLabelPara.setBold(true);
   sigLabelPara.setFontSize(11);
@@ -956,6 +976,10 @@ function addSignatureSection(body, formData) {
 
   const sigValueCell = signatureTable.getCell(0, 1);
   sigValueCell.clear();
+  sigValueCell.setPaddingTop(5);
+  sigValueCell.setPaddingBottom(5);
+  sigValueCell.setPaddingLeft(5);
+  sigValueCell.setPaddingRight(5);
   const sigValuePara = sigValueCell.appendParagraph(formData.signature);
   sigValuePara.setFontSize(11);
   sigValuePara.setSpacingBefore(0);
