@@ -1021,32 +1021,31 @@ function formatDateString(dateObj) {
 }
 
 function sendSubmissionEmail(formData, pdfBlob, processedFiles) {
-  const subject = `VaB LBC Request — ${formData.name} — ${formData.unitAddress}`;
+  const subject = 'VaB LBC Request — ' + formData.name + ' — ' + formData.unitAddress;
 
-  const body = `Landscape & Beautification Committee Request Submission
+  const body = 'Landscape & Beautification Committee Request Submission\n\n' +
+    'Homeowner: ' + formData.name + '\n' +
+    'Unit: ' + formData.unitAddress + '\n' +
+    'Phone: ' + formData.phone + '\n' +
+    'Email: ' + formData.email + '\n' +
+    'Submission Date: ' + formatDateString(new Date()) + '\n\n' +
+    'Request Type: ' + formData.plantingRequest + '\n' +
+    'Location: ' + formData.location + '\n' +
+    'Plant Type: ' + formData.plantType + '\n' +
+    'Specific Species: ' + formData.plantSpecies + '\n\n' +
+    'Planned Completion: ' + formatDateString(new Date(formData.completionDate)) + '\n\n' +
+    'Supporting Documents:\n' +
+    (processedFiles.length > 0 ? processedFiles.map(f => '• ' + f.name).join('\n') : '(None provided)') + '\n\n' +
+    '---\n' +
+    'PDF form attached. All supporting documents and photos included as attachments.';
 
-Homeowner: ${formData.name}
-Unit: ${formData.unitAddress}
-Phone: ${formData.phone}
-Email: ${formData.email}
-Submission Date: ${formatDateString(new Date())}
-
-Request Type: ${formData.plantingRequest}
-Location: ${formData.location}
-Plant Type: ${formData.plantType}
-Specific Species: ${formData.plantSpecies}
-
-Planned Completion: ${formatDateString(new Date(formData.completionDate))}
-
-Supporting Documents:
-${processedFiles.length > 0 ? processedFiles.map(f => '• ' + f.name).join('\n') : '(None provided)'}
-
----
-PDF form attached. All supporting documents and photos included as attachments.`;
-
-  const emailFileName = `LBC_Request_${formatFilenameFriendly(formData.unitAddress)}_${getTodayDate()}.pdf`;
+  const emailFileName = 'LBC_Request_' + formatFilenameFriendly(formData.unitAddress) + '_' + getTodayDate() + '.pdf';
   const attachments = [pdfBlob.setName(emailFileName)];
   attachments.push(...processedFiles.map(f => f.blob));
+
+  Logger.log('About to send email to: ' + CONFIG.LBC_RECIPIENT);
+  Logger.log('Subject: ' + subject);
+  Logger.log('Attachments count: ' + attachments.length);
 
   GmailApp.sendEmail(
     CONFIG.LBC_RECIPIENT,
@@ -1057,13 +1056,21 @@ PDF form attached. All supporting documents and photos included as attachments.`
       replyTo: formData.email
     }
   );
+
+  Logger.log('Email sent successfully');
 }
 
 function archivePdfToDrive(formData, pdfBlob) {
+  Logger.log('Attempting to archive to folder: ' + CONFIG.ARCHIVE_FOLDER_ID);
   const folder = DriveApp.getFolderById(CONFIG.ARCHIVE_FOLDER_ID);
-  const fileName = `${formatFilenameFriendly(formData.name)}_${formatFilenameFriendly(formData.unitAddress)}_${getTodayDate()}.pdf`;
+  Logger.log('Folder retrieved: ' + folder.getName());
+
+  const fileName = formatFilenameFriendly(formData.name) + '_' + formatFilenameFriendly(formData.unitAddress) + '_' + getTodayDate() + '.pdf';
+  Logger.log('Creating file with name: ' + fileName);
+
   const file = folder.createFile(pdfBlob);
   file.setName(fileName);
+
   Logger.log('Archived PDF to Drive: ' + file.getUrl());
 }
 

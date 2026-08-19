@@ -2,6 +2,10 @@
   "timeZone": "America/Denver",
   "exceptionLogging": "STACKDRIVER",
   "runtimeVersion": "V8",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/gmail.send",
+    "https://www.googleapis.com/auth/drive"
+  ],
   "webapp": {
     "access": "ANYONE",
     "executeAs": "USER_DEPLOYING"
