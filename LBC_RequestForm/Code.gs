@@ -805,7 +805,8 @@ function addPdfHeader(body) {
     const logoFile = DriveApp.getFileById('1SKxbUvO7YMl0cpYXFYMrdzvtw6sKhotQ');
     const logoBlob = logoFile.getBlob();
     const logoImage = body.appendImage(logoBlob);
-    logoImage.setWidth(420);
+    const FORM_TABLE_WIDTH = 450; // Same as form field table width (150 + 300)
+    logoImage.setWidth(FORM_TABLE_WIDTH);
     const logoPara = logoImage.getParent();
     logoPara.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
     logoPara.setSpacingBefore(0);
