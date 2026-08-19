@@ -960,7 +960,7 @@ function addSignatureSection(body, formData) {
 }
 
 function addContactSection(body) {
-  const contactParagraph = body.appendParagraph(`Direct questions to the LBC (Landscape & Beautification Committee) or HOA manager: ${CONFIG.MANAGER_EMAIL} or ${CONFIG.MANAGER_PHONE}`);
+  const contactParagraph = body.appendParagraph('Direct questions to the LBC (Landscape & Beautification Committee) or HOA manager: ' + CONFIG.MANAGER_EMAIL + ' or ' + CONFIG.MANAGER_PHONE);
   contactParagraph.setFontSize(10);
   contactParagraph.setForegroundColor('#1a3a52');
 
@@ -1097,5 +1097,5 @@ function getTodayDate() {
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, '0');
   const day = String(today.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return year + '-' + month + '-' + day;
 }
