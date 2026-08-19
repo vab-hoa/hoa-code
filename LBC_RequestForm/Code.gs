@@ -805,7 +805,7 @@ function addPdfHeader(body) {
     const logoFile = DriveApp.getFileById('1SKxbUvO7YMl0cpYXFYMrdzvtw6sKhotQ');
     const logoBlob = logoFile.getBlob();
     const logoImage = body.appendImage(logoBlob);
-    logoImage.setWidth(80);
+    logoImage.setWidth(420);
     const logoPara = logoImage.getParent();
     logoPara.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
     logoPara.setSpacingBefore(0);
@@ -858,8 +858,8 @@ function addFormFields(body, formData) {
 
     const labelCell = fieldTable.getCell(0, 0);
     labelCell.clear();
-    labelCell.setPaddingTop(2);
-    labelCell.setPaddingBottom(2);
+    labelCell.setPaddingTop(0);
+    labelCell.setPaddingBottom(0);
     labelCell.setPaddingLeft(5);
     labelCell.setPaddingRight(5);
     const labelPara = labelCell.appendParagraph(field.label);
@@ -868,17 +868,17 @@ function addFormFields(body, formData) {
     labelPara.setForegroundColor('#1a3a52');
     labelPara.setSpacingBefore(0);
     labelPara.setSpacingAfter(0);
-    labelPara.setLineSpacing(1.0);
+    labelPara.setLineSpacing(0.8);
 
     const valueCell = fieldTable.getCell(0, 1);
     valueCell.clear();
-    valueCell.setPaddingTop(2);
-    valueCell.setPaddingBottom(2);
+    valueCell.setPaddingTop(0);
+    valueCell.setPaddingBottom(0);
     valueCell.setPaddingLeft(5);
     valueCell.setPaddingRight(5);
     const valuePara = valueCell.appendParagraph(field.value);
     valuePara.setFontSize(10);
-    valuePara.setLineSpacing(1.0);
+    valuePara.setLineSpacing(0.8);
     valuePara.setSpacingBefore(0);
     valuePara.setSpacingAfter(0);
 
@@ -937,8 +937,8 @@ function addSignatureSection(body, formData) {
   const submissionTable = body.appendTable([['Submission Date', formatDateString(new Date())]]);
   const subLabelCell = submissionTable.getCell(0, 0);
   subLabelCell.clear();
-  subLabelCell.setPaddingTop(2);
-  subLabelCell.setPaddingBottom(2);
+  subLabelCell.setPaddingTop(0);
+  subLabelCell.setPaddingBottom(0);
   subLabelCell.setPaddingLeft(5);
   subLabelCell.setPaddingRight(5);
   const subLabelPara = subLabelCell.appendParagraph('Submission Date');
@@ -947,19 +947,19 @@ function addSignatureSection(body, formData) {
   subLabelPara.setForegroundColor('#1a3a52');
   subLabelPara.setSpacingBefore(0);
   subLabelPara.setSpacingAfter(0);
-  subLabelPara.setLineSpacing(1.0);
+  subLabelPara.setLineSpacing(0.8);
 
   const subValueCell = submissionTable.getCell(0, 1);
   subValueCell.clear();
-  subValueCell.setPaddingTop(2);
-  subValueCell.setPaddingBottom(2);
+  subValueCell.setPaddingTop(0);
+  subValueCell.setPaddingBottom(0);
   subValueCell.setPaddingLeft(5);
   subValueCell.setPaddingRight(5);
   const subValuePara = subValueCell.appendParagraph(formatDateString(new Date()));
   subValuePara.setFontSize(11);
   subValuePara.setSpacingBefore(0);
   subValuePara.setSpacingAfter(0);
-  subValuePara.setLineSpacing(1.0);
+  subValuePara.setLineSpacing(0.8);
 
   submissionTable.setColumnWidth(0, 150);
   submissionTable.setColumnWidth(1, 300);
@@ -968,8 +968,8 @@ function addSignatureSection(body, formData) {
   const signatureTable = body.appendTable([['Your Signature', formData.signature]]);
   const sigLabelCell = signatureTable.getCell(0, 0);
   sigLabelCell.clear();
-  sigLabelCell.setPaddingTop(2);
-  sigLabelCell.setPaddingBottom(2);
+  sigLabelCell.setPaddingTop(0);
+  sigLabelCell.setPaddingBottom(0);
   sigLabelCell.setPaddingLeft(5);
   sigLabelCell.setPaddingRight(5);
   const sigLabelPara = sigLabelCell.appendParagraph('Your Signature');
@@ -978,19 +978,19 @@ function addSignatureSection(body, formData) {
   sigLabelPara.setForegroundColor('#1a3a52');
   sigLabelPara.setSpacingBefore(0);
   sigLabelPara.setSpacingAfter(0);
-  sigLabelPara.setLineSpacing(1.0);
+  sigLabelPara.setLineSpacing(0.8);
 
   const sigValueCell = signatureTable.getCell(0, 1);
   sigValueCell.clear();
-  sigValueCell.setPaddingTop(2);
-  sigValueCell.setPaddingBottom(2);
+  sigValueCell.setPaddingTop(0);
+  sigValueCell.setPaddingBottom(0);
   sigValueCell.setPaddingLeft(5);
   sigValueCell.setPaddingRight(5);
   const sigValuePara = sigValueCell.appendParagraph(formData.signature);
   sigValuePara.setFontSize(11);
   sigValuePara.setSpacingBefore(0);
   sigValuePara.setSpacingAfter(0);
-  sigValuePara.setLineSpacing(1.0);
+  sigValuePara.setLineSpacing(0.8);
 
   signatureTable.setColumnWidth(0, 150);
   signatureTable.setColumnWidth(1, 300);
