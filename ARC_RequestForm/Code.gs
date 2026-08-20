@@ -702,12 +702,12 @@ function generateArcPdf(formData) {
 
     addPdfHeader(body, formData.completionDate);
     addFormFields(body, formData);
+    addCompletionDate(body, formData.completionDate);
 
     if (formData.files && formData.files.length > 0) {
       addSupportingDocumentation(body, formData.files);
     }
 
-    addCompletionDate(body, formData.completionDate);
     addAdmonitionText(body);
     addSignatureSection(body, formData);
     addArcActionSection(body);
@@ -834,6 +834,8 @@ function addSupportingDocumentation(body, files) {
     fileParagraph.setSpacingBefore(0);
     fileParagraph.setSpacingAfter(0);
   });
+
+  body.appendParagraph('').setSpacingAfter(2);
 }
 
 function addCompletionDate(body, completionDate) {
