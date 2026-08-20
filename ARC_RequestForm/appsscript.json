@@ -7,7 +7,7 @@
     "https://www.googleapis.com/auth/drive"
   ],
   "webapp": {
-    "access": "ANYONE",
+    "access": "ANYBODY_ANONYMOUS",
     "executeAs": "USER_DEPLOYING"
   }
 }
