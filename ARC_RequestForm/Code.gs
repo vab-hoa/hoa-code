@@ -3,7 +3,7 @@
 
 const CONFIG = {
   // Email recipient
-  ARC_RECIPIENT: 'admin@villasboulders.org',
+  ARC_RECIPIENT: 'arcformrecipients@villasboulders.org',
 
   // Drive folder for archiving (HOA Board Documents > ARC Request Forms)
   ARCHIVE_FOLDER_ID: '1-laNaFpH1eWuEs0f6_OtJ5Y0LkWXuUs7',
