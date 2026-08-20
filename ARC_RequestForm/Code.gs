@@ -710,7 +710,6 @@ function generateArcPdf(formData) {
     addCompletionDate(body, formData.completionDate);
     addAdmonitionText(body);
     addSignatureSection(body, formData);
-    addContactSection(body);
     addArcActionSection(body);
 
     doc.saveAndClose();
@@ -895,7 +894,7 @@ function addAdmonitionText(body) {
   admonitionParagraph.setLineSpacing(1.0);
   admonitionParagraph.setForegroundColor('#333333');
   admonitionParagraph.setSpacingBefore(0);
-  admonitionParagraph.setSpacingAfter(0);
+  admonitionParagraph.setSpacingAfter(4);
 }
 
 function addSignatureSection(body, formData) {
@@ -971,22 +970,6 @@ function addSignatureSection(body, formData) {
   sigValuePara.setLineSpacing(1.0);
 }
 
-function addContactSection(body) {
-  const contactLabel = body.appendParagraph('Questions or Support');
-  contactLabel.setBold(true);
-  contactLabel.setFontSize(8);
-  contactLabel.setForegroundColor('#1a3a52');
-  contactLabel.setSpacingBefore(2);
-  contactLabel.setSpacingAfter(1);
-
-  const contactParagraph = body.appendParagraph(`Direct questions to the HOA manager: ${CONFIG.MANAGER_EMAIL} or ${CONFIG.MANAGER_PHONE}`);
-  contactParagraph.setFontSize(7);
-  contactParagraph.setForegroundColor('#666666');
-  contactParagraph.setLineSpacing(1.0);
-  contactParagraph.setSpacingBefore(0);
-  contactParagraph.setSpacingAfter(0);
-}
-
 function addArcActionSection(body) {
   const divider = body.appendParagraph('');
   divider.setSpacingBefore(4);
@@ -998,19 +981,19 @@ function addArcActionSection(body) {
 
   const actionTitle = body.appendParagraph('ARC Committee Action & Review');
   actionTitle.setBold(true);
-  actionTitle.setFontSize(10);
+  actionTitle.setFontSize(9);
   actionTitle.setForegroundColor('#1a3a52');
   actionTitle.setSpacingBefore(0);
   actionTitle.setSpacingAfter(2);
 
   const checkboxesText = '☐ Approved     ☐ Disapproved     ☐ Final Inspection Required';
   const checkboxesParagraph = body.appendParagraph(checkboxesText);
-  checkboxesParagraph.setFontSize(11);
+  checkboxesParagraph.setFontSize(9);
   checkboxesParagraph.setSpacingBefore(0);
   checkboxesParagraph.setSpacingAfter(2);
 
   const reasonsLabel = body.appendParagraph('Additional requirements or disapproval reasons:');
-  reasonsLabel.setFontSize(11);
+  reasonsLabel.setFontSize(9);
   reasonsLabel.setBold(true);
   reasonsLabel.setForegroundColor('#1a3a52');
   reasonsLabel.setSpacingBefore(0);
@@ -1030,13 +1013,13 @@ function addArcActionSection(body) {
 
   const signatureLabel = body.appendParagraph('ARC Committee Signature');
   signatureLabel.setBold(true);
-  signatureLabel.setFontSize(11);
+  signatureLabel.setFontSize(9);
   signatureLabel.setForegroundColor('#1a3a52');
   signatureLabel.setSpacingBefore(2);
   signatureLabel.setSpacingAfter(2);
 
   const signatureLine = body.appendParagraph('_________________________________________     Date: _______________');
-  signatureLine.setFontSize(10);
+  signatureLine.setFontSize(9);
   signatureLine.setSpacingBefore(0);
   signatureLine.setSpacingAfter(0);
 }
