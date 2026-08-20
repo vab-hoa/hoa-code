@@ -729,6 +729,22 @@ function generateArcPdf(formData) {
 }
 
 function addPdfHeader(body, completionDate) {
+  // Add logo if available
+  try {
+    const logoFile = DriveApp.getFileById('1SKxbUvO7YMl0cpYXFYMrdzvtw6sKhotQ');
+    const logoBlob = logoFile.getBlob();
+    const logoImage = body.appendImage(logoBlob);
+    const FORM_TABLE_WIDTH = 450;
+    logoImage.setWidth(FORM_TABLE_WIDTH);
+    const logoPara = logoImage.getParent();
+    logoPara.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+    logoPara.setSpacingBefore(0);
+    logoPara.setSpacingAfter(0);
+    logoPara.setLineSpacing(0.5);
+  } catch (e) {
+    // Logo file not found or not accessible, continue without it
+  }
+
   // Add decorative header line (green accent)
   const decorativeLine = body.appendParagraph('');
   decorativeLine.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
