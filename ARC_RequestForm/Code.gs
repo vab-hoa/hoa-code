@@ -29,7 +29,7 @@ function testGmailAuthorization() {
 function testSendEmail() {
   try {
     Logger.log('Test: Attempting to send email to ' + CONFIG.ARC_RECIPIENT);
-    MailApp.sendEmail(
+    GmailApp.sendEmail(
       CONFIG.ARC_RECIPIENT,
       'TEST: ARC Form Email Test',
       'This is a test email from the ARC Request Form.\n\nIf you received this, email is working.'
@@ -1093,7 +1093,7 @@ PDF form attached. All supporting documents and photos included as attachments.`
   attachments.push(...processedFiles.map(f => f.blob));
 
   try {
-    MailApp.sendEmail(
+    GmailApp.sendEmail(
       CONFIG.ARC_RECIPIENT,
       subject,
       body,
