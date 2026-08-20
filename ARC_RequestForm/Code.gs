@@ -13,6 +13,18 @@ const CONFIG = {
   MANAGER_PHONE: '(TBD)'
 };
 
+// Test function to verify Gmail authorization
+function testGmailAuthorization() {
+  try {
+    GmailApp.getInboxUnreadCount();
+    Logger.log('Gmail authorization OK');
+    return true;
+  } catch (e) {
+    Logger.log('Gmail authorization failed: ' + e.message);
+    return false;
+  }
+}
+
 const HTML_FORM = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1054,7 +1066,7 @@ ${formData.description}
 Planned Completion: ${formatDateString(new Date(formData.completionDate))}
 
 Supporting Documents:
-${processedFiles.map(f => '• ' + f.name).join('\n')}
+${processedFiles.length > 0 ? processedFiles.map(f => '• ' + f.name).join('\n') : '(None)'}
 
 ---
 PDF form attached. All supporting documents and photos included as attachments.`;
@@ -1063,15 +1075,21 @@ PDF form attached. All supporting documents and photos included as attachments.`
   const attachments = [pdfBlob.setName(emailFileName)];
   attachments.push(...processedFiles.map(f => f.blob));
 
-  GmailApp.sendEmail(
-    CONFIG.ARC_RECIPIENT,
-    subject,
-    body,
-    {
-      attachments: attachments,
-      replyTo: formData.email
-    }
-  );
+  try {
+    GmailApp.sendEmail(
+      CONFIG.ARC_RECIPIENT,
+      subject,
+      body,
+      {
+        attachments: attachments,
+        replyTo: formData.email
+      }
+    );
+    Logger.log('Email sent successfully to: ' + CONFIG.ARC_RECIPIENT);
+  } catch (e) {
+    Logger.log('Email sending error: ' + e.message);
+    throw new Error('Failed to send email: ' + e.message);
+  }
 }
 
 function archivePdfToDrive(formData, pdfBlob) {
