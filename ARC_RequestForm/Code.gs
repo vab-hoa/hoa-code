@@ -25,6 +25,24 @@ function testGmailAuthorization() {
   }
 }
 
+// Test function to send a test email
+function testSendEmail() {
+  try {
+    Logger.log('Test: Attempting to send email to ' + CONFIG.ARC_RECIPIENT);
+    GmailApp.sendEmail(
+      CONFIG.ARC_RECIPIENT,
+      'TEST: ARC Form Email Test',
+      'This is a test email from the ARC Request Form.\n\nIf you received this, Gmail permissions are working.',
+      { replyTo: 'test@example.com' }
+    );
+    Logger.log('Test: Email sent successfully');
+    return { success: true, message: 'Test email sent to ' + CONFIG.ARC_RECIPIENT };
+  } catch (e) {
+    Logger.log('Test: Email send failed: ' + e.message);
+    return { success: false, error: e.message };
+  }
+}
+
 const HTML_FORM = `<!DOCTYPE html>
 <html lang="en">
 <head>
