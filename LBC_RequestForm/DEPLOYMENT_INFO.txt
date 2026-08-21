@@ -1,0 +1,17 @@
+VaB LBC Request Form - Deployment Info
+======================================
+
+Deployment ID:
+AKfycbyyN15Mee3z6OmMb7PGWPwXx9me5OD3s5ys61LcDHDF7B2l5x_e92Wpl3t5ZeyWkvrN
+
+Public URL (click or paste in browser):
+https://script.google.com/macros/s/AKfycbyyN15Mee3z6OmMb7PGWPwXx9me5OD3s5ys61LcDHDF7B2l5x_e92Wpl3t5ZeyWkvrN/exec
+
+Website Embed (iframe for https://www.villasboulders.org/forms/landscape-request):
+<iframe
+  src="https://script.google.com/macros/s/AKfycbyyN15Mee3z6OmMb7PGWPwXx9me5OD3s5ys61LcDHDF7B2l5x_e92Wpl3t5ZeyWkvrN/exec"
+  width="100%"
+  height="1200"
+  frameborder="0"
+  style="border: none; padding: 0; margin: 0;">
+</iframe>
