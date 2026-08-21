@@ -308,7 +308,7 @@ const HTML_FORM = `<!DOCTYPE html>
     <div class="container">
         <div class="header">
             <h1>Homeowner Paid Planting or Removal</h1>
-            <p>Submit a request to the Landscape & Beautification Committee</p>
+            <p>Submit a request to the Landscape Beautification Committee</p>
         </div>
 
         <div class="form-content">
@@ -1019,7 +1019,7 @@ function addContactSection(body) {
   contactLabel.setSpacingBefore(2);
   contactLabel.setSpacingAfter(1);
 
-  const contactParagraph = body.appendParagraph(`Direct questions to the LBC (Landscape & Beautification Committee) or HOA manager: ${CONFIG.MANAGER_EMAIL} or ${CONFIG.MANAGER_PHONE}`);
+  const contactParagraph = body.appendParagraph(`Direct questions to the LBC (Landscape Beautification Committee) or HOA manager: ${CONFIG.MANAGER_EMAIL} or ${CONFIG.MANAGER_PHONE}`);
   contactParagraph.setFontSize(7);
   contactParagraph.setForegroundColor('#666666');
   contactParagraph.setLineSpacing(1.0);
@@ -1097,7 +1097,7 @@ function formatDateString(dateObj) {
 function sendSubmissionEmail(formData, pdfBlob, processedFiles) {
   const subject = `VaB LBC Request — ${formData.name} — ${formData.unitAddress}`;
 
-  const body = `Landscape & Beautification Committee Request Submission
+  const body = `Landscape Beautification Committee Request Submission
 
 Homeowner: ${formData.name}
 Unit: ${formData.unitAddress}
@@ -1136,9 +1136,9 @@ PDF form attached. All supporting documents and photos included as attachments.`
 function sendHomeownerConfirmation(formData, processedFiles) {
   const subject = `Confirmation: Your LBC Request Submission`;
 
-  const body = `Thank you for submitting your Landscape & Beautification Committee request.
+  const body = `Thank you for submitting your Landscape Beautification Committee request.
 
-Landscape & Beautification Committee Request Submission
+Landscape Beautification Committee Request Submission
 
 Homeowner: ${formData.name}
 Unit: ${formData.unitAddress}
@@ -1157,7 +1157,7 @@ Supporting Documents:
 ${processedFiles.length > 0 ? processedFiles.map(f => '• ' + f.name).join('\n') : '(None provided)'}
 
 ---
-Your request has been received and is being reviewed by the Landscape & Beautification Committee. You will be contacted if additional information is needed.`;
+Your request has been received and is being reviewed by the Landscape Beautification Committee. You will be contacted if additional information is needed.`;
 
   try {
     GmailApp.sendEmail(
