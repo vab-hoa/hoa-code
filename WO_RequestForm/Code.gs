@@ -3,7 +3,7 @@
 
 const CONFIG = {
   // Email recipient
-  WO_RECIPIENT: 'workorders@villasboulders.org',
+  WO_RECIPIENT: 'woformrecipients@villasboulders.org',
 
   // Drive folder for archiving (HOA Board Documents > VAB File WorkOrder Request Forms)
   ARCHIVE_FOLDER_ID: '1el4DDZDw6iVGkFDFKOI_x_AGLoUVA2jE',
