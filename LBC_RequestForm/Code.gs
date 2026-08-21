@@ -713,6 +713,15 @@ function handleFormSubmission(formData) {
     }
 
     try {
+      log.push('Attempting confirmation email to homeowner: ' + formData.email);
+      sendHomeownerConfirmation(formData, processedFiles);
+      log.push('Confirmation email sent OK at ' + new Date().toISOString());
+    } catch (e) {
+      log.push('CONFIRMATION EMAIL FAILED: ' + e.message);
+      throw e;
+    }
+
+    try {
       log.push('Attempting Drive archive');
       archivePdfToDrive(formData, pdfBlob);
       log.push('Drive archive OK at ' + new Date().toISOString());
@@ -1122,6 +1131,45 @@ PDF form attached. All supporting documents and photos included as attachments.`
       replyTo: formData.email
     }
   );
+}
+
+function sendHomeownerConfirmation(formData, processedFiles) {
+  const subject = `Confirmation: Your LBC Request Submission`;
+
+  const body = `Thank you for submitting your Landscape & Beautification Committee request.
+
+Landscape & Beautification Committee Request Submission
+
+Homeowner: ${formData.name}
+Unit: ${formData.unitAddress}
+Phone: ${formData.phone}
+Email: ${formData.email}
+Submission Date: ${formatDateString(new Date())}
+
+Request Type: ${formData.plantingRequest}
+Location: ${formData.location}
+Plant Type: ${formData.plantType}
+Specific Species: ${formData.plantSpecies}
+
+Planned Completion: ${formatDateString(new Date(formData.completionDate))}
+
+Supporting Documents:
+${processedFiles.length > 0 ? processedFiles.map(f => '• ' + f.name).join('\n') : '(None provided)'}
+
+---
+Your request has been received and is being reviewed by the Landscape & Beautification Committee. You will be contacted if additional information is needed.`;
+
+  try {
+    GmailApp.sendEmail(
+      formData.email,
+      subject,
+      body
+    );
+    Logger.log('Confirmation email sent to: ' + formData.email);
+  } catch (e) {
+    Logger.log('Confirmation email sending error: ' + e.message);
+    throw new Error('Failed to send confirmation email: ' + e.message);
+  }
 }
 
 function archivePdfToDrive(formData, pdfBlob) {
