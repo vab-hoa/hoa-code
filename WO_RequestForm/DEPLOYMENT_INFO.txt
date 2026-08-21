@@ -1,0 +1,17 @@
+VaB Work Order Request Form - Deployment Info
+==============================================
+
+Deployment ID:
+AKfycbzCdaFbWgHrdFQWe9JkF9ORuJUOhD10AATEHf1hPWF-4inwIbBlMB1bRaM249UoGKFn
+
+Public URL (click or paste in browser):
+https://script.google.com/macros/s/AKfycbzCdaFbWgHrdFQWe9JkF9ORuJUOhD10AATEHf1hPWF-4inwIbBlMB1bRaM249UoGKFn/exec
+
+Website Embed (iframe for https://www.villasboulders.org/forms/work-order-request):
+<iframe
+  src="https://script.google.com/macros/s/AKfycbzCdaFbWgHrdFQWe9JkF9ORuJUOhD10AATEHf1hPWF-4inwIbBlMB1bRaM249UoGKFn/exec"
+  width="100%"
+  height="1200"
+  frameborder="0"
+  style="border: none; padding: 0; margin: 0;">
+</iframe>
