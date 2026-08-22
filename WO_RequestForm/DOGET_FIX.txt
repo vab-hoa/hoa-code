@@ -1,0 +1,6 @@
+Replace the doGet function in Code.gs with this:
+
+function doGet(e) {
+  return HtmlService.createHtmlOutputFromFile('index')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}

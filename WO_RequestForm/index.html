@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VaB Architectural Review Request</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f2f5 0%, #e8eaed 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a3a52 0%, #2d5f3f 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .form-content {
+            padding: 30px 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #1a3a52;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="date"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2d5f3f;
+            box-shadow: 0 0 0 3px rgba(45,95,63,0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-size: 13px;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 20px;
+            border: 2px dashed #2d5f3f;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            transition: background 0.3s;
+        }
+
+        .file-upload-label:hover {
+            background: #f0f2f5;
+        }
+
+        .file-upload-label.drag-over {
+            background: #e8f5e9;
+            border-color: #2d7d3a;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-list {
+            margin-top: 10px;
+            display: grid;
+            gap: 8px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .file-item button {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .file-item button:hover {
+            background: #cc0000;
+        }
+
+        .file-size {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .admonition {
+            background: #f5f5f5;
+            border-left: 4px solid #2d5f3f;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            line-height: 1.6;
+            font-size: 13px;
+            font-style: italic;
+            color: #333;
+        }
+
+        .signature-section {
+            margin: 20px 0;
+        }
+
+        .signature-section label {
+            margin-bottom: 8px;
+        }
+
+        .signature-line {
+            border-bottom: 2px solid #333;
+            margin-top: 5px;
+            min-height: 20px;
+        }
+
+        .form-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit {
+            background: #2d7d3a;
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: #1a4d22;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(45,125,58,0.3);
+        }
+
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-reset {
+            background: #999;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #666;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.loading {
+            background: #e7f3ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: #004085;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .required::after {
+            content: " *";
+            color: #ff4444;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 0;
+            }
+
+            .form-content {
+                padding: 20px 15px;
+            }
+
+            .header {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .form-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>VaB Architectural Review Request</h1>
+            <p>Submit improvements for committee review</p>
+        </div>
+
+        <div class="form-content">
+            <div id="alert" class="alert"></div>
+
+            <form id="arcForm">
+                <!-- Name -->
+                <div class="form-group">
+                    <label for="name" class="required">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Full name" required>
+                </div>
+
+                <!-- Unit Address -->
+                <div class="form-group">
+                    <label for="unitAddress" class="required">Unit Address in the Villas</label>
+                    <input type="text" id="unitAddress" name="unitAddress" placeholder="e.g., 13737 Rock Pt, Unit 102" required>
+                </div>
+
+                <!-- Phone -->
+                <div class="form-group">
+                    <label for="phone" class="required">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="(XXX) XXX-XXXX" required>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email" class="required">Email</label>
+                    <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description" class="required">Description of Improvements</label>
+                    <textarea id="description" name="description" placeholder="Describe your improvements in detail..." required></textarea>
+                </div>
+
+                <!-- File Upload -->
+                <div class="form-group">
+                    <label class="required">Supporting Documentation</label>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                        Upload up to 5 files (images will be auto-compressed). Accepted: JPG, PNG, PDF
+                    </p>
+                    <div class="file-upload-wrapper">
+                        <label for="fileInput" class="file-upload-label" id="dropZone">
+                            <div>📁 Click to upload or drag files here</div>
+                            <div style="font-size: 12px; color: #999; margin-top: 5px;">Max 5 files, images auto-compressed</div>
+                        </label>
+                        <input type="file" id="fileInput" name="files" multiple accept=".jpg,.jpeg,.png,.pdf">
+                    </div>
+                    <div id="fileList" class="file-list"></div>
+                </div>
+
+                <!-- Completion Date -->
+                <div class="form-group">
+                    <label for="completionDate" class="required">Planned (approximate) Completion Date</label>
+                    <input type="date" id="completionDate" name="completionDate" required>
+                </div>
+
+                <!-- Admonition -->
+                <div class="admonition">
+                    I understand that I must receive approval of the ARC in order to proceed. I understand that ARC approval does not constitute approval of the City and County of Broomfield and that I may be required to obtain a building permit. I understand that my improvements must be completed per specifications or approval, if granted, will be withdrawn. I understand and agree to the provisions of the ARC Design Guidelines of the Villas at the Boulders, including my responsibilities defined in Section II through V. If I am unable to complete my project within 3 months after approval, I understand that I must request an extension from the ARC.
+                </div>
+
+                <!-- Signature -->
+                <div class="signature-section">
+                    <label for="signature" class="required">Homeowner Signature</label>
+                    <input type="text" id="signature" name="signature" placeholder="Type your full name" required>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <button type="reset" class="btn-reset">Clear Form</button>
+                    <button type="submit" class="btn-submit">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const MAX_FILES = 5;
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+        const MAX_IMAGE_WIDTH = 800;
+        const MAX_IMAGE_HEIGHT = 600;
+        const JPEG_QUALITY = 0.8;
+
+        let uploadedFiles = [];
+
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const arcForm = document.getElementById('arcForm');
+        const alertDiv = document.getElementById('alert');
+
+        // Drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const files = Array.from(e.dataTransfer.files);
+            handleFiles(files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(Array.from(e.target.files));
+        });
+
+        function handleFiles(newFiles) {
+            // Check max files
+            if (uploadedFiles.length + newFiles.length > MAX_FILES) {
+                showAlert(`Maximum ${MAX_FILES} files allowed`, 'error');
+                return;
+            }
+
+            newFiles.forEach(file => {
+                if (file.size > MAX_FILE_SIZE) {
+                    showAlert(`File "${file.name}" is too large (max 10 MB)`, 'error');
+                    return;
+                }
+
+                if (file.type.startsWith('image/')) {
+                    compressImage(file).then(compressedBlob => {
+                        uploadedFiles.push({
+                            name: file.name,
+                            originalName: file.name,
+                            blob: compressedBlob,
+                            isImage: true,
+                            originalSize: file.size,
+                            compressedSize: compressedBlob.size
+                        });
+                        renderFileList();
+                    }).catch(err => {
+                        console.error('Compression error:', err);
+                        showAlert(`Failed to compress "${file.name}"`, 'error');
+                    });
+                } else if (file.type === 'application/pdf' || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                    uploadedFiles.push({
+                        name: file.name,
+                        originalName: file.name,
+                        blob: file,
+                        isImage: false,
+                        originalSize: file.size,
+                        compressedSize: file.size
+                    });
+                    renderFileList();
+                } else {
+                    showAlert(`File type not supported: "${file.name}"`, 'error');
+                }
+            });
+        }
+
+        function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        // Calculate new dimensions
+                        if (width > MAX_IMAGE_WIDTH || height > MAX_IMAGE_HEIGHT) {
+                            const aspectRatio = width / height;
+                            if (width > height) {
+                                width = MAX_IMAGE_WIDTH;
+                                height = Math.round(width / aspectRatio);
+                            } else {
+                                height = MAX_IMAGE_HEIGHT;
+                                width = Math.round(height * aspectRatio);
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        canvas.toBlob(
+                            (blob) => resolve(blob),
+                            'image/jpeg',
+                            JPEG_QUALITY
+                        );
+                    };
+                    img.onerror = () => reject(new Error('Failed to load image'));
+                    img.src = e.target.result;
+                };
+                reader.onerror = () => reject(new Error('Failed to read file'));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderFileList() {
+            fileList.innerHTML = '';
+            uploadedFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                const sizeKb = Math.round(file.compressedSize / 1024);
+                const compressed = file.isImage ? ` (${Math.round((1 - file.compressedSize / file.originalSize) * 100)}% compressed)` : '';
+                item.innerHTML = `
+                    <span>📄 ${file.name} <span class="file-size">${sizeKb} KB${compressed}</span></span>
+                    <button type="button" onclick="removeFile(${index})">Remove</button>
+                `;
+                fileList.appendChild(item);
+            });
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            fileInput.value = '';
+            renderFileList();
+        }
+
+        function showAlert(message, type) {
+            alertDiv.textContent = message;
+            alertDiv.className = `alert show ${type}`;
+            if (type !== 'loading') {
+                setTimeout(() => alertDiv.classList.remove('show'), 5000);
+            }
+        }
+
+        arcForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validation
+            if (!arcForm.checkValidity()) {
+                showAlert('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Convert form data
+            const formData = {
+                name: document.getElementById('name').value,
+                unitAddress: document.getElementById('unitAddress').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                description: document.getElementById('description').value,
+                completionDate: document.getElementById('completionDate').value,
+                signature: document.getElementById('signature').value,
+                files: []
+            };
+
+            // Convert blobs to base64
+            const filesToProcess = uploadedFiles.length > 0 ? uploadedFiles : [];
+
+            showAlert(`${filesToProcess.length > 0 ? 'Processing ' + filesToProcess.length + ' file(s) and ' : ''}submitting form...`, 'loading');
+
+            try {
+                // Convert files to base64
+                const filePromises = filesToProcess.map(file => {
+                    return new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            resolve({
+                                name: file.originalName,
+                                base64: reader.result.split(',')[1],
+                                mimeType: file.blob.type || 'application/octet-stream'
+                            });
+                        };
+                        reader.onerror = () => reject(new Error('Failed to read file'));
+                        reader.readAsDataURL(file.blob);
+                    });
+                });
+
+                formData.files = await Promise.all(filePromises);
+
+                // Call Apps Script backend
+                google.script.run
+                    .withSuccessHandler(() => {
+                        showAlert('✓ Request submitted successfully! Check your email for confirmation.', 'success');
+                        arcForm.reset();
+                        uploadedFiles = [];
+                        renderFileList();
+                        setTimeout(() => alertDiv.classList.remove('show'), 5000);
+                    })
+                    .withFailureHandler((error) => {
+                        console.error('Submission error:', error);
+                        showAlert(`Error: ${error || 'Failed to submit form'}`, 'error');
+                    })
+                    .handleFormSubmission(formData);
+            } catch (error) {
+                console.error('Processing error:', error);
+                showAlert('Error processing files', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
