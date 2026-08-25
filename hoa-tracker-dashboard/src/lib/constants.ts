@@ -16,6 +16,8 @@ export const STATUS_COLORS: Record<string, string> = {
   closed: 'bg-gray-500/5 text-gray-400 border border-gray-500/20',
   monitored: 'bg-teal-500/10 text-teal-300 border border-teal-500/30',
   cancelled: 'bg-gray-500/5 text-gray-400 border border-gray-500/20',
+  notified: 'bg-blue-500/10 text-blue-300 border border-blue-500/30',
+  fined: 'bg-red-500/10 text-red-300 border border-red-500/30',
 }
 
 export const STATUS_LABELS: Record<string, string> = {
@@ -36,6 +38,8 @@ export const STATUS_LABELS: Record<string, string> = {
   closed: 'Closed',
   monitored: 'Monitored',
   cancelled: 'Cancelled',
+  notified: 'Notified',
+  fined: 'Fined',
 }
 
 export const CATEGORY_COLORS: Record<string, string> = {

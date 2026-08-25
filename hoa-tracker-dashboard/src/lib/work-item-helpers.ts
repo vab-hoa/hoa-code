@@ -3,7 +3,7 @@ import type { OpenWorkItem, DashboardSummary } from './types'
 export const TERMINAL_STATUSES_BY_CATEGORY: Record<string, string[]> = {
   arc_request: ['closed', 'approved', 'approved_with_conditions', 'denied'],
   work_order: ['closed', 'cancelled', 'denied'],
-  violation: ['closed', 'resolved', 'dismissed'],
+  violation: ['closed', 'resolved', 'dismissed', 'notified', 'fined'],
   landscaping: ['closed', 'cancelled', 'denied'],
 }
 const DEFAULT_TERMINAL = ['closed', 'cancelled', 'denied']
