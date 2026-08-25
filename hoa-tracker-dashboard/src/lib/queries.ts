@@ -25,12 +25,18 @@ export async function getAgingWorkItems(): Promise<AgingWorkItem[]> {
   if (error) { console.error('getAgingWorkItems:', error); return [] }
 
   const items = data || []
+  console.log('Raw aging items count:', items.length)
+  console.log('Raw aging items statuses:', items.map(i => ({ title: i.title, status: i.status })))
+
   // Exclude terminal statuses and items that are intentionally paused/waiting
-  return items.filter(item =>
+  const filtered = items.filter(item =>
     !isTerminalStatus(item) &&
     item.status !== 'on_hold' &&
     item.status !== 'monitored'
   )
+
+  console.log('Filtered aging items count:', filtered.length)
+  return filtered
 }
 
 export async function getOpenWorkItems(): Promise<OpenWorkItem[]> {
@@ -174,6 +180,26 @@ export async function updateWorkItemDocumentTitle(documentId: string, title: str
 export function getWorkItemDocumentUrl(storagePath: string): string {
   const { data } = supabase.storage.from('work-item-documents').getPublicUrl(storagePath)
   return data.publicUrl
+}
+
+export async function updateWorkItemStatus(
+  workItemId: string,
+  newStatus: string
+): Promise<{ success: boolean; error?: string }> {
+  console.log('updateWorkItemStatus called', { workItemId, newStatus })
+
+  const { error } = await supabase
+    .from('work_items')
+    .update({ status: newStatus })
+    .eq('id', workItemId)
+
+  if (error) {
+    console.error('updateWorkItemStatus error:', error)
+    return { success: false, error: error.message }
+  }
+
+  console.log('Status update succeeded')
+  return { success: true }
 }
 
 export async function markWorkItemCompleted(
