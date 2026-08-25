@@ -33,6 +33,8 @@ export interface WorkItem {
   multi_item_parent_id: string | null
   external_ids: Record<string, string> | null
   updated_date: string
+  keystone_status: string | null
+  arc_request_serial: string | null
 }
 
 export interface CorrespondenceEntry {

@@ -30,7 +30,7 @@ export const STATUS_LABELS: Record<string, string> = {
   pending_board_review: 'Pending Board Review',
   approved: 'Approved',
   approved_with_conditions: 'Approved w/ Conditions',
-  under_review_with_architect: 'Under Review w/ Architect',
+  under_review_with_architect: 'Under Review by ARC',
   denied: 'Denied',
   completed: 'Completed',
   closed: 'Closed',
