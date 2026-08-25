@@ -175,7 +175,7 @@ export async function markWorkItemCompleted(
   workItemId: string,
   newStatus: string,
   closedDate?: string
-): Promise<boolean> {
+): Promise<{ success: boolean; error?: string }> {
   const { error } = await supabase
     .from('work_items')
     .update({
@@ -186,9 +186,9 @@ export async function markWorkItemCompleted(
 
   if (error) {
     console.error('markWorkItemCompleted:', error)
-    return false
+    return { success: false, error: error.message }
   }
-  return true
+  return { success: true }
 }
 
 // === Property Detail ===
