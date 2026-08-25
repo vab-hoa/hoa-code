@@ -76,11 +76,11 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
     }
 
     setIsCompleting(true)
-    const success = await markWorkItemCompleted(id, completionStatus)
+    const result = await markWorkItemCompleted(id, completionStatus)
     setIsCompleting(false)
 
-    if (!success) {
-      alert('Error marking item as completed')
+    if (!result.success) {
+      alert('Error marking item as completed: ' + (result.error || 'Unknown error'))
       return
     }
 
