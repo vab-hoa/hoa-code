@@ -25,7 +25,12 @@ export async function getAgingWorkItems(): Promise<AgingWorkItem[]> {
   if (error) { console.error('getAgingWorkItems:', error); return [] }
 
   const items = data || []
-  return items.filter(item => !isTerminalStatus(item))
+  // Exclude terminal statuses and items that are intentionally paused/waiting
+  return items.filter(item =>
+    !isTerminalStatus(item) &&
+    item.status !== 'on_hold' &&
+    item.status !== 'monitored'
+  )
 }
 
 export async function getOpenWorkItems(): Promise<OpenWorkItem[]> {
@@ -176,18 +181,42 @@ export async function markWorkItemCompleted(
   newStatus: string,
   closedDate?: string
 ): Promise<{ success: boolean; error?: string }> {
+  console.log('markWorkItemCompleted called', { workItemId, newStatus, closedDate })
+
+  const updateData = {
+    status: newStatus,
+    closed_date: closedDate || new Date().toISOString().split('T')[0],
+  }
+  console.log('updateData:', updateData)
+
+  // First, verify the work item exists
+  const { data: existingItem, error: fetchError } = await supabase
+    .from('work_items')
+    .select('id, status')
+    .eq('id', workItemId)
+    .single()
+
+  if (fetchError) {
+    console.error('Error fetching work item:', fetchError)
+    return { success: false, error: `Item not found: ${fetchError.message}` }
+  }
+
+  console.log('Found existing item:', existingItem)
+
+  // Now update it
   const { error } = await supabase
     .from('work_items')
-    .update({
-      status: newStatus,
-      closed_date: closedDate || new Date().toISOString().split('T')[0],
-    })
+    .update(updateData)
     .eq('id', workItemId)
 
+  console.log('Supabase response error:', error)
+
   if (error) {
-    console.error('markWorkItemCompleted:', error)
+    console.error('markWorkItemCompleted error:', error)
     return { success: false, error: error.message }
   }
+
+  console.log('Update succeeded')
   return { success: true }
 }
 
