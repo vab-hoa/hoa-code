@@ -85,7 +85,11 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
     }
 
     setShowCompletionDialog(false)
-    router.push('/')
+
+    // Redirect after a brief delay to show completion
+    setTimeout(() => {
+      router.push('/')
+    }, 500)
   }
 
   const handleUpload = async () => {
