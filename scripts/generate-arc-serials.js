@@ -30,7 +30,14 @@ async function generateArcSerials() {
 
   // Group by (parcel_code, created_date)
   const groups = {}
+  const skipped = []
+
   arcRequests.forEach(item => {
+    if (!item.created_date) {
+      skipped.push(item.id)
+      return
+    }
+
     const parcelCode = item.properties?.parcel_code || 'UNKNOWN'
     const date = item.created_date.split('T')[0] // YYYY-MM-DD
     const key = `${parcelCode}|${date}`
@@ -40,6 +47,10 @@ async function generateArcSerials() {
     }
     groups[key].push(item)
   })
+
+  if (skipped.length > 0) {
+    console.log(`⚠ Skipped ${skipped.length} ARC requests with null created_date`)
+  }
 
   console.log(`Grouped into ${Object.keys(groups).length} unique date/property combinations`)
 
