@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useWorkItem } from '@/hooks/useWorkItem'
 import { supabase } from '@/lib/supabase'
-import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted, updateWorkItemStatus } from '@/lib/queries'
+import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted, updateWorkItemStatus, getWorkItem } from '@/lib/queries'
 import { TERMINAL_STATUSES_BY_CATEGORY } from '@/lib/work-item-helpers'
 import { Loading } from '@/components/loading'
 import { StatusBadge } from '@/components/status-badge'
@@ -43,9 +43,15 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
   const [editingDocId, setEditingDocId] = useState<string | null>(null)
   const [editingDocTitle, setEditingDocTitle] = useState('')
 
+  const [localItem, setLocalItem] = useState(item)
+
   React.useEffect(() => {
     setLocalDocuments(documents)
   }, [documents])
+
+  React.useEffect(() => {
+    setLocalItem(item)
+  }, [item])
 
   const handleExclude = async () => {
     if (!exclusionReason.trim() || !excludingName.trim()) {
@@ -75,7 +81,7 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
   }
 
   const handleUpdateStatus = async () => {
-    if (newStatus === item?.status) {
+    if (newStatus === localItem?.status) {
       setEditingStatus(false)
       return
     }
@@ -87,6 +93,11 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
     if (!result.success) {
       alert('Error updating status: ' + (result.error || 'Unknown error'))
       return
+    }
+
+    // Update the local item state immediately to show the new status
+    if (localItem) {
+      setLocalItem({ ...localItem, status: newStatus as any })
     }
 
     setEditingStatus(false)
@@ -167,10 +178,10 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
         <div className="bg-surface border border-edge rounded-lg p-6 mb-6">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-ink mb-3">{item.title}</h1>
+              <h1 className="text-2xl font-bold text-ink mb-3">{localItem?.title}</h1>
               <div className="flex gap-2 flex-wrap mb-4">
-                <StatusBadge status={item.status} size="md" />
-                <CategoryBadge category={item.category} size="md" />
+                <StatusBadge status={localItem?.status || 'new'} size="md" />
+                <CategoryBadge category={localItem?.category || 'work_order'} size="md" />
               </div>
 
               {item.property_id && (
@@ -240,6 +251,12 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
           <div className="bg-surface border border-edge rounded-lg p-4">
             <h3 className="font-bold text-ink mb-3">Details</h3>
             <dl className="space-y-2 text-sm">
+              {localItem?.arc_request_serial && (
+                <div>
+                  <dt className="text-mute">ARC Serial</dt>
+                  <dd className="font-mono text-ink">{localItem.arc_request_serial}</dd>
+                </div>
+              )}
               <div>
                 <dt className="text-mute">Status</dt>
                 <dd className="font-medium text-ink">
@@ -261,7 +278,7 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                         <option value="pending_board_review">Pending Board Review</option>
                         <option value="approved">Approved</option>
                         <option value="approved_with_conditions">Approved with Conditions</option>
-                        <option value="under_review_with_architect">Under Review with Architect</option>
+                        <option value="under_review_with_architect">Under Review by ARC</option>
                         <option value="denied">Denied</option>
                         <option value="completed">Completed</option>
                         <option value="closed">Closed</option>
@@ -278,7 +295,7 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                       <button
                         onClick={() => {
                           setEditingStatus(false)
-                          setNewStatus(item.status)
+                          setNewStatus(localItem?.status || 'new')
                         }}
                         disabled={isUpdatingStatus}
                         className="px-2 py-1 text-xs bg-edge text-mute rounded hover:bg-edge/70 disabled:opacity-50"
@@ -287,15 +304,19 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                       </button>
                     </div>
                   ) : (
-                    <button
-                      onClick={() => {
-                        setEditingStatus(true)
-                        setNewStatus(item.status)
-                      }}
-                      className="inline-block hover:opacity-75 transition-opacity cursor-pointer"
-                    >
-                      <StatusBadge status={item.status} />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={localItem?.status || 'new'} />
+                      <button
+                        onClick={() => {
+                          setEditingStatus(true)
+                          setNewStatus(localItem?.status || 'new')
+                        }}
+                        className="px-2 py-1 text-xs bg-blue-500/20 border border-blue-500/50 text-blue-300 rounded hover:bg-blue-500/30 transition-colors cursor-pointer"
+                        title="Click to edit status"
+                      >
+                        Edit
+                      </button>
+                    </div>
                   )}
                 </dd>
               </div>
