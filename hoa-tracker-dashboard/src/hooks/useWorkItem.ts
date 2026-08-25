@@ -11,25 +11,44 @@ export function useWorkItem(id: string) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
+  const fetchData = async () => {
     setLoading(true)
-    Promise.all([
-      getWorkItem(id),
-      getWorkItemCorrespondence(id),
-      getWorkItemEmails(id),
-      getWorkItemStatusHistory(id),
-      getWorkItemDocuments(id),
-    ])
-      .then(([wi, corr, em, hist, docs]) => {
-        setItem(wi)
-        setCorrespondence(corr)
-        setEmails(em)
-        setStatusHistory(hist)
-        setDocuments(docs)
-        setError(null)
-      })
-      .catch(e => setError(e.message))
-      .finally(() => setLoading(false))
+    try {
+      const [wi, corr, em, hist, docs] = await Promise.all([
+        getWorkItem(id),
+        getWorkItemCorrespondence(id),
+        getWorkItemEmails(id),
+        getWorkItemStatusHistory(id),
+        getWorkItemDocuments(id),
+      ])
+      setItem(wi)
+      setCorrespondence(corr)
+      setEmails(em)
+      setStatusHistory(hist)
+      setDocuments(docs)
+      setError(null)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unknown error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Fetch on mount or when id changes
+  useEffect(() => {
+    fetchData()
+  }, [id])
+
+  // Refetch when page becomes visible (user returns to this page)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchData()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [id])
 
   return { item, correspondence, emails, statusHistory, documents, loading, error }
