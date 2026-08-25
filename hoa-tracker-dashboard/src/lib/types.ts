@@ -189,6 +189,7 @@ export type WorkItemStatus =
   | 'on_hold' | 'pending_board_review' | 'approved'
   | 'approved_with_conditions' | 'under_review_with_architect'
   | 'denied' | 'completed' | 'closed' | 'monitored' | 'cancelled'
+  | 'notified' | 'fined'
 
 export type Decision =
   | 'approved' | 'approved_with_conditions' | 'denied'

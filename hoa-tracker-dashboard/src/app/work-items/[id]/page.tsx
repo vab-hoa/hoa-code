@@ -284,6 +284,8 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                         <option value="closed">Closed</option>
                         <option value="monitored">Monitored</option>
                         <option value="cancelled">Cancelled</option>
+                        <option value="notified">Notified</option>
+                        <option value="fined">Fined</option>
                       </select>
                       <button
                         onClick={handleUpdateStatus}
