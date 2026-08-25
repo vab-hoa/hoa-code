@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useWorkItem } from '@/hooks/useWorkItem'
 import { supabase } from '@/lib/supabase'
-import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl } from '@/lib/queries'
+import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted } from '@/lib/queries'
+import { TERMINAL_STATUSES_BY_CATEGORY } from '@/lib/work-item-helpers'
 import { Loading } from '@/components/loading'
 import { StatusBadge } from '@/components/status-badge'
 import { CategoryBadge } from '@/components/category-badge'
@@ -22,6 +23,10 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
   const [exclusionReason, setExclusionReason] = useState('')
   const [excludingName, setExcludingName] = useState('')
   const [isExcluding, setIsExcluding] = useState(false)
+
+  const [showCompletionDialog, setShowCompletionDialog] = useState(false)
+  const [completionStatus, setCompletionStatus] = useState('')
+  const [isCompleting, setIsCompleting] = useState(false)
 
   const [showUploadDialog, setShowUploadDialog] = useState(false)
   const [uploadFile, setUploadFile] = useState<File | null>(null)
@@ -61,6 +66,25 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
     }
 
     setShowExclusionDialog(false)
+    router.push('/')
+  }
+
+  const handleMarkCompleted = async () => {
+    if (!completionStatus.trim()) {
+      alert('Please select a completion status')
+      return
+    }
+
+    setIsCompleting(true)
+    const success = await markWorkItemCompleted(id, completionStatus)
+    setIsCompleting(false)
+
+    if (!success) {
+      alert('Error marking item as completed')
+      return
+    }
+
+    setShowCompletionDialog(false)
     router.push('/')
   }
 
@@ -148,13 +172,25 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
               )}
             </div>
 
-            {/* Exclude button */}
-            <button
-              onClick={() => setShowExclusionDialog(true)}
-              className="px-3 py-1 bg-red-500/20 border border-red-500/50 text-red-300 text-sm rounded hover:bg-red-500/30 transition-colors whitespace-nowrap"
-            >
-              Mark as excluded
-            </button>
+            {/* Action buttons */}
+            <div className="flex gap-2 flex-wrap justify-end">
+              <button
+                onClick={() => {
+                  const terminals = TERMINAL_STATUSES_BY_CATEGORY[item.category] || ['closed', 'cancelled', 'denied']
+                  setCompletionStatus(terminals[0])
+                  setShowCompletionDialog(true)
+                }}
+                className="px-3 py-1 bg-green-500/20 border border-green-500/50 text-green-300 text-sm rounded hover:bg-green-500/30 transition-colors whitespace-nowrap"
+              >
+                Mark as completed
+              </button>
+              <button
+                onClick={() => setShowExclusionDialog(true)}
+                className="px-3 py-1 bg-red-500/20 border border-red-500/50 text-red-300 text-sm rounded hover:bg-red-500/30 transition-colors whitespace-nowrap"
+              >
+                Mark as excluded
+              </button>
+            </div>
           </div>
         </div>
 
@@ -401,6 +437,59 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                     className="px-3 py-2 bg-blue-500/20 border border-blue-500 text-blue-300 rounded text-sm hover:bg-blue-500/30 transition-colors disabled:opacity-50"
                   >
                     {isUploading ? 'Uploading...' : 'Upload'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Completion dialog */}
+        {showCompletionDialog && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-surface border border-edge rounded-lg p-6 max-w-sm w-full">
+              <h3 className="text-lg font-bold text-ink mb-4">Mark as completed</h3>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-2">
+                    Final status
+                  </label>
+                  <div className="space-y-2">
+                    {(TERMINAL_STATUSES_BY_CATEGORY[item.category] || ['closed', 'cancelled', 'denied']).map(status => (
+                      <label key={status} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="completion-status"
+                          value={status}
+                          checked={completionStatus === status}
+                          onChange={e => setCompletionStatus(e.target.value)}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm text-ink capitalize">{status.replace(/_/g, ' ')}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <p className="text-xs text-mute">
+                  This will update the status and set the closed date to today. The item will no longer appear in aging alerts.
+                </p>
+
+                <div className="flex gap-3 justify-end">
+                  <button
+                    onClick={() => setShowCompletionDialog(false)}
+                    disabled={isCompleting}
+                    className="px-3 py-2 bg-edge border border-edge text-ink rounded text-sm hover:bg-edge/70 transition-colors disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleMarkCompleted}
+                    disabled={isCompleting || !completionStatus.trim()}
+                    className="px-3 py-2 bg-green-500/20 border border-green-500 text-green-300 rounded text-sm hover:bg-green-500/30 transition-colors disabled:opacity-50"
+                  >
+                    {isCompleting ? 'Completing...' : 'Mark as completed'}
                   </button>
                 </div>
               </div>
