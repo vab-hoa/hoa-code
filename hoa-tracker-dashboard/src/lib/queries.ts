@@ -171,6 +171,26 @@ export function getWorkItemDocumentUrl(storagePath: string): string {
   return data.publicUrl
 }
 
+export async function markWorkItemCompleted(
+  workItemId: string,
+  newStatus: string,
+  closedDate?: string
+): Promise<boolean> {
+  const { error } = await supabase
+    .from('work_items')
+    .update({
+      status: newStatus,
+      closed_date: closedDate || new Date().toISOString().split('T')[0],
+    })
+    .eq('id', workItemId)
+
+  if (error) {
+    console.error('markWorkItemCompleted:', error)
+    return false
+  }
+  return true
+}
+
 // === Property Detail ===
 
 export async function getProperty(id: string): Promise<Property | null> {
