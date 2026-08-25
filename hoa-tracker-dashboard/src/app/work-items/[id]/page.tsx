@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useWorkItem } from '@/hooks/useWorkItem'
 import { supabase } from '@/lib/supabase'
-import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted } from '@/lib/queries'
+import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted, updateWorkItemStatus } from '@/lib/queries'
 import { TERMINAL_STATUSES_BY_CATEGORY } from '@/lib/work-item-helpers'
 import { Loading } from '@/components/loading'
 import { StatusBadge } from '@/components/status-badge'
@@ -13,6 +13,7 @@ import { CategoryBadge } from '@/components/category-badge'
 import { DecisionBadge } from '@/components/decision-badge'
 import { CorrespondenceTimeline } from '@/components/correspondence-timeline'
 import { formatDate, formatCurrency } from '@/lib/format'
+import type { WorkItemStatus } from '@/lib/types'
 
 export default function WorkItemDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params)
@@ -27,6 +28,10 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
   const [showCompletionDialog, setShowCompletionDialog] = useState(false)
   const [completionStatus, setCompletionStatus] = useState('')
   const [isCompleting, setIsCompleting] = useState(false)
+
+  const [editingStatus, setEditingStatus] = useState(false)
+  const [newStatus, setNewStatus] = useState(item?.status || '')
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
 
   const [showUploadDialog, setShowUploadDialog] = useState(false)
   const [uploadFile, setUploadFile] = useState<File | null>(null)
@@ -67,6 +72,24 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
 
     setShowExclusionDialog(false)
     router.push('/')
+  }
+
+  const handleUpdateStatus = async () => {
+    if (newStatus === item?.status) {
+      setEditingStatus(false)
+      return
+    }
+
+    setIsUpdatingStatus(true)
+    const result = await updateWorkItemStatus(id, newStatus)
+    setIsUpdatingStatus(false)
+
+    if (!result.success) {
+      alert('Error updating status: ' + (result.error || 'Unknown error'))
+      return
+    }
+
+    setEditingStatus(false)
   }
 
   const handleMarkCompleted = async () => {
@@ -220,7 +243,60 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
               <div>
                 <dt className="text-mute">Status</dt>
                 <dd className="font-medium text-ink">
-                  <StatusBadge status={item.status} />
+                  {editingStatus ? (
+                    <div className="flex gap-2 items-center">
+                      <select
+                        value={newStatus}
+                        onChange={(e) => setNewStatus(e.target.value as WorkItemStatus)}
+                        className="px-2 py-1 bg-edge border border-edge text-ink rounded text-sm"
+                      >
+                        <option value="new">New</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="awaiting_quote">Awaiting Quote</option>
+                        <option value="awaiting_board_approval">Awaiting Board Approval</option>
+                        <option value="service_request">Service Request</option>
+                        <option value="scheduled">Scheduled</option>
+                        <option value="on_hold">On Hold</option>
+                        <option value="pending_board_review">Pending Board Review</option>
+                        <option value="approved">Approved</option>
+                        <option value="approved_with_conditions">Approved with Conditions</option>
+                        <option value="under_review_with_architect">Under Review with Architect</option>
+                        <option value="denied">Denied</option>
+                        <option value="completed">Completed</option>
+                        <option value="closed">Closed</option>
+                        <option value="monitored">Monitored</option>
+                        <option value="cancelled">Cancelled</option>
+                      </select>
+                      <button
+                        onClick={handleUpdateStatus}
+                        disabled={isUpdatingStatus}
+                        className="px-2 py-1 text-xs bg-green-500/20 text-green-300 rounded hover:bg-green-500/30 disabled:opacity-50"
+                      >
+                        {isUpdatingStatus ? 'Saving...' : 'Save'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditingStatus(false)
+                          setNewStatus(item.status)
+                        }}
+                        disabled={isUpdatingStatus}
+                        className="px-2 py-1 text-xs bg-edge text-mute rounded hover:bg-edge/70 disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setEditingStatus(true)
+                        setNewStatus(item.status)
+                      }}
+                      className="inline-block hover:opacity-75 transition-opacity cursor-pointer"
+                    >
+                      <StatusBadge status={item.status} />
+                    </button>
+                  )}
                 </dd>
               </div>
               <div>
