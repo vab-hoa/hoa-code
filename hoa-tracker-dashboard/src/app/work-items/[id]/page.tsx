@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import { useWorkItem } from '@/hooks/useWorkItem'
 import { supabase } from '@/lib/supabase'
 import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted, updateWorkItemStatus, getWorkItem } from '@/lib/queries'
-import { TERMINAL_STATUSES_BY_CATEGORY } from '@/lib/work-item-helpers'
+import { TERMINAL_STATUSES_BY_CATEGORY, getValidStatusesForCategory } from '@/lib/work-item-helpers'
+import { STATUS_LABELS } from '@/lib/constants'
 import { Loading } from '@/components/loading'
 import { StatusBadge } from '@/components/status-badge'
 import { CategoryBadge } from '@/components/category-badge'
@@ -267,25 +268,11 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                         onChange={(e) => setNewStatus(e.target.value as WorkItemStatus)}
                         className="px-2 py-1 bg-edge border border-edge text-ink rounded text-sm"
                       >
-                        <option value="new">New</option>
-                        <option value="assigned">Assigned</option>
-                        <option value="in_progress">In Progress</option>
-                        <option value="awaiting_quote">Awaiting Quote</option>
-                        <option value="awaiting_board_approval">Awaiting Board Approval</option>
-                        <option value="service_request">Service Request</option>
-                        <option value="scheduled">Scheduled</option>
-                        <option value="on_hold">On Hold</option>
-                        <option value="pending_board_review">Pending Board Review</option>
-                        <option value="approved">Approved</option>
-                        <option value="approved_with_conditions">Approved with Conditions</option>
-                        <option value="under_review_with_architect">Under Review by ARC</option>
-                        <option value="denied">Denied</option>
-                        <option value="completed">Completed</option>
-                        <option value="closed">Closed</option>
-                        <option value="monitored">Monitored</option>
-                        <option value="cancelled">Cancelled</option>
-                        <option value="notified">Notified</option>
-                        <option value="fined">Fined</option>
+                        {localItem && getValidStatusesForCategory(localItem.category).map(status => (
+                          <option key={status} value={status}>
+                            {STATUS_LABELS[status as keyof typeof STATUS_LABELS] || status}
+                          </option>
+                        ))}
                       </select>
                       <button
                         onClick={handleUpdateStatus}
