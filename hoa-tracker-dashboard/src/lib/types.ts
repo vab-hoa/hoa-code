@@ -147,7 +147,6 @@ export interface DashboardSummary {
   service_request_count: number
   scheduled_count: number
   pending_board_count: number
-  awaiting_board_approval: number
   arc_in_review: number
   approved_count: number
   approved_with_conditions_count: number
@@ -183,13 +182,22 @@ export type WorkItemCategory =
   | 'gutter' | 'roofing' | 'siding' | 'irrigation' | 'drainage'
   | 'painting' | 'general_repair' | 'governance' | 'other'
 
-export type WorkItemStatus =
+export type ArcRequestStatus =
+  | 'new' | 'under_review_with_architect' | 'approved'
+  | 'approved_with_conditions' | 'denied' | 'closed'
+
+export type WorkOrderStatus =
   | 'new' | 'assigned' | 'in_progress' | 'awaiting_quote'
-  | 'awaiting_board_approval' | 'service_request' | 'scheduled'
-  | 'on_hold' | 'pending_board_review' | 'approved'
-  | 'approved_with_conditions' | 'under_review_with_architect'
-  | 'denied' | 'completed' | 'closed' | 'monitored' | 'cancelled'
-  | 'notified' | 'fined'
+  | 'service_request' | 'scheduled' | 'on_hold' | 'pending_board_review'
+  | 'monitored' | 'closed' | 'cancelled'
+
+export type ViolationStatus =
+  | 'notified' | 'fined' | 'resolved' | 'closed'
+
+export type LandscapingStatus =
+  | 'new' | 'service_request' | 'scheduled' | 'closed' | 'cancelled'
+
+export type WorkItemStatus = ArcRequestStatus | WorkOrderStatus | ViolationStatus | LandscapingStatus
 
 export type Decision =
   | 'approved' | 'approved_with_conditions' | 'denied'

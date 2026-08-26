@@ -2,9 +2,9 @@ import type { OpenWorkItem, DashboardSummary } from './types'
 
 export const TERMINAL_STATUSES_BY_CATEGORY: Record<string, string[]> = {
   arc_request: ['closed', 'approved', 'approved_with_conditions', 'denied'],
-  work_order: ['closed', 'cancelled', 'denied'],
-  violation: ['closed', 'resolved', 'dismissed', 'notified', 'fined'],
-  landscaping: ['closed', 'cancelled', 'denied'],
+  work_order: ['closed', 'cancelled'],
+  violation: ['closed', 'resolved'],
+  landscaping: ['closed', 'cancelled'],
 }
 const DEFAULT_TERMINAL = ['closed', 'cancelled', 'denied']
 
@@ -31,6 +31,22 @@ export function getWorkItemType(category: string): string {
   return 'work_order'
 }
 
+export const VALID_STATUSES_BY_CATEGORY: Record<string, string[]> = {
+  arc_request: ['new', 'under_review_with_architect', 'approved', 'approved_with_conditions', 'denied', 'closed'],
+  work_order: ['new', 'assigned', 'in_progress', 'awaiting_quote', 'service_request', 'scheduled', 'on_hold', 'pending_board_review', 'monitored', 'closed', 'cancelled'],
+  violation: ['notified', 'fined', 'resolved', 'closed'],
+  landscaping: ['new', 'service_request', 'scheduled', 'closed', 'cancelled'],
+}
+
+export function getValidStatusesForCategory(category: string): string[] {
+  return VALID_STATUSES_BY_CATEGORY[category] ?? []
+}
+
+export function isValidStatus(category: string, status: string): boolean {
+  const validStatuses = getValidStatusesForCategory(category)
+  return validStatuses.includes(status)
+}
+
 export function computeSummaryCounts(items: OpenWorkItem[]): DashboardSummary {
   return {
     total_open: items.length,
@@ -40,8 +56,6 @@ export function computeSummaryCounts(items: OpenWorkItem[]): DashboardSummary {
     service_request_count: items.filter(i => i.status === 'service_request').length,
     scheduled_count: items.filter(i => i.status === 'scheduled').length,
     pending_board_count: items.filter(i => i.status === 'pending_board_review').length,
-    awaiting_board_approval: items.filter(i => i.status === 'awaiting_board_approval')
-      .length,
     arc_in_review: items.filter(
       i => i.status === 'under_review_with_architect'
     ).length,
