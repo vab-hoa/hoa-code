@@ -39,3 +39,5 @@ hoa-tracker-dashboard/node_modules/
 hoa-tracker-dashboard/.next/
 hoa-tracker-dashboard/.env.local
 hoa-tracker-dashboard/.env*.local
+.vercel
+hoa-tracker/secrets/

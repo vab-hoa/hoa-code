@@ -17,12 +17,13 @@ Classification pipeline (ordered):
   9. Default → unclassified
 
 Usage:
-    python3 email_processor.py [--days N] [--dry-run] [--debug]
+    python3 email_processor.py [--days N] [--dry-run] [--debug] [--report-email]
 
 Options:
-    --days N     Look back N days (default: 1)
-    --dry-run    Process emails but don't write to Supabase
-    --debug      Print debug info to stderr
+    --days N        Look back N days (default: 1)
+    --dry-run       Process emails but don't write to Supabase
+    --debug         Print debug info to stderr
+    --report-email  Send a summary email to Dee after processing
 """
 
 import sys
@@ -57,11 +58,12 @@ except ImportError:
 
 SERVICE_ACCOUNT_FILE = '/home/dee/.config/openclaw/google-service-account.json'
 # Mailboxes to read — admin@ via service account, mcdonaldbuckhoa@ via IMAP
+SECRETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'secrets')
 MAILBOXES = [
     {'type': 'service_account', 'email': 'admin@villasboulders.org'},
     {'type': 'imap', 'email': 'mcdonaldbuckhoa@gmail.com',
      'host': 'imap.gmail.com', 'port': 993,
-     'password_file': '/tmp/hoa_processor/.gmail_pw_mcdonaldbuckhoa'},
+     'password_file': os.path.join(SECRETS_DIR, '.gmail_pw_mcdonaldbuckhoa')},
 ]
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
@@ -72,7 +74,12 @@ SUPABASE_HOST = 'db.obveytoovkzjrpzrhrim.supabase.co'
 SUPABASE_PORT = 5432
 SUPABASE_DB = 'postgres'
 SUPABASE_USER = 'postgres'
-SUPABASE_PASSWORD_FILE = '/tmp/.supabase_db_password'
+SUPABASE_PASSWORD_FILE = os.path.join(SECRETS_DIR, '.supabase_db_password')
+
+# Daily report email settings
+REPORT_FROM = 'admin@villasboulders.org'
+REPORT_TO = 'dee@wmbuck.net'
+REPORT_SUBJECT = 'HOA Email Processor - Daily Summary'
 
 # Import address standardization (same directory)
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -1160,11 +1167,139 @@ def process_email(email_data, debug=False, dry_run=False, conn=None):
 # Entry point
 # ============================================================
 
+def send_report_email(output):
+    """Send a daily summary email to Dee via sendmail."""
+    import subprocess
+
+    emails = output.get('emails', [])
+    # Categorize for the report
+    new_items = []  # ARC forms, WO forms, HPPR forms — things that need tracking
+    status_reports = []  # WO status reports — snapshots, not new items
+    board_emails = []
+    homeowner_emails = []
+    noise_count = 0
+    other_emails = []
+
+    for e in emails:
+        cls = e.get('classification', '')
+        if cls == 'noise':
+            noise_count += 1
+        elif cls == 'wo_status_report':
+            status_reports.append(e)
+        elif cls in ('arc_form_submission', 'arc_form_forward', 'wo_form', 'hppr_form'):
+            new_items.append(e)
+        elif cls in ('board_email', 'governance', 'josh_direct', 'arc_manager_reply', 'arc_process_discussion'):
+            board_emails.append(e)
+        elif cls == 'homeowner_direct':
+            homeowner_emails.append(e)
+        else:
+            other_emails.append(e)
+
+    # Build the email body
+    lines = []
+    lines.append(f"HOA Email Processor - Daily Summary")
+    lines.append(f"Run at: {output.get('run_at', '?')}")
+    lines.append(f"Lookback: {output.get('lookback_days', 1)} day(s)")
+    lines.append(f"Total checked: {output.get('total_checked', 0)}")
+    lines.append(f"Newly processed: {output.get('processed_count', 0)}")
+    lines.append(f"Classification breakdown: {output.get('classification_counts', {})}")
+    lines.append(f"Skipped (already processed): {output.get('skipped_already_processed', 0)}")
+    lines.append("")
+    lines.append(f"--- SUMMARY ---")
+    lines.append(f"  New trackable items (ARC/WO/HPPR forms): {len(new_items)}")
+    lines.append(f"  WO status reports (snapshots only, not new items): {len(status_reports)}")
+    lines.append(f"  Board/governance emails: {len(board_emails)}")
+    lines.append(f"  Homeowner direct emails: {len(homeowner_emails)}")
+    lines.append(f"  Noise filtered: {noise_count}")
+    lines.append(f"  Other: {len(other_emails)}")
+    lines.append("")
+
+    if new_items:
+        lines.append("=== NEW TRACKABLE ITEMS ===")
+        for e in new_items:
+            lines.append(f"  [{e.get('classification', '?')}] {e.get('subject', '?')[:80]}")
+            lines.append(f"    From: {e.get('from', '?')[:80]}")
+            lines.append(f"    Date: {e.get('received_date', '?')}")
+            parsed = e.get('parsed_data', {})
+            if parsed:
+                if parsed.get('homeowner_name'):
+                    lines.append(f"    Homeowner: {parsed.get('homeowner_name')}")
+                if parsed.get('address'):
+                    lines.append(f"    Address: {parsed.get('address')}")
+                if parsed.get('description'):
+                    lines.append(f"    Description: {parsed.get('description', '')[:120]}")
+            actions = e.get('actions', [])
+            if actions:
+                lines.append(f"    Actions: {'; '.join(actions)}")
+            if e.get('db_id'):
+                lines.append(f"    DB ID: {e.get('db_id')}")
+            lines.append("")
+
+    if status_reports:
+        lines.append("=== WO STATUS REPORTS (snapshots only — NOT new work items) ===")
+        for e in status_reports:
+            lines.append(f"  Subject: {e.get('subject', '?')[:80]}")
+            lines.append(f"    Date: {e.get('received_date', '?')}")
+            parsed = e.get('parsed_data', {})
+            if parsed:
+                summary = parsed.get('summary', {})
+                lines.append(f"    Open WOs: {summary.get('open_work_orders', '?')}")
+                if summary.get('scrape_failure_suspected'):
+                    lines.append(f"    WARNING: Scrape failure suspected!")
+                for sec in parsed.get('sections', []):
+                    lines.append(f"    {sec.get('status')}: {sec.get('count')} entries")
+            actions = e.get('actions', [])
+            if actions:
+                lines.append(f"    Actions: {'; '.join(actions)}")
+            lines.append("")
+
+    if board_emails:
+        lines.append("=== BOARD / GOVERNANCE EMAILS ===")
+        for e in board_emails:
+            lines.append(f"  [{e.get('classification', '?')}] {e.get('subject', '?')[:80]}")
+            lines.append(f"    From: {e.get('from', '?')[:60]}")
+            lines.append("")
+
+    if homeowner_emails:
+        lines.append("=== HOMEOWNER DIRECT EMAILS ===")
+        for e in homeowner_emails:
+            lines.append(f"  {e.get('subject', '?')[:80]}")
+            lines.append(f"    From: {e.get('from', '?')[:60]}")
+            if e.get('parcel_code'):
+                lines.append(f"    Parcel: {e.get('parcel_code')}")
+            lines.append("")
+
+    if other_emails:
+        lines.append("=== OTHER ===")
+        for e in other_emails:
+            lines.append(f"  [{e.get('classification', '?')}] {e.get('subject', '?')[:80]}")
+            lines.append("")
+
+    if not emails:
+        lines.append("(No new emails processed)")
+
+    body = '\n'.join(lines)
+
+    # Send via sendmail
+    msg = f"From: {REPORT_FROM}\nTo: {REPORT_TO}\nSubject: {REPORT_SUBJECT} - {datetime.now().strftime('%Y-%m-%d')}\nContent-Type: text/plain; charset=utf-8\n\n{body}"
+
+    try:
+        proc = subprocess.run(['/usr/sbin/sendmail', '-t'], input=msg.encode('utf-8'),
+                            capture_output=True, timeout=30)
+        if proc.returncode != 0:
+            print(f"[WARNING] sendmail returned {proc.returncode}: {proc.stderr.decode()}", file=sys.stderr)
+        else:
+            print(f"[INFO] Report email sent to {REPORT_TO}", file=sys.stderr)
+    except Exception as e:
+        print(f"[WARNING] Failed to send report email: {e}", file=sys.stderr)
+
+
 def main():
     parser = argparse.ArgumentParser(description='HOA Email Processor v2')
     parser.add_argument('--days', type=int, default=1, help='Look back N days (default: 1)')
     parser.add_argument('--dry-run', action='store_true', help='Process but do not write to Supabase')
     parser.add_argument('--debug', action='store_true', help='Print debug info to stderr')
+    parser.add_argument('--report-email', action='store_true', help='Send daily summary email to Dee')
     args = parser.parse_args()
 
     # Load processed IDs for dedup
@@ -1277,6 +1412,10 @@ def main():
         'classification_counts': all_classification_counts,
         'emails': all_results
     }
+
+    # Send report email if requested
+    if args.report_email:
+        send_report_email(output)
 
     print(json.dumps(output, indent=2, default=str))
 
