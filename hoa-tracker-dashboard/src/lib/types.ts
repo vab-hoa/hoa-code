@@ -187,9 +187,9 @@ export type ArcRequestStatus =
   | 'approved_with_conditions' | 'denied' | 'closed'
 
 export type WorkOrderStatus =
-  | 'new' | 'assigned' | 'in_progress' | 'awaiting_quote'
-  | 'service_request' | 'scheduled' | 'on_hold' | 'pending_board_review'
-  | 'monitored' | 'closed' | 'cancelled'
+  | 'open' | 'pending_board_review' | 'closed' | 'approved' | 'awaiting_quote'
+  | 'on_hold' | 'scheduled' | 'monitored' | 'service_request' | 'past_due'
+  | 'new' | 'assigned' | 'in_progress' | 'cancelled'
 
 export type ViolationStatus =
   | 'notified' | 'fined' | 'resolved' | 'closed'

@@ -1,4 +1,5 @@
 export const STATUS_COLORS: Record<string, string> = {
+  open: 'bg-blue-500/10 text-blue-300 border border-blue-500/30',
   new: 'bg-blue-500/10 text-blue-300 border border-blue-500/30',
   assigned: 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/30',
   in_progress: 'bg-yellow-500/10 text-yellow-300 border border-yellow-500/30',
@@ -14,12 +15,14 @@ export const STATUS_COLORS: Record<string, string> = {
   closed: 'bg-gray-500/5 text-gray-400 border border-gray-500/20',
   monitored: 'bg-teal-500/10 text-teal-300 border border-teal-500/30',
   cancelled: 'bg-gray-500/5 text-gray-400 border border-gray-500/20',
+  past_due: 'bg-red-600/10 text-red-200 border border-red-600/30',
   notified: 'bg-blue-500/10 text-blue-300 border border-blue-500/30',
   fined: 'bg-red-500/10 text-red-300 border border-red-500/30',
   resolved: 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30',
 }
 
 export const STATUS_LABELS: Record<string, string> = {
+  open: 'Open',
   new: 'New',
   assigned: 'Assigned',
   in_progress: 'In Progress',
@@ -35,6 +38,7 @@ export const STATUS_LABELS: Record<string, string> = {
   closed: 'Closed',
   monitored: 'Monitored',
   cancelled: 'Cancelled',
+  past_due: 'Past Due',
   notified: 'Notified',
   fined: 'Fined',
   resolved: 'Resolved',
