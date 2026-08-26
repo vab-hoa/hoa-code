@@ -3,7 +3,6 @@ export const STATUS_COLORS: Record<string, string> = {
   assigned: 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/30',
   in_progress: 'bg-yellow-500/10 text-yellow-300 border border-yellow-500/30',
   awaiting_quote: 'bg-orange-500/10 text-orange-300 border border-orange-500/30',
-  awaiting_board_approval: 'bg-purple-500/10 text-purple-300 border border-purple-500/30',
   service_request: 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/30',
   scheduled: 'bg-green-500/10 text-green-300 border border-green-500/30',
   on_hold: 'bg-gray-500/10 text-gray-300 border border-gray-500/30',
@@ -12,12 +11,12 @@ export const STATUS_COLORS: Record<string, string> = {
   approved_with_conditions: 'bg-amber-500/10 text-amber-300 border border-amber-500/30',
   under_review_with_architect: 'bg-violet-500/10 text-violet-300 border border-violet-500/30',
   denied: 'bg-rose-500/10 text-rose-300 border border-rose-500/30',
-  completed: 'bg-stone-500/10 text-stone-300 border border-stone-500/30',
   closed: 'bg-gray-500/5 text-gray-400 border border-gray-500/20',
   monitored: 'bg-teal-500/10 text-teal-300 border border-teal-500/30',
   cancelled: 'bg-gray-500/5 text-gray-400 border border-gray-500/20',
   notified: 'bg-blue-500/10 text-blue-300 border border-blue-500/30',
   fined: 'bg-red-500/10 text-red-300 border border-red-500/30',
+  resolved: 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30',
 }
 
 export const STATUS_LABELS: Record<string, string> = {
@@ -25,7 +24,6 @@ export const STATUS_LABELS: Record<string, string> = {
   assigned: 'Assigned',
   in_progress: 'In Progress',
   awaiting_quote: 'Awaiting Quote',
-  awaiting_board_approval: 'Awaiting Board Approval',
   service_request: 'Service Request',
   scheduled: 'Scheduled',
   on_hold: 'On Hold',
@@ -34,12 +32,12 @@ export const STATUS_LABELS: Record<string, string> = {
   approved_with_conditions: 'Approved w/ Conditions',
   under_review_with_architect: 'Under Review by ARC',
   denied: 'Denied',
-  completed: 'Completed',
   closed: 'Closed',
   monitored: 'Monitored',
   cancelled: 'Cancelled',
   notified: 'Notified',
   fined: 'Fined',
+  resolved: 'Resolved',
 }
 
 export const CATEGORY_COLORS: Record<string, string> = {

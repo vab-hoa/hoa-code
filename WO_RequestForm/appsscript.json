@@ -1,7 +1,14 @@
 {
-  "timeZone": "America/New_York",
-  "dependencies": {
-  },
+  "timeZone": "America/Denver",
   "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8"
+  "runtimeVersion": "V8",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/gmail.send",
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/documents"
+  ],
+  "webapp": {
+    "access": "ANYONE",
+    "executeAs": "USER_DEPLOYING"
+  }
 }
