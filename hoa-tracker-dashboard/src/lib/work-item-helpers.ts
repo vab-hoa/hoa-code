@@ -33,7 +33,7 @@ export function getWorkItemType(category: string): string {
 
 export const VALID_STATUSES_BY_CATEGORY: Record<string, string[]> = {
   arc_request: ['new', 'under_review_with_architect', 'approved', 'approved_with_conditions', 'denied', 'closed'],
-  work_order: ['new', 'assigned', 'in_progress', 'awaiting_quote', 'service_request', 'scheduled', 'on_hold', 'pending_board_review', 'monitored', 'closed', 'cancelled'],
+  work_order: ['open', 'pending_board_review', 'closed', 'approved', 'awaiting_quote', 'on_hold', 'scheduled', 'monitored', 'service_request', 'past_due', 'new', 'assigned', 'in_progress', 'cancelled'],
   violation: ['notified', 'fined', 'resolved', 'closed'],
   landscaping: ['new', 'service_request', 'scheduled', 'closed', 'cancelled'],
 }
