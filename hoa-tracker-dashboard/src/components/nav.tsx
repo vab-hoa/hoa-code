@@ -12,6 +12,7 @@ export function Nav() {
     { href: '/properties', label: 'Properties' },
     { href: '/emails', label: 'Emails' },
     { href: '/snapshots', label: 'Snapshots' },
+    { href: '/send', label: 'Send Email' },
   ]
 
   return (

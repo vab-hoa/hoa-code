@@ -23,7 +23,20 @@ Create `.env.local`:
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://obveytoovkzjrpzrhrim.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_VOkLzqlScMa7yTxZij1xXA_zATBJuyU
+
+# For Send Email feature (optional, needed if you want to use the /send page)
+GOOGLE_SERVICE_ACCOUNT_B64=<base64-encoded-service-account-json>
 ```
+
+### Setting up Google Service Account for Email
+
+The `/send` page requires a base64-encoded Google service account JSON:
+
+1. Get the service account JSON file from the GCP project (`villasboulders-automation`)
+2. Base64-encode it: `base64 < /path/to/service-account.json | tr -d '\n'`
+3. Add the encoded value to `.env.local` as `GOOGLE_SERVICE_ACCOUNT_B64`
+4. The service account must have domain-wide delegation enabled with `gmail.send` scope
+5. The account impersonates `admin@villasboulders.org` to send from any `@villasboulders.org` address
 
 ## Deployment to Vercel
 
@@ -43,6 +56,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_VOkLzqlScMa7yTxZij1xXA_zATBJuyU
 - `/work-items/[id]` - Work item detail with full correspondence and email timeline
 - `/emails` - Email inbox with classification filter and search
 - `/snapshots` - WO status snapshots and diff view
+- `/send` - Board email composer (requires `GOOGLE_SERVICE_ACCOUNT_B64` env var)
 
 ## Architecture
 
