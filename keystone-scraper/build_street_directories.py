@@ -19,6 +19,8 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 
+from sheets_retry import retry_sheets_call
+
 # IDs and config
 DOMAIN = "villasboulders.org"
 ADMIN_EMAIL = "admin@villasboulders.org"
@@ -112,10 +114,12 @@ def street_sort_key(street_name):
 
 def load_full_directory(sheets):
     """Load Full Directory tab from Keystone Cache spreadsheet."""
-    result = sheets.spreadsheets().values().get(
-        spreadsheetId=KEYSTONE_CACHE_SHEET_ID,
-        range='Full Directory!A2:J500'
-    ).execute()
+    result = retry_sheets_call(
+        lambda: sheets.spreadsheets().values().get(
+            spreadsheetId=KEYSTONE_CACHE_SHEET_ID,
+            range='Full Directory!A2:J500'
+        ).execute()
+    )
     return result.get('values', [])
 
 
@@ -185,9 +189,11 @@ def create_spreadsheet(drive, sheets, spreadsheet_name):
     """Create a new spreadsheet and move it to Member Lists folder. Return spreadsheet ID."""
     # Create spreadsheet (empty, no sheets initially)
     try:
-        result = sheets.spreadsheets().create(
-            body={'properties': {'title': spreadsheet_name}}
-        ).execute()
+        result = retry_sheets_call(
+            lambda: sheets.spreadsheets().create(
+                body={'properties': {'title': spreadsheet_name}}
+            ).execute()
+        )
         spreadsheet_id = result['spreadsheetId']
     except HttpError as e:
         print(f"  ERROR creating spreadsheet '{spreadsheet_name}': {e}")
@@ -212,7 +218,9 @@ def create_spreadsheet(drive, sheets, spreadsheet_name):
 def ensure_sheets_exist(sheets, spreadsheet_id, sheet_names):
     """Ensure the specified sheet tabs exist, clearing any existing data. Return sheet IDs by name."""
     # Get current sheets
-    meta = sheets.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+    meta = retry_sheets_call(
+        lambda: sheets.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+    )
     existing_sheets = {s['properties']['title']: s['properties']['sheetId']
                        for s in meta['sheets']}
 
@@ -228,12 +236,16 @@ def ensure_sheets_exist(sheets, spreadsheet_id, sheet_names):
             requests.append({'addSheet': {'properties': {'title': sheet_name}}})
 
     if requests:
-        sheets.spreadsheets().batchUpdate(
-            spreadsheetId=spreadsheet_id,
-            body={'requests': requests}
-        ).execute()
+        retry_sheets_call(
+            lambda: sheets.spreadsheets().batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body={'requests': requests}
+            ).execute()
+        )
         # Refresh meta
-        meta = sheets.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+        meta = retry_sheets_call(
+            lambda: sheets.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+        )
         existing_sheets = {s['properties']['title']: s['properties']['sheetId']
                            for s in meta['sheets']}
 
@@ -250,40 +262,48 @@ def write_sheet_data(sheets, spreadsheet_id, sheet_name, headers, rows, dry_run=
 
     # Clear the sheet first
     try:
-        sheets.spreadsheets().values().clear(
-            spreadsheetId=spreadsheet_id,
-            range=f'{sheet_name}!A:Z',
-        ).execute()
+        retry_sheets_call(
+            lambda: sheets.spreadsheets().values().clear(
+                spreadsheetId=spreadsheet_id,
+                range=f'{sheet_name}!A:Z',
+            ).execute()
+        )
     except HttpError:
         pass  # Sheet might not exist yet; that's OK
 
     # Write data
-    sheets.spreadsheets().values().update(
-        spreadsheetId=spreadsheet_id,
-        range=f'{sheet_name}!A1',
-        valueInputOption='RAW',
-        body={'values': sheet_data},
-    ).execute()
+    retry_sheets_call(
+        lambda: sheets.spreadsheets().values().update(
+            spreadsheetId=spreadsheet_id,
+            range=f'{sheet_name}!A1',
+            valueInputOption='RAW',
+            body={'values': sheet_data},
+        ).execute()
+    )
 
     # Format header row (bold) + freeze
-    meta = sheets.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+    meta = retry_sheets_call(
+        lambda: sheets.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+    )
     sheet_id = next((s['properties']['sheetId'] for s in meta['sheets']
                      if s['properties']['title'] == sheet_name), None)
     if sheet_id is not None:
-        sheets.spreadsheets().batchUpdate(
-            spreadsheetId=spreadsheet_id,
-            body={'requests': [
-                {'updateSheetProperties': {
-                    'properties': {'sheetId': sheet_id, 'gridProperties': {'frozenRowCount': 1}},
-                    'fields': 'gridProperties.frozenRowCount',
-                }},
-                {'repeatCell': {
-                    'range': {'sheetId': sheet_id, 'startRowIndex': 0, 'endRowIndex': 1},
-                    'cell': {'userEnteredFormat': {'textFormat': {'bold': True}}},
-                    'fields': 'userEnteredFormat.textFormat.bold',
-                }},
-            ]},
-        ).execute()
+        retry_sheets_call(
+            lambda: sheets.spreadsheets().batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body={'requests': [
+                    {'updateSheetProperties': {
+                        'properties': {'sheetId': sheet_id, 'gridProperties': {'frozenRowCount': 1}},
+                        'fields': 'gridProperties.frozenRowCount',
+                    }},
+                    {'repeatCell': {
+                        'range': {'sheetId': sheet_id, 'startRowIndex': 0, 'endRowIndex': 1},
+                        'cell': {'userEnteredFormat': {'textFormat': {'bold': True}}},
+                        'fields': 'userEnteredFormat.textFormat.bold',
+                    }},
+                ]},
+            ).execute()
+        )
 
 
 def build_street_directory(directory_rows, email_to_groups, street_name):

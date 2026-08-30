@@ -17,6 +17,8 @@ import sys
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
+from sheets_retry import retry_sheets_call
+
 SA_FILE  = os.path.expanduser('~/.config/openclaw/google-service-account.json')
 SCOPES   = [
     'https://www.googleapis.com/auth/spreadsheets',
@@ -110,10 +112,12 @@ def main():
     people   = build('people',  'v1', credentials=delegated)
 
     # ── Load Directory tab ────────────────────────────────────────────────────
-    result = sheets.spreadsheets().values().get(
-        spreadsheetId=SHEET_ID,
-        range='Directory!A2:G200'
-    ).execute()
+    result = retry_sheets_call(
+        lambda: sheets.spreadsheets().values().get(
+            spreadsheetId=SHEET_ID,
+            range='Directory!A2:G200'
+        ).execute()
+    )
     dir_rows = result.get('values', [])
 
     # Index by (street_number, unit, norm_street) — street name needed because
@@ -292,46 +296,58 @@ def main():
         ])
 
     # Ensure the tab exists; create it if not
-    sheet_meta = sheets.spreadsheets().get(spreadsheetId=SHEET_ID).execute()
+    sheet_meta = retry_sheets_call(
+        lambda: sheets.spreadsheets().get(spreadsheetId=SHEET_ID).execute()
+    )
     existing   = [s['properties']['title'] for s in sheet_meta['sheets']]
     if 'Full Directory' not in existing:
-        sheets.spreadsheets().batchUpdate(
-            spreadsheetId=SHEET_ID,
-            body={'requests': [{'addSheet': {'properties': {'title': 'Full Directory'}}}]},
-        ).execute()
-        sheet_meta = sheets.spreadsheets().get(spreadsheetId=SHEET_ID).execute()
+        retry_sheets_call(
+            lambda: sheets.spreadsheets().batchUpdate(
+                spreadsheetId=SHEET_ID,
+                body={'requests': [{'addSheet': {'properties': {'title': 'Full Directory'}}}]},
+            ).execute()
+        )
+        sheet_meta = retry_sheets_call(
+            lambda: sheets.spreadsheets().get(spreadsheetId=SHEET_ID).execute()
+        )
     else:
-        sheets.spreadsheets().values().clear(
-            spreadsheetId=SHEET_ID,
-            range='Full Directory!A:Z',
-        ).execute()
+        retry_sheets_call(
+            lambda: sheets.spreadsheets().values().clear(
+                spreadsheetId=SHEET_ID,
+                range='Full Directory!A:Z',
+            ).execute()
+        )
 
-    sheets.spreadsheets().values().update(
-        spreadsheetId=SHEET_ID,
-        range='Full Directory!A1',
-        valueInputOption='RAW',
-        body={'values': rows},
-    ).execute()
+    retry_sheets_call(
+        lambda: sheets.spreadsheets().values().update(
+            spreadsheetId=SHEET_ID,
+            range='Full Directory!A1',
+            valueInputOption='RAW',
+            body={'values': rows},
+        ).execute()
+    )
 
     # Bold + freeze header row
     tab = next((s for s in sheet_meta['sheets']
                 if s['properties']['title'] == 'Full Directory'), None)
     if tab:
         sid = tab['properties']['sheetId']
-        sheets.spreadsheets().batchUpdate(
-            spreadsheetId=SHEET_ID,
-            body={'requests': [
-                {'updateSheetProperties': {
-                    'properties': {'sheetId': sid, 'gridProperties': {'frozenRowCount': 1}},
-                    'fields': 'gridProperties.frozenRowCount',
-                }},
-                {'repeatCell': {
-                    'range': {'sheetId': sid, 'startRowIndex': 0, 'endRowIndex': 1},
-                    'cell': {'userEnteredFormat': {'textFormat': {'bold': True}}},
-                    'fields': 'userEnteredFormat.textFormat.bold',
-                }},
-            ]},
-        ).execute()
+        retry_sheets_call(
+            lambda: sheets.spreadsheets().batchUpdate(
+                spreadsheetId=SHEET_ID,
+                body={'requests': [
+                    {'updateSheetProperties': {
+                        'properties': {'sheetId': sid, 'gridProperties': {'frozenRowCount': 1}},
+                        'fields': 'gridProperties.frozenRowCount',
+                    }},
+                    {'repeatCell': {
+                        'range': {'sheetId': sid, 'startRowIndex': 0, 'endRowIndex': 1},
+                        'cell': {'userEnteredFormat': {'textFormat': {'bold': True}}},
+                        'fields': 'userEnteredFormat.textFormat.bold',
+                    }},
+                ]},
+            ).execute()
+        )
 
     print(f"Written {len(rows)-1} rows to 'Full Directory' tab.")
 
