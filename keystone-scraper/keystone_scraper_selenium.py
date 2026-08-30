@@ -35,6 +35,8 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from sheets_retry import retry_sheets_call
+
 
 # Configuration
 KEYSTONE_URL = "https://kppm.cincwebaxis.com"
@@ -1115,9 +1117,11 @@ class KeystoneScraperSelenium:
 
             # Check if sheet exists, create if not
             try:
-                spreadsheet = self.sheets_service.spreadsheets().get(
-                    spreadsheetId=SPREADSHEET_ID
-                ).execute()
+                spreadsheet = retry_sheets_call(
+                    lambda: self.sheets_service.spreadsheets().get(
+                        spreadsheetId=SPREADSHEET_ID
+                    ).execute()
+                )
 
                 sheet_exists = any(
                     sheet['properties']['title'] == sheet_name
@@ -1133,10 +1137,12 @@ class KeystoneScraperSelenium:
                             }
                         }
                     }
-                    self.sheets_service.spreadsheets().batchUpdate(
-                        spreadsheetId=SPREADSHEET_ID,
-                        body={'requests': [request]}
-                    ).execute()
+                    retry_sheets_call(
+                        lambda: self.sheets_service.spreadsheets().batchUpdate(
+                            spreadsheetId=SPREADSHEET_ID,
+                            body={'requests': [request]}
+                        ).execute()
+                    )
             except HttpError as e:
                 logger.error(f"Error checking/creating sheet: {e}")
                 raise
@@ -1158,18 +1164,22 @@ class KeystoneScraperSelenium:
             range_name = f"{sheet_name}!A1:Z{len(rows)}"
 
             # Clear existing data
-            self.sheets_service.spreadsheets().values().clear(
-                spreadsheetId=SPREADSHEET_ID,
-                range=f"{sheet_name}!A:Z"
-            ).execute()
+            retry_sheets_call(
+                lambda: self.sheets_service.spreadsheets().values().clear(
+                    spreadsheetId=SPREADSHEET_ID,
+                    range=f"{sheet_name}!A:Z"
+                ).execute()
+            )
 
             # Write new data
-            self.sheets_service.spreadsheets().values().update(
-                spreadsheetId=SPREADSHEET_ID,
-                range=range_name,
-                valueInputOption='RAW',
-                body={'values': rows}
-            ).execute()
+            retry_sheets_call(
+                lambda: self.sheets_service.spreadsheets().values().update(
+                    spreadsheetId=SPREADSHEET_ID,
+                    range=range_name,
+                    valueInputOption='RAW',
+                    body={'values': rows}
+                ).execute()
+            )
 
             logger.info(f"Successfully wrote {len(data)} rows to {sheet_name}")
 
@@ -1198,35 +1208,43 @@ class KeystoneScraperSelenium:
             logger.info(f"Writing {len(rows)-1} rows to {sheet_name}...")
 
             # Ensure sheet exists
-            spreadsheet = self.sheets_service.spreadsheets().get(
-                spreadsheetId=SPREADSHEET_ID
-            ).execute()
+            spreadsheet = retry_sheets_call(
+                lambda: self.sheets_service.spreadsheets().get(
+                    spreadsheetId=SPREADSHEET_ID
+                ).execute()
+            )
             sheet_exists = any(
                 sheet['properties']['title'] == sheet_name
                 for sheet in spreadsheet['sheets']
             )
             if not sheet_exists:
                 logger.info(f"Creating sheet {sheet_name}...")
-                self.sheets_service.spreadsheets().batchUpdate(
-                    spreadsheetId=SPREADSHEET_ID,
-                    body={'requests': [{'addSheet': {'properties': {'title': sheet_name}}}]}
-                ).execute()
+                retry_sheets_call(
+                    lambda: self.sheets_service.spreadsheets().batchUpdate(
+                        spreadsheetId=SPREADSHEET_ID,
+                        body={'requests': [{'addSheet': {'properties': {'title': sheet_name}}}]}
+                    ).execute()
+                )
 
             range_name = f"{sheet_name}!A1:Z{len(rows)}"
 
             # Clear existing data
-            self.sheets_service.spreadsheets().values().clear(
-                spreadsheetId=SPREADSHEET_ID,
-                range=f"{sheet_name}!A:Z"
-            ).execute()
+            retry_sheets_call(
+                lambda: self.sheets_service.spreadsheets().values().clear(
+                    spreadsheetId=SPREADSHEET_ID,
+                    range=f"{sheet_name}!A:Z"
+                ).execute()
+            )
 
             # Write rows
-            self.sheets_service.spreadsheets().values().update(
-                spreadsheetId=SPREADSHEET_ID,
-                range=range_name,
-                valueInputOption='RAW',
-                body={'values': rows}
-            ).execute()
+            retry_sheets_call(
+                lambda: self.sheets_service.spreadsheets().values().update(
+                    spreadsheetId=SPREADSHEET_ID,
+                    range=range_name,
+                    valueInputOption='RAW',
+                    body={'values': rows}
+                ).execute()
+            )
 
             logger.info(f"Successfully wrote {len(rows)-1} rows to {sheet_name}")
 
