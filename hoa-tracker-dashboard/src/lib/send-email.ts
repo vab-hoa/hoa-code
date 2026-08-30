@@ -18,8 +18,13 @@ async function getGmailService() {
   try {
     const serviceAccountJson = Buffer.from(serviceAccountB64, 'base64').toString('utf-8')
     serviceAccount = JSON.parse(serviceAccountJson)
+
+    // Fix escaped newlines in private key (convert \\n to actual newlines)
+    if (serviceAccount.private_key && typeof serviceAccount.private_key === 'string') {
+      serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n')
+    }
   } catch (e) {
-    throw new Error('Failed to decode or parse GOOGLE_SERVICE_ACCOUNT_B64')
+    throw new Error(`Failed to decode or parse GOOGLE_SERVICE_ACCOUNT_B64: ${e instanceof Error ? e.message : String(e)}`)
   }
 
   const auth = new google.auth.GoogleAuth({
