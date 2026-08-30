@@ -27,17 +27,18 @@ async function getGmailService() {
     throw new Error(`Failed to decode or parse GOOGLE_SERVICE_ACCOUNT_B64: ${e instanceof Error ? e.message : String(e)}`)
   }
 
-  const auth = new google.auth.GoogleAuth({
-    credentials: serviceAccount,
+  // Use JWT auth directly instead of GoogleAuth wrapper to avoid OpenSSL decoder issues
+  const jwtClient = new google.auth.JWT({
+    email: serviceAccount.client_email,
+    key: serviceAccount.private_key,
     scopes: ['https://www.googleapis.com/auth/gmail.send'],
+    subject: 'admin@villasboulders.org',
   })
 
-  const authClient = await auth.getClient() as any
+  // Authorize the JWT client
+  await jwtClient.authorize()
 
-  // Set the subject to admin@villasboulders.org for domain-wide delegation
-  authClient.subject = 'admin@villasboulders.org'
-
-  return google.gmail({ version: 'v1', auth: authClient })
+  return google.gmail({ version: 'v1', auth: jwtClient })
 }
 
 function createMimeMessage(params: SendEmailParams): string {
