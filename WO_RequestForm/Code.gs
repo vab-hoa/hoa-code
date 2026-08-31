@@ -13,6 +13,29 @@ const CONFIG = {
   MANAGER_PHONE: '(TBD)'
 };
 
+// Simple document creation test - watch for auth popup
+function testDocumentCreate() {
+  try {
+    const testDoc = DocumentApp.create('WO_Test_' + Date.now());
+    const docId = testDoc.getId();
+    const docUrl = 'https://docs.google.com/document/d/' + docId + '/edit';
+
+    Logger.log('SUCCESS: Document created');
+    Logger.log('Doc ID: ' + docId);
+    Logger.log('URL: ' + docUrl);
+
+    // Clean up - delete the test doc
+    DriveApp.getFileById(docId).setTrashed(true);
+    Logger.log('Test document cleaned up');
+
+    return { success: true, docId: docId, url: docUrl };
+  } catch (e) {
+    Logger.log('FAILED: ' + e.message);
+    Logger.log('Stack: ' + e.stack);
+    return { success: false, error: e.message, stack: e.stack };
+  }
+}
+
 // Test function to verify all authorizations
 function testAuthorizations() {
   const results = {};
@@ -434,6 +457,10 @@ const HTML_FORM = `<!DOCTYPE html>
                     <button type="submit" class="btn-submit">Submit Request</button>
                 </div>
             </form>
+
+            <div style="text-align: center; font-size: 10px; color: #999; margin-top: 20px; padding-top: 10px; border-top: 1px solid #eee;">
+                Deployment: ###DEPLOY_ID_PLACEHOLDER###
+            </div>
         </div>
     </div>
 
@@ -708,7 +735,9 @@ function addOtherInfoField(body, formData) {
 }
 
 function doGet(e) {
-  return HtmlService.createHtmlOutput(HTML_FORM)
+  const deployId = e.parameter.deployId || 'unknown';
+  const html = HTML_FORM.replace('###DEPLOY_ID_PLACEHOLDER###', deployId);
+  return HtmlService.createHtmlOutput(html)
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
