@@ -54,56 +54,67 @@ function generateFormHTML() {
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Volunteer Interest Form</title>
+  <title>VaB Volunteer Interest Form</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      background: linear-gradient(135deg, #f0f2f5 0%, #e8eaed 100%);
       padding: 20px;
+      min-height: 100vh;
     }
     .form-container {
       max-width: 600px;
       margin: 0 auto;
       background: white;
-      padding: 30px;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #1a3a52 0%, #2d5f3f 100%);
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
     }
     h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
-      color: #333;
+      font-size: 22px;
+      margin-bottom: 5px;
+      font-weight: bold;
     }
     .subtitle {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 25px;
+      font-size: 13px;
+      opacity: 0.9;
+      margin-bottom: 0;
+    }
+    .form-content {
+      padding: 20px;
     }
     .form-section {
-      margin-bottom: 25px;
+      margin-bottom: 15px;
     }
     label {
       display: block;
       font-weight: bold;
-      margin-bottom: 8px;
-      color: #333;
-      font-size: 14px;
+      margin-bottom: 6px;
+      color: #1a3a52;
+      font-size: 13px;
     }
     .required::after {
       content: " *";
-      color: red;
+      color: #ff4444;
     }
     input[type="text"],
     input[type="email"],
     input[type="tel"],
     textarea {
       width: 100%;
-      padding: 10px;
+      padding: 8px;
       border: 1px solid #ddd;
       border-radius: 4px;
       font-family: Arial, sans-serif;
-      font-size: 14px;
+      font-size: 13px;
+      transition: border-color 0.3s;
     }
     textarea {
       resize: vertical;
@@ -114,14 +125,14 @@ function generateFormHTML() {
     input[type="tel"]:focus,
     textarea:focus {
       outline: none;
-      border-color: #4CAF50;
-      box-shadow: 0 0 5px rgba(76,175,80,0.3);
+      border-color: #2d5f3f;
+      box-shadow: 0 0 0 3px rgba(45,95,63,0.1);
     }
     .checkbox-group,
     .radio-group {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
     .checkbox-item,
     .radio-item {
@@ -131,58 +142,63 @@ function generateFormHTML() {
     }
     input[type="checkbox"],
     input[type="radio"] {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       cursor: pointer;
     }
     .checkbox-item label,
     .radio-item label {
       margin: 0;
       font-weight: normal;
+      font-size: 13px;
       cursor: pointer;
       flex: 1;
+      color: #333;
     }
     .button-group {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-top: 30px;
+      margin-top: 20px;
     }
     button {
-      flex: 1;
-      padding: 12px 20px;
+      padding: 10px 15px;
       border: none;
       border-radius: 4px;
-      font-size: 16px;
+      font-size: 13px;
       font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s;
     }
     #submitBtn {
-      background-color: #4CAF50;
+      background-color: #2d7d3a;
       color: white;
+      grid-column: 1 / -1;
     }
     #submitBtn:hover {
-      background-color: #45a049;
+      background-color: #1a4d22;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(45,125,58,0.3);
     }
     #resetBtn {
-      background-color: #f0f0f0;
-      color: #333;
-      border: 1px solid #ddd;
+      background-color: #999;
+      color: white;
     }
     #resetBtn:hover {
-      background-color: #e0e0e0;
+      background-color: #666;
     }
     .message {
       display: none;
-      padding: 15px;
+      padding: 12px;
       border-radius: 4px;
-      margin-bottom: 20px;
-      font-size: 14px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      font-weight: bold;
     }
     .message.success {
       background-color: #d4edda;
       color: #155724;
-      border: 1px solid #c3e6cb;
+      border: 2px solid #28a745;
       display: block;
     }
     .message.error {
@@ -194,7 +210,9 @@ function generateFormHTML() {
     .loading {
       display: none;
       text-align: center;
-      margin: 20px 0;
+      margin: 15px 0;
+      color: #1a3a52;
+      font-size: 13px;
     }
     .loading.active {
       display: block;
@@ -203,12 +221,15 @@ function generateFormHTML() {
 </head>
 <body>
   <div class="form-container">
-    <div id="message" class="message"></div>
+    <div class="header">
+      <h1>VaB Volunteer Interest Form</h1>
+      <p class="subtitle">Help us serve the community better</p>
+    </div>
 
-    <h1>VaB Volunteer Interest Form</h1>
-    <p class="subtitle">Help us serve the community better</p>
+    <div class="form-content">
+      <div id="message" class="message"></div>
 
-    <form id="volunteerForm">
+      <form id="volunteerForm">
       <!-- Name Section -->
       <div class="form-section">
         <div style="display: flex; gap: 15px;">
@@ -286,8 +307,10 @@ function generateFormHTML() {
       </div>
     </form>
 
-    <div id="loading" class="loading">
-      <p>Processing your submission...</p>
+      <div id="loading" class="loading">
+        Processing your submission...
+      </div>
+    </form>
     </div>
   </div>
 
@@ -367,75 +390,143 @@ function submitVolunteerForm(formData) {
 function createVolunteerPDF(formData) {
   const doc = DocumentApp.create('VaB Volunteer Form - ' + formData.firstName + ' ' + formData.lastName + ' - ' + formData.timestamp);
   const body = doc.getBody();
-  const style = {};
+  body.clear();
+
+  // Header with decorative line
+  const decorativeLine = body.appendParagraph('');
+  decorativeLine.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  decorativeLine.setSpacingBefore(0);
+  decorativeLine.setSpacingAfter(2);
+  decorativeLine.setLineSpacing(0.5);
+  const decoration = decorativeLine.editAsText();
+  decoration.setText('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  decoration.setForegroundColor('#2d7d3a');
+  decoration.setFontSize(9);
 
   // Title
-  style.fontSize = 16;
-  style.bold = true;
-  body.appendParagraph('VaB Volunteer Interest Form')
-    .setAttributes(style);
-  body.appendParagraph('');
+  const titleParagraph = body.appendParagraph('VaB Volunteer Interest Form');
+  titleParagraph.setFontSize(16);
+  titleParagraph.setBold(true);
+  titleParagraph.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  titleParagraph.setForegroundColor('#1a3a52');
+  titleParagraph.setSpacingBefore(0);
+  titleParagraph.setSpacingAfter(0);
 
-  // Submission date
-  body.appendParagraph('Submission Date: ' + formData.timestamp);
-  body.appendParagraph('');
+  // Personal Information Section
+  const personalInfoTitle = body.appendParagraph('Personal Information');
+  personalInfoTitle.setBold(true);
+  personalInfoTitle.setFontSize(9);
+  personalInfoTitle.setForegroundColor('#1a3a52');
+  personalInfoTitle.setSpacingBefore(0);
+  personalInfoTitle.setSpacingAfter(2);
 
-  // Personal Information
-  style.fontSize = 12;
-  style.bold = true;
-  body.appendParagraph('Personal Information')
-    .setAttributes(style);
+  // Create table for personal info
+  const personalTable = body.appendTable([
+    ['Name', formData.firstName + ' ' + formData.lastName],
+    ['Email', formData.email],
+    ['Phone', formData.phone]
+  ]);
 
-  style.bold = false;
-  body.appendParagraph('Name: ' + formData.firstName + ' ' + formData.lastName)
-    .setAttributes(style);
-  body.appendParagraph('Email: ' + formData.email)
-    .setAttributes(style);
-  body.appendParagraph('Phone: ' + formData.phone)
-    .setAttributes(style);
-  body.appendParagraph('');
+  personalTable.setColumnWidth(0, 140);
+  personalTable.setColumnWidth(1, 310);
+  personalTable.setBorderColor('#dddddd');
 
-  // Committees
-  style.bold = true;
-  body.appendParagraph('Preferred Committees/Groups')
-    .setAttributes(style);
-  style.bold = false;
+  for (let i = 0; i < 3; i++) {
+    const labelCell = personalTable.getCell(i, 0);
+    labelCell.clear();
+    labelCell.setPaddingTop(1);
+    labelCell.setPaddingBottom(1);
+    labelCell.setPaddingLeft(4);
+    labelCell.setPaddingRight(4);
+    const labelPara = labelCell.appendParagraph(personalTable.getCell(i, 0).getText());
+    labelPara.setBold(true);
+    labelPara.setFontSize(9);
+    labelPara.setForegroundColor('#1a3a52');
+    labelPara.setSpacingBefore(0);
+    labelPara.setSpacingAfter(0);
+    labelPara.setLineSpacing(1.0);
+
+    const valueCell = personalTable.getCell(i, 1);
+    valueCell.clear();
+    valueCell.setPaddingTop(1);
+    valueCell.setPaddingBottom(1);
+    valueCell.setPaddingLeft(4);
+    valueCell.setPaddingRight(4);
+    const valuePara = valueCell.appendParagraph([formData.firstName + ' ' + formData.lastName, formData.email, formData.phone][i]);
+    valuePara.setFontSize(9);
+    valuePara.setLineSpacing(1.0);
+    valuePara.setSpacingBefore(0);
+    valuePara.setSpacingAfter(0);
+  }
+
+  body.appendParagraph('').setSpacingAfter(2);
+
+  // Committees Section
+  const committeesTitle = body.appendParagraph('Preferred Committees/Groups');
+  committeesTitle.setBold(true);
+  committeesTitle.setFontSize(9);
+  committeesTitle.setForegroundColor('#1a3a52');
+  committeesTitle.setSpacingBefore(0);
+  committeesTitle.setSpacingAfter(2);
+
   formData.committees.forEach(c => {
-    body.appendParagraph('• ' + c)
-      .setAttributes(style);
+    const p = body.appendParagraph('• ' + c);
+    p.setFontSize(9);
+    p.setForegroundColor('#333333');
+    p.setSpacingBefore(0);
+    p.setSpacingAfter(0);
   });
-  body.appendParagraph('');
+
+  body.appendParagraph('').setSpacingAfter(2);
 
   // Availability
-  style.bold = true;
-  body.appendParagraph('Availability Preference')
-    .setAttributes(style);
-  style.bold = false;
-  body.appendParagraph(formData.availability)
-    .setAttributes(style);
-  body.appendParagraph('');
+  const availTitle = body.appendParagraph('Availability Preference');
+  availTitle.setBold(true);
+  availTitle.setFontSize(9);
+  availTitle.setForegroundColor('#1a3a52');
+  availTitle.setSpacingBefore(0);
+  availTitle.setSpacingAfter(2);
+
+  const availP = body.appendParagraph(formData.availability);
+  availP.setFontSize(9);
+  availP.setSpacingBefore(0);
+  availP.setSpacingAfter(0);
+
+  body.appendParagraph('').setSpacingAfter(2);
 
   // Skills
   if (formData.skills.length > 0) {
-    style.bold = true;
-    body.appendParagraph('Special Skills')
-      .setAttributes(style);
-    style.bold = false;
+    const skillsTitle = body.appendParagraph('Special Skills');
+    skillsTitle.setBold(true);
+    skillsTitle.setFontSize(9);
+    skillsTitle.setForegroundColor('#1a3a52');
+    skillsTitle.setSpacingBefore(0);
+    skillsTitle.setSpacingAfter(2);
+
     formData.skills.forEach(s => {
-      body.appendParagraph('• ' + s)
-        .setAttributes(style);
+      const p = body.appendParagraph('• ' + s);
+      p.setFontSize(9);
+      p.setForegroundColor('#333333');
+      p.setSpacingBefore(0);
+      p.setSpacingAfter(0);
     });
-    body.appendParagraph('');
+    body.appendParagraph('').setSpacingAfter(2);
   }
 
   // Contribution
   if (formData.contribution.trim()) {
-    style.bold = true;
-    body.appendParagraph('How They Envision Contributing')
-      .setAttributes(style);
-    style.bold = false;
-    body.appendParagraph(formData.contribution)
-      .setAttributes(style);
+    const contribTitle = body.appendParagraph('How They Envision Contributing');
+    contribTitle.setBold(true);
+    contribTitle.setFontSize(9);
+    contribTitle.setForegroundColor('#1a3a52');
+    contribTitle.setSpacingBefore(0);
+    contribTitle.setSpacingAfter(2);
+
+    const contribP = body.appendParagraph(formData.contribution);
+    contribP.setFontSize(9);
+    contribP.setLineSpacing(1.0);
+    contribP.setSpacingBefore(0);
+    contribP.setSpacingAfter(0);
   }
 
   const docId = doc.getId();
