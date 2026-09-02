@@ -2,14 +2,14 @@ VaB Volunteer Expense Reimbursement Form - Deployment Info
 ==========================================================
 
 Deployment ID:
-AKfycbzYEI8mzZ1s03uDGa9A6WW_Q9zQPPAUeyzwrsaA78O9nAjZlP_0jBmRyBKTFDA0hqAg
+AKfycbwtmyKvb2WT4Z2XNXboRZsYgg50vDL7N8pspZJUybahJxC8S7YDfF6VXx0SovH8AE2X
 
 Public URL (click or paste in browser):
-https://script.google.com/macros/s/AKfycbzYEI8mzZ1s03uDGa9A6WW_Q9zQPPAUeyzwrsaA78O9nAjZlP_0jBmRyBKTFDA0hqAg/exec
+https://script.google.com/macros/s/AKfycbwtmyKvb2WT4Z2XNXboRZsYgg50vDL7N8pspZJUybahJxC8S7YDfF6VXx0SovH8AE2X/exec
 
 Website Embed (iframe):
 <iframe
-  src="https://script.google.com/macros/s/AKfycbzYEI8mzZ1s03uDGa9A6WW_Q9zQPPAUeyzwrsaA78O9nAjZlP_0jBmRyBKTFDA0hqAg/exec"
+  src="https://script.google.com/macros/s/AKfycbwtmyKvb2WT4Z2XNXboRZsYgg50vDL7N8pspZJUybahJxC8S7YDfF6VXx0SovH8AE2X/exec"
   width="100%"
   height="1400"
   frameborder="0"
@@ -19,5 +19,5 @@ Website Embed (iframe):
 Created: 2026-09-02
 Styling: Professional header with VaB branding, green decorative line, compact 9pt font
 Email Recipients: manager@villasboulders.org, board@villasboulders.org
-Features: File upload (up to 5 files), expense tracking, reimbursement method selection, ease rating
-Supported Files: JPG, PNG, PDF (up to 10 MB each)
+Features: File upload with attachment to email, expense tracking, reimbursement method selection, ease rating
+Supported Files: JPG, PNG, PDF (up to 10 MB each, max 5 files)

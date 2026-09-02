@@ -473,13 +473,35 @@ function generateFormHTML() {
 
 function submitExpenseForm(formData) {
   try {
+    // Process uploaded files
+    const processedFiles = processFiles(formData.files || []);
+
     const pdfFileName = createExpensePDF(formData);
-    sendExpenseEmails(formData, pdfFileName);
+    sendExpenseEmails(formData, pdfFileName, processedFiles);
     return { success: true, fileName: pdfFileName };
   } catch (error) {
     console.error('Error in submitExpenseForm:', error);
     throw new Error('Form submission failed: ' + error.message);
   }
+}
+
+function processFiles(encodedFiles) {
+  const processedFiles = [];
+
+  for (const file of encodedFiles) {
+    const decodedBlob = Utilities.newBlob(
+      Utilities.base64Decode(file.base64),
+      file.mimeType,
+      file.name
+    );
+    processedFiles.push({
+      name: file.name,
+      blob: decodedBlob,
+      mimeType: file.mimeType
+    });
+  }
+
+  return processedFiles;
 }
 
 function createExpensePDF(formData) {
@@ -608,7 +630,7 @@ function createExpensePDF(formData) {
   return pdfFile.getName();
 }
 
-function sendExpenseEmails(formData, fileName) {
+function sendExpenseEmails(formData, fileName, processedFiles) {
   const pdfFile = DriveApp.getFolderById(CONFIG.parentFolderId).getFilesByName(fileName).next();
   const pdfUrl = pdfFile.getUrl();
 
@@ -629,11 +651,15 @@ Reimbursement Method: ${formData.reimbursement}
 
 ${formData.rating ? 'Form Ease Rating: ' + formData.rating + ' out of 5\n' : ''}
 
-Receipts Uploaded: ${formData.files.length} file(s)
+Receipts: ${processedFiles.length} file(s) attached
 
 View PDF: ${pdfUrl}
   `;
 
-  GmailApp.sendEmail(CONFIG.managerEmail, subject, body);
-  GmailApp.sendEmail(CONFIG.boardEmail, subject, body);
+  const pdfFileName = `Expense_Request_${formData.volunteerName.replace(/\s+/g, '_')}_${formData.date}.pdf`;
+  const attachments = [pdfFile.getBlob().setName(pdfFileName)];
+  attachments.push(...processedFiles.map(f => f.blob));
+
+  GmailApp.sendEmail(CONFIG.managerEmail, subject, body, { attachments: attachments });
+  GmailApp.sendEmail(CONFIG.boardEmail, subject, body, { attachments: attachments });
 }
