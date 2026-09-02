@@ -530,10 +530,10 @@ function createVolunteerPDF(formData) {
   }
 
   const docId = doc.getId();
+  doc.saveAndClose();
+
   const targetFolder = DriveApp.getFolderById(CONFIG.parentFolderId);
   const file = DriveApp.getFileById(docId);
-  targetFolder.addFile(file);
-  DriveApp.getRootFolder().removeFile(file);
 
   // Convert to PDF
   const pdfBlob = file.getAs('application/pdf');
@@ -541,7 +541,6 @@ function createVolunteerPDF(formData) {
     .setName('VaB Volunteer Form - ' + formData.firstName + ' ' + formData.lastName + ' - ' + formData.timestamp + '.pdf');
 
   // Delete the Google Doc
-  doc.deleteBody(doc.getBody());
   DriveApp.getFileById(docId).setTrashed(true);
 
   return pdfFile.getName();
