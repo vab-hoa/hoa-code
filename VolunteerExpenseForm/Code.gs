@@ -303,7 +303,7 @@ function generateFormHTML() {
           <p class="help-text">Upload up to 5 files. Max 10 MB per file. Supported: JPG, PNG, PDF</p>
           <div class="file-upload-wrapper">
             <label for="fileInput" class="file-upload-label">Add file</label>
-            <input type="file" id="fileInput" name="files" multiple accept=".jpg,.jpeg,.png,.pdf">
+            <input type="file" id="fileInput" name="files" multiple accept="image/jpeg,image/png,application/pdf">
           </div>
           <div id="fileList" class="file-list"></div>
         </div>
