@@ -412,54 +412,21 @@ function createVolunteerPDF(formData) {
   titleParagraph.setSpacingBefore(0);
   titleParagraph.setSpacingAfter(0);
 
-  // Personal Information Section
-  const personalInfoTitle = body.appendParagraph('Personal Information');
-  personalInfoTitle.setBold(true);
-  personalInfoTitle.setFontSize(9);
-  personalInfoTitle.setForegroundColor('#1a3a52');
-  personalInfoTitle.setSpacingBefore(0);
-  personalInfoTitle.setSpacingAfter(2);
+  // Personal Information
+  const nameP = body.appendParagraph(formData.firstName + ' ' + formData.lastName);
+  nameP.setFontSize(9);
+  nameP.setSpacingBefore(0);
+  nameP.setSpacingAfter(0);
 
-  // Create table for personal info
-  const personalTable = body.appendTable([
-    ['Name', formData.firstName + ' ' + formData.lastName],
-    ['Email', formData.email],
-    ['Phone', formData.phone]
-  ]);
+  const emailP = body.appendParagraph(formData.email);
+  emailP.setFontSize(9);
+  emailP.setSpacingBefore(0);
+  emailP.setSpacingAfter(0);
 
-  personalTable.setColumnWidth(0, 140);
-  personalTable.setColumnWidth(1, 310);
-  personalTable.setBorderColor('#dddddd');
-
-  for (let i = 0; i < 3; i++) {
-    const labelCell = personalTable.getCell(i, 0);
-    labelCell.clear();
-    labelCell.setPaddingTop(1);
-    labelCell.setPaddingBottom(1);
-    labelCell.setPaddingLeft(4);
-    labelCell.setPaddingRight(4);
-    const labelPara = labelCell.appendParagraph(personalTable.getCell(i, 0).getText());
-    labelPara.setBold(true);
-    labelPara.setFontSize(9);
-    labelPara.setForegroundColor('#1a3a52');
-    labelPara.setSpacingBefore(0);
-    labelPara.setSpacingAfter(0);
-    labelPara.setLineSpacing(1.0);
-
-    const valueCell = personalTable.getCell(i, 1);
-    valueCell.clear();
-    valueCell.setPaddingTop(1);
-    valueCell.setPaddingBottom(1);
-    valueCell.setPaddingLeft(4);
-    valueCell.setPaddingRight(4);
-    const valuePara = valueCell.appendParagraph([formData.firstName + ' ' + formData.lastName, formData.email, formData.phone][i]);
-    valuePara.setFontSize(9);
-    valuePara.setLineSpacing(1.0);
-    valuePara.setSpacingBefore(0);
-    valuePara.setSpacingAfter(0);
-  }
-
-  body.appendParagraph('').setSpacingAfter(2);
+  const phoneP = body.appendParagraph(formData.phone);
+  phoneP.setFontSize(9);
+  phoneP.setSpacingBefore(0);
+  phoneP.setSpacingAfter(4);
 
   // Committees Section
   const committeesTitle = body.appendParagraph('Preferred Committees/Groups');
