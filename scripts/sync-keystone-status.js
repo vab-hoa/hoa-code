@@ -28,7 +28,7 @@ async function getSheetData(sheetName) {
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: KEYSTONE_CACHE_SHEET_ID,
-    range: `'${sheetName}'!A:Z`
+    range: `'${sheetName}'!A1:Z10000`
   })
 
   return response.data.values || []
