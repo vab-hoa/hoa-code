@@ -1,0 +1,21 @@
+VaB Overnight Parking Request Form - Deployment Info
+=====================================================
+
+Deployment ID:
+AKfycbzgNlbUPkUyQOVqeSfN7P8_b5Z4WrGBT2jT0DlP6ipVrVxtCkj_4OTGdSd97ozZQR_Y
+
+Public URL (click or paste in browser):
+https://script.google.com/macros/s/AKfycbzgNlbUPkUyQOVqeSfN7P8_b5Z4WrGBT2jT0DlP6ipVrVxtCkj_4OTGdSd97ozZQR_Y/exec
+
+Website Embed (iframe for https://www.villasboulders.org/forms/overnight-parking-request):
+<iframe
+  src="https://script.google.com/macros/s/AKfycbzgNlbUPkUyQOVqeSfN7P8_b5Z4WrGBT2jT0DlP6ipVrVxtCkj_4OTGdSd97ozZQR_Y/exec"
+  width="100%"
+  height="1200"
+  frameborder="0"
+  style="border: none; padding: 0; margin: 0;">
+</iframe>
+
+Created: 2026-09-02
+Styling: Professional header with VaB branding, green decorative line, compact 9pt font
+Email Recipients: board@villasboulders.org, manager@villasboulders.org
