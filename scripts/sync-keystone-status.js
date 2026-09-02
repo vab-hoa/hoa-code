@@ -26,12 +26,17 @@ async function getSheetData(sheetName) {
     })
   })
 
-  const response = await sheets.spreadsheets.values.get({
-    spreadsheetId: KEYSTONE_CACHE_SHEET_ID,
-    range: `'${sheetName}'!A1:Z10000`
-  })
-
-  return response.data.values || []
+  try {
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: KEYSTONE_CACHE_SHEET_ID,
+      range: sheetName,
+      majorDimension: 'ROWS'
+    })
+    return response.data.values || []
+  } catch (error) {
+    console.error(`Error fetching sheet "${sheetName}": ${error.message}`)
+    return []
+  }
 }
 
 function parseWorkOrdersTab(rows) {
@@ -227,8 +232,8 @@ async function main() {
     console.log('Starting Keystone status sync...')
 
     // Fetch from Keystone Cache
-    const woRows = await getSheetData('Work Orders')
-    const arcRows = await getSheetData('ARC Review')
+    const woRows = await getSheetData("'Work Orders'!A1:Z10000")
+    const arcRows = await getSheetData("'ARC Review'!A1:Z10000")
 
     const keystoneWOs = parseWorkOrdersTab(woRows)
     const keystoneArcs = parseArcTab(arcRows)
