@@ -1,0 +1,22 @@
+VaB Volunteer Expense Reimbursement Form - Deployment Info
+==========================================================
+
+Deployment ID:
+AKfycbyUdI3hy7r_M8WIOsU1qJ08-H23erpCC4aSxSJa1A-Ylts5P3-GS9UNgbGht87uSwZz
+
+Public URL (click or paste in browser):
+https://script.google.com/macros/s/AKfycbyUdI3hy7r_M8WIOsU1qJ08-H23erpCC4aSxSJa1A-Ylts5P3-GS9UNgbGht87uSwZz/exec
+
+Website Embed (iframe):
+<iframe
+  src="https://script.google.com/macros/s/AKfycbyUdI3hy7r_M8WIOsU1qJ08-H23erpCC4aSxSJa1A-Ylts5P3-GS9UNgbGht87uSwZz/exec"
+  width="100%"
+  height="1400"
+  frameborder="0"
+  style="border: none; padding: 0; margin: 0;">
+</iframe>
+
+Created: 2026-09-02
+Styling: Professional header with VaB branding, green decorative line, compact 9pt font
+Email Recipients: manager@villasboulders.org, board@villasboulders.org
+Features: File upload (up to 5 files), expense tracking, reimbursement method selection, ease rating
