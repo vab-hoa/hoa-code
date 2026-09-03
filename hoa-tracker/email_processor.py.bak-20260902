@@ -17,13 +17,13 @@ Classification pipeline (ordered):
   9. Default → unclassified
 
 Usage:
-    python3 email_processor.py [--days N] [--dry-run] [--debug] [--notify]
+    python3 email_processor.py [--days N] [--dry-run] [--debug] [--report-email]
 
 Options:
-    --days N     Look back N days (default: 1)
-    --dry-run    Process emails but don't write to Supabase
-    --debug      Print debug info to stderr
-    --notify     Send email notification for each new work item created
+    --days N        Look back N days (default: 1)
+    --dry-run       Process emails but don't write to Supabase
+    --debug         Print debug info to stderr
+    --report-email  Send a summary email to Dee after processing
 """
 
 import sys
@@ -58,11 +58,12 @@ except ImportError:
 
 SERVICE_ACCOUNT_FILE = '/home/dee/.config/openclaw/google-service-account.json'
 # Mailboxes to read — admin@ via service account, mcdonaldbuckhoa@ via IMAP
+SECRETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'secrets')
 MAILBOXES = [
     {'type': 'service_account', 'email': 'admin@villasboulders.org'},
     {'type': 'imap', 'email': 'mcdonaldbuckhoa@gmail.com',
      'host': 'imap.gmail.com', 'port': 993,
-     'password_file': '/home/dee/hoa-code/hoa-tracker/secrets/.gmail_pw_mcdonaldbuckhoa'},
+     'password_file': os.path.join(SECRETS_DIR, '.gmail_pw_mcdonaldbuckhoa')},
 ]
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
@@ -73,13 +74,12 @@ SUPABASE_HOST = 'db.obveytoovkzjrpzrhrim.supabase.co'
 SUPABASE_PORT = 5432
 SUPABASE_DB = 'postgres'
 SUPABASE_USER = 'postgres'
-SUPABASE_PASSWORD_FILE = '/home/dee/hoa-code/hoa-tracker/secrets/.supabase_db_password'
+SUPABASE_PASSWORD_FILE = os.path.join(SECRETS_DIR, '.supabase_db_password')
 
-# Supabase Storage (for attachment uploads)
-SUPABASE_URL = 'https://obveytoovkzjrpzrhrim.supabase.co'
-SUPABASE_SERVICE_ROLE_KEY_FILE = '/tmp/hoa_processor/.supabase_service_role_key'
-SUPABASE_STORAGE_BUCKET = 'work-item-documents'
-MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024  # 10MB limit
+# Daily report email settings
+REPORT_FROM = 'admin@villasboulders.org'
+REPORT_TO = 'dee@wmbuck.net'
+REPORT_SUBJECT = 'HOA Email Processor - Daily Summary'
 
 # Import address standardization (same directory)
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -112,9 +112,6 @@ ADMIN_EMAIL = 'admin@villasboulders.org'
 BOARDWORK_EMAIL = 'boardwork@villasboulders.org'
 ARCFORM_RECIPIENT = 'arcformrecipients@villasbouders.org'
 
-# Classifications that create work items (trigger notifications when --notify is on)
-WORK_ITEM_CLASSIFICATIONS = {'arc_form_submission', 'arc_form_forward', 'wo_form', 'hppr_form'}
-
 # Noise sender domains/patterns
 NOISE_DOMAINS = {
     'noreply@google.com', 'drive-shares-dm-noreply@google.com',
@@ -131,7 +128,6 @@ NOISE_DOMAIN_PATTERNS = [
     'googlecloud@google.com',  # Google Cloud trial notices
     'gemini-notes@google.com',  # Gemini meeting notes
     'googlephotos.com',         # Google Photos shares
-    'strongroomsolutions.com',  # Invoice lockbox - classify separately
 ]
 
 # ============================================================
@@ -161,10 +157,6 @@ def classify_email(subject, sender, recipients, body, headers=None):
     # Mailer-daemon DSN
     if 'mailer-daemon' in sender_lower:
         return ('noise', 1.0, True)
-
-    # --- 2b. Invoice lockbox (Strongroom) ---
-    if 'strongroomsolutions.com' in sender_lower or 'payableslockbox' in sender_lower:
-        return ('invoice_pending', 0.95, False)
 
     # --- 2. Exact automation match ---
     # WO status report
@@ -370,7 +362,7 @@ def detect_multiple_work_items(parsed):
     """
     desc = parsed.get('description', '')
     if not desc:
-        return [desc], None
+        return [desc]
 
     # Keywords that suggest distinct asset types
     asset_keywords = [
@@ -409,82 +401,6 @@ def detect_multiple_work_items(parsed):
         return [desc], found_types
 
     return [desc], None
-
-
-# ============================================================
-# WO form parser (Google Forms work order submission)
-# ============================================================
-
-WO_FIELD_LABELS = [
-    'Name',
-    'Unit Address',
-    'Your\nEmail',
-    'Briefly describe the work that needs to be done',
-    'Upload photos or files',
-    'Type of work\nneeded',
-    'Priority you would assign this work (High=10, Low=1)',
-]
-
-# Simpler labels for matching (handle line wrapping)
-WO_FIELD_MATCHES = [
-    ('name', 'Name'),
-    ('address', 'Unit Address'),
-    ('email', 'Your'),  # followed by newline then Email
-    ('description', 'Briefly describe the work'),
-    ('attachments', 'Upload photos or files'),
-    ('work_type', 'Type of work'),
-    ('priority', 'Priority you would assign'),
-]
-
-def parse_wo_form(body):
-    """Parse a Google Forms work order submission email body."""
-    text = strip_html(body)
-    
-    result = {}
-    for field_name, label in WO_FIELD_MATCHES:
-        # Find the label and extract text until the next label
-        idx = text.find(label)
-        if idx == -1:
-            idx = text.lower().find(label.lower())
-        if idx == -1:
-            continue
-        
-        value_start = idx + len(label)
-        # Find the next label after this one
-        value_end = len(text)
-        for _, next_label in WO_FIELD_MATCHES:
-            if next_label == label:
-                continue
-            next_idx = text.find(next_label, value_start)
-            if next_idx != -1 and next_idx < value_end:
-                value_end = next_idx
-        
-        value = text[value_start:value_end].strip()
-        # Clean up newlines and extra whitespace
-        value = ' '.join(value.split())
-        
-        if field_name == 'address':
-            result['address'] = value
-            result['parcel_code'] = standardize_address(value)
-        elif field_name == 'email':
-            # Extract email - may have "Email" prefix
-            value = value.replace('Email', '').strip()
-            result['email'] = value
-        elif field_name == 'description':
-            result['description'] = value
-        elif field_name == 'attachments':
-            result['attachments'] = value if value else 'none'
-        elif field_name == 'work_type':
-            # Label in form is "Type of work\nneeded" — "needed" is part of the label,
-            # not the value. Strip it if present.
-            value = re.sub(r'^needed\s*', '', value, flags=re.IGNORECASE)
-            result['work_type'] = value
-        elif field_name == 'name':
-            result['homeowner_name'] = value
-        elif field_name == 'priority':
-            result['priority'] = value
-    
-    return result
 
 
 # ============================================================
@@ -727,7 +643,7 @@ def get_gmail_service(delegated_email='admin@villasboulders.org'):
 def get_recent_emails(service, days=1, debug=False, max_results=500, mailbox_email=None):
     """Fetch emails from the last N days."""
     after_date = (datetime.now(timezone.utc) - timedelta(days=days)).strftime('%Y/%m/%d')
-    query = f'after:{after_date} -subject:"[HOA Tracker]"'
+    query = f'after:{after_date}'
 
     if debug:
         print(f"[DEBUG] Gmail query: {query}", file=sys.stderr)
@@ -780,9 +696,6 @@ def get_recent_emails(service, days=1, debug=False, max_results=500, mailbox_ema
 
             body_text, body_html = extract_bodies(msg.get('payload', {}))
 
-            # Extract attachment metadata from Gmail payload
-            attachments = extract_gmail_attachments(msg.get('payload', {}))
-
             # Parse date
             try:
                 received_date = parsedate_to_datetime(date_str) if date_str else None
@@ -806,8 +719,7 @@ def get_recent_emails(service, days=1, debug=False, max_results=500, mailbox_ema
                 'received_date': received_date,
                 'body_text': body_text,
                 'body_html': body_html,
-                'raw_headers': header_dict,
-                'attachments': attachments
+                'raw_headers': header_dict
             })
         except Exception as e:
             if debug:
@@ -887,9 +799,6 @@ def get_recent_emails_imap(mailbox, days=1, debug=False, max_results=500):
             # Build a synthetic thread_id from subject normalization (IMAP doesn't have thread IDs)
             thread_id = f"imap:{normalize_subject(headers.get('subject', ''))[:50]}"
 
-            # Extract attachments (IMAP - data already decoded)
-            attachments = extract_imap_attachments(msg)
-
             emails.append({
                 'gmail_id': mid.decode(),
                 'gmail_message_id': message_id,
@@ -903,8 +812,7 @@ def get_recent_emails_imap(mailbox, days=1, debug=False, max_results=500):
                 'received_date': received_date,
                 'body_text': body_text,
                 'body_html': body_html,
-                'raw_headers': headers,
-                'attachments': attachments
+                'raw_headers': headers
             })
         except Exception as e:
             if debug:
@@ -965,42 +873,6 @@ def get_db_connection():
         user=SUPABASE_USER,
         password=password
     )
-
-def lookup_property_by_parcel(conn, parcel_code):
-    """Look up a property by parcel code, return UUID or None."""
-    try:
-        with conn.cursor() as cur:
-            cur.execute("SELECT id FROM properties WHERE parcel_code = %s", (parcel_code,))
-            row = cur.fetchone()
-            return row[0] if row else None
-    except Exception:
-        return None
-
-def create_work_item(conn, item_data):
-    """Create a work item in Supabase. Return the new UUID or None."""
-    try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO work_items
-                    (source_document_id, property_id, title, description, category, status, priority)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-                RETURNING id
-            """, (
-                item_data.get('source_document_id'),
-                item_data.get('property_id'),
-                item_data.get('title', ''),
-                item_data.get('description', ''),
-                item_data.get('category', 'work_order'),
-                item_data.get('status', 'new'),
-                item_data.get('priority', 'normal'),
-            ))
-            row = cur.fetchone()
-            conn.commit()
-            return row[0] if row else None
-    except Exception as e:
-        print(f"[ERROR] create_work_item failed: {e}", file=sys.stderr)
-        conn.rollback()
-        return None
 
 def upsert_email_message(conn, email_data, classification, confidence, is_noise, parse_payload):
     """Insert or update an email_message record."""
@@ -1115,386 +987,10 @@ def insert_wo_snapshots(conn, email_uuid, parsed_report, snapshot_date):
     return count
 
 # ============================================================
-# Attachment extraction (Gmail API and IMAP)
-# ============================================================
-
-def extract_gmail_attachments(payload):
-    """Extract attachment metadata from a Gmail API message payload."""
-    attachments = []
-    def walk(part):
-        if part.get('filename') and part.get('body', {}).get('attachmentId'):
-            attachments.append({
-                'filename': part['filename'],
-                'content_type': part.get('mimeType', 'application/octet-stream'),
-                'size': part['body'].get('size', 0),
-                'attachment_id': part['body']['attachmentId']
-            })
-        if 'parts' in part:
-            for p in part['parts']:
-                walk(p)
-    walk(payload)
-    return attachments
-
-
-def download_gmail_attachment(service, message_id, attachment_id):
-    """Download an attachment from Gmail API. Returns raw bytes."""
-    result = service.users().messages().attachments().get(
-        userId='me', messageId=message_id, id=attachment_id
-    ).execute()
-    data = result.get('data', '')
-    # Gmail returns base64url encoded data
-    data = data.replace('-', '+').replace('_', '/')
-    padding = 4 - len(data) % 4
-    if padding < 4:
-        data += '=' * padding
-    return base64.b64decode(data)
-
-
-def extract_imap_attachments(msg):
-    """Extract attachments from an IMAP email.message.Message object.
-    Returns list of dicts with filename, content_type, size, and decoded data."""
-    attachments = []
-    if msg.is_multipart():
-        for part in msg.walk():
-            fn = part.get_filename()
-            if fn:
-                payload = part.get_payload(decode=True)
-                if payload:
-                    attachments.append({
-                        'filename': fn,
-                        'content_type': part.get_content_type(),
-                        'size': len(payload),
-                        'data': payload  # already decoded bytes
-                    })
-    return attachments
-
-
-def load_service_role_key():
-    """Load the Supabase service role key from file."""
-    try:
-        with open(SUPABASE_SERVICE_ROLE_KEY_FILE, 'r') as f:
-            return f.read().strip()
-    except FileNotFoundError:
-        return None
-
-
-def upload_to_supabase_storage(file_path, file_data, content_type, service_role_key):
-    """Upload a file to Supabase Storage bucket via REST API.
-    Returns the storage path on success, raises on failure."""
-    import urllib.request
-    import urllib.error
-
-    url = f"{SUPABASE_URL}/storage/v1/object/{SUPABASE_STORAGE_BUCKET}/{file_path}"
-    headers = {
-        'Authorization': f'Bearer {service_role_key}',
-        'Content-Type': content_type or 'application/octet-stream',
-        'x-upsert': 'true'
-    }
-    req = urllib.request.Request(url, data=file_data, method='POST', headers=headers)
-    try:
-        resp = urllib.request.urlopen(req, timeout=30)
-        body = json.loads(resp.read())
-        return file_path  # success
-    except urllib.error.HTTPError as e:
-        error_body = e.read().decode('utf-8', errors='replace') if e.fp else ''
-        raise RuntimeError(f"Supabase Storage upload failed: HTTP {e.code} - {error_body}")
-    except Exception as e:
-        raise RuntimeError(f"Supabase Storage upload error: {str(e)}")
-
-
-def insert_work_item_document(conn, work_item_id, filename, storage_path, content_type, file_size):
-    """Insert a work_item_documents row via psycopg2."""
-    with conn.cursor() as cur:
-        cur.execute("""
-            INSERT INTO work_item_documents (work_item_id, title, file_name, storage_path, content_type, file_size_bytes, uploaded_by)
-            VALUES (%s, NULL, %s, %s, %s, %s, 'email_processor')
-            RETURNING id
-        """, (work_item_id, filename, storage_path, content_type, file_size))
-        result = cur.fetchone()
-        conn.commit()
-        return str(result[0]) if result else None
-
-
-def process_attachments_for_email(email_data, work_item_id, conn, service=None, debug=False, dry_run=False):
-    """Extract, download, and upload attachments for an ARC form email.
-
-    Args:
-        email_data: The email dict (must include 'attachments' metadata)
-        work_item_id: UUID of the associated work item (or None if not created yet)
-        conn: psycopg2 connection for inserting work_item_documents
-        service: Gmail service object (required for Gmail attachments, not needed for IMAP)
-        debug: Print debug info
-        dry_run: Skip actual uploads/inserts
-
-    Returns list of attachment result dicts.
-    """
-    attachments = email_data.get('attachments', [])
-    if not attachments:
-        if debug:
-            print(f"[DEBUG] No attachments found for {email_data.get('gmail_message_id', '?')[:20]}...", file=sys.stderr)
-        return []
-
-    if debug:
-        print(f"[DEBUG] Found {len(attachments)} attachment(s) for {email_data.get('gmail_message_id', '?')[:20]}...", file=sys.stderr)
-        for a in attachments:
-            print(f"[DEBUG]   - {a['filename']} ({a.get('content_type', '?')}, {a.get('size', 0)} bytes)", file=sys.stderr)
-
-    service_role_key = load_service_role_key()
-    if not service_role_key and not dry_run:
-        if debug:
-            print(f"[DEBUG] No service role key found at {SUPABASE_SERVICE_ROLE_KEY_FILE} - will insert doc rows with intended path", file=sys.stderr)
-
-    results = []
-    for att in attachments:
-        filename = att['filename']
-        content_type = att.get('content_type', 'application/octet-stream')
-        size = att.get('size', 0)
-
-        # Skip attachments larger than 10MB
-        if size > MAX_ATTACHMENT_SIZE:
-            if debug:
-                print(f"[DEBUG] Skipping {filename}: too large ({size} bytes > {MAX_ATTACHMENT_SIZE})", file=sys.stderr)
-            results.append({
-                'filename': filename,
-                'status': 'skipped_too_large',
-                'size': size
-            })
-            continue
-
-        # Download attachment data
-        file_data = None
-        try:
-            if 'data' in att:
-                # IMAP - data already decoded
-                file_data = att['data']
-            elif 'attachment_id' in att and service:
-                # Gmail API - need to download
-                file_data = download_gmail_attachment(service, email_data['gmail_id'], att['attachment_id'])
-            else:
-                if debug:
-                    print(f"[DEBUG] Cannot download {filename}: no data or attachment_id", file=sys.stderr)
-                results.append({'filename': filename, 'status': 'download_failed'})
-                continue
-        except Exception as e:
-            if debug:
-                print(f"[DEBUG] Error downloading {filename}: {e}", file=sys.stderr)
-            results.append({'filename': filename, 'status': 'download_failed', 'error': str(e)})
-            continue
-
-        if not file_data:
-            results.append({'filename': filename, 'status': 'no_data'})
-            continue
-
-        actual_size = len(file_data)
-        storage_path = None
-        upload_error = None
-
-        if not dry_run:
-            # Upload to Supabase Storage
-            storage_file_path = f"{work_item_id}/{filename}" if work_item_id else f"unlinked/{filename}"
-            if service_role_key:
-                try:
-                    storage_path = upload_to_supabase_storage(storage_file_path, file_data, content_type, service_role_key)
-                    if debug:
-                        print(f"[DEBUG] Uploaded {filename} to Supabase Storage at {storage_path}", file=sys.stderr)
-                except Exception as e:
-                    upload_error = str(e)
-                    if debug:
-                        print(f"[DEBUG] Upload failed for {filename}: {e}", file=sys.stderr)
-            else:
-                if debug:
-                    print(f"[DEBUG] No service role key - skipping storage upload for {filename}", file=sys.stderr)
-
-            # Insert work_item_documents row (even if upload failed, with intended storage_path)
-            if work_item_id:
-                try:
-                    doc_id = insert_work_item_document(
-                        conn, work_item_id, filename,
-                        storage_path or storage_file_path,
-                        content_type, actual_size
-                    )
-                    results.append({
-                        'filename': filename,
-                        'status': 'uploaded' if storage_path else 'doc_row_only',
-                        'storage_path': storage_path or storage_file_path,
-                        'doc_id': doc_id,
-                        'size': actual_size,
-                        'upload_error': upload_error
-                    })
-                except Exception as e:
-                    if debug:
-                        print(f"[DEBUG] Error inserting work_item_documents for {filename}: {e}", file=sys.stderr)
-                    results.append({'filename': filename, 'status': 'db_insert_failed', 'error': str(e), 'size': actual_size})
-            else:
-                results.append({
-                    'filename': filename,
-                    'status': 'no_work_item',
-                    'size': actual_size
-                })
-        else:
-            results.append({
-                'filename': filename,
-                'status': 'dry_run',
-                'size': actual_size,
-                'would_upload_to': f"{work_item_id}/{filename}" if work_item_id else f"unlinked/{filename}"
-            })
-
-    return results
-
-
-# ============================================================
-# Notification email
-# ============================================================
-
-def send_notification_email(classification, email_data, result, mailbox_email=None, dry_run=False, debug=False):
-    """
-    Send (or print, in dry-run) a notification email for a newly created work item.
-    Sends via admin@villasboulders.org to dee@wmbuck.net using the Google service account.
-    """
-    from email.mime.text import MIMEText
-
-    type_map = {
-        'arc_form_submission': 'ARC Request',
-        'arc_form_forward': 'ARC Request (Forwarded)',
-        'wo_form': 'Work Order Form',
-        'hppr_form': 'HPPR Form',
-    }
-    type_name = type_map.get(classification, classification)
-
-    parsed = result.get('parsed_data') or {}
-
-    # Build title: short description + parcel code, or fall back to subject
-    title_parts = []
-    desc = parsed.get('description', '')
-    if desc:
-        title_parts.append(desc[:60])
-    parcel = result.get('parcel_code')
-    if parcel:
-        title_parts.append(parcel)
-    title = ' - '.join(title_parts) if title_parts else (email_data.get('subject', '')[:80] or 'Untitled')
-
-    # Determine status
-    has_error = 'error' in result
-    status_str = 'ERROR' if has_error else 'SUCCESS'
-
-    subject_line = f"[HOA Tracker] New {type_name}: {title}"
-
-    # Build plain-text body
-    lines = []
-    lines.append("HOA Issue Tracker — New Work Item Created")
-    lines.append("")
-    lines.append(f"Type: {type_name} ({classification})")
-    lines.append(f"Status: {status_str}")
-    lines.append("")
-    lines.append("=== SOURCE EMAIL ===")
-    lines.append(f"From: {email_data.get('from_name', '')} <{email_data.get('from_email', '')}>")
-    lines.append(f"To: {', '.join(email_data.get('to_recipients', []))}")
-    rd = email_data.get('received_date')
-    lines.append(f"Date: {rd.isoformat() if rd else 'N/A'}")
-    lines.append(f"Subject: {email_data.get('subject', '')}")
-    lines.append(f"Mailbox: {mailbox_email or result.get('mailbox', 'unknown')}")
-    lines.append("")
-    lines.append("=== PARSED DATA ===")
-    lines.append(f"Homeowner Name: {parsed.get('homeowner_name', 'N/A')}")
-    lines.append(f"Address: {parsed.get('address', 'N/A')}")
-    lines.append(f"Parcel Code: {parcel or 'N/A'}")
-    lines.append(f"Phone: {parsed.get('phone', 'N/A')}")
-    lines.append(f"Email: {parsed.get('email', 'N/A')}")
-    lines.append(f"Description: {parsed.get('description', 'N/A')}")
-    lines.append(f"Supporting Documentation: {parsed.get('supporting_docs', 'none')}")
-    lines.append(f"Planned Completion Date: {parsed.get('planned_completion_date', 'N/A')}")
-    lines.append(f"Submission Date: {parsed.get('submission_date', 'N/A')}")
-    lines.append("")
-    lines.append("=== WORK ITEM CREATED ===")
-    lines.append(f"Work Item ID: {result.get('db_id', 'N/A (dry run)')}")
-    lines.append(f"Title: {title}")
-    lines.append(f"Category: {classification}")
-    lines.append(f"Status: {status_str}")
-    lines.append(f"Property ID: {parcel or 'UNMATCHED - no property found for this address'}")
-    lines.append("")
-    lines.append("=== ATTACHMENTS ===")
-
-    attachments = result.get('attachments', [])
-    if attachments:
-        for att in attachments:
-            fn = att.get('filename', '?')
-            ct = att.get('content_type', att.get('content_type', '?'))
-            sz = att.get('size', 0)
-            st = att.get('status', '?')
-            sp = att.get('storage_path') or att.get('would_upload_to', '')
-            line = f"  - {fn} ({ct}, {sz} bytes) → {st}"
-            if sp:
-                line += f" [path: {sp}]"
-            if att.get('upload_error'):
-                line += f" [error: {att['upload_error']}]"
-            lines.append(line)
-    else:
-        lines.append("No attachments")
-
-    lines.append("")
-    lines.append("=== PROCESSING NOTES ===")
-    notes = result.get('actions', [])
-    if notes:
-        for note in notes:
-            lines.append(f"  - {note}")
-    else:
-        lines.append("  None")
-
-    if has_error:
-        lines.append("")
-        lines.append(f"ERROR: {result.get('error', 'Unknown error')}")
-
-    body = "\n".join(lines)
-
-    if dry_run:
-        print(file=sys.stderr)
-        print("=" * 60, file=sys.stderr)
-        print("NOTIFICATION EMAIL (dry-run — not sent)", file=sys.stderr)
-        print("=" * 60, file=sys.stderr)
-        print(f"To: dee@wmbuck.net", file=sys.stderr)
-        print(f"From: admin@villasboulders.org", file=sys.stderr)
-        print(f"Subject: {subject_line}", file=sys.stderr)
-        print("=" * 60, file=sys.stderr)
-        print(body, file=sys.stderr)
-        print("=" * 60, file=sys.stderr)
-        print(file=sys.stderr)
-        return
-
-    # Actually send the email via service account
-    try:
-        if service_account is None or build is None:
-            if debug:
-                print(f"[DEBUG] Cannot send notification: google-api-python-client not available", file=sys.stderr)
-            return
-
-        creds = service_account.Credentials.from_service_account_file(
-            SERVICE_ACCOUNT_FILE,
-            scopes=['https://www.googleapis.com/auth/gmail.send'],
-            subject='admin@villasboulders.org'
-        )
-        gmail = build('gmail', 'v1', credentials=creds)
-
-        msg = MIMEText(body)
-        msg['to'] = 'dee@wmbuck.net'
-        msg['from'] = 'admin@villasboulders.org'
-        msg['subject'] = subject_line
-
-        raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
-        gmail.users().messages().send(userId='me', body={'raw': raw}).execute()
-
-        if debug:
-            print(f"[DEBUG] Notification email sent: {subject_line}", file=sys.stderr)
-    except Exception as e:
-        if debug:
-            print(f"[DEBUG] Failed to send notification email: {e}", file=sys.stderr)
-        # Don't fail processing — just log
-
-
-# ============================================================
 # Main processing pipeline
 # ============================================================
 
-def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_service=None, notify=False, mailbox_email=None):
+def process_email(email_data, debug=False, dry_run=False, conn=None):
     """
     Process a single email: classify, parse, and optionally persist.
     Returns structured dict with results.
@@ -1522,8 +1018,7 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
         'from': sender_full,
         'received_date': email_data['received_date'].isoformat() if email_data['received_date'] else None,
         'parsed_data': None,
-        'actions': [],
-        'attachments': []
+        'actions': []
     }
 
     parse_payload = {}
@@ -1561,97 +1056,6 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
             upsert_email_thread(conn, email_data['thread_id'], subject,
                                email_data['received_date'], classification,
                                result.get('parcel_code'))
-
-            # Look up property
-            property_id = None
-            if result.get('parcel_code'):
-                property_id = lookup_property_by_parcel(conn, result['parcel_code'])
-
-            # Create source document
-            source_doc_id = None
-            try:
-                with conn.cursor() as cur:
-                    cur.execute("""
-                        INSERT INTO source_documents
-                            (property_id, doc_type, source_ref, subject, body_text, from_name, from_email, received_date, gmail_thread_id)
-                        VALUES (%s, 'email', %s, %s, %s, %s, %s, %s, %s)
-                        RETURNING id
-                    """, (
-                        property_id,
-                        email_data.get('gmail_message_id', ''),
-                        subject,
-                        body[:5000],
-                        email_data.get('from_name', ''),
-                        email_data.get('from_email', ''),
-                        email_data.get('received_date'),
-                        email_data.get('thread_id', ''),
-                    ))
-                    row = cur.fetchone()
-                    source_doc_id = row[0] if row else None
-                    conn.commit()
-            except Exception as e:
-                print(f"[ERROR] source_document creation failed: {e}", file=sys.stderr)
-                conn.rollback()
-
-            # Create work item
-            # Title format: "Name - Unit" (+ " (serial)" if available)
-            arc_name = parsed.get('homeowner_name', '?')
-            work_title = arc_name
-            if result.get('parcel_code'):
-                work_title += f' - {result["parcel_code"]}'
-            if parsed.get('arc_request_serial'):
-                work_title += f' ({parsed["arc_request_serial"]})'
-            desc = parsed.get('description', '')
-            if parsed.get('planned_completion_date'):
-                desc += f'\nPlanned completion: {parsed["planned_completion_date"]}'
-
-            work_item_id = create_work_item(conn, {
-                'source_document_id': source_doc_id,
-                'property_id': property_id,
-                'title': work_title,
-                'description': desc,
-                'category': 'arc_request',
-                'status': 'new',
-                'priority': 'normal',
-            })
-            if work_item_id:
-                result['work_item_id'] = str(work_item_id)
-                result['actions'].append(f'created_work_item: {work_title}')
-
-                # Create issue_email_link connecting email to work item
-                if email_uuid:
-                    try:
-                        with conn.cursor() as cur:
-                            cur.execute("""
-                                INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
-                                VALUES (%s, %s, 'origin', 'parcel_date', 0.95)
-                                ON CONFLICT DO NOTHING
-                            """, (work_item_id, email_uuid))
-                            conn.commit()
-                            result['actions'].append(f'created_issue_email_link: {email_uuid} -> {work_item_id}')
-                    except Exception as e:
-                        print(f"[ERROR] issue_email_link creation failed: {e}", file=sys.stderr)
-                        conn.rollback()
-            else:
-                result['actions'].append('ERROR: failed to create work item')
-
-            # Process attachments (upload to Supabase Storage, insert work_item_documents)
-            att_results = process_attachments_for_email(
-                email_data, work_item_id or email_uuid, conn, service=gmail_service,
-                debug=debug, dry_run=dry_run
-            )
-            if att_results:
-                result['attachments'] = att_results
-                result['actions'].append(f'processed {len(att_results)} attachment(s)')
-        else:
-            # Dry run - still check attachments for reporting
-            att_results = process_attachments_for_email(
-                email_data, None, conn, service=gmail_service,
-                debug=debug, dry_run=True
-            )
-            if att_results:
-                result['attachments'] = att_results
-                result['actions'].append(f'found {len(att_results)} attachment(s) (dry run)')
 
     elif classification == 'arc_manager_reply':
         parsed = parse_arc_manager_reply(body, subject)
@@ -1703,96 +1107,6 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
                                email_data['received_date'], classification,
                                result.get('parcel_code'))
 
-            # Look up property
-            property_id = None
-            if result.get('parcel_code'):
-                property_id = lookup_property_by_parcel(conn, result['parcel_code'])
-
-            # Create source document
-            source_doc_id = None
-            try:
-                with conn.cursor() as cur:
-                    cur.execute("""
-                        INSERT INTO source_documents
-                            (property_id, doc_type, source_ref, subject, body_text, from_name, from_email, received_date, gmail_thread_id)
-                        VALUES (%s, 'email', %s, %s, %s, %s, %s, %s, %s)
-                        RETURNING id
-                    """, (
-                        property_id,
-                        email_data.get('gmail_message_id', ''),
-                        subject,
-                        body[:5000],
-                        email_data.get('from_name', ''),
-                        email_data.get('from_email', ''),
-                        email_data.get('received_date'),
-                        email_data.get('thread_id', ''),
-                    ))
-                    row = cur.fetchone()
-                    source_doc_id = row[0] if row else None
-                    conn.commit()
-            except Exception as e:
-                print(f"[ERROR] source_document creation failed: {e}", file=sys.stderr)
-                conn.rollback()
-
-            # Create work item
-            # Title format: "Name - Unit" (+ " (serial)" if available)
-            arc_name = parsed.get('homeowner_name', '?')
-            work_title = arc_name
-            if result.get('parcel_code'):
-                work_title += f' - {result["parcel_code"]}'
-            if parsed.get('arc_request_serial'):
-                work_title += f' ({parsed["arc_request_serial"]})'
-            desc = parsed.get('description', '')
-            if parsed.get('planned_completion_date'):
-                desc += f'\nPlanned completion: {parsed["planned_completion_date"]}'
-
-            work_item_id = create_work_item(conn, {
-                'source_document_id': source_doc_id,
-                'property_id': property_id,
-                'title': work_title,
-                'description': desc,
-                'category': 'arc_request',
-                'status': 'new',
-                'priority': 'normal',
-            })
-            if work_item_id:
-                result['work_item_id'] = str(work_item_id)
-                result['actions'].append(f'created_work_item: {work_title}')
-
-                # Create issue_email_link connecting email to work item
-                if email_uuid:
-                    try:
-                        with conn.cursor() as cur:
-                            cur.execute("""
-                                INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
-                                VALUES (%s, %s, 'origin', 'parcel_date', 0.95)
-                                ON CONFLICT DO NOTHING
-                            """, (work_item_id, email_uuid))
-                            conn.commit()
-                            result['actions'].append(f'created_issue_email_link: {email_uuid} -> {work_item_id}')
-                    except Exception as e:
-                        print(f"[ERROR] issue_email_link creation failed: {e}", file=sys.stderr)
-                        conn.rollback()
-            else:
-                result['actions'].append('ERROR: failed to create work item')
-
-            # Process attachments
-            att_results = process_attachments_for_email(
-                email_data, work_item_id or email_uuid, conn, service=gmail_service,
-                debug=debug, dry_run=dry_run
-            )
-            if att_results:
-                result['attachments'] = att_results
-                result['actions'].append(f'processed {len(att_results)} attachment(s)')
-        else:
-            att_results = process_attachments_for_email(
-                email_data, None, conn, service=gmail_service,
-                debug=debug, dry_run=True
-            )
-            if att_results:
-                result['attachments'] = att_results
-                result['actions'].append(f'found {len(att_results)} attachment(s) (dry run)')
-
     elif classification == 'arc_process_discussion':
         parse_payload = {'body_preview': body[:1000]}
         result['parsed_data'] = parse_payload
@@ -1824,98 +1138,7 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
             upsert_email_thread(conn, email_data['thread_id'], subject,
                                email_data['received_date'], classification)
 
-    elif classification == 'wo_form':
-        # Parse work order form submission
-        parsed = parse_wo_form(body)
-        parse_payload = parsed
-        result['parsed_data'] = parsed
-
-        if parsed.get('address'):
-            parcel = standardize_address(parsed.get('address', ''))
-            if parcel:
-                result['parcel_code'] = parcel
-                result['actions'].append(f'address_match: {parsed["address"]} -> {parcel}')
-
-        result['actions'].append(f'would_create_work_item: work_order for {parsed.get("homeowner_name", "?")}')
-
-        if not dry_run and conn:
-            email_uuid = upsert_email_message(conn, email_data, classification, confidence, is_noise, parse_payload)
-            result['db_id'] = str(email_uuid) if email_uuid else None
-
-            # Create work item
-            property_id = None
-            if result.get('parcel_code'):
-                property_id = lookup_property_by_parcel(conn, result['parcel_code'])
-            
-            # Create source document first
-            source_doc_id = None
-            try:
-                with conn.cursor() as cur:
-                    cur.execute("""
-                        INSERT INTO source_documents
-                            (property_id, doc_type, source_ref, subject, body_text, from_name, from_email, received_date, gmail_thread_id)
-                        VALUES (%s, 'email', %s, %s, %s, %s, %s, %s, %s)
-                        RETURNING id
-                    """, (
-                        property_id,
-                        email_data.get('gmail_message_id', ''),
-                        subject,
-                        body[:5000],
-                        email_data.get('from_name', ''),
-                        email_data.get('from_email', ''),
-                        email_data.get('received_date'),
-                        email_data.get('thread_id', ''),
-                    ))
-                    row = cur.fetchone()
-                    source_doc_id = row[0] if row else None
-                    conn.commit()
-            except Exception as e:
-                print(f"[ERROR] source_document creation failed: {e}", file=sys.stderr)
-                conn.rollback()
-            
-            # Title format: "Name - Unit" (+ " (WO number)" if available)
-            wo_name = parsed.get('homeowner_name') or email_data.get('from_name', '?')
-            work_title = wo_name
-            if result.get('parcel_code'):
-                work_title += f' - {result["parcel_code"]}'
-            if parsed.get('keystone_wo_number'):
-                work_title += f' ({parsed["keystone_wo_number"]})'
-            
-            work_item_id = create_work_item(conn, {
-                'source_document_id': source_doc_id,
-                'property_id': property_id,
-                'title': work_title,
-                'description': parsed.get('description', ''),
-                'category': 'work_order',
-                'status': 'new',
-                'priority': 'high' if parsed.get('priority', '0') in ('10', '9', '8') else 'normal',
-            })
-            if work_item_id:
-                result['work_item_id'] = str(work_item_id)
-                result['actions'].append(f'created_work_item: {work_title}')
-                
-                # Create issue_email_link connecting email to work item
-                if email_uuid:
-                    try:
-                        with conn.cursor() as cur:
-                            cur.execute("""
-                                INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
-                                VALUES (%s, %s, 'origin', 'parcel_date', 0.95)
-                                ON CONFLICT DO NOTHING
-                            """, (work_item_id, email_uuid))
-                            conn.commit()
-                            result['actions'].append(f'created_issue_email_link: {email_uuid} -> {work_item_id}')
-                    except Exception as e:
-                        print(f"[ERROR] issue_email_link creation failed: {e}", file=sys.stderr)
-                        conn.rollback()
-            else:
-                result['actions'].append('ERROR: failed to create work item')
-            
-            upsert_email_thread(conn, email_data['thread_id'], subject,
-                               email_data['received_date'], classification,
-                               result.get('parcel_code'))
-
-    elif classification in ('hppr_form', 'property_report', 'ops_alert', 'invoice_pending'):
+    elif classification in ('wo_form', 'hppr_form', 'property_report', 'ops_alert'):
         parse_payload = {'body_preview': body[:1000]}
         result['parsed_data'] = parse_payload
         result['actions'].append(f'logged_as_{classification}')
@@ -1937,19 +1160,6 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
             upsert_email_thread(conn, email_data['thread_id'], subject,
                                email_data['received_date'], classification)
 
-    # Send notification for work-item-creating classifications
-    if notify and classification in WORK_ITEM_CLASSIFICATIONS:
-        try:
-            send_notification_email(
-                classification, email_data, result,
-                mailbox_email=mailbox_email,
-                dry_run=dry_run, debug=debug
-            )
-        except Exception as e:
-            if debug:
-                print(f"[DEBUG] Notification error: {e}", file=sys.stderr)
-            result['actions'].append(f'notification_failed: {e}')
-
     return result
 
 
@@ -1957,13 +1167,139 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
 # Entry point
 # ============================================================
 
+def send_report_email(output):
+    """Send a daily summary email to Dee via sendmail."""
+    import subprocess
+
+    emails = output.get('emails', [])
+    # Categorize for the report
+    new_items = []  # ARC forms, WO forms, HPPR forms — things that need tracking
+    status_reports = []  # WO status reports — snapshots, not new items
+    board_emails = []
+    homeowner_emails = []
+    noise_count = 0
+    other_emails = []
+
+    for e in emails:
+        cls = e.get('classification', '')
+        if cls == 'noise':
+            noise_count += 1
+        elif cls == 'wo_status_report':
+            status_reports.append(e)
+        elif cls in ('arc_form_submission', 'arc_form_forward', 'wo_form', 'hppr_form'):
+            new_items.append(e)
+        elif cls in ('board_email', 'governance', 'josh_direct', 'arc_manager_reply', 'arc_process_discussion'):
+            board_emails.append(e)
+        elif cls == 'homeowner_direct':
+            homeowner_emails.append(e)
+        else:
+            other_emails.append(e)
+
+    # Build the email body
+    lines = []
+    lines.append(f"HOA Email Processor - Daily Summary")
+    lines.append(f"Run at: {output.get('run_at', '?')}")
+    lines.append(f"Lookback: {output.get('lookback_days', 1)} day(s)")
+    lines.append(f"Total checked: {output.get('total_checked', 0)}")
+    lines.append(f"Newly processed: {output.get('processed_count', 0)}")
+    lines.append(f"Classification breakdown: {output.get('classification_counts', {})}")
+    lines.append(f"Skipped (already processed): {output.get('skipped_already_processed', 0)}")
+    lines.append("")
+    lines.append(f"--- SUMMARY ---")
+    lines.append(f"  New trackable items (ARC/WO/HPPR forms): {len(new_items)}")
+    lines.append(f"  WO status reports (snapshots only, not new items): {len(status_reports)}")
+    lines.append(f"  Board/governance emails: {len(board_emails)}")
+    lines.append(f"  Homeowner direct emails: {len(homeowner_emails)}")
+    lines.append(f"  Noise filtered: {noise_count}")
+    lines.append(f"  Other: {len(other_emails)}")
+    lines.append("")
+
+    if new_items:
+        lines.append("=== NEW TRACKABLE ITEMS ===")
+        for e in new_items:
+            lines.append(f"  [{e.get('classification', '?')}] {e.get('subject', '?')[:80]}")
+            lines.append(f"    From: {e.get('from', '?')[:80]}")
+            lines.append(f"    Date: {e.get('received_date', '?')}")
+            parsed = e.get('parsed_data', {})
+            if parsed:
+                if parsed.get('homeowner_name'):
+                    lines.append(f"    Homeowner: {parsed.get('homeowner_name')}")
+                if parsed.get('address'):
+                    lines.append(f"    Address: {parsed.get('address')}")
+                if parsed.get('description'):
+                    lines.append(f"    Description: {parsed.get('description', '')[:120]}")
+            actions = e.get('actions', [])
+            if actions:
+                lines.append(f"    Actions: {'; '.join(actions)}")
+            if e.get('db_id'):
+                lines.append(f"    DB ID: {e.get('db_id')}")
+            lines.append("")
+
+    if status_reports:
+        lines.append("=== WO STATUS REPORTS (snapshots only — NOT new work items) ===")
+        for e in status_reports:
+            lines.append(f"  Subject: {e.get('subject', '?')[:80]}")
+            lines.append(f"    Date: {e.get('received_date', '?')}")
+            parsed = e.get('parsed_data', {})
+            if parsed:
+                summary = parsed.get('summary', {})
+                lines.append(f"    Open WOs: {summary.get('open_work_orders', '?')}")
+                if summary.get('scrape_failure_suspected'):
+                    lines.append(f"    WARNING: Scrape failure suspected!")
+                for sec in parsed.get('sections', []):
+                    lines.append(f"    {sec.get('status')}: {sec.get('count')} entries")
+            actions = e.get('actions', [])
+            if actions:
+                lines.append(f"    Actions: {'; '.join(actions)}")
+            lines.append("")
+
+    if board_emails:
+        lines.append("=== BOARD / GOVERNANCE EMAILS ===")
+        for e in board_emails:
+            lines.append(f"  [{e.get('classification', '?')}] {e.get('subject', '?')[:80]}")
+            lines.append(f"    From: {e.get('from', '?')[:60]}")
+            lines.append("")
+
+    if homeowner_emails:
+        lines.append("=== HOMEOWNER DIRECT EMAILS ===")
+        for e in homeowner_emails:
+            lines.append(f"  {e.get('subject', '?')[:80]}")
+            lines.append(f"    From: {e.get('from', '?')[:60]}")
+            if e.get('parcel_code'):
+                lines.append(f"    Parcel: {e.get('parcel_code')}")
+            lines.append("")
+
+    if other_emails:
+        lines.append("=== OTHER ===")
+        for e in other_emails:
+            lines.append(f"  [{e.get('classification', '?')}] {e.get('subject', '?')[:80]}")
+            lines.append("")
+
+    if not emails:
+        lines.append("(No new emails processed)")
+
+    body = '\n'.join(lines)
+
+    # Send via sendmail
+    msg = f"From: {REPORT_FROM}\nTo: {REPORT_TO}\nSubject: {REPORT_SUBJECT} - {datetime.now().strftime('%Y-%m-%d')}\nContent-Type: text/plain; charset=utf-8\n\n{body}"
+
+    try:
+        proc = subprocess.run(['/usr/sbin/sendmail', '-t'], input=msg.encode('utf-8'),
+                            capture_output=True, timeout=30)
+        if proc.returncode != 0:
+            print(f"[WARNING] sendmail returned {proc.returncode}: {proc.stderr.decode()}", file=sys.stderr)
+        else:
+            print(f"[INFO] Report email sent to {REPORT_TO}", file=sys.stderr)
+    except Exception as e:
+        print(f"[WARNING] Failed to send report email: {e}", file=sys.stderr)
+
+
 def main():
     parser = argparse.ArgumentParser(description='HOA Email Processor v2')
     parser.add_argument('--days', type=int, default=1, help='Look back N days (default: 1)')
     parser.add_argument('--dry-run', action='store_true', help='Process but do not write to Supabase')
     parser.add_argument('--debug', action='store_true', help='Print debug info to stderr')
-    parser.add_argument('--notify', action='store_true', help='Send email notification for each new work item created')
-    parser.add_argument('--reprocess', action='store_true', help='Reprocess already-processed emails to create missing work_items/source_documents/issue_email_links (does not duplicate email_message rows)')
+    parser.add_argument('--report-email', action='store_true', help='Send daily summary email to Dee')
     args = parser.parse_args()
 
     # Load processed IDs for dedup
@@ -2021,17 +1357,16 @@ def main():
 
             # Skip already-processed emails (dedup across mailboxes)
             full_id = f"{mb_email}:{msg_id}"
-            if full_id in processed_ids and not args.reprocess:
+            if full_id in processed_ids:
                 if args.debug:
                     print(f"[DEBUG] Skipping already-processed: {full_id[:40]}...", file=sys.stderr)
                 continue
 
             try:
-                result = process_email(email_data, debug=args.debug, dry_run=args.dry_run, conn=conn, gmail_service=service if mailbox['type'] == 'service_account' else None, notify=args.notify, mailbox_email=mb_email)
+                result = process_email(email_data, debug=args.debug, dry_run=args.dry_run, conn=conn)
                 result['mailbox'] = mb_email
                 results.append(result)
-                if full_id not in processed_ids:
-                    new_processed.add(full_id)
+                new_processed.add(full_id)
 
                 cls = result['classification']
                 classification_counts[cls] = classification_counts.get(cls, 0) + 1
@@ -2069,7 +1404,6 @@ def main():
     output = {
         'status': 'success',
         'dry_run': args.dry_run,
-        'reprocess': getattr(args, 'reprocess', False),
         'processed_count': len(all_results),
         'total_checked': total_checked,
         'skipped_already_processed': total_checked - len(all_results) - sum(1 for r in all_results if 'error' in r),
@@ -2078,6 +1412,10 @@ def main():
         'classification_counts': all_classification_counts,
         'emails': all_results
     }
+
+    # Send report email if requested
+    if args.report_email:
+        send_report_email(output)
 
     print(json.dumps(output, indent=2, default=str))
 

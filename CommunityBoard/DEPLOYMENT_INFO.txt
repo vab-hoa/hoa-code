@@ -1,0 +1,27 @@
+VaB Community Board — Deployment Info
+======================================
+
+[To be filled in after first deployment]
+
+Script ID:
+[SCRIPT_ID from .clasp.json or first `clasp create` output]
+
+Deployment ID:
+[DEPLOYMENT_ID from `clasp deploy` output]
+
+Public URL (Browse page by default):
+https://script.google.com/macros/s/[DEPLOYMENT_ID]/exec
+
+Public URL (Post page):
+https://script.google.com/macros/s/[DEPLOYMENT_ID]/exec?page=post
+
+Sheet ID:
+[SHEET_ID of the Community Board Responses sheet]
+
+Sheet URL:
+https://docs.google.com/spreadsheets/d/[SHEET_ID]/edit
+
+Created: 2026-09-03
+Styling: Professional header with VaB branding, green decorative line, compact 13px font
+Features: Multi-page web app (Browse + Post), manual moderation via Sheet, street Group links
+Email Recipients: admin@villasboulders.org (new-post notification only)
