@@ -1,27 +1,38 @@
 VaB Community Board — Deployment Info
 ======================================
 
-[To be filled in after first deployment]
-
 Script ID:
-[SCRIPT_ID from .clasp.json or first `clasp create` output]
+1mvFHmZh7J1UX4vUZ3cGAujudh9qlRDSgC_ok0TixikgSynanvdV8rzBG
 
 Deployment ID:
-[DEPLOYMENT_ID from `clasp deploy` output]
+AKfycbzyn986Bx40Fv6SdeWNQcWTHEhsXeXFXR9S92ZppM03USOZ16-hWkB8bOAoCF-kk3I9Fw
 
-Public URL (Browse page by default):
-https://script.google.com/macros/s/[DEPLOYMENT_ID]/exec
+Public URL (Browse page by default — copy this):
+https://script.google.com/macros/s/AKfycbzyn986Bx40Fv6SdeWNQcWTHEhsXeXFXR9S92ZppM03USOZ16-hWkB8bOAoCF-kk3I9Fw/exec
 
 Public URL (Post page):
-https://script.google.com/macros/s/[DEPLOYMENT_ID]/exec?page=post
+https://script.google.com/macros/s/AKfycbzyn986Bx40Fv6SdeWNQcWTHEhsXeXFXR9S92ZppM03USOZ16-hWkB8bOAoCF-kk3I9Fw/exec?page=post
 
 Sheet ID:
-[SHEET_ID of the Community Board Responses sheet]
+1mhbzm-qoUvdp_AI8P59gzJrGNnBo3Zmcxjkn0Um86xE
 
-Sheet URL:
-https://docs.google.com/spreadsheets/d/[SHEET_ID]/edit
+Sheet URL (for moderation):
+https://docs.google.com/spreadsheets/d/1mhbzm-qoUvdp_AI8P59gzJrGNnBo3Zmcxjkn0Um86xE/edit
+
+Google Drive Folder:
+Villas at the Boulders Website Forms and Surveys / Community Board
 
 Created: 2026-09-03
-Styling: Professional header with VaB branding, green decorative line, compact 13px font
-Features: Multi-page web app (Browse + Post), manual moderation via Sheet, street Group links
+Deployed: 2026-09-03
+Styling: Professional header with VaB branding (navy #1a3a52 → green #2d5f3f), green decorative line, compact 13px font
+Features: Multi-page web app (Browse + Post), manual moderation via Sheet, street Group links, admin notification on submission
 Email Recipients: admin@villasboulders.org (new-post notification only)
+
+NEXT STEPS:
+1. Go to Google Sites editor: villasboulders.org
+2. Create new page: path /community-board-preview
+3. Hide from navigation (pages panel → ⋮ → Hide from navigation)
+4. Add a button/link with the Public URL above
+5. Publish the site
+6. Visit the deployment URL to test (should show 2 sample posts)
+7. Test moderation: open the Sheet, set a sample post Approved=TRUE, refresh Browse page
