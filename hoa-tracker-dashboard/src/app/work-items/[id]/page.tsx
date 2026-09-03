@@ -26,6 +26,10 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
   const [excludingName, setExcludingName] = useState('')
   const [isExcluding, setIsExcluding] = useState(false)
 
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
+
   const [showCompletionDialog, setShowCompletionDialog] = useState(false)
   const [completionStatus, setCompletionStatus] = useState('')
   const [isCompleting, setIsCompleting] = useState(false)
@@ -125,6 +129,42 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
     setTimeout(() => {
       router.push('/')
     }, 500)
+  }
+
+  const handleDelete = async () => {
+    if (deleteConfirmText.trim() !== localItem?.title) {
+      alert('The title you typed does not match the work item title')
+      return
+    }
+
+    setIsDeleting(true)
+
+    try {
+      // Delete related records first
+      await supabase.from('issue_email_link').delete().eq('work_item_id', id)
+      await supabase.from('wo_status_snapshot').delete().eq('work_item_id', id)
+      await supabase.from('work_item_documents').delete().eq('work_item_id', id)
+      // source_documents are linked via source_document_id on work_items;
+      // delete them too since they belong to this work item
+      const sourceDocId = (item as any).source_document_id
+      if (sourceDocId) {
+        await supabase.from('source_documents').delete().eq('id', sourceDocId)
+      }
+
+      // Delete the work item itself
+      const { error: deleteError } = await supabase.from('work_items').delete().eq('id', id)
+
+      if (deleteError) {
+        alert('Error deleting work item: ' + deleteError.message)
+        setIsDeleting(false)
+        return
+      }
+
+      router.push('/')
+    } catch (err) {
+      alert('Error deleting work item: ' + (err as Error).message)
+      setIsDeleting(false)
+    }
   }
 
   const handleUpload = async () => {
@@ -228,6 +268,15 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                 className="px-3 py-1 bg-red-500/20 border border-red-500/50 text-red-300 text-sm rounded hover:bg-red-500/30 transition-colors whitespace-nowrap"
               >
                 Mark as excluded
+              </button>
+              <button
+                onClick={() => {
+                  setDeleteConfirmText('')
+                  setShowDeleteDialog(true)
+                }}
+                className="px-3 py-1 bg-red-700/30 border border-red-600/60 text-red-300 text-sm rounded hover:bg-red-700/40 transition-colors whitespace-nowrap"
+              >
+                Delete
               </button>
             </div>
           </div>
@@ -637,6 +686,63 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                     className="px-3 py-2 bg-red-500/20 border border-red-500 text-red-300 rounded text-sm hover:bg-red-500/30 transition-colors disabled:opacity-50"
                   >
                     {isExcluding ? 'Excluding...' : 'Exclude'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete confirmation dialog */}
+        {showDeleteDialog && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-surface border border-edge rounded-lg p-6 max-w-sm w-full">
+              <h3 className="text-lg font-bold text-red-300 mb-4">Delete work item</h3>
+
+              <div className="space-y-4">
+                <p className="text-sm text-ink">
+                  Are you sure you want to permanently delete this work item? This cannot be undone.
+                </p>
+                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded text-sm text-ink">
+                  <span className="text-mute">Item:</span>{' '}
+                  <span className="font-medium">{localItem?.title}</span>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-1">
+                    Type the item title to confirm deletion
+                  </label>
+                  <input
+                    type="text"
+                    value={deleteConfirmText}
+                    onChange={e => setDeleteConfirmText(e.target.value)}
+                    placeholder={localItem?.title || ''}
+                    className="w-full px-3 py-2 bg-edge border border-edge text-ink rounded text-sm"
+                    autoFocus
+                  />
+                </div>
+
+                <p className="text-xs text-mute">
+                  This will permanently delete the work item and all related records (emails, documents, status snapshots). This action is irreversible.
+                </p>
+
+                <div className="flex gap-3 justify-end">
+                  <button
+                    onClick={() => {
+                      setShowDeleteDialog(false)
+                      setDeleteConfirmText('')
+                    }}
+                    disabled={isDeleting}
+                    className="px-3 py-2 bg-edge border border-edge text-ink rounded text-sm hover:bg-edge/70 transition-colors disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    disabled={isDeleting || deleteConfirmText.trim() !== localItem?.title}
+                    className="px-3 py-2 bg-red-600/30 border border-red-600 text-red-200 rounded text-sm hover:bg-red-600/40 transition-colors disabled:opacity-50"
+                  >
+                    {isDeleting ? 'Deleting...' : 'Delete permanently'}
                   </button>
                 </div>
               </div>
