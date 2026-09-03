@@ -1,4 +1,16 @@
 {
-  "scriptId": "TO_BE_SET_BY_CLASP_LOGIN",
-  "rootDir": "."
+  "scriptId": "1mvFHmZh7J1UX4vUZ3cGAujudh9qlRDSgC_ok0TixikgSynanvdV8rzBG",
+  "rootDir": ".",
+  "scriptExtensions": [
+    ".js",
+    ".gs"
+  ],
+  "htmlExtensions": [
+    ".html"
+  ],
+  "jsonExtensions": [
+    ".json"
+  ],
+  "filePushOrder": [],
+  "skipSubdirectories": false
 }

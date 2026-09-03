@@ -1,5 +1,5 @@
 const CONFIG = {
-  sheetId: '1VH1UQdEQYDY3cSXVEjIhWxq7r6x3wmvm', // Will be set once Sheet is created
+  sheetId: '1mhbzm-qoUvdp_AI8P59gzJrGNnBo3Zmcxjkn0Um86xE',
   adminEmail: 'admin@villasboulders.org',
   timeZone: 'America/Denver',
 };
