@@ -1,0 +1,134 @@
+================================================================================
+COMMUNITY BOARD — QUICK START GUIDE
+================================================================================
+
+This is a NEW multi-page Apps Script web app that replaces the Google Form +
+Looker Studio approach from SPEC-community-board-looker.md.
+
+Instead of Google Forms, this is hand-built with the same professional styling
+as ARC/LBC/WO/Volunteer forms (navy #1a3a52, green #2d7d3a, compact layout).
+
+KEY DIFFERENCES FROM SPEC:
+- No Google Form (we build the form in Apps Script)
+- No Looker Studio (we build the Browse page in Apps Script)
+- Data lives in a Google Sheet (you moderate by editing a column)
+- Plain link from Sites (not an iframe)
+- First multi-page Apps Script web app in this repo (routes on ?page=board or ?page=post)
+
+================================================================================
+THE 5-MINUTE SETUP
+================================================================================
+
+1. Open the terminal:
+   cd /home/dee/hoa-code/CommunityBoard
+
+2. Create the Apps Script project:
+   clasp login  (first time only)
+   clasp create --type webapp --title "Community Board"
+
+3. Open the editor in your browser:
+   go to script.google.com/home → click Community Board project
+
+4. Run the setup script:
+   - Click SETUP.gs in the left sidebar
+   - Click the ▶ play button
+   - Look at the Execution log output for the Sheet ID
+
+5. Copy the Sheet ID and update Code.gs:
+   - Change CONFIG.sheetId = '1VH...' to your Sheet ID from step 4
+
+6. Push and deploy:
+   clasp push
+   clasp deploy --description "Initial deployment"
+
+7. Copy the deployment URL and add to Google Sites:
+   - Go to villasboulders.org editor
+   - New page: path /community-board-preview, hide from nav
+   - Add a link to the deployment URL
+   - Publish
+
+8. Test:
+   - Open the deployment URL
+   - Browse page should show 2 sample posts
+   - Click "Post Something" to test the form
+   - Check email for notification
+   - Go to Sheet, set Approved=TRUE on your test post
+   - Refresh Browse page — post should appear
+
+================================================================================
+FILES IN THIS PROJECT
+================================================================================
+
+Code.gs              →  Main app (915 lines)
+                        - doGet() router (board vs post page)
+                        - generateBrowsePageHTML() / generatePostPageHTML()
+                        - submitPost() / getPublishedPosts()
+                        - Handles form validation, Sheet writes, notifications
+
+SETUP.gs             →  One-time setup script
+                        - Creates the Community Board Sheet in Drive
+                        - Adds Form Responses and Config tabs
+                        - Adds 2 sample posts
+                        - Run once via the ▶ button, then delete
+
+appsscript.json      →  Project config
+                        - OAuth scopes: gmail.send, spreadsheets
+                        - Access: ANYONE_ANONYMOUS (consistent with most forms)
+
+README.md            →  Full documentation (what's in the Sheet, how to moderate, etc)
+
+DEPLOYMENT_STEPS.md  →  Step-by-step walkthrough of the 8-step setup above
+
+DEPLOYMENT_INFO.txt  →  Fill this in after deploying (for reference)
+
+deploy.sh            →  Convenient push/deploy script (optional)
+
+================================================================================
+MODERATION WORKFLOW
+================================================================================
+
+User posts → you get email → open Sheet → set Approved column → post appears
+
+That's it. No admin UI, no code changes, just edit one column in the Sheet.
+
+================================================================================
+TWO PAGES, ONE URL
+================================================================================
+
+Browse page (default):     https://script.google.com/macros/s/{ID}/exec
+Post page:                 https://script.google.com/macros/s/{ID}/exec?page=post
+
+The same deployment URL, query param selects the page.
+
+================================================================================
+STREET GROUPS
+================================================================================
+
+6 streets, each with a Google Group (already set up by Keystone scraper).
+Community Board looks them up from the Sheet's Config tab and shows links.
+
+See community-board/STREET_GROUPS.md for the mapping.
+
+================================================================================
+SAMPLE POSTS
+================================================================================
+
+SETUP.gs creates 2 sample posts (Approved=TRUE so they show) with "SAMPLE"
+in the title. Delete these before going live. They're good for testing.
+
+================================================================================
+READY TO DEPLOY?
+================================================================================
+
+See DEPLOYMENT_STEPS.md for the full walkthrough.
+
+TL;DR:
+  clasp create --type webapp --title "Community Board"
+  [open Apps Script editor, run setupSheet() from SETUP.gs]
+  [copy Sheet ID, update Code.gs]
+  clasp push
+  clasp deploy --description "Initial deployment"
+  [copy URL, add to Sites page /community-board-preview]
+  [test]
+
+Questions? See README.md.
