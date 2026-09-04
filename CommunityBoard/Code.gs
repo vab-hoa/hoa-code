@@ -21,313 +21,111 @@ const CATEGORIES = [
 ];
 
 function doGet(e) {
-  const page = e.parameter && e.parameter.page ? e.parameter.page : 'board';
-
-  if (page === 'post') {
-    return HtmlService.createHtmlOutput(generatePostPageHTML())
-      .setWidth(800)
-      .setHeight(1400);
-  }
-
-  // Default: browse page (full-screen for linking from Sites)
-  return HtmlService.createHtmlOutput(generateBrowsePageHTML())
+  // Single deployment with both Browse and Post on same page, toggled by JS
+  return HtmlService.createHtmlOutput(generateCombinedPageHTML())
     .setWidth(1200)
-    .setHeight(1600);
+    .setHeight(1800);
 }
 
-function generatePostPageHTML() {
-  return `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Post to Community Board</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #f0f2f5 0%, #e8eaed 100%);
-      padding: 20px;
-      min-height: 100vh;
-    }
-    .form-container {
-      max-width: 700px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
-    .header {
-      background: linear-gradient(135deg, #1a3a52 0%, #2d5f3f 100%);
-      color: white;
-      padding: 20px;
-      text-align: center;
-      border-bottom: 4px solid #2d7d3a;
-    }
-    h1 {
-      font-size: 24px;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-    .subtitle {
-      font-size: 13px;
-      opacity: 0.95;
-    }
-    .form-content {
-      padding: 25px;
-    }
-    .form-section {
-      margin-bottom: 18px;
-    }
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 6px;
-      color: #1a3a52;
-      font-size: 13px;
-    }
-    .required::after {
-      content: " *";
-      color: #ff4444;
-    }
-    input[type="text"],
-    input[type="email"],
-    textarea,
-    select {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-      transition: border-color 0.3s;
-    }
-    input[type="text"]:focus,
-    input[type="email"]:focus,
-    textarea:focus,
-    select:focus {
-      outline: none;
-      border-color: #2d5f3f;
-      box-shadow: 0 0 0 3px rgba(45,95,63,0.1);
-    }
-    textarea {
-      resize: vertical;
-      min-height: 100px;
-      font-family: Arial, sans-serif;
-    }
-    .radio-group,
-    .checkbox-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .radio-item,
-    .checkbox-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-    }
-    input[type="radio"],
-    input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-      margin-top: 2px;
-      flex-shrink: 0;
-    }
-    .radio-item label,
-    .checkbox-item label {
-      margin: 0;
-      font-weight: normal;
-      font-size: 13px;
-      cursor: pointer;
-      color: #333;
-    }
-    .hint {
-      font-size: 12px;
-      color: #666;
-      margin-top: 4px;
-      font-style: italic;
-    }
-    .button-group {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 25px;
-    }
-    button {
-      padding: 10px 15px;
-      border: none;
-      border-radius: 4px;
-      font-size: 13px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    #submitBtn {
-      background-color: #2d7d3a;
-      color: white;
-      grid-column: 1 / -1;
-    }
-    #submitBtn:hover {
-      background-color: #1a4d22;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(45,125,58,0.3);
-    }
-    #resetBtn {
-      background-color: #999;
-      color: white;
-    }
-    #resetBtn:hover {
-      background-color: #666;
-    }
-    .message {
-      display: none;
-      padding: 12px 15px;
-      margin-bottom: 20px;
-      border-radius: 4px;
-      font-size: 13px;
-      font-weight: bold;
-    }
-    .message.success {
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-      display: block;
-    }
-    .message.error {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-      display: block;
-    }
-    .back-link {
-      text-align: center;
-      margin-top: 15px;
-    }
-    .back-link a {
-      color: #1a3a52;
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: bold;
-    }
-    .back-link a:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
-  <div class="form-container">
-    <div class="header">
-      <h1>Post to Community Board</h1>
-      <div class="subtitle">Share with your neighbors — not official HOA business</div>
-    </div>
-    <div class="form-content">
-      <div id="message" class="message"></div>
-
-      <div class="form-section">
-        <label class="required">Display name</label>
-        <input type="text" id="displayName" placeholder="e.g., Jane S." required>
-        <div class="hint">First name + last initial is fine</div>
-      </div>
-
-      <div class="form-section">
-        <label class="required">Street</label>
-        <select id="street" required>
-          <option value="">Select your street...</option>
-          <option>Boulder Circle</option>
-          <option>Boulder Point</option>
-          <option>Broadlands Lane</option>
-          <option>Plaster Point</option>
-          <option>Rock Point</option>
-          <option>Stone Circle</option>
-        </select>
-      </div>
-
-      <div class="form-section">
-        <label class="required">Unit / address</label>
-        <input type="text" id="address" placeholder="e.g., 123 Boulder Circle" required>
-        <div class="hint">For moderation only — not published on the board</div>
-      </div>
-
-      <div class="form-section">
-        <label class="required">Category</label>
-        <select id="category" required>
-          <option value="">Select a category...</option>
-          <option>Vendor recommendation</option>
-          <option>Help needed</option>
-          <option>For sale or giveaway</option>
-          <option>General</option>
-        </select>
-      </div>
-
-      <div class="form-section">
-        <label class="required">Title</label>
-        <input type="text" id="title" placeholder="Max ~80 chars" required>
-        <div class="hint">Example: "Reliable plumber — leak under sink"</div>
-      </div>
-
-      <div class="form-section">
-        <label class="required">Details</label>
-        <textarea id="details" required></textarea>
-        <div class="hint">No medical details, please. Neighbor-to-neighbor only.</div>
-      </div>
-
-      <div class="form-section">
-        <label>Vendor name (if recommending)</label>
-        <input type="text" id="vendorName" placeholder="e.g., ABC Plumbing">
-        <div class="hint">Only if Category is "Vendor recommendation"</div>
-      </div>
-
-      <div class="form-section">
-        <label class="required">May we publish your contact info?</label>
-        <div class="radio-group">
-          <div class="radio-item">
-            <input type="radio" id="contactYes" name="contactOK" value="Yes" required>
-            <label for="contactYes">Yes — publish the contact I enter below</label>
+function generateCombinedPageHTML() {
+  const browseHtml = generateBrowsePageHTML();
+  const postFormHtml = `
+    <div id="postModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; overflow:auto; padding:20px;">
+      <div style="max-width:600px; margin:50px auto; background:white; padding:30px; border-radius:8px;">
+        <h2 style="color:#1a3a52;">Post to Community Board</h2>
+        <button onclick="closePostModal()" style="float:right; background:#999; padding:8px 12px;">Close</button>
+        <div style="clear:both;"></div>
+        <form onsubmit="handlePostSubmit(event)" style="margin-top:20px;">
+          <div style="margin-bottom:15px;">
+            <label style="display:block; font-weight:bold; color:#1a3a52; margin-bottom:5px;">Display Name:</label>
+            <input type="text" id="postName" placeholder="Jane S." required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; font-size:13px;">
           </div>
-          <div class="radio-item">
-            <input type="radio" id="contactNo" name="contactOK" value="No" required>
-            <label for="contactNo">No — website only, contact me through the street group</label>
+          <div style="margin-bottom:15px;">
+            <label style="display:block; font-weight:bold; color:#1a3a52; margin-bottom:5px;">Street:</label>
+            <select id="postStreet" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; font-size:13px;">
+              <option>Boulder Circle</option>
+              <option>Boulder Point</option>
+              <option>Broadlands Lane</option>
+              <option>Plaster Point</option>
+              <option>Rock Point</option>
+              <option>Stone Circle</option>
+            </select>
           </div>
-        </div>
-      </div>
-
-      <div class="form-section">
-        <label>Your contact (if publishing)</label>
-        <input type="text" id="publishableContact" placeholder="Phone or email (only if Yes above)">
-        <div class="hint">Leave blank if you chose "No" above</div>
-      </div>
-
-      <div class="form-section">
-        <label class="checkbox-group">
-          <input type="checkbox" id="emailStreetGroup">
-          <span>Email this post to my street Group</span>
-        </label>
-        <div class="hint">Checked = we'll send a copy to your street Group once approved</div>
-      </div>
-
-      <div class="form-section">
-        <label class="required">
-          <input type="checkbox" id="acknowledgement" required>
-          <span>I understand: this is neighbor-to-neighbor, not official HOA; no medical details; board may hide posts</span>
-        </label>
-      </div>
-
-      <div class="button-group">
-        <button type="button" id="resetBtn" onclick="document.querySelectorAll('#displayName, #street, #address, #category, #title, #details, #vendorName, #publishableContact').forEach(el => el.value = ''); document.getElementById('contactYes').checked = false; document.getElementById('contactNo').checked = false; document.getElementById('emailStreetGroup').checked = false; document.getElementById('acknowledgement').checked = false;">Clear</button>
-        <button type="button" id="submitBtn" onclick="submitPost()">Post to Board</button>
-      </div>
-
-      <div class="back-link">
-        <a href="javascript:void(0);" onclick="window.location.href=window.location.href.split('?')[0];">← Back to Community Board</a>
+          <div style="margin-bottom:15px;">
+            <label style="display:block; font-weight:bold; color:#1a3a52; margin-bottom:5px;">Address:</label>
+            <input type="text" id="postAddress" placeholder="123 Boulder Circle" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; font-size:13px;">
+          </div>
+          <div style="margin-bottom:15px;">
+            <label style="display:block; font-weight:bold; color:#1a3a52; margin-bottom:5px;">Category:</label>
+            <select id="postCategory" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; font-size:13px;">
+              <option>Vendor recommendation</option>
+              <option>Help needed</option>
+              <option>For sale or giveaway</option>
+              <option>General</option>
+            </select>
+          </div>
+          <div style="margin-bottom:15px;">
+            <label style="display:block; font-weight:bold; color:#1a3a52; margin-bottom:5px;">Title:</label>
+            <input type="text" id="postTitle" placeholder="What's this about?" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; font-size:13px;">
+          </div>
+          <div style="margin-bottom:15px;">
+            <label style="display:block; font-weight:bold; color:#1a3a52; margin-bottom:5px;">Details:</label>
+            <textarea id="postDetails" rows="6" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; font-size:13px; font-family:Arial;"></textarea>
+          </div>
+          <button type="submit" style="background:#2d7d3a; color:white; padding:12px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Post to Board</button>
+        </form>
       </div>
     </div>
-  </div>
+    <script>
+      function showPostModal() {
+        document.getElementById('postModal').style.display = 'block';
+      }
+      function closePostModal() {
+        document.getElementById('postModal').style.display = 'none';
+      }
+      function handlePostSubmit(e) {
+        e.preventDefault();
+        const formData = {
+          displayName: document.getElementById('postName').value,
+          street: document.getElementById('postStreet').value,
+          address: document.getElementById('postAddress').value,
+          category: document.getElementById('postCategory').value,
+          title: document.getElementById('postTitle').value,
+          details: document.getElementById('postDetails').value,
+          vendorName: '',
+          contactOK: 'No',
+          publishableContact: '',
+          emailStreetGroup: false,
+          timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Denver' })
+        };
 
-  <script>
+        google.script.run
+          .withSuccessHandler(function() {
+            alert('Post submitted! It will appear after approval.');
+            closePostModal();
+            document.getElementById('postName').value = '';
+            document.getElementById('postAddress').value = '';
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postDetails').value = '';
+            loadPosts();
+          })
+          .withFailureHandler(function(err) {
+            alert('Error submitting post: ' + err);
+          })
+          .submitPost(formData);
+      }
+    </script>
+  `;
+
+  // Insert modal into Browse HTML
+  return browseHtml.replace(
+    '</body>',
+    postFormHtml + '</body>'
+  );
+}
+
+// Original detailed form saved below - will restore once we fix the routing
+/*
     function submitPost() {
       const displayName = document.getElementById('displayName').value.trim();
       const street = document.getElementById('street').value.trim();
@@ -397,6 +195,7 @@ function generatePostPageHTML() {
 </html>
   `;
 }
+*/
 
 function generateBrowsePageHTML() {
   return `
@@ -682,7 +481,7 @@ function generateBrowsePageHTML() {
         <input type="text" id="searchBox" placeholder="Search posts..." onkeyup="filterPosts()">
       </div>
       <div class="control-group action-buttons">
-        <button type="button" id="postBtn" onclick="goToPostPage()">Post Something</button>
+        <button type="button" id="postBtn" onclick="showPostModal()">Post Something</button>
         <button type="button" class="reset-btn" onclick="resetFilters()">Reset</button>
       </div>
     </div>
@@ -783,11 +582,7 @@ function generateBrowsePageHTML() {
       displayPosts(allPosts);
     }
 
-    function goToPostPage() {
-      const currentUrl = window.location.href;
-      const baseUrl = currentUrl.split('?')[0];
-      window.location.href = baseUrl + '?page=post';
-    }
+    // goToPostPage removed - using modal instead
 
     function escapeHtml(text) {
       if (!text) return '';
