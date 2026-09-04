@@ -6,10 +6,13 @@ set -e
 echo "Building Community Board deployment..."
 echo ""
 
-# Check if clasp is installed
-if ! command -v clasp &> /dev/null; then
-    echo "Error: clasp not found. Install with: npm install -g @google/clasp"
-    exit 1
+# Locate clasp. v3 is required: ~/.clasprc.json uses the v3 `tokens.default` format,
+# which clasp v2 cannot read ("Cannot read properties of undefined (reading 'access_token')").
+if command -v clasp &> /dev/null; then
+    CLASP="clasp"
+else
+    echo "clasp not installed globally; using npx."
+    CLASP="npx --yes @google/clasp@3.0.6-alpha"
 fi
 
 # Check if .clasp.json exists and has scriptId
@@ -30,14 +33,29 @@ fi
 echo "Script ID: $SCRIPT_ID"
 echo ""
 
+# The public URL is pinned to this deployment. Pushing alone does NOT update it,
+# and `clasp deploy` without -i creates a new unused URL instead. Always redeploy
+# this exact ID.
+DEPLOYMENT_ID="AKfycbzyn986Bx40Fv6SdeWNQcWTHEhsXeXFXR9S92ZppM03USOZ16-hWkB8bOAoCF-kk3I9Fw"
+DESC="${1:-Community Board update}"
+
 # Push code
 echo "Pushing code..."
-clasp push --force
+$CLASP push --force
 
 echo ""
-echo "Code pushed successfully!"
+echo "Redeploying public URL (deployment $DEPLOYMENT_ID)..."
+$CLASP deploy -i "$DEPLOYMENT_ID" -d "$DESC"
+
 echo ""
-echo "Next: Deploy the web app"
-echo "  clasp deploy --description \"Community Board web app\""
+echo "Verifying the live URL serves the new code..."
+if curl -s "https://script.google.com/macros/s/$DEPLOYMENT_ID/exec" | grep -q showPostModal; then
+    echo "  OK - live URL is serving current code."
+else
+    echo "  WARNING - live URL still looks stale. Check the deployment in the Apps Script editor."
+    exit 1
+fi
+
 echo ""
-echo "After deploying, update DEPLOYMENT_INFO.txt with the deployment ID and Sheet ID."
+echo "Done. Public URL:"
+echo "  https://script.google.com/macros/s/$DEPLOYMENT_ID/exec"

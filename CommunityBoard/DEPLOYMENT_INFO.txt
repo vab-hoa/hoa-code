@@ -10,8 +10,30 @@ AKfycbzyn986Bx40Fv6SdeWNQcWTHEhsXeXFXR9S92ZppM03USOZ16-hWkB8bOAoCF-kk3I9Fw
 Public URL (Browse page by default — copy this):
 https://script.google.com/macros/s/AKfycbzyn986Bx40Fv6SdeWNQcWTHEhsXeXFXR9S92ZppM03USOZ16-hWkB8bOAoCF-kk3I9Fw/exec
 
-Public URL (Post page):
-https://script.google.com/macros/s/AKfycbzyn986Bx40Fv6SdeWNQcWTHEhsXeXFXR9S92ZppM03USOZ16-hWkB8bOAoCF-kk3I9Fw/exec?page=post
+Note: Browse and Post are now a single page (Post opens as a modal). There is no
+separate ?page=post URL any more.
+
+*** HOW TO DEPLOY CHANGES — READ THIS FIRST ***
+A web app URL is PINNED to one version. `clasp push` updates the editor only; it does
+NOT change what the public URL serves. `clasp deploy` with no -i creates a BRAND NEW
+URL and leaves the public one untouched.
+
+So after every push, redeploy THIS deployment ID:
+
+  clasp push --force
+  clasp deploy -i AKfycbzyn986Bx40Fv6SdeWNQcWTHEhsXeXFXR9S92ZppM03USOZ16-hWkB8bOAoCF-kk3I9Fw -d "what changed"
+
+clasp is not installed globally on oregano; use:
+  npx --yes @google/clasp@3.0.6-alpha <cmd>
+(v3 is required — ~/.clasprc.json is in v3 `tokens.default` format and clasp v2 cannot
+read it: "Cannot read properties of undefined (reading 'access_token')")
+
+Verify a deploy actually landed:
+  curl -s ".../exec" | grep -c showPostModal    # 0 means you are seeing stale code
+
+History: this URL sat pinned at version 1 from 2026-09-03 to 2026-09-04 while versions
+2-14 were each deployed to different, unused URLs. Symptom was posts never appearing on
+Browse even though the Sheet was correct — the fixes were never being served.
 
 Sheet ID:
 1mhbzm-qoUvdp_AI8P59gzJrGNnBo3Zmcxjkn0Um86xE
@@ -23,7 +45,7 @@ Google Drive Folder:
 Villas at the Boulders Website Forms and Surveys / Community Board
 
 Created: 2026-09-03
-Deployed: 2026-09-03
+Deployed: 2026-09-04 (version 15 — canonical URL repointed off of stale version 1)
 Styling: Professional header with VaB branding (navy #1a3a52 → green #2d5f3f), green decorative line, compact 13px font
 Features: Multi-page web app (Browse + Post), manual moderation via Sheet, street Group links, admin notification on submission
 Email Recipients: admin@villasboulders.org (new-post notification only)
