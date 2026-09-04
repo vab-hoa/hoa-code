@@ -144,10 +144,11 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
       await supabase.from('issue_email_link').delete().eq('work_item_id', id)
       await supabase.from('wo_status_snapshot').delete().eq('work_item_id', id)
       await supabase.from('work_item_documents').delete().eq('work_item_id', id)
-      // source_documents are linked via source_document_id on work_items;
-      // delete them too since they belong to this work item
+
+      // Null out the foreign key on work_items before deleting source_documents
       const sourceDocId = (item as any).source_document_id
       if (sourceDocId) {
+        await supabase.from('work_items').update({ source_document_id: null }).eq('id', id)
         await supabase.from('source_documents').delete().eq('id', sourceDocId)
       }
 
