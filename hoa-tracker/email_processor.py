@@ -231,8 +231,12 @@ def classify_email(subject, sender, recipients, body, headers=None):
         # Board members discussing ARC form language
         if is_board_member:
             return ('arc_process_discussion', 0.75, False)
-        # Fallback — still ARC-related
-        return ('arc_form_submission', 0.60, False)
+        # Fallback — ARC-related but not a form submission
+        # Only treat as form submission if actual form fields are present;
+        # otherwise it's a discussion/reply in an ARC thread
+        if 'unit address in the villas' in body_lower and 'description of improvements' in body_lower:
+            return ('arc_form_submission', 0.60, False)
+        return ('arc_process_discussion', 0.60, False)
 
     # --- 4. HPPR/LBC forms ---
     if ('homeowner paid planting' in subject_lower or
@@ -336,6 +340,8 @@ def parse_arc_form(body):
         value_start = p['pos'] + len(p['label'])
         value_end = positions[i + 1]['pos'] if i + 1 < len(positions) else len(text)
         value = text[value_start:value_end].strip()
+        # Strip email quoting artifacts (> >> >>> etc.)
+        value = re.sub(r'^(>\s*)+', '', value).strip()
 
         label = p['label']
         if label == 'Name':
@@ -460,6 +466,8 @@ def parse_wo_form(body):
                 value_end = next_idx
         
         value = text[value_start:value_end].strip()
+        # Strip email quoting artifacts (> >> >>> etc.)
+        value = re.sub(r'^(>\s*)+', '', value).strip()
         # Clean up newlines and extra whitespace
         value = ' '.join(value.split())
         
@@ -1494,6 +1502,21 @@ def send_notification_email(classification, email_data, result, mailbox_email=No
 # Main processing pipeline
 # ============================================================
 
+def check_thread_has_work_item(conn, thread_id):
+    """Check if a work item already exists for this email thread."""
+    if not thread_id:
+        return False
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT wi.id FROM work_items wi
+            JOIN issue_email_link iel ON iel.work_item_id = wi.id
+            JOIN email_message em ON em.id = iel.email_message_id
+            WHERE em.gmail_thread_id = %s
+            LIMIT 1
+        """, (thread_id,))
+        return cur.fetchone() is not None
+
+
 def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_service=None, notify=False, mailbox_email=None):
     """
     Process a single email: classify, parse, and optionally persist.
@@ -1605,35 +1628,39 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
             if parsed.get('planned_completion_date'):
                 desc += f'\nPlanned completion: {parsed["planned_completion_date"]}'
 
-            work_item_id = create_work_item(conn, {
-                'source_document_id': source_doc_id,
-                'property_id': property_id,
-                'title': work_title,
-                'description': desc,
-                'category': 'arc_request',
-                'status': 'new',
-                'priority': 'normal',
-            })
-            if work_item_id:
-                result['work_item_id'] = str(work_item_id)
-                result['actions'].append(f'created_work_item: {work_title}')
-
-                # Create issue_email_link connecting email to work item
-                if email_uuid:
-                    try:
-                        with conn.cursor() as cur:
-                            cur.execute("""
-                                INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
-                                VALUES (%s, %s, 'origin', 'parcel_date', 0.95)
-                                ON CONFLICT DO NOTHING
-                            """, (work_item_id, email_uuid))
-                            conn.commit()
-                            result['actions'].append(f'created_issue_email_link: {email_uuid} -> {work_item_id}')
-                    except Exception as e:
-                        print(f"[ERROR] issue_email_link creation failed: {e}", file=sys.stderr)
-                        conn.rollback()
+            # Check if a work item already exists for this thread (avoid duplicates from replies)
+            if check_thread_has_work_item(conn, email_data.get('thread_id')):
+                result['actions'].append('skipped_work_item_creation: thread already has a work item')
             else:
-                result['actions'].append('ERROR: failed to create work item')
+                work_item_id = create_work_item(conn, {
+                    'source_document_id': source_doc_id,
+                    'property_id': property_id,
+                    'title': work_title,
+                    'description': desc,
+                    'category': 'arc_request',
+                    'status': 'new',
+                    'priority': 'normal',
+                })
+                if work_item_id:
+                    result['work_item_id'] = str(work_item_id)
+                    result['actions'].append(f'created_work_item: {work_title}')
+
+                    # Create issue_email_link connecting email to work item
+                    if email_uuid:
+                        try:
+                            with conn.cursor() as cur:
+                                cur.execute("""
+                                    INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
+                                    VALUES (%s, %s, 'origin', 'parcel_date', 0.95)
+                                    ON CONFLICT DO NOTHING
+                                """, (work_item_id, email_uuid))
+                                conn.commit()
+                                result['actions'].append(f'created_issue_email_link: {email_uuid} -> {work_item_id}')
+                        except Exception as e:
+                            print(f"[ERROR] issue_email_link creation failed: {e}", file=sys.stderr)
+                            conn.rollback()
+                else:
+                    result['actions'].append('ERROR: failed to create work item')
 
             # Process attachments (upload to Supabase Storage, insert work_item_documents)
             att_results = process_attachments_for_email(
@@ -1746,35 +1773,39 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
             if parsed.get('planned_completion_date'):
                 desc += f'\nPlanned completion: {parsed["planned_completion_date"]}'
 
-            work_item_id = create_work_item(conn, {
-                'source_document_id': source_doc_id,
-                'property_id': property_id,
-                'title': work_title,
-                'description': desc,
-                'category': 'arc_request',
-                'status': 'new',
-                'priority': 'normal',
-            })
-            if work_item_id:
-                result['work_item_id'] = str(work_item_id)
-                result['actions'].append(f'created_work_item: {work_title}')
-
-                # Create issue_email_link connecting email to work item
-                if email_uuid:
-                    try:
-                        with conn.cursor() as cur:
-                            cur.execute("""
-                                INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
-                                VALUES (%s, %s, 'origin', 'parcel_date', 0.95)
-                                ON CONFLICT DO NOTHING
-                            """, (work_item_id, email_uuid))
-                            conn.commit()
-                            result['actions'].append(f'created_issue_email_link: {email_uuid} -> {work_item_id}')
-                    except Exception as e:
-                        print(f"[ERROR] issue_email_link creation failed: {e}", file=sys.stderr)
-                        conn.rollback()
+            # Check if a work item already exists for this thread (avoid duplicates from replies)
+            if check_thread_has_work_item(conn, email_data.get('thread_id')):
+                result['actions'].append('skipped_work_item_creation: thread already has a work item')
             else:
-                result['actions'].append('ERROR: failed to create work item')
+                work_item_id = create_work_item(conn, {
+                    'source_document_id': source_doc_id,
+                    'property_id': property_id,
+                    'title': work_title,
+                    'description': desc,
+                    'category': 'arc_request',
+                    'status': 'new',
+                    'priority': 'normal',
+                })
+                if work_item_id:
+                    result['work_item_id'] = str(work_item_id)
+                    result['actions'].append(f'created_work_item: {work_title}')
+
+                    # Create issue_email_link connecting email to work item
+                    if email_uuid:
+                        try:
+                            with conn.cursor() as cur:
+                                cur.execute("""
+                                    INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
+                                    VALUES (%s, %s, 'origin', 'parcel_date', 0.95)
+                                    ON CONFLICT DO NOTHING
+                                """, (work_item_id, email_uuid))
+                                conn.commit()
+                                result['actions'].append(f'created_issue_email_link: {email_uuid} -> {work_item_id}')
+                        except Exception as e:
+                            print(f"[ERROR] issue_email_link creation failed: {e}", file=sys.stderr)
+                            conn.rollback()
+                else:
+                    result['actions'].append('ERROR: failed to create work item')
 
             # Process attachments
             att_results = process_attachments_for_email(
