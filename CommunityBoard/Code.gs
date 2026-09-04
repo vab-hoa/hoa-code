@@ -198,6 +198,17 @@ function generateCombinedPageHTML() {
 */
 
 function generateBrowsePageHTML() {
+  // Server-side render the posts into the page. Previously the Browse list was
+  // populated only by a google.script.run round-trip after load; if that call
+  // resolved with nothing the page silently showed "No posts yet".
+  let initialPosts = [];
+  try {
+    initialPosts = getPublishedPosts() || [];
+  } catch (err) {
+    initialPosts = [];
+  }
+  // Escape "<" so a post body can never terminate the <script> block.
+  const initialPostsJson = JSON.stringify(initialPosts).replace(/</g, '\\u003c');
   return `
 <!DOCTYPE html>
 <html>
@@ -492,7 +503,7 @@ function generateBrowsePageHTML() {
   </div>
 
   <script>
-    let allPosts = [];
+    let allPosts = ${initialPostsJson};
 
     function loadPosts() {
       google.script.run
@@ -591,8 +602,9 @@ function generateBrowsePageHTML() {
       return div.innerHTML;
     }
 
-    // Load posts on page load
-    loadPosts();
+    // Posts are server-side rendered into allPosts above, so paint immediately.
+    // loadPosts() remains available to refresh from the Sheet (e.g. after posting).
+    displayPosts(allPosts);
   </script>
 </body>
 </html>
