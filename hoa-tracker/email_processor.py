@@ -110,7 +110,7 @@ BOARD_EMAILS = {
 }
 ADMIN_EMAIL = 'admin@villasboulders.org'
 BOARDWORK_EMAIL = 'boardwork@villasboulders.org'
-ARCFORM_RECIPIENT = 'arcformrecipients@villasbouders.org'
+ARCFORM_RECIPIENT = 'arcformrecipients@villasboulders.org'
 
 # Classifications that create work items (trigger notifications when --notify is on)
 WORK_ITEM_CLASSIFICATIONS = {'arc_form_submission', 'arc_form_forward', 'wo_form', 'hppr_form'}
@@ -199,7 +199,9 @@ def classify_email(subject, sender, recipients, body, headers=None):
 
     # --- 3. ARC family ---
     is_arc = (ARCFORM_RECIPIENT in recipients_lower or
-              'architectural review request' in subject_lower)
+              'architectural review request' in subject_lower or
+              'vab arc request' in subject_lower or
+              re.search(r'\barc request\b', subject_lower) is not None)
     is_from_josh = JOSH_EMAIL in sender_lower
     is_from_dee = 'admin@villasboulders.org' in sender_lower or 'wmbuck' in sender_lower
     is_board_member = any(be in sender_lower for be in BOARD_EMAILS)
@@ -271,6 +273,15 @@ def classify_email(subject, sender, recipients, body, headers=None):
     if is_from_dee and any(kw in subject_lower for kw in ['design guidelines', 'broadlands vs',
                                                           'meeting notes', 'community outreach']):
         return ('governance', 0.75, False)
+
+    # --- 7b. ARC Google Form from admin@ (before homeowner/admin catch-all) ---
+    if is_from_dee or 'admin@villasboulders.org' in sender_lower:
+        if 'arc request' in subject_lower or 'architectural review' in subject_lower:
+            # Google Form submission forwarded by the form notification system
+            if 'unit address' in body_lower or 'description of improvements' in body_lower:
+                return ('arc_form_submission', 0.85, False)
+            # ARC request email without form fields (e.g. notification copy)
+            return ('arc_form_forward', 0.75, False)
 
     # --- 8. Homeowner direct ---
     # Not from known system/board/josh — likely homeowner
@@ -1848,6 +1859,41 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
                 result['parcel_code'] = parcel
                 result['actions'].append(f'address_extracted: {parcel}')
             result['actions'].append('logged_as_homeowner_direct')
+
+            # Auto-create work item if we found a property address
+            if result.get('parcel_code') and not dry_run and conn:
+                # Determine category from subject/body keywords
+                subj_lower = (subject or '').lower()
+                body_lower_check = (body or '').lower()[:2000]
+                if any(kw in subj_lower or kw in body_lower_check for kw in
+                       ['roof', 'leak', 'water', 'flood', 'pipe', 'burst']):
+                    wi_category = 'maintenance_request'
+                elif any(kw in subj_lower or kw in body_lower_check for kw in
+                         ['arc', 'architectural', 'paint', 'fence', 'window', 'door', 'deck', 'patio', 'landscape']):
+                    wi_category = 'arc_request'
+                else:
+                    wi_category = 'homeowner_inquiry'
+
+                # Check thread dedup
+                if not check_thread_has_work_item(conn, email_data.get('thread_id')):
+                    work_title = f'{email_data.get("from_name", "Homeowner") or "Homeowner"} - {result["parcel_code"]}'
+                    try:
+                        work_item_id = create_work_item(conn, {
+                            'property_id': None,  # Will be linked if property found
+                            'title': work_title,
+                            'description': body[:2000],
+                            'category': wi_category,
+                            'status': 'new',
+                            'priority': 'normal',
+                        })
+                        if work_item_id:
+                            result['work_item_id'] = str(work_item_id)
+                            result['actions'].append(f'created_work_item: {work_title} ({wi_category})')
+                    except Exception as e:
+                        print(f"[ERROR] homeowner_direct work item creation failed: {e}", file=sys.stderr)
+                        result['actions'].append(f'error_creating_work_item: {e}')
+                else:
+                    result['actions'].append('skipped_work_item_creation: thread already has a work item')
 
         if not dry_run and conn:
             email_uuid = upsert_email_message(conn, email_data, classification, confidence, is_noise, parse_payload)
