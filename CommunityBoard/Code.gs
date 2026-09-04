@@ -657,36 +657,76 @@ function getPublishedPosts() {
     }
 
     const data = formResponsesTab.getDataRange().getValues();
+    if (data.length < 2) return []; // No data rows
+
     const headers = data[0];
     const posts = [];
 
-    // Find column indices
+    // Find column indices - be very explicit about column names
     const colIndex = {};
-    headers.forEach((header, idx) => {
-      colIndex[header.trim().toLowerCase()] = idx;
-    });
+    for (let i = 0; i < headers.length; i++) {
+      const headerKey = String(headers[i]).trim().toLowerCase();
+      colIndex[headerKey] = i;
+    }
+
+    // Debug: log what we found
+    const hasApprovedCol = colIndex.hasOwnProperty('approved');
+
+    // Hardcode expected column indices as fallback
+    const cols = {
+      timestamp: 0,
+      displayName: 1,
+      street: 2,
+      address: 3,
+      category: 4,
+      title: 5,
+      details: 6,
+      vendorName: 7,
+      contactOK: 8,
+      publishableContact: 9,
+      emailToStreetGroup: 10,
+      approved: 11,
+      hiddenReason: 12
+    };
 
     // Process rows (skip header, start at row 2)
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
-      const approved = row[colIndex['approved']] === true || row[colIndex['approved']] === 'TRUE';
+
+      // Check if row is empty
+      if (!row || row.length === 0) continue;
+
+      // Get approved value - use hardcoded index, fallback to column lookup
+      let approvedValue = row[cols.approved];
+      if (approvedValue === undefined && hasApprovedCol) {
+        approvedValue = row[colIndex['approved']];
+      }
+
+      // Check if approved
+      let approved = false;
+      if (approvedValue !== undefined && approvedValue !== null && approvedValue !== '') {
+        const val = String(approvedValue).trim().toUpperCase();
+        if (val === 'TRUE') {
+          approved = true;
+        }
+      }
 
       if (!approved) continue; // Only include Approved = TRUE
 
-      const street = row[colIndex['street']] || '';
+      const street = row[cols.street] || '';
       const streetGroup = STREET_GROUPS[street];
 
       const post = {
-        timestamp: row[colIndex['timestamp']] || '',
-        displayName: row[colIndex['display name']] || 'Anonymous',
+        timestamp: row[cols.timestamp] || '',
+        displayName: row[cols.displayName] || 'Anonymous',
         street: street,
-        category: row[colIndex['category']] || '',
-        title: row[colIndex['title']] || '',
-        details: row[colIndex['details']] || '',
-        vendorName: row[colIndex['vendor name']] || '',
-        contactOK: row[colIndex['contact ok']] || '',
-        publishableContact: (row[colIndex['contact ok']] === 'Yes' || row[colIndex['contact ok']] === true)
-          ? (row[colIndex['publishable contact']] || '')
+        category: row[cols.category] || '',
+        title: row[cols.title] || '',
+        details: row[cols.details] || '',
+        vendorName: row[cols.vendorName] || '',
+        contactOK: row[cols.contactOK] || '',
+        publishableContact: (row[cols.contactOK] === 'Yes' || row[cols.contactOK] === true)
+          ? (row[cols.publishableContact] || '')
           : '',
         streetGroupUrl: streetGroup ? streetGroup.url : '',
       };
