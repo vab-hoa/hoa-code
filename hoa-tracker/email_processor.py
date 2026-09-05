@@ -1867,12 +1867,30 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
                 body_lower_check = (body or '').lower()[:2000]
                 if any(kw in subj_lower or kw in body_lower_check for kw in
                        ['roof', 'leak', 'water', 'flood', 'pipe', 'burst']):
-                    wi_category = 'maintenance_request'
+                    wi_category = 'roofing'
                 elif any(kw in subj_lower or kw in body_lower_check for kw in
-                         ['arc', 'architectural', 'paint', 'fence', 'window', 'door', 'deck', 'patio', 'landscape']):
+                         ['gutter', 'drainage']):
+                    wi_category = 'drainage'
+                elif any(kw in subj_lower or kw in body_lower_check for kw in
+                         ['paint', 'painting']):
+                    wi_category = 'painting'
+                elif any(kw in subj_lower or kw in body_lower_check for kw in
+                         ['siding']):
+                    wi_category = 'siding'
+                elif any(kw in subj_lower or kw in body_lower_check for kw in
+                         ['irrigation', 'sprinkler']):
+                    wi_category = 'irrigation'
+                elif any(kw in subj_lower or kw in body_lower_check for kw in
+                         ['landscape', 'landscaping', 'tree', 'plant']):
+                    wi_category = 'landscaping'
+                elif any(kw in subj_lower or kw in body_lower_check for kw in
+                         ['arc', 'architectural', 'fence', 'window', 'door', 'deck', 'patio']):
                     wi_category = 'arc_request'
+                elif any(kw in subj_lower or kw in body_lower_check for kw in
+                         ['violation', 'complaint', 'fine']):
+                    wi_category = 'violation'
                 else:
-                    wi_category = 'homeowner_inquiry'
+                    wi_category = 'other'
 
                 # Check thread dedup
                 if not check_thread_has_work_item(conn, email_data.get('thread_id')):
