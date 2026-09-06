@@ -1,17 +1,18 @@
 /**
  * Concrete & Asphalt Section Generator
- * Self-contained: reads its own data from the spreadsheet.
- * Data source: VBB Concrete Work History (Board Documents/Projects/Active/Concrete-Asphalt)
+ * Displays photos from the concrete photos Drive folder if available,
+ * otherwise shows repair history from spreadsheet.
  */
+
+var CONCRETE_PHOTOS_FOLDER_ID = '10GaFTxR4uFw-KoAOSLVq-VfL9rJsxP8K';
+var CONCRETE_PHOTO_MAX_WIDTH = 300;
+var CONCRETE_PHOTO_MAX_HEIGHT = 250;
 
 function generateSectionConcrete(address, displayAddress, data) {
   const sectionLabel = 'Concrete & Asphalt Repair History';
   console.log('Generating Concrete section for ' + address);
 
   try {
-    // Load data directly — not passed via data object
-    var unitRecords = loadConcreteRecords(address);
-
     const reportsFolder = DriveApp.getFolderById(REPORT_CONFIG.reportsFolderId);
     const dateStr = new Date().toISOString().slice(0, 10);
     const docName = 'Report_' + address + '_concrete_' + dateStr;
@@ -37,56 +38,62 @@ function generateSectionConcrete(address, displayAddress, data) {
 
     body.appendParagraph('');
 
-    if (unitRecords.length > 0) {
-      body.appendParagraph('Repair Records')
-        .setHeading(DocumentApp.ParagraphHeading.HEADING3)
-        .setForegroundColor('#1a3c5e');
+    // Try to find and display photos from Drive folder
+    var photosDisplayed = displayConcretePhotosFromDrive(body, address);
 
-      body.appendParagraph('Concrete and asphalt work scheduled or completed at this unit.')
-        .setFontSize(9)
-        .setItalic(true)
-        .setForegroundColor('#666666');
+    // If no photos found, show spreadsheet data
+    if (!photosDisplayed) {
+      var unitRecords = loadConcreteRecords(address);
 
-      body.appendParagraph('');
+      if (unitRecords.length > 0) {
+        body.appendParagraph('Repair Records')
+          .setHeading(DocumentApp.ParagraphHeading.HEADING3)
+          .setForegroundColor('#1a3c5e');
 
-      var table = body.appendTable();
-      table.setBorderWidth(1);
-      table.setBorderColor('#dddddd');
+        body.appendParagraph('Concrete and asphalt work scheduled or completed at this unit.')
+          .setFontSize(9)
+          .setItalic(true)
+          .setForegroundColor('#666666');
 
-      var hdr = table.appendTableRow();
-      ['Year', 'Location', 'Work', 'Source', 'Severity Notes'].forEach(function(label) {
-        var cell = hdr.appendTableCell(label);
-        cell.setBackgroundColor('#1a3c5e');
-        cell.getChild(0).asParagraph()
-          .setBold(true).setFontSize(10).setForegroundColor('#ffffff');
-        cell.setPaddingTop(6); cell.setPaddingBottom(6);
-        cell.setPaddingLeft(8); cell.setPaddingRight(8);
-      });
+        body.appendParagraph('');
 
-      for (var i = 0; i < unitRecords.length; i++) {
-        var rec = unitRecords[i];
-        var dataRow = table.appendTableRow();
-        var bg = (i % 2 === 0) ? '#ffffff' : '#f8f8f8';
-        [rec.year, rec.location, rec.work, rec.source, rec.severity].forEach(function(val) {
-          var cell = dataRow.appendTableCell(val || '');
-          cell.setBackgroundColor(bg);
+        var table = body.appendTable();
+        table.setBorderWidth(1);
+        table.setBorderColor('#dddddd');
+
+        var hdr = table.appendTableRow();
+        ['Year', 'Location', 'Work', 'Source', 'Severity Notes'].forEach(function(label) {
+          var cell = hdr.appendTableCell(label);
+          cell.setBackgroundColor('#1a3c5e');
           cell.getChild(0).asParagraph()
-            .setFontSize(10).setForegroundColor('#333333');
-          cell.setPaddingTop(5); cell.setPaddingBottom(5);
+            .setBold(true).setFontSize(10).setForegroundColor('#ffffff');
+          cell.setPaddingTop(6); cell.setPaddingBottom(6);
           cell.setPaddingLeft(8); cell.setPaddingRight(8);
         });
-      }
 
-    } else {
-      body.appendParagraph('No concrete or asphalt work on record for this unit.')
-        .setItalic(true)
-        .setForegroundColor('#666666');
+        for (var i = 0; i < unitRecords.length; i++) {
+          var rec = unitRecords[i];
+          var dataRow = table.appendTableRow();
+          var bg = (i % 2 === 0) ? '#ffffff' : '#f8f8f8';
+          [rec.year, rec.location, rec.work, rec.source, rec.severity].forEach(function(val) {
+            var cell = dataRow.appendTableCell(val || '');
+            cell.setBackgroundColor(bg);
+            cell.getChild(0).asParagraph()
+              .setFontSize(10).setForegroundColor('#333333');
+            cell.setPaddingTop(5); cell.setPaddingBottom(5);
+            cell.setPaddingLeft(8); cell.setPaddingRight(8);
+          });
+        }
+      } else {
+        body.appendParagraph('No concrete or asphalt repair photos or records on file for this property.')
+          .setItalic(true)
+          .setForegroundColor('#666666');
+      }
     }
 
     body.appendParagraph('');
     body.appendParagraph(
-      'Note: Records prior to 2025 are reconstructed from HOA documents and may be incomplete. ' +
-      'Contact manager@villasboulders.org with questions.'
+      'For questions about concrete and asphalt repairs, contact manager@villasboulders.org.'
     ).setFontSize(9).setItalic(true).setForegroundColor('#888888');
 
     body.appendParagraph('');
@@ -106,6 +113,152 @@ function generateSectionConcrete(address, displayAddress, data) {
   } catch (e) {
     console.error('Error generating Concrete section: ' + e.toString());
     throw e;
+  }
+}
+
+/**
+ * Look for a folder matching the property address in the concrete photos directory.
+ * If found, displays photos in a 2-column layout.
+ * Returns true if photos were displayed, false otherwise.
+ */
+function displayConcretePhotosFromDrive(body, address) {
+  try {
+    var parentFolder = DriveApp.getFolderById(CONCRETE_PHOTOS_FOLDER_ID);
+    var childFolders = parentFolder.getFolders();
+
+    var addressFolder = null;
+    while (childFolders.hasNext()) {
+      var folder = childFolders.next();
+      // Match standard form (e.g., 13737RP2)
+      if (folder.getName() === address) {
+        addressFolder = folder;
+        break;
+      }
+    }
+
+    if (!addressFolder) {
+      console.log('No concrete photos folder found for ' + address);
+      return false;
+    }
+
+    // Collect all image files from the folder
+    var photoFiles = [];
+    var files = addressFolder.getFiles();
+    while (files.hasNext()) {
+      var file = files.next();
+      var mimeType = file.getMimeType();
+      if (mimeType.indexOf('image') === 0 ||
+          mimeType === 'image/heic' ||
+          mimeType === 'image/heif') {
+        photoFiles.push(file);
+      }
+    }
+
+    if (photoFiles.length === 0) {
+      console.log('No image files found in concrete photos folder for ' + address);
+      return false;
+    }
+
+    console.log('Found ' + photoFiles.length + ' photos for ' + address);
+
+    // Display photos in 2-column table
+    body.appendParagraph('Repair Site Photos')
+      .setHeading(DocumentApp.ParagraphHeading.HEADING3)
+      .setForegroundColor('#1a3c5e');
+
+    body.appendParagraph('Photos of concrete and asphalt repairs at this property.')
+      .setFontSize(9)
+      .setItalic(true)
+      .setForegroundColor('#666666');
+
+    body.appendParagraph('');
+
+    // Create 2-column photo table
+    displayPhotosIn2ColumnTableConcrete(body, photoFiles);
+
+    return true;
+  } catch (e) {
+    console.error('Error displaying concrete photos: ' + e.toString());
+    return false;
+  }
+}
+
+/**
+ * Display photos in a 2-column table layout
+ */
+function displayPhotosIn2ColumnTableConcrete(body, photoFiles) {
+  if (!photoFiles || photoFiles.length === 0) return;
+
+  var table = body.appendTable();
+  table.setBorderWidth(0);
+  table.setBorderColor('#ffffff');
+
+  var colWidths = [300, 300];
+
+  for (var i = 0; i < photoFiles.length; i += 2) {
+    var tableRow = table.appendTableRow();
+
+    // Left cell
+    var leftCell = tableRow.appendTableCell('');
+    leftCell.setWidth(colWidths[0]);
+    leftCell.setPaddingTop(10);
+    leftCell.setPaddingBottom(10);
+    leftCell.setPaddingLeft(5);
+    leftCell.setPaddingRight(5);
+
+    addPhotoCellConcrete(leftCell, photoFiles[i]);
+
+    // Right cell
+    var rightCell = tableRow.appendTableCell('');
+    rightCell.setWidth(colWidths[1]);
+    rightCell.setPaddingTop(10);
+    rightCell.setPaddingBottom(10);
+    rightCell.setPaddingLeft(5);
+    rightCell.setPaddingRight(5);
+
+    if (i + 1 < photoFiles.length) {
+      addPhotoCellConcrete(rightCell, photoFiles[i + 1]);
+    }
+  }
+}
+
+/**
+ * Add a single photo to a table cell
+ */
+function addPhotoCellConcrete(cell, photoFile) {
+  if (!photoFile) return;
+
+  try {
+    var imageBlob = photoFile.getBlob();
+    var mimeType = photoFile.getMimeType();
+
+    // Convert HEIF/HEIC if needed
+    var convertedBlob = imageBlob;
+    if (mimeType === 'image/heic' || mimeType === 'image/heif') {
+      convertedBlob = convertHeifToJpeg(imageBlob, photoFile.getName());
+    }
+
+    if (!convertedBlob) {
+      convertedBlob = imageBlob;
+    }
+
+    var paragraph = cell.getChild(0);
+    if (paragraph.getType() === DocumentApp.ElementType.PARAGRAPH) {
+      paragraph.clear();
+    }
+
+    var inlineImage = cell.appendImage(convertedBlob);
+    inlineImage.setWidth(CONCRETE_PHOTO_MAX_WIDTH);
+    inlineImage.setHeight(CONCRETE_PHOTO_MAX_HEIGHT);
+
+    // Add filename as caption
+    var caption = cell.appendParagraph(photoFile.getName());
+    caption.setFontSize(9);
+    caption.setForegroundColor('#666666');
+    caption.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+
+  } catch (e) {
+    console.error('Error adding photo ' + photoFile.getName() + ': ' + e.toString());
   }
 }
 
