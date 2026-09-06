@@ -5,6 +5,7 @@ const CONFIG = {
 };
 
 const STREET_GROUPS = {
+  'All streets': { email: 'residents@villasboulders.org', url: 'https://groups.google.com/a/villasboulders.org/g/residents' },
   'Boulder Circle': { email: 'bouldercircle@villasboulders.org', url: 'https://groups.google.com/a/villasboulders.org/g/bouldercircle' },
   'Boulder Point': { email: 'boulderpoint@villasboulders.org', url: 'https://groups.google.com/a/villasboulders.org/g/boulderpoint' },
   'Broadlands Lane': { email: 'broadlandslane@villasboulders.org', url: 'https://groups.google.com/a/villasboulders.org/g/broadlandslane' },
@@ -43,6 +44,7 @@ function generateCombinedPageHTML() {
           <div style="margin-bottom:15px;">
             <label style="display:block; font-weight:bold; color:#1a3a52; margin-bottom:5px;">Street:</label>
             <select id="postStreet" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; font-size:13px;">
+              <option selected>All streets</option>
               <option>Boulder Circle</option>
               <option>Boulder Point</option>
               <option>Broadlands Lane</option>
@@ -557,7 +559,8 @@ function generateBrowsePageHTML() {
         html += '<div class="post-timestamp">Posted ' + timestamp + '</div>';
 
         if (post.streetGroupUrl) {
-          html += '<div class="post-action"><a href="' + post.streetGroupUrl + '" target="_blank">Discuss on ' + escapeHtml(post.street) + ' group →</a></div>';
+          const groupLabel = post.street === 'All streets' ? 'Residents list' : escapeHtml(post.street) + ' group';
+          html += '<div class="post-action"><a href="' + post.streetGroupUrl + '" target="_blank">Discuss on ' + groupLabel + ' →</a></div>';
         }
 
         html += '</div>';
