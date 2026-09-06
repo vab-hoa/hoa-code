@@ -42,6 +42,12 @@ export const STATUS_LABELS: Record<string, string> = {
   notified: 'Notified',
   fined: 'Fined',
   resolved: 'Resolved',
+
+  'project: window_wells': 'Project: Window Wells',
+  'project: concrete': 'Project: Concrete',
+  'project: lawns': 'Project: Lawns',
+  'project: wood_trim': 'Project: Wood Trim',
+  'project: asphalt': 'Project: Asphalt',
 }
 
 export const CATEGORY_COLORS: Record<string, string> = {
