@@ -21,6 +21,7 @@ import os
 import sys
 import time
 import argparse
+from functools import wraps
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
@@ -52,6 +53,28 @@ SYNC_LIST = [
 ]
 
 
+def retry_on_transient_error(max_retries=3, initial_delay=1):
+  """Retry on transient HTTP errors (5xx, 429) with exponential backoff."""
+  def decorator(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+      delay = initial_delay
+      for attempt in range(max_retries):
+        try:
+          return func(*args, **kwargs)
+        except HttpError as e:
+          is_transient = (500 <= e.resp.status < 600) or e.resp.status == 429
+          is_last_attempt = (attempt == max_retries - 1)
+          if not is_transient or is_last_attempt:
+            raise
+          print(f"    Transient error ({e.resp.status}), retrying in {delay}s...")
+          time.sleep(delay)
+          delay *= 2
+      return func(*args, **kwargs)
+    return wrapper
+  return decorator
+
+
 def normalize_email(email):
     """Normalize Gmail addresses by removing dots from the local part.
 
@@ -79,6 +102,15 @@ def build_services():
     return people, directory
 
 
+@retry_on_transient_error(max_retries=3)
+def _batch_get_people(people, resource_names):
+  """Fetch person details for a batch of resource names with retry."""
+  return people.people().getBatchGet(
+    resourceNames=resource_names,
+    personFields="emailAddresses",
+  ).execute()
+
+
 def get_contact_group_emails(people, label_name):
     """Return set of lowercase email addresses in the named contact group."""
     result = people.contactGroups().list(pageSize=200).execute()
@@ -100,10 +132,7 @@ def get_contact_group_emails(people, label_name):
     emails = set()
     for i in range(0, len(resource_names), 50):
         batch = resource_names[i:i + 50]
-        resp = people.people().getBatchGet(
-            resourceNames=batch,
-            personFields="emailAddresses",
-        ).execute()
+        resp = _batch_get_people(people, batch)
         for r in resp.get("responses", []):
             addrs = r.get("person", {}).get("emailAddresses", [])
             if addrs:
@@ -114,16 +143,22 @@ def get_contact_group_emails(people, label_name):
     return emails
 
 
+@retry_on_transient_error(max_retries=3)
+def _list_group_members(directory, group_email, page_token=None):
+  """List group members with retry on transient errors."""
+  kwargs = {"groupKey": group_email, "maxResults": 200}
+  if page_token:
+    kwargs["pageToken"] = page_token
+  return directory.members().list(**kwargs).execute()
+
+
 def get_group_members(directory, group_email):
     """Return set of lowercase member emails, or None if the group doesn't exist."""
     members = set()
     page_token = None
     while True:
-        kwargs = {"groupKey": group_email, "maxResults": 200}
-        if page_token:
-            kwargs["pageToken"] = page_token
         try:
-            result = directory.members().list(**kwargs).execute()
+            result = _list_group_members(directory, group_email, page_token)
         except HttpError as e:
             if e.resp.status == 404:
                 return None
