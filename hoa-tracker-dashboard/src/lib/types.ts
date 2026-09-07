@@ -202,3 +202,12 @@ export type WorkItemStatus = ArcRequestStatus | WorkOrderStatus | ViolationStatu
 export type Decision =
   | 'approved' | 'approved_with_conditions' | 'denied'
   | 'no_approval_needed' | 'pending' | 'info_requested'
+
+export interface WorkItemNote {
+  id: string
+  work_item_id: string
+  note_date: string
+  content: string
+  source: string | null
+  created_at: string
+}

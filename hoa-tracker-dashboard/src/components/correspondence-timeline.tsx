@@ -4,12 +4,12 @@ import { useState } from 'react'
 import clsx from 'clsx'
 import { formatDateTime, truncate } from '@/lib/format'
 import { StatusBadge } from './status-badge'
-import type { CorrespondenceEntry, EmailMessage } from '@/lib/types'
+import type { CorrespondenceEntry, EmailMessage, WorkItemNote } from '@/lib/types'
 
 interface TimelineEntry {
   id: string
   date: string
-  type: 'correspondence' | 'email'
+  type: 'correspondence' | 'email' | 'note'
   author: string
   subject?: string
   classification?: string
@@ -17,14 +17,17 @@ interface TimelineEntry {
   oldStatus?: string | null
   newStatus?: string | null
   email?: EmailMessage
+  source?: string | null
+  createdAt?: string
 }
 
 interface CorrespondenceTimelineProps {
   correspondence: CorrespondenceEntry[]
   emails: any[]
+  notes?: WorkItemNote[]
 }
 
-export function CorrespondenceTimeline({ correspondence, emails }: CorrespondenceTimelineProps) {
+export function CorrespondenceTimeline({ correspondence, emails, notes = [] }: CorrespondenceTimelineProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [selectedEmail, setSelectedEmail] = useState<EmailMessage | null>(null)
 
@@ -51,10 +54,19 @@ export function CorrespondenceTimeline({ correspondence, emails }: Correspondenc
         email: em,
       }
     }),
+    ...notes.map(n => ({
+      id: n.id,
+      date: n.note_date,
+      type: 'note' as const,
+      author: n.source || 'Note',
+      content: n.content,
+      source: n.source,
+      createdAt: n.created_at,
+    })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   if (entries.length === 0) {
-    return <p className="text-sm text-gray-500">No correspondence or emails recorded.</p>
+    return <p className="text-sm text-gray-500">No correspondence or notes recorded.</p>
   }
 
   return (
@@ -62,13 +74,22 @@ export function CorrespondenceTimeline({ correspondence, emails }: Correspondenc
       {entries.map((entry, idx) => (
         <div key={entry.id} className="relative">
           {idx > 0 && <div className="h-2 border-l-2 border-gray-200 ml-6" />}
-          <div className="flex gap-4">
+          <div className={clsx('flex gap-4', entry.type === 'note' && 'border-l-3 border-amber-400 pl-3 -ml-3')}>
             <div className="flex-shrink-0 mt-1">
-              <div className={clsx('w-3 h-3 rounded-full border-2', entry.type === 'email' ? 'bg-indigo-500 border-indigo-300' : 'bg-gray-400 border-gray-300')} />
+              <div className={clsx('w-3 h-3 rounded-full border-2',
+                entry.type === 'email' ? 'bg-indigo-500 border-indigo-300' :
+                entry.type === 'note' ? 'bg-amber-400 border-amber-300' :
+                'bg-gray-400 border-gray-300'
+              )} />
             </div>
             <div className="flex-1 pb-3">
               <div className="flex items-center justify-between gap-2">
-                <div className="text-sm font-medium text-gray-900">{entry.author}</div>
+                <div className="flex items-center gap-2">
+                  <div className="text-sm font-medium text-gray-900">{entry.author}</div>
+                  {entry.type === 'note' && (
+                    <span className="px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide bg-amber-100 text-amber-800 rounded">Note</span>
+                  )}
+                </div>
                 <div className="text-xs text-gray-500">{formatDateTime(entry.date)}</div>
               </div>
 
@@ -80,7 +101,9 @@ export function CorrespondenceTimeline({ correspondence, emails }: Correspondenc
                 <div className="text-xs text-gray-500 mt-1">Classification: {entry.classification}</div>
               )}
 
-              <div className="mt-2 text-sm text-gray-700 bg-white border border-gray-200 p-2 rounded max-h-20 overflow-hidden">
+              <div className={clsx('mt-2 text-sm text-gray-700 border p-2 rounded max-h-20 overflow-hidden',
+                entry.type === 'note' ? 'bg-amber-50 border-amber-200' : 'bg-white border-gray-200'
+              )}>
                 {truncate(entry.content, 300)}
               </div>
 
@@ -98,6 +121,12 @@ export function CorrespondenceTimeline({ correspondence, emails }: Correspondenc
                 >
                   Read full email
                 </button>
+              )}
+
+              {entry.type === 'note' && entry.createdAt && (
+                <div className="mt-1 text-xs text-gray-400">
+                  Added: {formatDateTime(entry.createdAt)}
+                </div>
               )}
             </div>
           </div>

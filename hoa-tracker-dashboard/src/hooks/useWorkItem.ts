@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { getWorkItem, getWorkItemCorrespondence, getWorkItemEmails, getWorkItemStatusHistory, getWorkItemDocuments } from '@/lib/queries'
-import type { WorkItem, CorrespondenceEntry, WorkItemDocument } from '@/lib/types'
+import { getWorkItem, getWorkItemCorrespondence, getWorkItemEmails, getWorkItemStatusHistory, getWorkItemDocuments, getWorkItemNotes } from '@/lib/queries'
+import type { WorkItem, CorrespondenceEntry, WorkItemDocument, WorkItemNote } from '@/lib/types'
 
 export function useWorkItem(id: string) {
   const [item, setItem] = useState<WorkItem | null>(null)
@@ -8,24 +8,27 @@ export function useWorkItem(id: string) {
   const [emails, setEmails] = useState<any[]>([])
   const [statusHistory, setStatusHistory] = useState<CorrespondenceEntry[]>([])
   const [documents, setDocuments] = useState<WorkItemDocument[]>([])
+  const [notes, setNotes] = useState<WorkItemNote[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchData = async () => {
     setLoading(true)
     try {
-      const [wi, corr, em, hist, docs] = await Promise.all([
+      const [wi, corr, em, hist, docs, notesData] = await Promise.all([
         getWorkItem(id),
         getWorkItemCorrespondence(id),
         getWorkItemEmails(id),
         getWorkItemStatusHistory(id),
         getWorkItemDocuments(id),
+        getWorkItemNotes(id),
       ])
       setItem(wi)
       setCorrespondence(corr)
       setEmails(em)
       setStatusHistory(hist)
       setDocuments(docs)
+      setNotes(notesData)
       setError(null)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unknown error')
@@ -51,5 +54,5 @@ export function useWorkItem(id: string) {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [id])
 
-  return { item, correspondence, emails, statusHistory, documents, loading, error }
+  return { item, correspondence, emails, statusHistory, documents, notes, loading, error }
 }
