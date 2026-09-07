@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useWorkItem } from '@/hooks/useWorkItem'
 import { supabase } from '@/lib/supabase'
-import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted, updateWorkItemStatus, getWorkItem } from '@/lib/queries'
+import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted, updateWorkItemStatus, getWorkItem, addWorkItemNote } from '@/lib/queries'
 import { TERMINAL_STATUSES_BY_CATEGORY, getValidStatusesForCategory } from '@/lib/work-item-helpers'
 import { STATUS_LABELS } from '@/lib/constants'
 import { Loading } from '@/components/loading'
@@ -19,7 +19,7 @@ import type { WorkItemStatus } from '@/lib/types'
 export default function WorkItemDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params)
   const router = useRouter()
-  const { item, correspondence, emails, statusHistory, documents, loading, error } = useWorkItem(id)
+  const { item, correspondence, emails, statusHistory, documents, notes, loading, error } = useWorkItem(id)
 
   const [showExclusionDialog, setShowExclusionDialog] = useState(false)
   const [exclusionReason, setExclusionReason] = useState('')
@@ -50,6 +50,14 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
 
   const [localItem, setLocalItem] = useState(item)
 
+  // Add Note dialog state
+  const [showNoteDialog, setShowNoteDialog] = useState(false)
+  const [noteDate, setNoteDate] = useState('')
+  const [noteContent, setNoteContent] = useState('')
+  const [noteSource, setNoteSource] = useState('')
+  const [isAddingNote, setIsAddingNote] = useState(false)
+  const [localNotes, setLocalNotes] = useState(notes)
+
   React.useEffect(() => {
     setLocalDocuments(documents)
   }, [documents])
@@ -57,6 +65,10 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
   React.useEffect(() => {
     setLocalItem(item)
   }, [item])
+
+  React.useEffect(() => {
+    setLocalNotes(notes)
+  }, [notes])
 
   const handleExclude = async () => {
     if (!exclusionReason.trim() || !excludingName.trim()) {
@@ -203,6 +215,27 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
       setEditingDocId(null)
     } else {
       alert('Error updating title')
+    }
+  }
+
+  const handleAddNote = async () => {
+    if (!noteDate.trim() || !noteContent.trim()) {
+      alert('Please provide both a date and note content')
+      return
+    }
+
+    setIsAddingNote(true)
+    const result = await addWorkItemNote(id, noteDate, noteContent, noteSource || null)
+    setIsAddingNote(false)
+
+    if (result) {
+      setLocalNotes([result, ...localNotes])
+      setNoteDate('')
+      setNoteContent('')
+      setNoteSource('')
+      setShowNoteDialog(false)
+    } else {
+      alert('Error adding note')
     }
   }
 
@@ -495,8 +528,21 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
         </div>
 
         <div className="bg-surface border border-edge rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-bold text-ink mb-4">Correspondence & Emails</h2>
-          <CorrespondenceTimeline correspondence={correspondence} emails={emails} />
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-ink">Correspondence &amp; Notes</h2>
+            <button
+              onClick={() => {
+                setNoteDate(new Date().toISOString().split('T')[0])
+                setNoteContent('')
+                setNoteSource('')
+                setShowNoteDialog(true)
+              }}
+              className="px-3 py-1 text-xs bg-amber-500/20 border border-amber-500/50 text-amber-300 rounded hover:bg-amber-500/30 transition-colors"
+            >
+              + Add Note
+            </button>
+          </div>
+          <CorrespondenceTimeline correspondence={correspondence} emails={emails} notes={localNotes} />
         </div>
 
         {statusHistory.length > 0 && (
@@ -577,6 +623,72 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                     className="px-3 py-2 bg-blue-500/20 border border-blue-500 text-blue-300 rounded text-sm hover:bg-blue-500/30 transition-colors disabled:opacity-50"
                   >
                     {isUploading ? 'Uploading...' : 'Upload'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Add Note dialog */}
+        {showNoteDialog && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-surface border border-edge rounded-lg p-6 max-w-md w-full">
+              <h3 className="text-lg font-bold text-ink mb-4">Add Note</h3>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-1">
+                    Note date
+                  </label>
+                  <input
+                    type="date"
+                    value={noteDate}
+                    onChange={e => setNoteDate(e.target.value)}
+                    className="w-full px-3 py-2 bg-edge border border-edge text-ink rounded text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-1">
+                    Note content
+                  </label>
+                  <textarea
+                    value={noteContent}
+                    onChange={e => setNoteContent(e.target.value)}
+                    placeholder="Enter note content..."
+                    rows={5}
+                    className="w-full px-3 py-2 bg-edge border border-edge text-ink rounded text-sm resize-y"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-1">
+                    Author / Source (optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={noteSource}
+                    onChange={e => setNoteSource(e.target.value)}
+                    placeholder="e.g., Keystone Details, Dee, Josh Hall"
+                    className="w-full px-3 py-2 bg-edge border border-edge text-ink rounded text-sm"
+                  />
+                </div>
+
+                <div className="flex gap-3 justify-end">
+                  <button
+                    onClick={() => setShowNoteDialog(false)}
+                    disabled={isAddingNote}
+                    className="px-3 py-2 bg-edge border border-edge text-ink rounded text-sm hover:bg-edge/70 transition-colors disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleAddNote}
+                    disabled={isAddingNote || !noteDate.trim() || !noteContent.trim()}
+                    className="px-3 py-2 bg-amber-500/20 border border-amber-500 text-amber-300 rounded text-sm hover:bg-amber-500/30 transition-colors disabled:opacity-50"
+                  >
+                    {isAddingNote ? 'Adding...' : 'Add Note'}
                   </button>
                 </div>
               </div>

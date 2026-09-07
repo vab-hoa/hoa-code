@@ -3,7 +3,7 @@ import { isTerminalStatus } from './work-item-helpers'
 import type {
   DashboardSummary, OpenWorkItem, AgingWorkItem,
   WorkItem, Property, CorrespondenceEntry, EmailMessage,
-  IssueEmailLink, WoStatusSnapshot, SourceDocument, EmailThread, WorkItemDocument,
+  IssueEmailLink, WoStatusSnapshot, SourceDocument, EmailThread, WorkItemDocument, WorkItemNote,
 } from './types'
 
 // === Dashboard Home ===
@@ -436,4 +436,36 @@ export async function getEmailStats() {
     .order('message_count', { ascending: false })
   if (error) { console.error('getEmailStats:', error); return [] }
   return data || []
+}
+
+// === Work Item Notes ===
+
+export async function getWorkItemNotes(workItemId: string): Promise<WorkItemNote[]> {
+  const { data, error } = await supabase
+    .from('work_item_notes')
+    .select('*')
+    .eq('work_item_id', workItemId)
+    .order('note_date', { ascending: true })
+  if (error) { console.error('getWorkItemNotes:', error); return [] }
+  return data || []
+}
+
+export async function addWorkItemNote(
+  workItemId: string,
+  noteDate: string,
+  content: string,
+  source?: string | null
+): Promise<WorkItemNote | null> {
+  const { data, error } = await supabase
+    .from('work_item_notes')
+    .insert({
+      work_item_id: workItemId,
+      note_date: noteDate,
+      content,
+      source: source || null,
+    })
+    .select()
+    .single()
+  if (error) { console.error('addWorkItemNote:', error); return null }
+  return data
 }
