@@ -48,6 +48,7 @@ export const STATUS_LABELS: Record<string, string> = {
   'project: lawns': 'Project: Lawns',
   'project: wood_trim': 'Project: Wood Trim',
   'project: asphalt': 'Project: Asphalt',
+  'project: tree_trimming': 'Project: Tree Trimming',
 }
 
 export const CATEGORY_COLORS: Record<string, string> = {
