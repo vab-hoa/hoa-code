@@ -141,16 +141,12 @@ export interface WorkItemDocument {
 
 export interface DashboardSummary {
   total_open: number
-  new_count: number
-  on_hold_count: number
-  awaiting_quote_count: number
-  service_request_count: number
-  scheduled_count: number
-  pending_board_count: number
-  arc_in_review: number
-  approved_count: number
-  approved_with_conditions_count: number
-  denied_count: number
+  manager_count: number
+  board_count: number
+  arc_count: number
+  contractor_count: number
+  project_count: number
+  closed_count: number
   total_all_time: number
 }
 
@@ -178,26 +174,15 @@ export interface AgingWorkItem {
 // === Enums ===
 
 export type WorkItemCategory =
-  | 'arc_request' | 'work_order' | 'violation' | 'landscaping'
-  | 'gutter' | 'roofing' | 'siding' | 'irrigation' | 'drainage'
-  | 'painting' | 'general_repair' | 'governance' | 'other'
+  | 'arc_request' | 'work_order' | 'violation' | 'other'
 
-export type ArcRequestStatus =
-  | 'new' | 'under_review_with_architect' | 'approved'
-  | 'approved_with_conditions' | 'denied' | 'closed'
-
-export type WorkOrderStatus =
-  | 'open' | 'pending_board_review' | 'closed' | 'approved' | 'awaiting_quote'
-  | 'on_hold' | 'scheduled' | 'monitored' | 'service_request' | 'past_due'
-  | 'new' | 'assigned' | 'in_progress' | 'cancelled'
-
-export type ViolationStatus =
-  | 'notified' | 'fined' | 'resolved' | 'closed'
-
-export type LandscapingStatus =
-  | 'new' | 'service_request' | 'scheduled' | 'closed' | 'cancelled'
-
-export type WorkItemStatus = ArcRequestStatus | WorkOrderStatus | ViolationStatus | LandscapingStatus
+export type WorkItemStatus =
+  | 'manager' | 'board' | 'arc' | 'contractor'
+  | 'project: window_wells' | 'project: concrete' | 'project: lawns'
+  | 'project: wood_trim' | 'project: asphalt' | 'project: tree_trimming'
+  | 'closed'
+  | 'approved' | 'approved_with_conditions' | 'denied' | 'withdrawn'
+  | 'notified' | 'fined' | 'resolved'
 
 export type Decision =
   | 'approved' | 'approved_with_conditions' | 'denied'

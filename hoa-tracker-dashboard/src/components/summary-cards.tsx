@@ -11,13 +11,13 @@ export function SummaryCards({ summary, agingCount }: SummaryCardsProps) {
 
   const cards = [
     { label: 'Total Open', value: summary.total_open, color: 'border-t-blue-500' },
-    { label: 'New', value: summary.new_count, color: 'border-t-blue-500' },
+    { label: 'Manager', value: summary.manager_count, color: 'border-t-blue-500' },
+    { label: 'Board', value: summary.board_count, color: 'border-t-red-500' },
+    { label: 'ARC', value: summary.arc_count, color: 'border-t-violet-500' },
+    { label: 'Contractor', value: summary.contractor_count, color: 'border-t-yellow-500' },
+    { label: 'Project', value: summary.project_count, color: 'border-t-teal-500' },
+    { label: 'Closed', value: summary.closed_count, color: 'border-t-gray-500' },
     { label: 'Aging', value: agingCount, color: 'border-t-red-500' },
-    { label: 'Pending Review', value: summary.pending_board_count, color: 'border-t-red-500' },
-    { label: 'Awaiting Quote', value: summary.awaiting_quote_count, color: 'border-t-orange-500' },
-    { label: 'On Hold', value: summary.on_hold_count, color: 'border-t-gray-500' },
-    { label: 'Scheduled', value: summary.scheduled_count, color: 'border-t-green-500' },
-    { label: 'ARC In Review', value: summary.arc_in_review, color: 'border-t-violet-500' },
   ]
 
   return (

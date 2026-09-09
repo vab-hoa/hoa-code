@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useWorkItem } from '@/hooks/useWorkItem'
 import { supabase } from '@/lib/supabase'
 import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted, updateWorkItemStatus, getWorkItem, addWorkItemNote } from '@/lib/queries'
-import { TERMINAL_STATUSES_BY_CATEGORY, getValidStatusesForCategory } from '@/lib/work-item-helpers'
+import { ALL_TERMINAL_STATUSES, getValidStatusesForCategory } from '@/lib/work-item-helpers'
 import { STATUS_LABELS } from '@/lib/constants'
 import { Loading } from '@/components/loading'
 import { StatusBadge } from '@/components/status-badge'
@@ -108,7 +108,7 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
     setIsUpdatingStatus(false)
 
     if (!result.success) {
-      alert('Error updating status: ' + (result.error || 'Unknown error'))
+      alert('Error updating responsibility: ' + (result.error || 'Unknown error'))
       return
     }
 
@@ -122,7 +122,7 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
 
   const handleMarkCompleted = async () => {
     if (!completionStatus.trim()) {
-      alert('Please select a completion status')
+      alert('Please select a completion responsibility')
       return
     }
 
@@ -255,7 +255,7 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-ink mb-3">{localItem?.title}</h1>
               <div className="flex gap-2 flex-wrap mb-4">
-                <StatusBadge status={localItem?.status || 'new'} size="md" />
+                <StatusBadge status={localItem?.status || 'manager'} size="md" />
                 <CategoryBadge category={localItem?.category || 'work_order'} size="md" />
               </div>
 
@@ -289,8 +289,7 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
             <div className="flex gap-2 flex-wrap justify-end">
               <button
                 onClick={() => {
-                  const terminals = TERMINAL_STATUSES_BY_CATEGORY[item.category] || ['closed', 'cancelled', 'denied']
-                  setCompletionStatus(terminals[0])
+                  setCompletionStatus(ALL_TERMINAL_STATUSES[0])
                   setShowCompletionDialog(true)
                 }}
                 className="px-3 py-1 bg-green-500/20 border border-green-500/50 text-green-300 text-sm rounded hover:bg-green-500/30 transition-colors whitespace-nowrap"
@@ -342,7 +341,7 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                 </div>
               )}
               <div>
-                <dt className="text-mute">Status</dt>
+                <dt className="text-mute">Responsibility</dt>
                 <dd className="font-medium text-ink">
                   {editingStatus ? (
                     <div className="flex gap-2 items-center">
@@ -367,7 +366,7 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                       <button
                         onClick={() => {
                           setEditingStatus(false)
-                          setNewStatus(localItem?.status || 'new')
+                          setNewStatus(localItem?.status || 'manager')
                         }}
                         disabled={isUpdatingStatus}
                         className="px-2 py-1 text-xs bg-edge text-mute rounded hover:bg-edge/70 disabled:opacity-50"
@@ -377,14 +376,14 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <StatusBadge status={localItem?.status || 'new'} />
+                      <StatusBadge status={localItem?.status || 'manager'} />
                       <button
                         onClick={() => {
                           setEditingStatus(true)
-                          setNewStatus(localItem?.status || 'new')
+                          setNewStatus(localItem?.status || 'manager')
                         }}
                         className="px-2 py-1 text-xs bg-blue-500/20 border border-blue-500/50 text-blue-300 rounded hover:bg-blue-500/30 transition-colors cursor-pointer"
-                        title="Click to edit status"
+                        title="Click to edit responsibility"
                       >
                         Edit
                       </button>
@@ -547,7 +546,7 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
 
         {statusHistory.length > 0 && (
           <div className="bg-surface border border-edge rounded-lg p-6">
-            <h2 className="text-lg font-bold text-ink mb-4">Status History</h2>
+            <h2 className="text-lg font-bold text-ink mb-4">Responsibility History</h2>
             <div className="space-y-2 text-sm">
               {statusHistory.map(entry => (
                 <div key={entry.id} className="flex items-center gap-2">
@@ -705,10 +704,10 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-ink mb-2">
-                    Final status
+                    Final responsibility
                   </label>
                   <div className="space-y-2">
-                    {(TERMINAL_STATUSES_BY_CATEGORY[item.category] || ['closed', 'cancelled', 'denied']).map(status => (
+                    {ALL_TERMINAL_STATUSES.map(status => (
                       <label key={status} className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="radio"
@@ -718,14 +717,14 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                           onChange={e => setCompletionStatus(e.target.value)}
                           className="w-4 h-4"
                         />
-                        <span className="text-sm text-ink capitalize">{status.replace(/_/g, ' ')}</span>
+                        <span className="text-sm text-ink">{STATUS_LABELS[status] || status.replace(/_/g, ' ')}</span>
                       </label>
                     ))}
                   </div>
                 </div>
 
                 <p className="text-xs text-mute">
-                  This will update the status and set the closed date to today. The item will no longer appear in aging alerts.
+                  This will update the responsibility and set the closed date to today. The item will no longer appear in aging alerts.
                 </p>
 
                 <div className="flex gap-3 justify-end">

@@ -28,12 +28,8 @@ export async function getAgingWorkItems(): Promise<AgingWorkItem[]> {
   console.log('Raw aging items count:', items.length)
   console.log('Raw aging items statuses:', items.map(i => ({ title: i.title, status: i.status })))
 
-  // Exclude terminal statuses and items that are intentionally paused/waiting
-  const filtered = items.filter(item =>
-    !isTerminalStatus(item) &&
-    item.status !== 'on_hold' &&
-    item.status !== 'monitored'
-  )
+  // Exclude terminal statuses from aging alerts
+  const filtered = items.filter(item => !isTerminalStatus(item))
 
   console.log('Filtered aging items count:', filtered.length)
   return filtered

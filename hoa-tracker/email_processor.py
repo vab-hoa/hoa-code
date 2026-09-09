@@ -1010,7 +1010,7 @@ def create_work_item(conn, item_data):
                 item_data.get('title', ''),
                 item_data.get('description', ''),
                 item_data.get('category', 'work_order'),
-                item_data.get('status', 'new'),
+                item_data.get('status', 'manager'),
                 item_data.get('priority', 'normal'),
             ))
             row = cur.fetchone()
@@ -1649,7 +1649,7 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
                     'title': work_title,
                     'description': desc,
                     'category': 'arc_request',
-                    'status': 'new',
+                    'status': 'manager',
                     'priority': 'normal',
                 })
                 if work_item_id:
@@ -1794,7 +1794,7 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
                     'title': work_title,
                     'description': desc,
                     'category': 'arc_request',
-                    'status': 'new',
+                    'status': 'manager',
                     'priority': 'normal',
                 })
                 if work_item_id:
@@ -1862,35 +1862,7 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
 
             # Auto-create work item if we found a property address
             if result.get('parcel_code') and not dry_run and conn:
-                # Determine category from subject/body keywords
-                subj_lower = (subject or '').lower()
-                body_lower_check = (body or '').lower()[:2000]
-                if any(kw in subj_lower or kw in body_lower_check for kw in
-                       ['roof', 'leak', 'water', 'flood', 'pipe', 'burst']):
-                    wi_category = 'roofing'
-                elif any(kw in subj_lower or kw in body_lower_check for kw in
-                         ['gutter', 'drainage']):
-                    wi_category = 'drainage'
-                elif any(kw in subj_lower or kw in body_lower_check for kw in
-                         ['paint', 'painting']):
-                    wi_category = 'painting'
-                elif any(kw in subj_lower or kw in body_lower_check for kw in
-                         ['siding']):
-                    wi_category = 'siding'
-                elif any(kw in subj_lower or kw in body_lower_check for kw in
-                         ['irrigation', 'sprinkler']):
-                    wi_category = 'irrigation'
-                elif any(kw in subj_lower or kw in body_lower_check for kw in
-                         ['landscape', 'landscaping', 'tree', 'plant']):
-                    wi_category = 'landscaping'
-                elif any(kw in subj_lower or kw in body_lower_check for kw in
-                         ['arc', 'architectural', 'fence', 'window', 'door', 'deck', 'patio']):
-                    wi_category = 'arc_request'
-                elif any(kw in subj_lower or kw in body_lower_check for kw in
-                         ['violation', 'complaint', 'fine']):
-                    wi_category = 'violation'
-                else:
-                    wi_category = 'other'
+                wi_category = 'work_order'
 
                 # Check thread dedup
                 if not check_thread_has_work_item(conn, email_data.get('thread_id')):
@@ -1901,7 +1873,7 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
                             'title': work_title,
                             'description': body[:2000],
                             'category': wi_category,
-                            'status': 'new',
+                            'status': 'manager',
                             'priority': 'normal',
                         })
                         if work_item_id:
@@ -1982,7 +1954,7 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
                 'title': work_title,
                 'description': parsed.get('description', ''),
                 'category': 'work_order',
-                'status': 'new',
+                'status': 'manager',
                 'priority': 'high' if parsed.get('priority', '0') in ('10', '9', '8') else 'normal',
             })
             if work_item_id:
