@@ -1,3 +1,7 @@
+## ⚠️ PARTIALLY SUPERSEDED (2026-09-09)
+
+Status and category models have been replaced with the Responsibility model. See ai-memory #692. The status values, category values, VALID_STATUSES_BY_CATEGORY, and TERMINAL_STATUSES_BY_CATEGORY described below are outdated. The UI label is now "Responsibility" not "Status". The rest of the spec (architecture, data model, UI layout) is still useful reference.
+
 # HOA Issue Tracker Dashboard — Claude Code Build Spec
 
 **Project:** Villas at the Boulders HOA Issue Tracker  
