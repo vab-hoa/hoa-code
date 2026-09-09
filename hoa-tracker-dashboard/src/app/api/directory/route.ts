@@ -83,10 +83,12 @@ export async function GET() {
         continue
       }
 
+      const parcelCode = parcelCodeFromParts(street, streetNumber, unit)
+      const prop = parcelCode ? byParcel.get(parcelCode.toUpperCase()) : undefined
+
       // Skip non-homeowner contacts (property manager, vendors, etc.)
       // These are in Google Contacts but don't match any HOA property.
       if (!parcelCode && !prop) {
-        // Contacts-only entries with no street address — likely vendor/manager
         const fullLower = (firstName + ' ' + lastName).toLowerCase()
         const emailLower = (email || '').toLowerCase()
         if (emailLower.includes('keystonepacific') ||
@@ -95,9 +97,6 @@ export async function GET() {
           continue
         }
       }
-
-      const parcelCode = parcelCodeFromParts(street, streetNumber, unit)
-      const prop = parcelCode ? byParcel.get(parcelCode.toUpperCase()) : undefined
 
       people.push({
         street,
