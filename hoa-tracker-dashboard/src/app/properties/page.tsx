@@ -182,12 +182,13 @@ export default function PropertiesPage() {
         </div>
 
         <div className="bg-surface rounded-lg border border-edge overflow-x-auto">
-          <table className="w-full min-w-[960px]">
+          <table className="w-full min-w-[1100px]">
             <thead className="bg-edge/50 border-b border-edge">
               <tr>
                 <SortableTh
                   label="Address"
                   sortKey="sortAddress"
+                  className="min-w-[16rem]"
                   currentSortKey={sortKey as string | null}
                   currentSortDir={sortDir}
                   onSort={(k) => requestSort(k as keyof SortablePerson)}
@@ -236,7 +237,7 @@ export default function PropertiesPage() {
                   const key = `${p.parcelCode || p.fullAddress}-${p.email}-${p.firstName}-${p.lastName}-${idx}`
                   return (
                     <tr key={key} className="hover:bg-edge/25 transition-colors">
-                      <td className="px-4 py-2 text-sm text-ink">
+                      <td className="px-4 py-2 text-sm text-ink whitespace-nowrap">
                         {p.propertyId ? (
                           <Link
                             href={`/properties/${p.propertyId}`}
