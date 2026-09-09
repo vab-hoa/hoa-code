@@ -1109,7 +1109,11 @@ def upsert_email_thread(conn, thread_id, subject, received_date, classification,
     conn.commit()
 
 def insert_wo_snapshots(conn, email_uuid, parsed_report, snapshot_date):
-    """Insert WO status snapshot records from a parsed WO status report."""
+    """Insert WO status snapshot records from a parsed WO status report.
+
+    Deduplicates by (source_email_id, wo_number) — if snapshots already exist
+    for this email+WO combination (from a prior processing run), skips them.
+    """
     if not email_uuid or not parsed_report:
         return 0
 
@@ -1117,6 +1121,16 @@ def insert_wo_snapshots(conn, email_uuid, parsed_report, snapshot_date):
     with conn.cursor() as cur:
         for section in parsed_report.get('sections', []):
             for entry in section.get('entries', []):
+                wo_number = entry.get('wo_number')
+                if not wo_number:
+                    continue
+                # Check if this WO already has a snapshot for this email
+                cur.execute(
+                    "SELECT 1 FROM wo_status_snapshot WHERE source_email_id = %s AND wo_number = %s LIMIT 1",
+                    (email_uuid, wo_number),
+                )
+                if cur.fetchone():
+                    continue
                 cur.execute("""
                     INSERT INTO wo_status_snapshot (
                         source_email_id, snapshot_date, wo_number, parcel_code,
@@ -1124,7 +1138,7 @@ def insert_wo_snapshots(conn, email_uuid, parsed_report, snapshot_date):
                     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
                     email_uuid, snapshot_date,
-                    entry.get('wo_number'), entry.get('parcel_code'),
+                    wo_number, entry.get('parcel_code'),
                     entry.get('homeowner_name'), section.get('status'),
                     entry.get('description'), entry.get('vendor'),
                     entry.get('date')
