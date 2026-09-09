@@ -39,8 +39,20 @@ export const VALID_STATUSES_BY_CATEGORY: Record<string, string[]> = {
 }
 
 export function getValidStatusesForCategory(category: string): string[] {
-  return VALID_STATUSES_BY_CATEGORY[category] ?? VALID_STATUSES_BY_CATEGORY['work_order']
+  // All statuses are valid for all categories — category does not gate status
+  return ALL_VALID_STATUSES
 }
+
+export const ALL_VALID_STATUSES = [
+  'new', 'open', 'assigned', 'in_progress', 'scheduled', 'awaiting_quote',
+  'pending_board_review', 'past_due', 'service_request',
+  'on_hold', 'monitored',
+  'closed', 'cancelled', 'approved', 'approved_with_conditions', 'denied',
+  'notified', 'fined', 'resolved',
+  'under_review_with_architect',
+  'project: window_wells', 'project: concrete', 'project: lawns',
+  'project: wood_trim', 'project: asphalt', 'project: tree_trimming',
+]
 
 export function isValidStatus(category: string, status: string): boolean {
   const validStatuses = getValidStatusesForCategory(category)
