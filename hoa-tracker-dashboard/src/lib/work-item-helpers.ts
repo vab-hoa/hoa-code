@@ -1,26 +1,25 @@
 import type { OpenWorkItem, DashboardSummary } from './types'
 
-export const TERMINAL_STATUSES_BY_CATEGORY: Record<string, string[]> = {
-  arc_request: ['closed', 'approved', 'approved_with_conditions', 'denied'],
-  work_order: ['closed', 'cancelled'],
-  violation: ['closed', 'resolved'],
-  landscaping: ['closed', 'cancelled'],
-}
-const DEFAULT_TERMINAL = ['closed', 'cancelled', 'denied']
+export const ALL_TERMINAL_STATUSES = [
+  'closed',
+  'approved',
+  'approved_with_conditions',
+  'denied',
+  'withdrawn',
+  'resolved',
+]
 
 export function isTerminalStatus(item: { category: string; status: string }): boolean {
-  const terminal = TERMINAL_STATUSES_BY_CATEGORY[item.category] ?? DEFAULT_TERMINAL
-  return terminal.includes(item.status)
+  return ALL_TERMINAL_STATUSES.includes(item.status)
 }
 
 export const WORK_ITEM_TYPES = [
   { key: 'arc_request', label: 'ARC Requests', categories: ['arc_request'] },
-  { key: 'landscaping', label: 'Landscape', categories: ['landscaping'] },
   { key: 'violation', label: 'Violations', categories: ['violation'] },
   {
     key: 'work_order',
     label: 'Work Orders',
-    categories: ['work_order', 'gutter', 'roofing', 'siding', 'irrigation', 'drainage', 'painting', 'general_repair', 'governance', 'other'],
+    categories: ['work_order', 'other'],
   },
 ]
 
@@ -31,28 +30,31 @@ export function getWorkItemType(category: string): string {
   return 'work_order'
 }
 
-export const VALID_STATUSES_BY_CATEGORY: Record<string, string[]> = {
-  arc_request: ['new', 'under_review_with_architect', 'approved', 'approved_with_conditions', 'denied', 'closed'],
-  work_order: ['open', 'pending_board_review', 'closed', 'approved', 'awaiting_quote', 'on_hold', 'scheduled', 'monitored', 'service_request', 'past_due', 'new', 'assigned', 'in_progress', 'cancelled', 'project: window_wells', 'project: concrete', 'project: lawns', 'project: wood_trim', 'project: asphalt', 'project: tree_trimming'],
-  violation: ['notified', 'fined', 'resolved', 'closed'],
-  landscaping: ['new', 'service_request', 'scheduled', 'closed', 'cancelled'],
-}
+export const ALL_VALID_STATUSES = [
+  'manager',
+  'board',
+  'arc',
+  'contractor',
+  'project: window_wells',
+  'project: concrete',
+  'project: lawns',
+  'project: wood_trim',
+  'project: asphalt',
+  'project: tree_trimming',
+  'closed',
+  'approved',
+  'approved_with_conditions',
+  'denied',
+  'withdrawn',
+  'notified',
+  'fined',
+  'resolved',
+]
 
-export function getValidStatusesForCategory(category: string): string[] {
+export function getValidStatusesForCategory(_category: string): string[] {
   // All statuses are valid for all categories — category does not gate status
   return ALL_VALID_STATUSES
 }
-
-export const ALL_VALID_STATUSES = [
-  'new', 'open', 'assigned', 'in_progress', 'scheduled', 'awaiting_quote',
-  'pending_board_review', 'past_due', 'service_request',
-  'on_hold', 'monitored',
-  'closed', 'cancelled', 'approved', 'approved_with_conditions', 'denied',
-  'notified', 'fined', 'resolved',
-  'under_review_with_architect',
-  'project: window_wells', 'project: concrete', 'project: lawns',
-  'project: wood_trim', 'project: asphalt', 'project: tree_trimming',
-]
 
 export function isValidStatus(category: string, status: string): boolean {
   const validStatuses = getValidStatusesForCategory(category)
@@ -62,20 +64,14 @@ export function isValidStatus(category: string, status: string): boolean {
 export function computeSummaryCounts(items: OpenWorkItem[]): DashboardSummary {
   return {
     total_open: items.length,
-    new_count: items.filter(i => i.status === 'new').length,
-    on_hold_count: items.filter(i => i.status === 'on_hold').length,
-    awaiting_quote_count: items.filter(i => i.status === 'awaiting_quote').length,
-    service_request_count: items.filter(i => i.status === 'service_request').length,
-    scheduled_count: items.filter(i => i.status === 'scheduled').length,
-    pending_board_count: items.filter(i => i.status === 'pending_board_review').length,
-    arc_in_review: items.filter(
-      i => i.status === 'under_review_with_architect'
+    manager_count: items.filter(i => i.status === 'manager').length,
+    board_count: items.filter(i => i.status === 'board').length,
+    arc_count: items.filter(i => i.status === 'arc').length,
+    contractor_count: items.filter(i => i.status === 'contractor').length,
+    project_count: items.filter(i => i.status.startsWith('project:')).length,
+    closed_count: items.filter(
+      i => i.status === 'closed' || ALL_TERMINAL_STATUSES.includes(i.status)
     ).length,
-    approved_count: items.filter(i => i.status === 'approved').length,
-    approved_with_conditions_count: items.filter(
-      i => i.status === 'approved_with_conditions'
-    ).length,
-    denied_count: items.filter(i => i.status === 'denied').length,
     total_all_time: items.length,
   }
 }

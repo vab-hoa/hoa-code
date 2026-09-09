@@ -21,7 +21,7 @@ interface SortableAgingItem extends AgingWorkItem {
 
 export function AgingAlerts({ items }: AgingAlertsProps) {
   const [visibleTypes, setVisibleTypes] = useState<Set<string>>(
-    new Set(['arc_request', 'work_order', 'violation', 'landscaping'])
+    new Set(['arc_request', 'work_order', 'violation'])
   )
 
   if (items.length === 0) {
@@ -149,7 +149,7 @@ function AgingAlertsTypeSection({
                 onSort={() => requestSort('category')}
               />
               <SortableTh
-                label="Status"
+                label="Responsibility"
                 sortKey="status"
                 currentSortKey={sortKey as string}
                 currentSortDir={sortDir}

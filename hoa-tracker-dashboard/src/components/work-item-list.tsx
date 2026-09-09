@@ -15,24 +15,26 @@ interface WorkItemListProps {
 }
 
 const STATUS_ORDER = [
-  'new',
-  'pending_board_review',
-  'awaiting_quote',
-  'awaiting_board_approval',
-  'service_request',
-  'assigned',
-  'in_progress',
-  'scheduled',
-  'on_hold',
-  'under_review_with_architect',
+  'manager',
+  'board',
+  'arc',
+  'contractor',
+  'project: window_wells',
+  'project: concrete',
+  'project: lawns',
+  'project: wood_trim',
+  'project: asphalt',
+  'project: tree_trimming',
+  'notified',
+  'fined',
 ]
 
 export function WorkItemList({ items }: WorkItemListProps) {
   const [visibleTypes, setVisibleTypes] = useState<Set<string>>(
-    new Set(['arc_request', 'work_order', 'violation', 'landscaping'])
+    new Set(['arc_request', 'work_order', 'violation'])
   )
   const [expandedStatuses, setExpandedStatuses] = useState<Set<string>>(
-    new Set(['new', 'pending_board_review', 'awaiting_quote'])
+    new Set(['manager', 'board', 'arc', 'contractor'])
   )
 
   const toggleType = (typeKey: string) => {
