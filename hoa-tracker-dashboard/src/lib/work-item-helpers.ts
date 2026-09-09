@@ -39,7 +39,7 @@ export const VALID_STATUSES_BY_CATEGORY: Record<string, string[]> = {
 }
 
 export function getValidStatusesForCategory(category: string): string[] {
-  return VALID_STATUSES_BY_CATEGORY[category] ?? []
+  return VALID_STATUSES_BY_CATEGORY[category] ?? VALID_STATUSES_BY_CATEGORY['work_order']
 }
 
 export function isValidStatus(category: string, status: string): boolean {
