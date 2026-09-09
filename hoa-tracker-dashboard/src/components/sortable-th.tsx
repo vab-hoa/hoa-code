@@ -6,6 +6,7 @@ interface SortableThProps {
   currentSortKey: string | null
   currentSortDir: 'asc' | 'desc'
   onSort: (key: string) => void
+  className?: string
 }
 
 export function SortableTh({
@@ -14,6 +15,7 @@ export function SortableTh({
   currentSortKey,
   currentSortDir,
   onSort,
+  className,
 }: SortableThProps) {
   const isActive = currentSortKey === sortKey
   const isAsc = currentSortDir === 'asc'
@@ -21,7 +23,7 @@ export function SortableTh({
   return (
     <th
       onClick={() => onSort(sortKey)}
-      className="cursor-pointer select-none px-4 py-2 text-left text-xs font-semibold text-ink hover:bg-edge/50 transition-colors"
+      className={`cursor-pointer select-none px-4 py-2 text-left text-xs font-semibold text-ink hover:bg-edge/50 transition-colors ${className || ''}`}
     >
       <div className="flex items-center gap-1">
         <span>{label}</span>
