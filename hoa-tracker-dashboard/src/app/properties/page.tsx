@@ -221,13 +221,12 @@ export default function PropertiesPage() {
                   currentSortDir={sortDir}
                   onSort={(k) => requestSort(k as keyof SortablePerson)}
                 />
-                <th className="px-4 py-2 text-left text-xs font-semibold text-ink">Source</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-edge">
               {sortedItems.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-sm text-mute">
+                  <td colSpan={6} className="px-4 py-8 text-center text-sm text-mute">
                     No matches for “{search}”.
                   </td>
                 </tr>
@@ -274,9 +273,6 @@ export default function PropertiesPage() {
                           {p.officialOwner || '—'}
                         </span>
                       </td>
-                      <td className="px-4 py-2 text-xs text-mute whitespace-nowrap">
-                        {p.source || '—'}
-                      </td>
                     </tr>
                   )
                 })
@@ -289,8 +285,7 @@ export default function PropertiesPage() {
           {sortedItems.length} of {people.length} people
           {search.trim() ? ` matching “${search.trim()}”` : ''}
           {' · '}
-          one row per person (couples appear separately), from Keystone Full Directory +
-          contacts
+          one row per person (couples appear separately), from Keystone Full Directory
         </p>
       </div>
     </div>
