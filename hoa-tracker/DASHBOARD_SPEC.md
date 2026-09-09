@@ -346,16 +346,15 @@ export interface AgingWorkItem {
 // === Enums ===
 
 export type WorkItemCategory =
-  | 'arc_request' | 'work_order' | 'violation' | 'landscaping'
-  | 'gutter' | 'roofing' | 'siding' | 'irrigation' | 'drainage'
-  | 'painting' | 'general_repair' | 'governance' | 'other'
+  | 'arc_request' | 'work_order' | 'violation' | 'other'
 
 export type WorkItemStatus =
-  | 'new' | 'assigned' | 'in_progress' | 'awaiting_quote'
-  | 'awaiting_board_approval' | 'service_request' | 'scheduled'
-  | 'on_hold' | 'pending_board_review' | 'approved'
-  | 'approved_with_conditions' | 'under_review_with_architect'
-  | 'denied' | 'completed' | 'closed' | 'monitored' | 'cancelled'
+  | 'manager' | 'board' | 'arc' | 'contractor'
+  | 'project: window_wells' | 'project: concrete' | 'project: lawns'
+  | 'project: wood_trim' | 'project: asphalt' | 'project: tree_trimming'
+  | 'closed'
+  | 'approved' | 'approved_with_conditions' | 'denied' | 'withdrawn'
+  | 'notified' | 'fined' | 'resolved'
 
 export type Decision =
   | 'approved' | 'approved_with_conditions' | 'denied'
@@ -370,58 +369,51 @@ export type Decision =
 
 ```typescript
 export const STATUS_COLORS: Record<string, string> = {
-  new: 'bg-blue-100 text-blue-800 border-blue-200',
-  assigned: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-  in_progress: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  awaiting_quote: 'bg-orange-100 text-orange-800 border-orange-200',
-  awaiting_board_approval: 'bg-purple-100 text-purple-800 border-purple-200',
-  service_request: 'bg-cyan-100 text-cyan-800 border-cyan-200',
-  scheduled: 'bg-green-100 text-green-800 border-green-200',
-  on_hold: 'bg-gray-100 text-gray-800 border-gray-200',
-  pending_board_review: 'bg-red-100 text-red-800 border-red-200',
+  manager: 'bg-blue-100 text-blue-800 border-blue-200',
+  board: 'bg-red-100 text-red-800 border-red-200',
+  arc: 'bg-violet-100 text-violet-800 border-violet-200',
+  contractor: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  'project: window_wells': 'bg-teal-100 text-teal-800 border-teal-200',
+  'project: concrete': 'bg-teal-100 text-teal-800 border-teal-200',
+  'project: lawns': 'bg-teal-100 text-teal-800 border-teal-200',
+  'project: wood_trim': 'bg-teal-100 text-teal-800 border-teal-200',
+  'project: asphalt': 'bg-teal-100 text-teal-800 border-teal-200',
+  'project: tree_trimming': 'bg-teal-100 text-teal-800 border-teal-200',
+  closed: 'bg-stone-50 text-stone-600 border-stone-200',
   approved: 'bg-emerald-100 text-emerald-800 border-emerald-200',
   approved_with_conditions: 'bg-amber-100 text-amber-800 border-amber-200',
-  under_review_with_architect: 'bg-violet-100 text-violet-800 border-violet-200',
   denied: 'bg-rose-100 text-rose-800 border-rose-200',
-  completed: 'bg-stone-100 text-stone-800 border-stone-200',
-  closed: 'bg-stone-50 text-stone-600 border-stone-200',
-  monitored: 'bg-teal-100 text-teal-800 border-teal-200',
-  cancelled: 'bg-stone-50 text-stone-500 border-stone-200',
+  withdrawn: 'bg-stone-50 text-stone-500 border-stone-200',
+  notified: 'bg-blue-100 text-blue-800 border-blue-200',
+  fined: 'bg-red-100 text-red-800 border-red-200',
+  resolved: 'bg-emerald-100 text-emerald-800 border-emerald-200',
 }
 
 export const STATUS_LABELS: Record<string, string> = {
-  new: 'New',
-  assigned: 'Assigned',
-  in_progress: 'In Progress',
-  awaiting_quote: 'Awaiting Quote',
-  awaiting_board_approval: 'Awaiting Board Approval',
-  service_request: 'Service Request',
-  scheduled: 'Scheduled',
-  on_hold: 'On Hold',
-  pending_board_review: 'Pending Board Review',
-  approved: 'Approved',
-  approved_with_conditions: 'Approved w/ Conditions',
-  under_review_with_architect: 'Under Review w/ Architect',
-  denied: 'Denied',
-  completed: 'Completed',
+  manager: 'Manager',
+  board: 'Board',
+  arc: 'ARC Committee',
+  contractor: 'Contractor',
+  'project: window_wells': 'Project: Window Wells',
+  'project: concrete': 'Project: Concrete',
+  'project: lawns': 'Project: Lawns',
+  'project: wood_trim': 'Project: Wood Trim',
+  'project: asphalt': 'Project: Asphalt',
+  'project: tree_trimming': 'Project: Tree Trimming',
   closed: 'Closed',
-  monitored: 'Monitored',
-  cancelled: 'Cancelled',
+  approved: 'Approved',
+  approved_with_conditions: 'Approved with Conditions',
+  denied: 'Denied',
+  withdrawn: 'Withdrawn',
+  notified: 'Notified',
+  fined: 'Fined',
+  resolved: 'Resolved',
 }
 
 export const CATEGORY_COLORS: Record<string, string> = {
   arc_request: 'bg-violet-100 text-violet-800',
   work_order: 'bg-blue-100 text-blue-800',
   violation: 'bg-red-100 text-red-800',
-  landscaping: 'bg-green-100 text-green-800',
-  gutter: 'bg-cyan-100 text-cyan-800',
-  roofing: 'bg-amber-100 text-amber-800',
-  siding: 'bg-orange-100 text-orange-800',
-  irrigation: 'bg-teal-100 text-teal-800',
-  drainage: 'bg-indigo-100 text-indigo-800',
-  painting: 'bg-pink-100 text-pink-800',
-  general_repair: 'bg-stone-100 text-stone-800',
-  governance: 'bg-purple-100 text-purple-800',
   other: 'bg-gray-100 text-gray-800',
 }
 
@@ -429,15 +421,6 @@ export const CATEGORY_LABELS: Record<string, string> = {
   arc_request: 'ARC Request',
   work_order: 'Work Order',
   violation: 'Violation',
-  landscaping: 'Landscaping',
-  gutter: 'Gutter',
-  roofing: 'Roofing',
-  siding: 'Siding',
-  irrigation: 'Irrigation',
-  drainage: 'Drainage',
-  painting: 'Painting',
-  general_repair: 'General Repair',
-  governance: 'Governance',
   other: 'Other',
 }
 
@@ -870,13 +853,13 @@ A horizontal row of **compact** summary cards. NOT big cards with one number. Ea
 
 Cards to show (left to right):
 1. **Total Open** (blue border) — `total_open`
-2. **New** (blue border) — `new_count`
-3. **Aging** (red border) — count of aging items (from `v_aging_work_items` length)
-4. **Pending Board Review** (red border) — `pending_board_count`
-5. **Awaiting Quote** (orange border) — `awaiting_quote_count`
-6. **On Hold** (gray border) — `on_hold_count`
-7. **Scheduled** (green border) — `scheduled_count`
-8. **ARC In Review** (violet border) — `arc_in_review`
+2. **Manager** (blue border) — `manager_count`
+3. **Board** (red border) — `board_count`
+4. **ARC** (violet border) — `arc_count`
+5. **Contractor** (yellow border) — `contractor_count`
+6. **Project** (teal border) — `project_count`
+7. **Closed** (gray border) — `closed_count`
+8. **Aging** (red border) — count of aging items (from `v_aging_work_items` length)
 
 On mobile: 2-column grid, wrapping.
 
@@ -890,7 +873,7 @@ If no aging items: show a green "All caught up — no items past their aging thr
 
 If aging items exist: a **compact table** with columns:
 
-| Title | Property | Category | Status | Days Open | Limit | Over By | Vendor |
+| Title | Property | Category | Responsibility | Days Open | Limit | Over By | Vendor |
 |-------|----------|----------|--------|-----------|-------|---------|--------|
 
 - Rows sorted by "Over By" descending (worst first)
@@ -941,17 +924,19 @@ Group work items by status. For each status group:
 
 **Layout option:** Can be a **Kanban-style grid** (horizontal scroll on desktop, stacked on mobile) OR a **grouped vertical list**. Prefer grouped vertical list for information density.
 
-Status groups to show (in this order):
-1. New
-2. Pending Board Review
-3. Awaiting Quote
-4. Awaiting Board Approval
-5. Service Request
-6. Assigned
-7. In Progress
-8. Scheduled
-9. On Hold
-10. Under Review with Architect
+Responsibility groups to show (in this order):
+1. Manager
+2. Board
+3. ARC
+4. Contractor
+5. Project: Window Wells
+6. Project: Concrete
+7. Project: Lawns
+8. Project: Wood Trim
+9. Project: Asphalt
+10. Project: Tree Trimming
+11. Notified
+12. Fined
 
 Skip empty groups (show nothing if count = 0).
 
