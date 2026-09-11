@@ -7,9 +7,9 @@ master user auth), parses HOA-related content, links to existing work items
 in Supabase, and optionally updates work item status based on keywords found.
 
 This is a companion to email_processor.py which handles boardwork@ and
-mcdonaldbuckhoa@ mailboxes. This handler is narrower: it does NOT create
-new work items — it only links forwarded emails to existing ones and updates
-status when clear status keywords + dates are found.
+mcdonaldbuckhoa@ mailboxes. Emails forwarded to jane@wmbuck.net are create-or-update
+signals: link/update when a match is found; otherwise create a new work_order
+item (status=manager) with the email as origin.
 
 Usage:
     python3 jane_inbound_handler.py [--days N] [--dry-run] [--debug]
@@ -826,6 +826,118 @@ def classify_jane_email(email_data, body):
     # Default: unclassified (Dee forwarded it, so it's probably HOA-related)
     return ('unclassified', 0.50, False)
 
+
+def lookup_property_by_parcel(conn, parcel_code):
+    """Look up a property by parcel code, return UUID or None."""
+    if not parcel_code:
+        return None
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT id FROM properties WHERE parcel_code = %s", (parcel_code,))
+            row = cur.fetchone()
+            return row[0] if row else None
+    except Exception:
+        return None
+
+
+def create_work_item(conn, item_data):
+    """Create a work item in Supabase. Return the new UUID or None."""
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO work_items
+                    (source_document_id, property_id, title, description, category, status, priority)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                RETURNING id
+            """, (
+                item_data.get('source_document_id'),
+                item_data.get('property_id'),
+                item_data.get('title', ''),
+                item_data.get('description', ''),
+                item_data.get('category', 'work_order'),
+                item_data.get('status', 'manager'),
+                item_data.get('priority', 'normal'),
+            ))
+            row = cur.fetchone()
+            return row[0] if row else None
+    except Exception as e:
+        print(f"[ERROR] create_work_item failed: {e}", file=sys.stderr)
+        return None
+
+
+def extract_homeowner_lastname(subject, body, from_name=''):
+    """Best-effort last name for work item titles."""
+    subject_match = re.search(r'ARC\s*-\s*(.+?)\s*-\s*\d', subject or '', re.IGNORECASE)
+    if subject_match:
+        name = subject_match.group(1).strip()
+        if name:
+            return name.split()[-1]
+
+    dear_match = re.search(r'Dear\s+(?:Mr\.|Ms\.|Mrs\.|Dr\.?)\s+(\w+)', body or '', re.IGNORECASE)
+    if dear_match:
+        return dear_match.group(1)
+
+    # "Last, First" or trailing token of from_name
+    if from_name:
+        cleaned = re.sub(r'[<>"].*', '', from_name).strip()
+        if ',' in cleaned:
+            return cleaned.split(',')[0].strip().split()[-1]
+        parts = [p for p in cleaned.split() if p and p.lower() not in ('re:', 'fw:', 'fwd:')]
+        if parts:
+            return parts[-1]
+    return None
+
+
+def build_unmatched_work_item_title(email_data, body, parcel_codes):
+    """Title: LastName - ParcelCode - short_description, or Unmatched - subject."""
+    subject = email_data.get('subject') or ''
+    short_subject = normalize_subject(subject)[:80] or 'forwarded email'
+    last = extract_homeowner_lastname(subject, body, email_data.get('from_name') or '')
+    parcel = parcel_codes[0] if parcel_codes else None
+
+    # short description from subject without Re/Fwd noise
+    short_desc = short_subject
+    if last and parcel:
+        return f'{last} - {parcel} - {short_desc}'
+    if last and not parcel:
+        return f'{last} - {short_desc}'
+    if parcel and not last:
+        return f'{parcel} - {short_desc}'
+    return f'Unmatched - {short_subject}'
+
+
+def create_work_item_from_forward(conn, email_data, body, parcel_codes, email_uuid, debug=False):
+    """
+    Create a new work_order from an unmatched jane@ forward.
+    Links the email as origin. Returns work_item_id or None.
+    """
+    parcel = parcel_codes[0] if parcel_codes else None
+    property_id = lookup_property_by_parcel(conn, parcel) if parcel else None
+    title = build_unmatched_work_item_title(email_data, body, parcel_codes)
+    description = (body or email_data.get('subject') or '')[:2000]
+    work_item_id = create_work_item(conn, {
+        'source_document_id': None,
+        'property_id': property_id,
+        'title': title,
+        'description': description,
+        'category': 'work_order',
+        'status': 'manager',
+        'priority': 'normal',
+    })
+    if not work_item_id:
+        return None
+    if email_uuid:
+        create_issue_email_link(
+            conn, work_item_id, email_uuid,
+            role='origin',
+            match_method='jane_forward_create',
+            confidence=0.8,
+        )
+    if debug:
+        print(f"[DEBUG] Created work_item from jane forward: {title} -> {work_item_id}", file=sys.stderr)
+    return work_item_id
+
+
 def process_email(email_data, debug=False, dry_run=False, conn=None):
     """
     Process a single email: classify, parse, match to work item, persist.
@@ -896,8 +1008,25 @@ def process_email(email_data, debug=False, dry_run=False, conn=None):
             result['email_message_id'] = str(email_uuid)
             result['actions'].append(f'inserted_email_message: {classification}')
 
-            # Create issue_email_link if matched
-            if work_item_id:
+            # No match → create work item (jane forward is an intentional create/update signal)
+            if not work_item_id:
+                created_id = create_work_item_from_forward(
+                    conn, email_data, body, parcel_codes, email_uuid, debug=debug
+                )
+                if created_id:
+                    work_item_id = created_id
+                    match_method = 'jane_forward_create'
+                    match_conf = 0.8
+                    link_role = 'origin'
+                    result['work_item_id'] = str(work_item_id)
+                    result['match_method'] = match_method
+                    result['match_confidence'] = match_conf
+                    result['actions'].append(f'created_work_item: {result["work_item_id"]} (no match — jane forward)')
+                else:
+                    result['actions'].append('error_creating_work_item_from_forward')
+
+            # Create issue_email_link if we have a work item (skip if origin link already made on create)
+            if work_item_id and match_method != 'jane_forward_create':
                 link_ok = create_issue_email_link(
                     conn, work_item_id, email_uuid,
                     role=link_role,
@@ -923,8 +1052,26 @@ def process_email(email_data, debug=False, dry_run=False, conn=None):
                             result['status_update'] = status
                             result['actions'].append(f'updated_work_item_status: {status}')
                             break  # Only apply first status update
+            elif work_item_id and match_method == 'jane_forward_create':
+                # Origin link already created; still allow status keyword updates if present
+                if status_keywords:
+                    for status in status_keywords:
+                        scheduled_date = dates.get('scheduled') if status == 'scheduled' else None
+                        completed_date = dates.get('completed') if status == 'completed' else None
+                        updated = update_work_item_status(
+                            conn, work_item_id, status,
+                            scheduled_date=scheduled_date,
+                            completed_date=completed_date,
+                            debug=debug
+                        )
+                        if updated:
+                            result['status_update'] = status
+                            result['actions'].append(f'updated_work_item_status: {status}')
+                            break
         else:
             result['actions'].append('error_inserting_email_message')
+            if not work_item_id:
+                result['actions'].append('no_matching_work_item_found')
     else:
         # Dry run — don't persist
         result['actions'].append(f'would_insert_email_message: {classification}')
@@ -932,9 +1079,8 @@ def process_email(email_data, debug=False, dry_run=False, conn=None):
             result['actions'].append(f'would_create_issue_email_link: {link_role} via {match_method}')
             if status_keywords:
                 result['actions'].append(f'would_update_work_item_status: {status_keywords[0]}')
-
-    if not work_item_id and not is_noise:
-        result['actions'].append('no_matching_work_item_found')
+        elif not is_noise:
+            result['actions'].append('would_create_work_item_from_forward')
 
     return result
 
