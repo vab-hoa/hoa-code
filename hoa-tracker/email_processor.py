@@ -1864,7 +1864,7 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
         parse_payload = {'body_preview': body[:1000]}
         result['parsed_data'] = parse_payload
 
-        # Attempt address extraction for homeowner direct
+        # homeowner_direct: log + optional link only — never auto-create work items
         if classification == 'homeowner_direct':
             # Try to find an address in the body
             addr_match = re.search(r'\b(\d{5}\s+(?:Rock Point|Stone Circle|Boulder Point|Plaster Point|Broadlands|Boulder Circle)[^,\n]*(?:#|Unit|unit)?\s*\d*)\b', body)
@@ -1874,36 +1874,151 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
                 result['actions'].append(f'address_extracted: {parcel}')
             result['actions'].append('logged_as_homeowner_direct')
 
-            # Auto-create work item if we found a property address
-            if result.get('parcel_code') and not dry_run and conn:
-                wi_category = 'work_order'
+            if not dry_run and conn:
+                email_uuid = upsert_email_message(conn, email_data, classification, confidence, is_noise, parse_payload)
+                result['db_id'] = str(email_uuid) if email_uuid else None
+                upsert_email_thread(conn, email_data['thread_id'], subject,
+                                   email_data['received_date'], classification,
+                                   result.get('parcel_code'))
 
-                # Check thread dedup
-                if not check_thread_has_work_item(conn, email_data.get('thread_id')):
-                    work_title = f'{email_data.get("from_name", "Homeowner") or "Homeowner"} - {result["parcel_code"]}'
+                # Link to existing work item if match found (WO# / address / parcel / thread)
+                work_item_id = None
+                match_method = None
+                match_confidence = 0.0
+
+                # 1) Thread already linked
+                if email_data.get('thread_id'):
                     try:
-                        work_item_id = create_work_item(conn, {
-                            'property_id': None,  # Will be linked if property found
-                            'title': work_title,
-                            'description': body[:2000],
-                            'category': wi_category,
-                            'status': 'manager',
-                            'priority': 'normal',
-                        })
-                        if work_item_id:
-                            result['work_item_id'] = str(work_item_id)
-                            result['actions'].append(f'created_work_item: {work_title} ({wi_category})')
+                        with conn.cursor() as cur:
+                            cur.execute("""
+                                SELECT iel.work_item_id
+                                FROM issue_email_link iel
+                                JOIN email_message em ON em.id = iel.email_message_id
+                                WHERE em.gmail_thread_id = %s
+                                LIMIT 1
+                            """, (email_data.get('thread_id'),))
+                            row = cur.fetchone()
+                            if row:
+                                work_item_id = row[0]
+                                match_method = 'thread'
+                                match_confidence = 0.85
                     except Exception as e:
-                        print(f"[ERROR] homeowner_direct work item creation failed: {e}", file=sys.stderr)
-                        result['actions'].append(f'error_creating_work_item: {e}')
-                else:
-                    result['actions'].append('skipped_work_item_creation: thread already has a work item')
+                        print(f"[ERROR] homeowner_direct thread match failed: {e}", file=sys.stderr)
 
-        if not dry_run and conn:
-            email_uuid = upsert_email_message(conn, email_data, classification, confidence, is_noise, parse_payload)
-            result['db_id'] = str(email_uuid) if email_uuid else None
-            upsert_email_thread(conn, email_data['thread_id'], subject,
-                               email_data['received_date'], classification)
+                # 2) WO number in body/subject
+                if not work_item_id:
+                    wo_nums = set()
+                    search_text = f"{subject or ''}\n{body or ''}"
+                    for m in re.finditer(r'\bWO\s*#?\s*(\d{3,6})\b', search_text, re.IGNORECASE):
+                        wo_nums.add(m.group(1))
+                    for m in re.finditer(r'\bwork\s*order\s*#?\s*(\d{3,6})\b', search_text, re.IGNORECASE):
+                        wo_nums.add(m.group(1))
+                    if wo_nums:
+                        try:
+                            with conn.cursor() as cur:
+                                for wo in sorted(wo_nums):
+                                    cur.execute("""
+                                        SELECT id FROM work_items
+                                        WHERE keystone_wo_number = %s
+                                          AND excluded_at IS NULL
+                                        LIMIT 1
+                                    """, (wo,))
+                                    row = cur.fetchone()
+                                    if row:
+                                        work_item_id = row[0]
+                                        match_method = 'wo_number'
+                                        match_confidence = 1.0
+                                        break
+                                    cur.execute("""
+                                        SELECT id FROM work_items
+                                        WHERE title ILIKE %s
+                                          AND excluded_at IS NULL
+                                        ORDER BY created_date DESC
+                                        LIMIT 1
+                                    """, (f'%{wo}%',))
+                                    row = cur.fetchone()
+                                    if row:
+                                        work_item_id = row[0]
+                                        match_method = 'wo_number_title'
+                                        match_confidence = 0.9
+                                        break
+                        except Exception as e:
+                            print(f"[ERROR] homeowner_direct WO match failed: {e}", file=sys.stderr)
+
+                # 3) Parcel / address match
+                if not work_item_id and result.get('parcel_code'):
+                    try:
+                        with conn.cursor() as cur:
+                            cur.execute("SELECT id FROM properties WHERE parcel_code = %s", (result['parcel_code'],))
+                            prop_row = cur.fetchone()
+                            if prop_row:
+                                property_id = prop_row[0]
+                                cur.execute("""
+                                    SELECT id FROM work_items
+                                    WHERE property_id = %s
+                                      AND excluded_at IS NULL
+                                      AND status NOT IN ('closed', 'cancelled', 'denied')
+                                    ORDER BY updated_date DESC NULLS LAST, created_date DESC
+                                    LIMIT 1
+                                """, (property_id,))
+                                row = cur.fetchone()
+                                if not row:
+                                    cur.execute("""
+                                        SELECT id FROM work_items
+                                        WHERE property_id = %s
+                                          AND excluded_at IS NULL
+                                        ORDER BY created_date DESC
+                                        LIMIT 1
+                                    """, (property_id,))
+                                    row = cur.fetchone()
+                                if row:
+                                    work_item_id = row[0]
+                                    match_method = 'parcel'
+                                    match_confidence = 0.75
+                            if not work_item_id:
+                                cur.execute("""
+                                    SELECT id FROM work_items
+                                    WHERE title ILIKE %s
+                                      AND excluded_at IS NULL
+                                      AND status NOT IN ('closed', 'cancelled', 'denied')
+                                    ORDER BY created_date DESC
+                                    LIMIT 1
+                                """, (f'%{result["parcel_code"]}%',))
+                                row = cur.fetchone()
+                                if row:
+                                    work_item_id = row[0]
+                                    match_method = 'parcel_title'
+                                    match_confidence = 0.7
+                    except Exception as e:
+                        print(f"[ERROR] homeowner_direct parcel match failed: {e}", file=sys.stderr)
+
+                if work_item_id and email_uuid:
+                    try:
+                        with conn.cursor() as cur:
+                            cur.execute("""
+                                INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
+                                VALUES (%s, %s, 'related', %s, %s)
+                                ON CONFLICT DO NOTHING
+                            """, (work_item_id, email_uuid, match_method or 'manual', match_confidence))
+                            conn.commit()
+                        result['work_item_id'] = str(work_item_id)
+                        result['actions'].append(
+                            f'created_issue_email_link: {email_uuid} -> {work_item_id} (related via {match_method})'
+                        )
+                    except Exception as e:
+                        print(f"[ERROR] homeowner_direct issue_email_link failed: {e}", file=sys.stderr)
+                        conn.rollback()
+                        result['actions'].append(f'error_creating_issue_email_link: {e}')
+                else:
+                    result['actions'].append('no_work_item_created (homeowner_direct — log only)')
+            else:
+                result['actions'].append('no_work_item_created (homeowner_direct — log only)')
+        else:
+            if not dry_run and conn:
+                email_uuid = upsert_email_message(conn, email_data, classification, confidence, is_noise, parse_payload)
+                result['db_id'] = str(email_uuid) if email_uuid else None
+                upsert_email_thread(conn, email_data['thread_id'], subject,
+                                   email_data['received_date'], classification)
 
     elif classification == 'wo_form':
         # Parse work order form submission
