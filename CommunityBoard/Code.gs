@@ -103,7 +103,7 @@ function generateCombinedPageHTML() {
 
         google.script.run
           .withSuccessHandler(function() {
-            alert('Post submitted! It will appear after approval.');
+            alert('Post published! It\'s now live on the Community Board.');
             closePostModal();
             document.getElementById('postName').value = '';
             document.getElementById('postAddress').value = '';
@@ -637,13 +637,14 @@ function submitPost(formData) {
       formData.contactOK,
       formData.publishableContact || '',
       formData.emailStreetGroup ? 'Yes' : 'No',
-      '', // Approved (blank = pending)
+      'TRUE', // Approved (auto-approve; admin can set FALSE to reject)
       '', // Hidden reason
     ]);
 
     // Send notification to admin
-    const subject = '[Community Board] New post pending approval: ' + formData.title;
-    const body = 'Display name: ' + formData.displayName + '\n' +
+    const subject = '[Community Board] New post published: ' + formData.title;
+    const body = 'A new post has been published to the Community Board.\n\n' +
+                'Display name: ' + formData.displayName + '\n' +
                 'Street: ' + formData.street + '\n' +
                 'Address: ' + formData.address + '\n' +
                 'Category: ' + formData.category + '\n' +
@@ -653,7 +654,8 @@ function submitPost(formData) {
                 'Contact OK: ' + formData.contactOK + '\n' +
                 (formData.publishableContact ? 'Published contact: ' + formData.publishableContact + '\n' : '') +
                 (formData.emailStreetGroup ? 'Request to email street group: Yes\n' : '') +
-                '\nView and moderate at: https://docs.google.com/spreadsheets/d/' + CONFIG.sheetId;
+                '\nIf this post is inappropriate, set Approved=FALSE in the Sheet to remove it.\n' +
+                'Review at: https://docs.google.com/spreadsheets/d/' + CONFIG.sheetId;
 
     GmailApp.sendEmail(CONFIG.adminEmail, subject, body);
 
