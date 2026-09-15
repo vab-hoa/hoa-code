@@ -210,6 +210,11 @@ def classify_email(subject, sender, recipients, body, headers=None):
         # Check sender type FIRST — Josh's replies contain quoted form text
         if is_from_josh:
             return ('arc_manager_reply', 0.90, False)
+        # Forwarded ARC request: subject says "VaB ARC Request" and it's a forward
+        # — treat as arc_form_forward even without full form fields in the forward body
+        # (form data may be in the original email, not copied into the forward)
+        if 'vab arc request' in subject_lower and ('fwd' in subject_lower or 'forward' in subject_lower.lower()):
+            return ('arc_form_forward', 0.85, False)
         # Form submission: has the structured fields AND comes via Jotform relay
         # (not from a human reply that quotes the form)
         is_via_jotform = 'arcformrecipients' in sender_lower or 'jotform' in sender_lower
