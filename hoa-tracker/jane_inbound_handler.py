@@ -702,6 +702,7 @@ def upsert_email_message(conn, email_data, classification, confidence, is_noise)
             return row[0] if row else None
     except Exception as e:
         print(f"[ERROR] upsert_email_message failed: {e}", file=sys.stderr)
+        conn.rollback()
         return None
 
 def create_issue_email_link(conn, work_item_id, email_message_id, role, match_method, confidence):
@@ -719,6 +720,7 @@ def create_issue_email_link(conn, work_item_id, email_message_id, role, match_me
         return True
     except Exception as e:
         print(f"[ERROR] create_issue_email_link failed: {e}", file=sys.stderr)
+        conn.rollback()
         return False
 
 def update_work_item_status(conn, work_item_id, status, scheduled_date=None, completed_date=None, debug=False):
@@ -862,6 +864,7 @@ def create_work_item(conn, item_data):
             return row[0] if row else None
     except Exception as e:
         print(f"[ERROR] create_work_item failed: {e}", file=sys.stderr)
+        conn.rollback()
         return None
 
 
