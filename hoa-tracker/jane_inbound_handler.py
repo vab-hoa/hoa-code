@@ -933,7 +933,7 @@ def create_work_item_from_forward(conn, email_data, body, parcel_codes, email_uu
         create_issue_email_link(
             conn, work_item_id, email_uuid,
             role='origin',
-            match_method='jane_forward_create',
+            match_method='manual',
             confidence=0.8,
         )
     if debug:
@@ -1018,7 +1018,7 @@ def process_email(email_data, debug=False, dry_run=False, conn=None):
                 )
                 if created_id:
                     work_item_id = created_id
-                    match_method = 'jane_forward_create'
+                    match_method = 'manual'
                     match_conf = 0.8
                     link_role = 'origin'
                     result['work_item_id'] = str(work_item_id)
@@ -1029,7 +1029,7 @@ def process_email(email_data, debug=False, dry_run=False, conn=None):
                     result['actions'].append('error_creating_work_item_from_forward')
 
             # Create issue_email_link if we have a work item (skip if origin link already made on create)
-            if work_item_id and match_method != 'jane_forward_create':
+            if work_item_id and match_method != 'manual':
                 link_ok = create_issue_email_link(
                     conn, work_item_id, email_uuid,
                     role=link_role,
@@ -1055,7 +1055,7 @@ def process_email(email_data, debug=False, dry_run=False, conn=None):
                             result['status_update'] = status
                             result['actions'].append(f'updated_work_item_status: {status}')
                             break  # Only apply first status update
-            elif work_item_id and match_method == 'jane_forward_create':
+            elif work_item_id and match_method == 'manual':
                 # Origin link already created; still allow status keyword updates if present
                 if status_keywords:
                     for status in status_keywords:
