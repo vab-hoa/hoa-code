@@ -189,7 +189,10 @@ export async function updateWorkItemStatus(
 
   const { error } = await supabase
     .from('work_items')
-    .update({ status: newStatus })
+    .update({
+      status: newStatus,
+      status_changed_at: new Date().toISOString(),
+    })
     .eq('id', workItemId)
 
   if (error) {
@@ -198,6 +201,22 @@ export async function updateWorkItemStatus(
   }
 
   console.log('Status update succeeded')
+  return { success: true }
+}
+
+export async function resetWorkItemClock(
+  workItemId: string
+): Promise<{ success: boolean; error?: string }> {
+  const { error } = await supabase
+    .from('work_items')
+    .update({ status_changed_at: new Date().toISOString() })
+    .eq('id', workItemId)
+
+  if (error) {
+    console.error('resetWorkItemClock error:', error)
+    return { success: false, error: error.message }
+  }
+
   return { success: true }
 }
 

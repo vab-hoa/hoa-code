@@ -54,5 +54,5 @@ export function useWorkItem(id: string) {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [id])
 
-  return { item, correspondence, emails, statusHistory, documents, notes, loading, error }
+  return { item, correspondence, emails, statusHistory, documents, notes, loading, error, refetch: fetchData }
 }

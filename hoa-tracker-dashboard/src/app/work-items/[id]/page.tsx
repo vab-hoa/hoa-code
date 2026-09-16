@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useWorkItem } from '@/hooks/useWorkItem'
 import { supabase } from '@/lib/supabase'
-import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted, updateWorkItemStatus, getWorkItem, addWorkItemNote } from '@/lib/queries'
+import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted, updateWorkItemStatus, resetWorkItemClock, getWorkItem, addWorkItemNote } from '@/lib/queries'
 import { ALL_TERMINAL_STATUSES, getValidStatusesForCategory } from '@/lib/work-item-helpers'
 import { STATUS_LABELS } from '@/lib/constants'
 import { Loading } from '@/components/loading'
@@ -19,7 +19,7 @@ import type { WorkItemStatus } from '@/lib/types'
 export default function WorkItemDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params)
   const router = useRouter()
-  const { item, correspondence, emails, statusHistory, documents, notes, loading, error } = useWorkItem(id)
+  const { item, correspondence, emails, statusHistory, documents, notes, loading, error, refetch } = useWorkItem(id)
 
   const [showExclusionDialog, setShowExclusionDialog] = useState(false)
   const [exclusionReason, setExclusionReason] = useState('')
@@ -37,6 +37,9 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
   const [editingStatus, setEditingStatus] = useState(false)
   const [newStatus, setNewStatus] = useState(item?.status || '')
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
+
+  const [isResettingClock, setIsResettingClock] = useState(false)
+  const [clockResetMessage, setClockResetMessage] = useState<string | null>(null)
 
   const [showUploadDialog, setShowUploadDialog] = useState(false)
   const [uploadFile, setUploadFile] = useState<File | null>(null)
@@ -114,10 +117,29 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
 
     // Update the local item state immediately to show the new status
     if (localItem) {
-      setLocalItem({ ...localItem, status: newStatus as any })
+      setLocalItem({ ...localItem, status: newStatus as any, status_changed_at: new Date().toISOString() })
     }
 
     setEditingStatus(false)
+  }
+
+  const handleResetClock = async () => {
+    setIsResettingClock(true)
+    const result = await resetWorkItemClock(id)
+    setIsResettingClock(false)
+
+    if (!result.success) {
+      alert('Error resetting clock: ' + (result.error || 'Unknown error'))
+      return
+    }
+
+    if (localItem) {
+      setLocalItem({ ...localItem, status_changed_at: new Date().toISOString() })
+    }
+
+    setClockResetMessage('Aging clock reset - days-since-change now counts from today')
+    setTimeout(() => setClockResetMessage(null), 4000)
+    refetch()
   }
 
   const handleMarkCompleted = async () => {
@@ -387,6 +409,17 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                       >
                         Edit
                       </button>
+                      <button
+                        onClick={handleResetClock}
+                        disabled={isResettingClock}
+                        className="px-2 py-1 text-xs bg-amber-500/20 border border-amber-500/50 text-amber-300 rounded hover:bg-amber-500/30 transition-colors cursor-pointer disabled:opacity-50"
+                        title="Reset the aging clock to now"
+                      >
+                        {isResettingClock ? 'Resetting...' : 'Reset Clock'}
+                      </button>
+                      {clockResetMessage && (
+                        <span className="text-xs text-green-300">{clockResetMessage}</span>
+                      )}
                     </div>
                   )}
                 </dd>
@@ -419,6 +452,12 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                 <dt className="text-mute">Created</dt>
                 <dd className="text-ink">{formatDate(item.created_date)}</dd>
               </div>
+              {localItem?.status_changed_at && (
+                <div>
+                  <dt className="text-mute">Last Changed</dt>
+                  <dd className="text-ink">{formatDate(localItem.status_changed_at)}</dd>
+                </div>
+              )}
               {item.due_date && (
                 <div>
                   <dt className="text-mute">Due Date</dt>

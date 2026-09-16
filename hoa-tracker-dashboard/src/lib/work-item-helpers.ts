@@ -34,6 +34,7 @@ export const ALL_VALID_STATUSES = [
   'manager',
   'board',
   'arc',
+  'lbc',
   'contractor',
   'project: window_wells',
   'project: concrete',
@@ -67,6 +68,7 @@ export function computeSummaryCounts(items: OpenWorkItem[]): DashboardSummary {
     manager_count: items.filter(i => i.status === 'manager').length,
     board_count: items.filter(i => i.status === 'board').length,
     arc_count: items.filter(i => i.status === 'arc').length,
+    lbc_count: items.filter(i => i.status === 'lbc').length,
     contractor_count: items.filter(i => i.status === 'contractor').length,
     project_count: items.filter(i => i.status.startsWith('project:')).length,
     closed_count: items.filter(

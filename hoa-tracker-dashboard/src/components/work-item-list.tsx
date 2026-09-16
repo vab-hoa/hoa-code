@@ -18,6 +18,7 @@ const STATUS_ORDER = [
   'manager',
   'board',
   'arc',
+  'lbc',
   'contractor',
   'project: window_wells',
   'project: concrete',
@@ -34,7 +35,7 @@ export function WorkItemList({ items }: WorkItemListProps) {
     new Set(['arc_request', 'work_order', 'violation'])
   )
   const [expandedStatuses, setExpandedStatuses] = useState<Set<string>>(
-    new Set(['manager', 'board', 'arc', 'contractor'])
+    new Set(['manager', 'board', 'arc', 'lbc', 'contractor'])
   )
 
   const toggleType = (typeKey: string) => {
