@@ -42,6 +42,7 @@ export const ALL_VALID_STATUSES = [
   'project: wood_trim',
   'project: asphalt',
   'project: tree_trimming',
+  'project: gutter_cleaning',
   'closed',
   'approved',
   'approved_with_conditions',
