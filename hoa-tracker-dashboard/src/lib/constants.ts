@@ -32,7 +32,7 @@ export const STATUS_LABELS: Record<string, string> = {
   'project: wood_trim': 'Project: Wood Trim',
   'project: asphalt': 'Project: Asphalt',
   'project: tree_trimming': 'Project: Tree Trimming",
-  "project: gutter_cleaning": "Project: Gutter Cleaning',
+  'project: gutter_cleaning': 'Project: Gutter Cleaning',
   closed: 'Closed',
   approved: 'Approved',
   approved_with_conditions: 'Approved with Conditions',
