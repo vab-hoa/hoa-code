@@ -43,7 +43,7 @@ function parseWorkOrdersTab(rows) {
   if (rows.length < 2) return []
 
   const headers = rows[0].map(h => h?.toLowerCase?.() || '')
-  const woNumIdx = headers.indexOf('wo #') || headers.indexOf('wo#')
+  let woNumIdx = headers.findIndex(h => h.includes('wo') && (h.includes('#') || h.includes('number')))
   const statusIdx = headers.indexOf('status')
 
   if (woNumIdx === -1 || statusIdx === -1) {
