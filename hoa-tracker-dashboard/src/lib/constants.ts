@@ -10,7 +10,7 @@ export const STATUS_COLORS: Record<string, string> = {
   'project: wood_trim': 'bg-teal-500/10 text-teal-300 border border-teal-500/30',
   'project: asphalt': 'bg-teal-500/10 text-teal-300 border border-teal-500/30',
   'project: tree_trimming': 'bg-teal-500/10 text-teal-300 border border-teal-500/30',
-  project: gutter_cleaning: bg-teal-500/10 text-teal-300 border border-teal-500/30,
+  'project: gutter_cleaning': 'bg-teal-500/10 text-teal-300 border border-teal-500/30',
   closed: 'bg-gray-500/5 text-gray-400 border border-gray-500/20',
   approved: 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30',
   approved_with_conditions: 'bg-amber-500/10 text-amber-300 border border-amber-500/30',
