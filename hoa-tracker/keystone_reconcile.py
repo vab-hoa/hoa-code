@@ -14,8 +14,12 @@ sheet. This script runs after it (cron 7:30 AM MT) and reconciles:
      ->  assign the sheet's WO number to the work item
   c) WO number known + matching sheet row
      ->  refresh the informational keystone_status field from the sheet
-  d) WO number known but NO sheet row for it
-     ->  keystone_status = 'not in keystone'  (WO purged from cache / unknown)
+  d) Any work item with NO row in the cache sheet
+     ->  keystone_status = 'not in keystone'  (WO purged, or an email-sourced
+         item Josh never entered into the Keystone portal)
+     Matching is by WO number when the item has one; WO-less items are matched
+     by parcel code against the tab for their category (work_order ->
+     WorkOrders, arc_request -> ArchReviews, violation -> Violations).
 
 `status` is our internal responsibility-model field; `keystone_status` is
 purely informational (what Keystone says) and never drives workflow by itself.
@@ -122,14 +126,11 @@ def title_similarity(a, b):
     return jaccard / 2.0
 
 
-def read_workorders():
+def read_workorders(svc):
     """
     Read the WorkOrders tab via the Sheets API (readonly).
     Returns a list of dicts: parcel, wo_number, date, description, vendor, status.
     """
-    creds = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=SHEETS_SCOPES)
-    svc = build("sheets", "v4", credentials=creds, cache_discovery=False)
     res = svc.spreadsheets().values().get(
         spreadsheetId=SPREADSHEET_ID,
         range=f"{WORKORDERS_SHEET}!A1:F5000").execute()
@@ -151,6 +152,15 @@ def read_workorders():
             "status": (raw[5].strip() if len(raw) > 5 else ""),
         })
     return out
+
+
+def read_parcel_set(svc, tab):
+    """Set of parcel codes (column A) present in a cache sheet tab."""
+    res = svc.spreadsheets().values().get(
+        spreadsheetId=SPREADSHEET_ID,
+        range=f"{tab}!A1:A5000").execute()
+    return {(r[0] or "").strip().upper()
+            for r in res.get("values", [])[1:] if r and r[0].strip()}
 
 
 def get_db_connection():
@@ -284,16 +294,24 @@ def refresh_keystone_statuses(cur, items, by_wo, summary, dry_run):
             item["status"] = "closed"
 
 
-def mark_not_in_keystone(cur, items, by_wo, summary, dry_run):
-    """Case (d): WO known to us but absent from the cache sheet."""
+def mark_not_in_keystone(cur, items, by_wo, parcel_tabs, summary, dry_run):
+    """
+    Case (d): any work item with no row in the cache sheet. Items with a WO
+    number match by WO; WO-less items match by parcel against the tab for
+    their category. Covers email-sourced items that were never entered in
+    the Keystone portal, telling us Josh isn't tracking them.
+    """
     for item in items:
-        if not item["wo"] or item["wo"] in by_wo:
-            continue
-        if item["keystone_status"] == NOT_IN_KEYSTONE:
-            continue  # already marked, idempotent no-op
-        logger.info("[not-in-keystone] WO %s (%s) keystone_status -> %r  %r",
-                    item["wo"], item["parcel"], NOT_IN_KEYSTONE,
-                    item["title"][:60])
+        if item["wo"]:
+            matched = item["wo"] in by_wo
+        else:
+            parcels = parcel_tabs.get(item["category"], set())
+            matched = bool(item["parcel"]) and item["parcel"] in parcels
+        if matched or item["keystone_status"] == NOT_IN_KEYSTONE:
+            continue  # in the cache, or already marked (idempotent no-op)
+        logger.info("[not-in-keystone] %s (parcel=%s) keystone_status -> %r  %r",
+                    item["wo"] or item["category"], item["parcel"] or "none",
+                    NOT_IN_KEYSTONE, item["title"][:60])
         summary["not_in_keystone"] += 1
         if not dry_run:
             cur.execute(
@@ -319,10 +337,20 @@ def run_reconciliation(dry_run, debug):
     ok = False
     conn = None
     try:
-        sheet_rows = read_workorders()
+        creds = service_account.Credentials.from_service_account_file(
+            SERVICE_ACCOUNT_FILE, scopes=SHEETS_SCOPES)
+        sheets = build("sheets", "v4", credentials=creds, cache_discovery=False)
+        sheet_rows = read_workorders(sheets)
         summary["total_sheet_rows"] = len(sheet_rows)
         logger.info("Read %d WorkOrders rows from the cache sheet",
                     len(sheet_rows))
+
+        # Parcel sets per category, for matching WO-less items (case d)
+        parcel_tabs = {
+            "work_order": {r["parcel"] for r in sheet_rows},
+            "arc_request": read_parcel_set(sheets, "ArchReviews"),
+            "violation": read_parcel_set(sheets, "Violations"),
+        }
 
         by_wo = {}
         by_parcel = defaultdict(list)
@@ -343,7 +371,7 @@ def run_reconciliation(dry_run, debug):
         # by the status refresh, then mark the leftovers.
         assign_wo_numbers(cur, items, by_parcel, summary, dry_run)
         refresh_keystone_statuses(cur, items, by_wo, summary, dry_run)
-        mark_not_in_keystone(cur, items, by_wo, summary, dry_run)
+        mark_not_in_keystone(cur, items, by_wo, parcel_tabs, summary, dry_run)
 
         if dry_run:
             conn.rollback()
