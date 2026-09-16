@@ -448,6 +448,14 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                   <dd className="font-mono text-ink">{item.keystone_wo_number}</dd>
                 </div>
               )}
+              {item.keystone_status && (
+                <div>
+                  <dt className="text-mute">Keystone Status</dt>
+                  <dd className={item.keystone_status === 'not in keystone' ? 'text-mute italic' : 'text-ink'}>
+                    {item.keystone_status}
+                  </dd>
+                </div>
+              )}
               <div>
                 <dt className="text-mute">Created</dt>
                 <dd className="text-ink">{formatDate(item.created_date)}</dd>
