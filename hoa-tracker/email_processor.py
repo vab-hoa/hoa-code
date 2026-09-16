@@ -871,7 +871,7 @@ def get_recent_emails_imap(mailbox, days=1, debug=False, max_results=500):
     emails = []
     for mid in msg_ids:
         try:
-            status, msg_data = imap.fetch(mid, '(RFC822)')
+            status, msg_data = imap.fetch(mid, '(BODY.PEEK[])')
             if status != 'OK':
                 continue
             import email as email_module

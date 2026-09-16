@@ -146,7 +146,7 @@ def fetch_unread_emails(days=7, debug=False):
 
     for mid in msg_ids:
         try:
-            status, msg_data = imap.fetch(mid, '(RFC822)')
+            status, msg_data = imap.fetch(mid, '(BODY.PEEK[])')
             if status != 'OK':
                 continue
             raw_msg = msg_data[0][1]
