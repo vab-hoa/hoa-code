@@ -14,6 +14,7 @@ export function SummaryCards({ summary, agingCount }: SummaryCardsProps) {
     { label: 'Manager', value: summary.manager_count, color: 'border-t-blue-500' },
     { label: 'Board', value: summary.board_count, color: 'border-t-red-500' },
     { label: 'ARC', value: summary.arc_count, color: 'border-t-violet-500' },
+    { label: 'LBC', value: summary.lbc_count, color: 'border-t-fuchsia-500' },
     { label: 'Contractor', value: summary.contractor_count, color: 'border-t-yellow-500' },
     { label: 'Project', value: summary.project_count, color: 'border-t-teal-500' },
     { label: 'Closed', value: summary.closed_count, color: 'border-t-gray-500' },

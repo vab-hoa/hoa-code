@@ -156,7 +156,7 @@ function AgingAlertsTypeSection({
                 onSort={() => requestSort('status')}
               />
               <SortableTh
-                label="Days Open"
+                label="Days Since Change"
                 sortKey="days_open"
                 currentSortKey={sortKey as string}
                 currentSortDir={sortDir}

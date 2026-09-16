@@ -17,6 +17,7 @@ export interface WorkItem {
   description: string | null
   category: WorkItemCategory
   status: WorkItemStatus
+  status_changed_at: string | null
   priority: string | null
   assigned_to: string | null
   vendor: string | null
@@ -144,6 +145,7 @@ export interface DashboardSummary {
   manager_count: number
   board_count: number
   arc_count: number
+  lbc_count: number
   contractor_count: number
   project_count: number
   closed_count: number
@@ -167,6 +169,7 @@ export interface AgingWorkItem {
   created_date: string
   max_days: number
   days_open: number
+  status_changed_at: string | null
   assigned_to: string | null
   vendor: string | null
 }
@@ -177,7 +180,7 @@ export type WorkItemCategory =
   | 'arc_request' | 'work_order' | 'violation' | 'other'
 
 export type WorkItemStatus =
-  | 'manager' | 'board' | 'arc' | 'contractor'
+  | 'manager' | 'board' | 'arc' | 'lbc' | 'contractor'
   | 'project: window_wells' | 'project: concrete' | 'project: lawns'
   | 'project: wood_trim' | 'project: asphalt' | 'project: tree_trimming'
   | 'closed'
