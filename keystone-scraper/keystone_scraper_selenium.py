@@ -604,10 +604,13 @@ class KeystoneScraperSelenium:
                             work_location = cells[6].text.strip()
                             status = cells[7].text.strip()
 
-                            # Format description: "Type\nDescription" -> "Type - Description"
+                            # Parse Type and Description separately
+                            wo_type = ''
+                            description = ''
                             if '\n' in type_desc_raw:
                                 parts = type_desc_raw.split('\n', 1)
-                                description = ' - '.join(p.strip() for p in parts if p.strip())
+                                wo_type = parts[0].strip() if len(parts) > 0 else ''
+                                description = parts[1].strip() if len(parts) > 1 else ''
                             else:
                                 description = type_desc_raw
 
@@ -646,7 +649,8 @@ class KeystoneScraperSelenium:
                                 'date': date_created,
                                 'description': description,
                                 'vendor': vendor,
-                                'status': status
+                                'status': status,
+                                'wo_type': wo_type
                             })
                             logger.info(
                                 f"Added WO#{wo_number} - {standardized_address} "
@@ -1286,7 +1290,7 @@ class KeystoneScraperSelenium:
             )
 
             # Work orders use direct row writing (columns don't map via camelCase convention)
-            wo_rows = [['Address', 'WO Number', 'Date Created', 'Type/Description', 'Vendor', 'Status']]
+            wo_rows = [['Address', 'WO Number', 'Date Created', 'Description', 'Vendor', 'Status', 'Type']]
             for wo in work_orders:
                 wo_rows.append([
                     wo.get('address', ''),
@@ -1294,7 +1298,8 @@ class KeystoneScraperSelenium:
                     wo.get('date', ''),
                     wo.get('description', ''),
                     wo.get('vendor', ''),
-                    wo.get('status', '')
+                    wo.get('status', ''),
+                    wo.get('wo_type', '')
                 ])
             self._write_rows_to_sheet(WORKORDERS_SHEET, wo_rows)
 
