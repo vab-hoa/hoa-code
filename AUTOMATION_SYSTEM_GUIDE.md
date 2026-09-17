@@ -231,6 +231,13 @@ Note: These are NOT part of the critical automation path (which is all in GitHub
 
 ## Authentication & Credentials
 
+**Credential Storage:**
+- **Bitwarden IT Officer Vault** — Primary store for HOA automation credentials (succession-facing, shared with IT Officer successors)
+- **GitHub Actions Secrets** — Cloud-hosted credentials for workflows (encrypted at rest, decrypted at runtime)
+- **Vercel Environment Variables** — Deployment credentials (encrypted in Vercel dashboard)
+- **Apps Script Script Properties** — Sensitive values like OAuth secrets (stored within the script project)
+- **Local oregano files** — Temporary/development credentials outside git (strictly non-production)
+
 **Complete credential inventory:** See [memory/auth_inventory.md](../memory/auth_inventory.md) for detailed up-to-date list of every credential, where it lives, when it was last touched, and current vs deprecated status.
 
 **Architecture reference:** See [memory/gcp_apps_script_architecture.md](../memory/gcp_apps_script_architecture.md) for explanation of how GCP projects, Apps Script OAuth, and Workspace delegation relate to each other.
