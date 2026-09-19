@@ -90,6 +90,15 @@ To have/use a google workspace, we have to pay money, and we pay by workspace us
 - Vercel deployments (Supabase Postgres auth, Gmail sending from the dashboard)
 - Apps Script (optional; PropertyReport uses OAuth instead)
 
+### Namecheap (Registrar)
+**Used for:**
+- We have to "buy" the name "villasboulders.org"
+- The company called namecheap (namecheap.com) sells internet "domain names", like villasboulders.org
+- We buy the name for a limited period. In our case we have bought "villasboulders.org" for 10 years.
+- It will have to be renewed in 2036.
+- Whoever "sells" you a domain name, also keeps records about where to send mail for villasboulders.org, and where on the internet to go for a website at that address, e.g. DNS.
+- Our DNS records for villasboulders.org are at namecheap.com. 
+
 ### Supabase (Database)
 
 - **Project:** hoa-tracker-dashboard database
