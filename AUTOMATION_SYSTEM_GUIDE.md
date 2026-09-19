@@ -1,7 +1,7 @@
 # Villas at the Boulders HOA — Automation System Guide
 
 **Last updated:** 2026-09-07  
-**Owner:** Dee Buck, HOA President & IT Officer  
+**Owner:** Dee Buck, IT Officer  
 **Repository:** github.com/vab-hoa/hoa-code (private)
 
 ---
@@ -19,6 +19,9 @@
 9. [Troubleshooting & Common Tasks](#troubleshooting--common-tasks)
 
 ---
+## Introduction 
+
+Most of this was written by AI. I'm writing this part to set the stage. I have built a bunch of stuff (with AI help) to help run the HOA. Initially this was all on my own computers, but I'm trying to move everything off of my stuff so it will still run when I croak. But there is still some reliance on me. The management company right now is Keystone Pacific, and they offer a wretched nearly unusable portal, which almost nobody uses but me. But we have to get information out of it sometimes. The only access we have is via a homeowner login account, so at the moment we are using my account. That is one thing which has to change when things have to run without me. This document describes what infrastructure we use, where it is located, how to authenticate into it, where to get credentials, how it all fits together. That kind of stuff. It is intended for somebody who is reasonably tech-savvy, but such a person would be needed to run it. 
 
 ## System Overview
 
@@ -33,6 +36,10 @@ The HOA automation system is a suite of interconnected tools for managing neighb
 ---
 
 ## Infrastructure
+
+### BitWarden account
+
+There are lots of accounts involved. Below is a description of the infrastructure. But we have passwords, OAuth Tokens, API Keys, Google GCP projects, a Github account etc. All this stuff has various keys and passwords and stuff, and I am trying to gather all the information together in a protected account at the service called BitWarden, which is free for the level of stuff that we have. 
 
 ### Google Workspace (villasboulders.org)
 
