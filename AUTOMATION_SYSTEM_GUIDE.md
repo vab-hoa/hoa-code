@@ -43,6 +43,10 @@ There are lots of accounts involved. Below is a description of the infrastructur
 
 ### Google Workspace (villasboulders.org)
 
+The main information vehicle for the HOA is at Google. We have a Google "Workspace" -- which is a google paid service allowing us to gather a bunch of stuff together on google's cloud under our own name: villasboulders.org. So we have a website, gmail, google "groups", google drive, docs & spreadsheets, video-conferencing (google meet), contacts. We keep all our information on google. We chose google (as opposed to Microsoft or Apple, or somewhere else) because a lot of people have gmail accounts already (which means they have a login to google), and many people have Android phones (which also means they have a login to google). Having a login for google (i.e. have a "google account") enables them to authenticate into google, and our system can use that capability to do authentication -- i.e. to have users prove their identity. 
+
+The google workspace isn't great. It is horribly complicated. But it is the best option by a wide margin. 
+
 - **Domain:** villasboulders.org (registered at Namecheap; delegated manager access to Dee)
 - **Workspace admin:** admin@villasboulders.org (only licensed Workspace user; other board members use external Gmail)
 - **Role-based groups:**
