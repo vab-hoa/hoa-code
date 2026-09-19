@@ -47,6 +47,8 @@ The main information vehicle for the HOA is at Google. We have a Google "Workspa
 
 The google workspace isn't great. It is horribly complicated. But it is the best option by a wide margin. 
 
+To have/use a google workspace, we have to pay money, and we pay by workspace user/account id -- so we only have 2 workspace users. One is the "admin" account, and we have one more, as sort of utility account called boardwork. But this is a very important point about our use of google workspace. Part of the reason it is SO complicated, is because we try to get the benefit out of it WITHOUT paying for every homeowner to have an account. That would be very expensive. It would make things much easier, but we can't afford it. 
+
 - **Domain:** villasboulders.org (registered at Namecheap; delegated manager access to Dee)
 - **Workspace admin:** admin@villasboulders.org (only licensed Workspace user; other board members use external Gmail)
 - **Role-based groups:**
