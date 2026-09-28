@@ -1,12 +1,10 @@
 {
-  "last_checked": "2026-09-21T16:32:26.117008",
+  "last_checked": "2026-09-28T18:13:07.395286",
   "folders": {
     "Architectural": {
-      "BRL AIR Form Writeable.pdf": "150032",
-      "BRL Design Guidelines.pdf": "230979",
-      "BRL DRC PAINT FORM.pdf": "236280",
-      "BRL Fence and Mailbox Detail": "165991",
-      "BRL Waterwise Plans.pdf": "161866"
+      "Design Guidelines": "230979",
+      "Fence and Mailbox Detail": "165991",
+      "Waterwise Plans.pdf": "161866"
     },
     "Governing Documents": {
       "BRL Annexation": "150037",
