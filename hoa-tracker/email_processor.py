@@ -113,7 +113,7 @@ BOARDWORK_EMAIL = 'boardwork@villasboulders.org'
 ARCFORM_RECIPIENT = 'arcformrecipients@villasboulders.org'
 
 # Classifications that create work items (trigger notifications when --notify is on)
-WORK_ITEM_CLASSIFICATIONS = {'arc_form_submission', 'arc_form_forward', 'wo_form', 'hppr_form'}
+WORK_ITEM_CLASSIFICATIONS = {'arc_form_submission', 'arc_form_forward', 'wo_form', 'hppr_form', 'wo_homeowner'}
 
 # Noise sender domains/patterns
 NOISE_DOMAINS = {
@@ -135,8 +135,143 @@ NOISE_DOMAIN_PATTERNS = [
 ]
 
 # ============================================================
+# LLM-based classification helpers
+# ============================================================
+
+import urllib.request as _urllib_request
+import urllib.error as _urllib_error
+
+OPENROUTER_API_KEY_FILE = '/home/dee/hoa-code/hoa-tracker/secrets/.openrouter_api_key'
+LLM_CLASSIFY_URL = 'https://openrouter.ai/api/v1/chat/completions'
+LLM_MODEL = 'z-ai/glm-5.3-flash'
+LLM_RETRY_QUEUE = '/home/dee/hoa-code/hoa-tracker/.llm_retry_queue.json'
+LLM_MAX_RETRY_DAYS = 3
+
+def load_openrouter_key():
+    """Load OpenRouter API key from file."""
+    try:
+        with open(OPENROUTER_API_KEY_FILE) as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        return None
+
+def llm_classify_email(subject, sender, recipients, body):
+    """
+    Use an LLM to classify a non-system email.
+    Returns (classification, confidence, is_noise, reason) or None on failure.
+    """
+    api_key = load_openrouter_key()
+    if not api_key:
+        return None
+
+    # Truncate body to keep token usage low
+    body_truncated = body[:1000] if body else ''
+
+    prompt = f"""You are an assistant for a homeowners association (HOA) board. Classify this email.
+
+Subject: {subject or '(none)'}
+From: {sender or '(unknown)'}
+To: {recipients or '(unknown)'}
+
+Body (first 1000 chars):
+{body_truncated}
+
+Classify this email as exactly one of:
+- wo_homeowner: A homeowner reporting a maintenance issue or work order request about their property (e.g., sprinkler leak, broken step, drainage problem)
+- homeowner_direct: General correspondence from a homeowner that is NOT a maintenance request (e.g., newsletter edits, social emails, questions about meetings)
+- josh_direct: A reply from a property manager or vendor/contractor about work being done
+- noise: Automated notifications, marketing, or irrelevant emails
+
+Reply with JSON only: {{"classification": "wo_homeowner", "reason": "brief explanation"}}"""
+
+    payload = {
+        'model': LLM_MODEL,
+        'messages': [{'role': 'user', 'content': prompt}],
+        'temperature': 0.1,
+        'max_tokens': 500,
+    }
+
+    try:
+        import json as _json
+        data = _json.dumps(payload).encode()
+        req = _urllib_request.Request(
+            LLM_CLASSIFY_URL,
+            data=data,
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {api_key}',
+            },
+        )
+        resp = _urllib_request.urlopen(req, timeout=30)
+        result = _json.loads(resp.read())
+        content = result['choices'][0]['message']['content']
+        # Parse JSON from content — handle markdown code blocks
+        content = content.strip()
+        if content.startswith('```'):
+            content = content.split('\n', 1)[1] if '\n' in content else content[3:]
+            if content.endswith('```'):
+                content = content[:-3].strip()
+        # Find JSON object in content
+        import re as _re
+        json_match = _re.search(r'\{[^}]+\}', content)
+        if json_match:
+            parsed = _json.loads(json_match.group())
+            cls = parsed.get('classification', 'homeowner_direct')
+            reason = parsed.get('reason', '')
+            # Validate classification
+            if cls not in ('wo_homeowner', 'homeowner_direct', 'josh_direct', 'noise'):
+                cls = 'homeowner_direct'
+            return (cls, 0.85, cls == 'noise', reason)
+        return None
+    except Exception as e:
+        print(f'[LLM classify error] {e}', file=sys.stderr)
+        return None
+
+def load_retry_queue():
+    """Load the LLM retry queue from file."""
+    try:
+        import json as _json
+        with open(LLM_RETRY_QUEUE) as f:
+            return _json.load(f)
+    except (FileNotFoundError, _json.JSONDecodeError):
+        return []
+
+def save_retry_queue(queue):
+    """Save the LLM retry queue to file."""
+    import json as _json
+    with open(LLM_RETRY_QUEUE, 'w') as f:
+        _json.dump(queue, f, indent=2)
+
+def check_retry_queue_age(queue):
+    """Check if any items in the queue are older than LLM_MAX_RETRY_DAYS.
+    Returns list of stale items."""
+    from datetime import datetime, timedelta
+    cutoff = datetime.now() - timedelta(days=LLM_MAX_RETRY_DAYS)
+    stale = []
+    for item in queue:
+        queued_at = item.get('queued_at')
+        if queued_at:
+            try:
+                queued_dt = datetime.fromisoformat(queued_at)
+                if queued_dt < cutoff:
+                    stale.append(item)
+            except (ValueError, TypeError):
+                pass
+    return stale
+
+# ============================================================
 # Email classification pipeline
 # ============================================================
+
+
+def _read_smtp_password():
+    """Read SMTP password for jane@wmbuck.net from file."""
+    pw_file = '/home/dee/hoa-code/hoa-tracker/secrets/.smtp_pass_jane'
+    try:
+        with open(pw_file) as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        return None
 
 def classify_email(subject, sender, recipients, body, headers=None):
     """
@@ -250,6 +385,11 @@ def classify_email(subject, sender, recipients, body, headers=None):
         'planting and removal' in subject_lower or
         'lbcformrecipients' in recipients_lower or
         'landscape' in subject_lower and 'form' in subject_lower):
+        # An LBC approval reply (e.g. 'Re: VaB LBC Request' with an approval vote)
+        # is still part of the HPPR flow, but flag it so the handler records the
+        # approval rather than logging a brand-new request.
+        if subject_lower.startswith('re:') and ('approv' in subject_lower or 'approv' in body_lower[:1500]):
+            return ('hppr_form', 0.85, False)
         return ('hppr_form', 0.90, False)
     # HPPR auto-reply "Thank you for filling out our form!"
     if 'thank you for filling out our form' in subject_lower and 'villasboulders.org' in sender_lower:
@@ -266,8 +406,34 @@ def classify_email(subject, sender, recipients, body, headers=None):
     if is_from_josh:
         return ('josh_direct', 0.85, False)
 
+    # --- 6b. Work-order follow-up / resolution replies ---
+    # Board member or LBC/admin replies on an existing work-order thread
+    # (Re: subject + property address). Links to the open work item and
+    # applies a disposition from the body when present (monitor / resolved).
+    if ('re:' in subject_lower or 're ' in subject_lower or
+            'will monitor' in body_lower or 'monitor the situation' in body_lower or
+            'verify that it is running' in body_lower):
+        if is_board_member or is_from_dee or 'lbc@villasboulders.org' in recipients_lower:
+            # Must reference a specific property (5-digit street number)
+            addr_re = re.compile(
+                r'\b(\d{4,5}\s+(?:Rock Point|Stone Circle|Boulder Point|Plaster Point|Broadlands|Boulder Circle)[^,\n]*(?:#|Unit|unit)?\s*\d*)\b',
+                re.IGNORECASE)
+            if addr_re.search(subject + '\n' + body[:2000]):
+                # Also make sure it's talking about a work-order topic, not ARC
+                work_topic_words = ['irrigation', 'sprinkler', 'watering', 'water',
+                                    'leak', 'downspout', 'gutter', 'soffit', 'window well',
+                                    'drainage', 'landscap', 'shrub', 'bush', 'tree',
+                                    'lawn', 'turf', 'fence', 'concrete', 'paint',
+                                    'siding', 'roof', 'step', 'patio', 'deck', 'light',
+                                    'snow', 'ice', 'plow', 'door', 'lock', 'glass']
+                topic_hit = any(w in (subject + ' ' + body[:2000]).lower() for w in work_topic_words)
+                if topic_hit:
+                    return ('wo_followup', 0.85, False)
+
     # --- 7. Board governance ---
-    if is_board_member or 'board@villasboulders.org' in recipients_lower:
+    # Prefer sender is a board member. board@ in recipients alone is NOT enough
+    # (homeowner mail To/CC board@ must not become board_email).
+    if is_board_member:
         # Check for governance topics
         if any(kw in subject_lower for kw in ['insurance', 'guidelines', 'meeting',
                'bylaw', 'budget', 'reserve', 'design review', 'election',
@@ -288,11 +454,60 @@ def classify_email(subject, sender, recipients, body, headers=None):
             # ARC request email without form fields (e.g. notification copy)
             return ('arc_form_forward', 0.75, False)
 
-    # --- 8. Homeowner direct ---
-    # Not from known system/board/josh — likely homeowner
+    # --- 7c. ARC approval reply (e.g. "13705 Stone Circle 101 APPROVED") ---
+    # Catches ARC decisions sent by board members / managers before the
+    # homeowner fall-through, so the linked ARC work item can be updated.
+    has_approval_word = ('approve' in subject_lower or 'approve' in body_lower[:2000]
+                         or 'approved' in subject_lower or 'approved' in body_lower[:2000])
+    if has_approval_word and ('arc' in subject_lower or 'arc' in body_lower[:2000]
+                              or any(kw in subject_lower for kw in
+                                     ['stone circle', 'rock point', 'boulder point',
+                                      'boulder circle', 'broadlands', 'plaster point'])):
+        # Only if it looks like a decision about a specific property, not a generic mention
+        if has_approval_word and \
+           re.search(r'\b\d{5}\b', subject_lower + ' ' + body_lower[:2000]):
+            return ('arc_approval', 0.80, False)
+
+    # --- 7d. LLM-based classification for non-system emails ---
+    # For emails that aren't from known system/board/manager senders, use an
+    # LLM to understand the email content and classify it properly.
+    # This replaces keyword matching which produced too many false positives
+    # (e.g., 'contact' in 'contact information' matched as maintenance).
     if not any(d in sender_lower for d in ['villasboulders.org', 'keystonepacific.com',
                                            'google.com', 'namecheap.com']):
-        return ('homeowner_direct', 0.60, False)
+        # Try LLM classification
+        llm_result = llm_classify_email(subject, sender, recipients, body)
+        if llm_result is not None:
+            cls, conf, is_noise_val, reason = llm_result
+            return (cls, conf, is_noise_val)
+        # LLM failed — queue for retry, alert jane, classify as homeowner_direct for now
+        # (safe default: log the email, don't create a work item)
+        print(f'[LLM unavailable] Queuing email for retry: {subject[:60]}', file=sys.stderr)
+        # Send alert to jane@wmbuck.net so we can investigate immediately
+        try:
+            import smtplib
+            from email.mime.text import MIMEText
+            smtp_pw = _read_smtp_password()
+            msg = MIMEText(
+                f'LLM classification API failed while processing email:\n'
+                f'Subject: {subject}\n'
+                f'From: {sender}\n'
+                f'Error: {llm_result}\n\n'
+                f'The email has been queued for retry.\n'
+                f'Investigate the API issue and fix it — do not wait for Dee to notice.\n'
+                f'File: /home/dee/hoa-code/hoa-tracker/.llm_retry_queue.json'
+            )
+            msg['Subject'] = '[ALERT] HOA email processor: LLM API failure'
+            msg['From'] = 'jane@wmbuck.net'
+            msg['To'] = 'jane@wmbuck.net'
+            with smtplib.SMTP('wmbuck.net', 587) as s:
+                s.starttls()
+                s.login('jane@wmbuck.net', smtp_pw)
+                s.send_message(msg)
+            print('[LLM alert] Sent alert email to jane@wmbuck.net', file=sys.stderr)
+        except Exception as alert_err:
+            print(f'[LLM alert] Failed to send alert: {alert_err}', file=sys.stderr)
+        return ('homeowner_direct', 0.50, False)
 
     # --- 8b. Admin internal emails (from admin@ to non-board) ---
     if is_from_dee or 'admin@villasboulders.org' in sender_lower:
@@ -709,6 +924,127 @@ def normalize_subject(subject):
             break
         subject = s
     return s.strip()
+
+
+def clean_email_body(body, subject='', sender_name=''):
+    """Clean an email body for use as a work item description.
+
+    Strips quoted replies, signatures, marketing boilerplate, and excess
+    blank lines. If the result looks like a reply, produces a short summary
+    instead of the raw body.
+
+    Returns a clean, readable summary -- max 500 chars.
+    """
+    if not body:
+        return ''
+
+    text = body
+
+    # Strip HTML if present
+    if '<' in text and '>' in text:
+        text = strip_html(text, preserve_newlines=True)
+
+    lines = text.split('\n')
+
+    # 1. Strip quoted reply text -- cut at common quote markers
+    quote_markers = [
+        r'^On\s+.+\wrote:\s*$',
+        r'^From:\s+\S+',
+        r'^\-+Original Message\-+$',
+        r'^\>.*$',  # lines starting with > (email quoting)
+    ]
+    clean_lines = []
+    for line in lines:
+        stripped = line.strip()
+        if any(re.match(pat, stripped, re.IGNORECASE) for pat in quote_markers):
+            break
+        clean_lines.append(line)
+
+    # 2. Strip email signatures -- cut at signature markers
+    sig_markers = [
+        r'^--\s*$',
+        r'^Sent from my \w+',
+        r'^Best regards,',
+        r'^Thanks,?\s*$',
+        r'^Thank you,?\s*$',
+        r'^Sincerely,',
+        r'^Regards,?',
+        r'^Joshua Hall',
+        r'^Keystone\s*$',
+    ]
+    final_lines = []
+    for line in clean_lines:
+        stripped = line.strip()
+        if any(re.match(pat, stripped, re.IGNORECASE) for pat in sig_markers):
+            break
+        final_lines.append(line)
+
+    # 3. Strip marketing boilerplate lines (Keystone disclaimers, social, etc.)
+    boilerplate_patterns = [
+        r'kppm\.com',
+        r'keystone\s*pacific',
+        r'we\s+would\s+love\s+your\s+feedback',
+        r'we\'d\s+love\s+your\s+feedback',
+        r'\bfacebook\b',
+        r'\blinkedin\b',
+        r'\btwitter\b',
+        r'\binstagram\b',
+        r'direct:\s*\d',
+        r'main:\s*\d',
+        r'\bamsc(?:a|cmca)?\b',
+        r'\bCMCA\b',
+        r'\bAMS\b',
+        r'community\s+association\s+manager',
+        r'2851\s+S\s*Parker',
+        r'Aurora,\s*CO',
+        r'303\)\s*369',
+        r'720\)\s*617',
+    ]
+    deduped = []
+    for line in final_lines:
+        stripped = line.strip()
+        if stripped and any(re.search(pat, stripped, re.IGNORECASE) for pat in boilerplate_patterns):
+            continue
+        deduped.append(line)
+
+    # 4. Strip excessive blank lines (collapse multiple blanks to one)
+    result_lines = []
+    prev_blank = False
+    for line in deduped:
+        is_blank = not line.strip()
+        if is_blank and prev_blank:
+            continue
+        result_lines.append(line)
+        prev_blank = is_blank
+    # Also strip leading/trailing blanks
+    while result_lines and not result_lines[0].strip():
+        result_lines.pop(0)
+    while result_lines and not result_lines[-1].strip():
+        result_lines.pop()
+
+    cleaned = '\n'.join(result_lines).strip()
+
+    # 5. If the result is a reply (starts with Re: or had quoted content), summarize
+    is_reply = (subject or '').strip().lower().startswith('re:') or len(result_lines) < len(lines)
+
+    if is_reply and sender_name:
+        orig_subject = normalize_subject(subject or '')
+        if not orig_subject:
+            orig_subject = subject or 'HOA matter'
+        summary = f"Reply from {sender_name} re: {orig_subject}"
+    elif is_reply and not sender_name:
+        orig_subject = normalize_subject(subject or '')
+        if not orig_subject:
+            orig_subject = subject or 'HOA matter'
+        summary = f"Reply re: {orig_subject}"
+    else:
+        summary = cleaned
+
+    # 6. Enforce max 500 chars
+    if len(summary) > 500:
+        summary = summary[:497] + '...'
+
+    return summary
 
 
 # ============================================================
@@ -1396,6 +1732,7 @@ def send_notification_email(classification, email_data, result, mailbox_email=No
         'arc_form_forward': 'ARC Request (Forwarded)',
         'wo_form': 'Work Order Form',
         'hppr_form': 'HPPR Form',
+        'wo_homeowner': 'Homeowner Maintenance Request',
     }
     type_name = type_map.get(classification, classification)
 
@@ -1556,11 +1893,28 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
     sender = email_data['from_email']
     sender_full = f"{email_data['from_name']} <{email_data['from_email']}>"
     recipients = ', '.join(email_data['to_recipients'])
+    cc_recipients = ', '.join(email_data.get('cc_recipients') or [])
     body = email_data['body_text'] or email_data['body_html'] or ''
 
     classification, confidence, is_noise = classify_email(
-        subject, sender_full, recipients, body
+        subject, sender_full, recipients + ',' + cc_recipients, body
     )
+
+    # If LLM was unavailable and we got the safe default, queue for retry
+    if (classification == 'homeowner_direct' and confidence == 0.50
+            and not any(d in (sender or '').lower() for d in ['villasboulders.org', 'keystonepacific.com', 'google.com', 'namecheap.com'])):
+        # Check if this was an LLM failure (non-system email that fell through)
+        # Queue it for retry on next run
+        queue = load_retry_queue()
+        queue.append({
+            'gmail_message_id': email_data.get('gmail_message_id', ''),
+            'thread_id': email_data.get('thread_id', ''),
+            'subject': subject,
+            'from': sender_full,
+            'received_date': email_data.get('received_date', '').isoformat() if email_data.get('received_date') else None,
+            'queued_at': datetime.now().isoformat(),
+        })
+        save_retry_queue(queue)
 
     if debug:
         print(f"[DEBUG] {email_data['gmail_message_id'][:20]}... → {classification} ({confidence:.2f}) | {subject[:60]}", file=sys.stderr)
@@ -1865,6 +2219,177 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
             upsert_email_thread(conn, email_data['thread_id'], subject,
                                email_data['received_date'], classification)
 
+    elif classification == 'arc_approval':
+        # ARC approval/decision reply ('APPROVED BY THE ARC', '13705 ... APPROVED', etc.)
+        # Find the matching open ARC work item by parcel code and mark it approved.
+        parse_payload = {'body_preview': body[:1000]}
+        result['parsed_data'] = parse_payload
+        result['actions'].append('logged_as_arc_approval')
+
+        # Try to extract a parcel code from subject/body
+        parcel = None
+        addr_match = re.search(
+            r'\b(\d{4,5}\s+(?:Rock Point|Stone Circle|Boulder Point|Plaster Point|Broadlands|Boulder Circle)[^,\n]*(?:#|Unit|unit)?\s*\d*)\b',
+            subject + '\n' + body
+        )
+        if addr_match:
+            parcel = standardize_address(addr_match.group(0))
+            result['parcel_code'] = parcel
+            result['actions'].append(f'address_extracted: {parcel}')
+
+        if not dry_run and conn:
+            email_uuid = upsert_email_message(conn, email_data, classification, confidence, is_noise, parse_payload)
+            result['db_id'] = str(email_uuid) if email_uuid else None
+            upsert_email_thread(conn, email_data['thread_id'], subject,
+                               email_data['received_date'], classification,
+                               result.get('parcel_code'))
+
+            if parcel:
+                property_id = lookup_property_by_parcel(conn, parcel)
+                if property_id:
+                    try:
+                        with conn.cursor() as cur:
+                            # Find newest open ARC work item for this property
+                            cur.execute("""
+                                SELECT id FROM work_items
+                                WHERE property_id = %s
+                                  AND category = 'arc_request'
+                                  AND status NOT IN ('closed', 'cancelled', 'denied', 'approved', 'approved_with_conditions')
+                                ORDER BY created_date DESC NULLS LAST
+                                LIMIT 1
+                            """, (property_id,))
+                            row = cur.fetchone()
+                            if row:
+                                work_item_id = row[0]
+                                cur.execute("""
+                                    UPDATE work_items
+                                    SET status = 'approved', decision = 'approved',
+                                        decision_at = NOW(), updated_date = NOW(),
+                                        status_changed_at = NOW()
+                                    WHERE id = %s
+                                """, (work_item_id,))
+                                cur.execute("""
+                                    INSERT INTO work_item_notes (work_item_id, note_date, content, source)
+                                    VALUES (%s, NOW(), %s, 'email_processor')
+                                """, (work_item_id,
+                                      f"ARC approval from email: {subject[:200]}"))
+                                conn.commit()
+                                if email_uuid:
+                                    cur.execute("""
+                                        INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
+                                        VALUES (%s, %s, 'decision', 'parcel_date', 0.8)
+                                        ON CONFLICT DO NOTHING
+                                    """, (work_item_id, email_uuid))
+                                    conn.commit()
+                                result['work_item_id'] = str(work_item_id)
+                                result['actions'].append(f'arc_work_item_approved: {work_item_id}')
+                            else:
+                                result['actions'].append('no_open_arc_item_found')
+                    except Exception as e:
+                        print(f"[ERROR] arc_approval update failed: {e}", file=sys.stderr)
+                        conn.rollback()
+                else:
+                    result['actions'].append('property_not_found')
+            else:
+                result['actions'].append('no_address_found')
+
+    elif classification == 'wo_followup':
+        # Board/admin reply on an existing work-order thread.
+        # Link to the open work order for the property; apply disposition
+        # from body when present (monitor / resolved / closed).
+        parse_payload = {'body_preview': body[:1000]}
+        result['parsed_data'] = parse_payload
+        result['actions'].append('logged_as_wo_followup')
+
+        # Extract parcel code from subject/body
+        parcel = None
+        addr_match = re.search(
+            r'\b(\d{4,5}\s+(?:Rock Point|Stone Circle|Boulder Point|Plaster Point|Broadlands|Boulder Circle)[^,\n]*(?:#|Unit|unit)?\s*\d*)\b',
+            subject + '\n' + body, re.IGNORECASE
+        )
+        if addr_match:
+            parcel = standardize_address(addr_match.group(0))
+            result['parcel_code'] = parcel
+            result['actions'].append(f'address_extracted: {parcel}')
+
+        # Classify disposition from the body
+        body_l = body[:3000].lower()
+        has_monitor = any(w in body_l for w in [
+            'will monitor', 'monitor the situation', 'we will monitor',
+            'verify that it is running', 'doublecheck', 'double check',
+            'keep an eye', 'watch it', 'understood'])
+        has_resolved = any(w in body_l for w in [
+            'resolved', 'fixed', 'is fixed', 'has been fixed', 'completed',
+            'is complete', 'done', 'repaired', 'taken care of', 'working now',
+            'is running now', 'now working', 'it appears the irrigation is running'])
+        # Schema has no 'monitored' status for work orders; map monitor intent to 'resolved'
+        # (issue addressed + follow-up note) per current status CHECK constraint.
+        disposition = 'resolved' if (has_monitor or has_resolved) else None
+
+        if not dry_run and conn:
+            email_uuid = upsert_email_message(conn, email_data, classification, confidence, is_noise, parse_payload)
+            result['db_id'] = str(email_uuid) if email_uuid else None
+            upsert_email_thread(conn, email_data['thread_id'], subject,
+                               email_data['received_date'], classification,
+                               result.get('parcel_code'))
+
+            if parcel:
+                property_id = lookup_property_by_parcel(conn, parcel)
+                if property_id:
+                    try:
+                        with conn.cursor() as cur:
+                            # Find newest open work_order for this property
+                            cur.execute("""
+                                SELECT id, title FROM work_items
+                                WHERE property_id = %s
+                                  AND category = 'work_order'
+                                  AND status NOT IN ('closed', 'cancelled', 'denied', 'withdrawn', 'resolved')
+                                ORDER BY created_date DESC NULLS LAST
+                                LIMIT 1
+                            """, (property_id,))
+                            row = cur.fetchone()
+                            if row:
+                                work_item_id = row[0]
+                                old_title = row[1] or ''
+                                note_parts = [f'WO follow-up from email: {subject[:200]}']
+                                if disposition:
+                                    cur.execute("""
+                                        UPDATE work_items
+                                        SET status = %s, updated_date = NOW(),
+                                            status_changed_at = NOW()
+                                        WHERE id = %s
+                                    """, (disposition, work_item_id))
+                                    note_parts.append(f'Status -> {disposition} (from email body)')
+                                    if has_monitor:
+                                        note_parts.append(
+                                            'LBC is monitoring the situation '
+                                            '(monitor language mapped to resolved; CHECK has no monitored).'
+                                        )
+                                    result['actions'].append(f'wo_status_set: {disposition}')
+                                cur.execute("""
+                                    INSERT INTO work_item_notes (work_item_id, note_date, content, source)
+                                    VALUES (%s, NOW(), %s, 'email_processor')
+                                """, (work_item_id, '\n'.join(note_parts)))
+                                conn.commit()
+                                if email_uuid:
+                                    cur.execute("""
+                                        INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
+                                        VALUES (%s, %s, 'update', 'parcel_date', 0.8)
+                                        ON CONFLICT DO NOTHING
+                                    """, (work_item_id, email_uuid))
+                                    conn.commit()
+                                result['work_item_id'] = str(work_item_id)
+                                result['actions'].append(f'linked_work_order: {work_item_id} ({old_title[:40]}...)')
+                            else:
+                                result['actions'].append('no_open_work_order_for_parcel')
+                    except Exception as e:
+                        print(f"[ERROR] wo_followup update failed: {e}", file=sys.stderr)
+                        conn.rollback()
+                else:
+                    result['actions'].append('property_not_found')
+            else:
+                result['actions'].append('no_address_found')
+
     elif classification in ('board_email', 'governance', 'josh_direct', 'homeowner_direct'):
         parse_payload = {'body_preview': body[:1000]}
         result['parsed_data'] = parse_payload
@@ -1872,7 +2397,7 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
         # homeowner_direct: log + optional link only — never auto-create work items
         if classification == 'homeowner_direct':
             # Try to find an address in the body
-            addr_match = re.search(r'\b(\d{5}\s+(?:Rock Point|Stone Circle|Boulder Point|Plaster Point|Broadlands|Boulder Circle)[^,\n]*(?:#|Unit|unit)?\s*\d*)\b', body)
+            addr_match = re.search(r'\b(\d{4,5}(?:\s*(?:#|Unit|unit)\s*\d+)?\s+(?:Rock Point|Stone Circle|Boulder Point|Plaster Point|Broadlands|Boulder Circle)[^,\n]*(?:\s*(?:#|Unit|unit)\s*\d*)?)\b', body)
             if addr_match:
                 parcel = standardize_address(addr_match.group(0))
                 result['parcel_code'] = parcel
@@ -1999,12 +2524,21 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
 
                 if work_item_id and email_uuid:
                     try:
+                        # CHECK allows only parcel_date|wo_number|thread|manual
+                        method_map = {
+                            'parcel': 'parcel_date',
+                            'parcel_title': 'parcel_date',
+                            'wo_number_title': 'wo_number',
+                        }
+                        db_method = method_map.get(match_method or '', match_method or 'manual')
+                        if db_method not in ('parcel_date', 'wo_number', 'thread', 'manual'):
+                            db_method = 'manual'
                         with conn.cursor() as cur:
                             cur.execute("""
                                 INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
                                 VALUES (%s, %s, 'related', %s, %s)
                                 ON CONFLICT DO NOTHING
-                            """, (work_item_id, email_uuid, match_method or 'manual', match_confidence))
+                            """, (work_item_id, email_uuid, db_method, match_confidence))
                             conn.commit()
                         result['work_item_id'] = str(work_item_id)
                         result['actions'].append(
@@ -2019,11 +2553,139 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
             else:
                 result['actions'].append('no_work_item_created (homeowner_direct — log only)')
         else:
+            # board_email, governance, josh_direct — log + try to link to existing work items
+            if classification == 'josh_direct':
+                addr_re_josh = re.compile(
+                    r'\b(\d{4,5}(?:\s*(?:#|Unit|unit)\s*\d+)?\s+(?:Rock Point|Stone Circle|Boulder Point|Plaster Point|Broadlands|Boulder Circle)[^,\n]*(?:\s*(?:#|Unit|unit)\s*\d*)?)\b',
+                    re.IGNORECASE)
+                addr_match_josh = addr_re_josh.search(subject + '\n' + body[:3000])
+                if addr_match_josh:
+                    parcel_j = standardize_address(addr_match_josh.group(0))
+                    result['parcel_code'] = parcel_j
+                    result['actions'].append(f'address_extracted: {parcel_j}')
+
             if not dry_run and conn:
                 email_uuid = upsert_email_message(conn, email_data, classification, confidence, is_noise, parse_payload)
                 result['db_id'] = str(email_uuid) if email_uuid else None
                 upsert_email_thread(conn, email_data['thread_id'], subject,
-                                   email_data['received_date'], classification)
+                                   email_data['received_date'], classification,
+                                   result.get('parcel_code'))
+
+                # For josh_direct: link to existing work item for the property
+                if classification == 'josh_direct' and result.get('parcel_code') and email_uuid:
+                    try:
+                        property_id = lookup_property_by_parcel(conn, result['parcel_code'])
+                        if property_id:
+                            with conn.cursor() as cur:
+                                cur.execute(
+                                    'SELECT id FROM work_items WHERE property_id = %s AND excluded_at IS NULL '
+                                    'AND status NOT IN (%s, %s, %s) ORDER BY updated_date DESC NULLS LAST, created_date DESC LIMIT 1',
+                                    (property_id, 'closed', 'cancelled', 'denied'))
+                                row = cur.fetchone()
+                                if row:
+                                    work_item_id = row[0]
+                                    cur.execute(
+                                        'INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence) '
+                                        'VALUES (%s, %s, %s, %s, %s) ON CONFLICT DO NOTHING',
+                                        (work_item_id, email_uuid, 'update', 'parcel_date', 0.75))
+                                    conn.commit()
+                                    result['work_item_id'] = str(work_item_id)
+                                    result['actions'].append(f'linked_to_work_item: {work_item_id} (parcel_date)')
+                    except Exception as e:
+                        print(f'[ERROR] josh_direct linking failed: {e}', file=sys.stderr)
+                        conn.rollback()
+
+    elif classification == 'wo_homeowner':
+        # Homeowner maintenance request — create a work item from a direct email
+        parse_payload = {'body_preview': body[:1000]}
+        result['parsed_data'] = parse_payload
+
+        # Extract address
+        addr_re_woh = re.compile(
+            r'\b(\d{4,5}(?:\s*(?:#|Unit|unit)\s*\d+)?\s+(?:Rock Point|Stone Circle|Boulder Point|Plaster Point|Broadlands|Boulder Circle)[^,\n]*(?:\s*(?:#|Unit|unit)\s*\d*)?)\b',
+            re.IGNORECASE)
+        addr_match_woh = addr_re_woh.search(subject + '\n' + body[:2000])
+        if addr_match_woh:
+            parcel = standardize_address(addr_match_woh.group(0))
+            result['parcel_code'] = parcel
+            result['actions'].append(f'address_extracted: {parcel}')
+
+        result['actions'].append('logged_as_wo_homeowner')
+
+        if not dry_run and conn:
+            email_uuid = upsert_email_message(conn, email_data, classification, confidence, is_noise, parse_payload)
+            result['db_id'] = str(email_uuid) if email_uuid else None
+
+            # Look up property
+            property_id = None
+            if result.get('parcel_code'):
+                property_id = lookup_property_by_parcel(conn, result['parcel_code'])
+
+            # Create source document
+            source_doc_id = None
+            try:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        'INSERT INTO source_documents '
+                        '(property_id, doc_type, source_ref, subject, body_text, from_name, from_email, received_date, gmail_thread_id) '
+                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id',
+                        (property_id, 'email', email_data.get('gmail_message_id', ''),
+                         subject, body[:5000], email_data.get('from_name', ''),
+                         email_data.get('from_email', ''), email_data.get('received_date'),
+                         email_data.get('thread_id', '')))
+                    row = cur.fetchone()
+                    source_doc_id = row[0] if row else None
+                    conn.commit()
+            except Exception as e:
+                print(f'[ERROR] wo_homeowner source_document creation failed: {e}', file=sys.stderr)
+                conn.rollback()
+
+            # Build title: LastName - ParcelCode - ShortDescription
+            from_name_woh = email_data.get('from_name', '')
+            last_name_woh = from_name_woh.split()[-1] if from_name_woh.split() else '?'
+            short_desc = subject or 'Maintenance request'
+            if len(short_desc) > 50:
+                short_desc = short_desc[:47] + '...'
+            work_title = last_name_woh
+            if result.get('parcel_code'):
+                work_title += f' - {result["parcel_code"]}'
+            work_title += f' - {short_desc}'
+
+            # Idempotency: check if a work item already exists for this thread
+            if check_thread_has_work_item(conn, email_data.get('thread_id')):
+                result['actions'].append('skipped_work_item_creation: thread already has a work item')
+            else:
+                work_item_id = create_work_item(conn, {
+                    'source_document_id': source_doc_id,
+                    'property_id': property_id,
+                    'title': work_title,
+                    'description': clean_email_body(body, subject, email_data.get('from_name', '')),
+                    'category': 'work_order',
+                    'status': 'manager',
+                    'priority': 'normal',
+                })
+                if work_item_id:
+                    result['work_item_id'] = str(work_item_id)
+                    result['actions'].append(f'created_work_item: {work_title}')
+
+                    if email_uuid:
+                        try:
+                            with conn.cursor() as cur:
+                                cur.execute(
+                                    'INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence) '
+                                    'VALUES (%s, %s, %s, %s, %s) ON CONFLICT DO NOTHING',
+                                    (work_item_id, email_uuid, 'origin', 'parcel_date', 0.85))
+                                conn.commit()
+                                result['actions'].append(f'created_issue_email_link: {email_uuid} -> {work_item_id}')
+                        except Exception as e:
+                            print(f'[ERROR] wo_homeowner issue_email_link failed: {e}', file=sys.stderr)
+                            conn.rollback()
+                else:
+                    result['actions'].append('ERROR: failed to create work item')
+
+            upsert_email_thread(conn, email_data['thread_id'], subject,
+                               email_data['received_date'], classification,
+                               result.get('parcel_code'))
 
     elif classification == 'wo_form':
         # Parse work order form submission
@@ -2082,41 +2744,141 @@ def process_email(email_data, debug=False, dry_run=False, conn=None, gmail_servi
             if parsed.get('keystone_wo_number'):
                 work_title += f' ({parsed["keystone_wo_number"]})'
             
-            work_item_id = create_work_item(conn, {
-                'source_document_id': source_doc_id,
-                'property_id': property_id,
-                'title': work_title,
-                'description': parsed.get('description', ''),
-                'category': 'work_order',
-                'status': 'manager',
-                'priority': 'high' if parsed.get('priority', '0') in ('10', '9', '8') else 'normal',
-            })
-            if work_item_id:
-                result['work_item_id'] = str(work_item_id)
-                result['actions'].append(f'created_work_item: {work_title}')
-                
-                # Create issue_email_link connecting email to work item
-                if email_uuid:
-                    try:
-                        with conn.cursor() as cur:
-                            cur.execute("""
-                                INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
-                                VALUES (%s, %s, 'origin', 'parcel_date', 0.95)
-                                ON CONFLICT DO NOTHING
-                            """, (work_item_id, email_uuid))
-                            conn.commit()
-                            result['actions'].append(f'created_issue_email_link: {email_uuid} -> {work_item_id}')
-                    except Exception as e:
-                        print(f"[ERROR] issue_email_link creation failed: {e}", file=sys.stderr)
-                        conn.rollback()
+            # Idempotency: check if a work item already exists for this thread
+            if check_thread_has_work_item(conn, email_data.get('thread_id')):
+                result['actions'].append('skipped_work_item_creation: thread already has a work item')
             else:
-                result['actions'].append('ERROR: failed to create work item')
+                work_item_id = create_work_item(conn, {
+                    'source_document_id': source_doc_id,
+                    'property_id': property_id,
+                    'title': work_title,
+                    'description': parsed.get('description', ''),
+                    'category': 'work_order',
+                    'status': 'manager',
+                    'priority': 'high' if parsed.get('priority', '0') in ('10', '9', '8') else 'normal',
+                })
+                if work_item_id:
+                    result['work_item_id'] = str(work_item_id)
+                    result['actions'].append(f'created_work_item: {work_title}')
+                    
+                    # Create issue_email_link connecting email to work item
+                    if email_uuid:
+                        try:
+                            with conn.cursor() as cur:
+                                cur.execute("""
+                                    INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
+                                    VALUES (%s, %s, 'origin', 'parcel_date', 0.95)
+                                    ON CONFLICT DO NOTHING
+                                """, (work_item_id, email_uuid))
+                                conn.commit()
+                                result['actions'].append(f'created_issue_email_link: {email_uuid} -> {work_item_id}')
+                        except Exception as e:
+                            print(f"[ERROR] issue_email_link creation failed: {e}", file=sys.stderr)
+                            conn.rollback()
+                else:
+                    result['actions'].append('ERROR: failed to create work item')
             
             upsert_email_thread(conn, email_data['thread_id'], subject,
                                email_data['received_date'], classification,
                                result.get('parcel_code'))
 
-    elif classification in ('hppr_form', 'property_report', 'ops_alert', 'invoice_pending'):
+    elif classification == 'hppr_form':
+        # HPPR/LBC request or approval. Create/update an LBC work item for the
+        # property so requests and approvals are actually tracked.
+        parse_payload = {'body_preview': body[:1000]}
+        result['parsed_data'] = parse_payload
+        result['actions'].append('logged_as_hppr_form')
+
+        # Extract parcel/address
+        addr_match = re.search(
+            r'\b(\d{4,5}\s+(?:Rock Point|Stone Circle|Boulder Point|Plaster Point|Broadlands|Boulder Circle)[^,\n]*(?:#|Unit|unit)?\s*\d*)\b',
+            subject + '\n' + body
+        )
+        if addr_match:
+            parcel = standardize_address(addr_match.group(0))
+            result['parcel_code'] = parcel
+            result['actions'].append(f'address_extracted: {parcel}')
+
+        is_approval_reply = subject.lower().startswith('re:') and ('approv' in subject.lower() or 'approv' in body[:1500].lower())
+        if is_approval_reply:
+            result['actions'].append('hppr_approval_reply_detected')
+
+        if not dry_run and conn:
+            email_uuid = upsert_email_message(conn, email_data, classification, confidence, is_noise, parse_payload)
+            result['db_id'] = str(email_uuid) if email_uuid else None
+            upsert_email_thread(conn, email_data['thread_id'], subject,
+                               email_data['received_date'], classification,
+                               result.get('parcel_code'))
+
+            if result.get('parcel_code'):
+                property_id = lookup_property_by_parcel(conn, result['parcel_code'])
+                if property_id and email_uuid:
+                    try:
+                        with conn.cursor() as cur:
+                            # Find an existing open LBC work item for this property
+                            cur.execute("""
+                                SELECT id, status FROM work_items
+                                WHERE property_id = %s
+                                  AND (category = 'lbc' OR title ILIKE '%%hppr%%' OR title ILIKE '%%lbc%%')
+                                  AND status NOT IN ('closed', 'cancelled', 'denied')
+                                ORDER BY created_date DESC NULLS LAST
+                                LIMIT 1
+                            """, (property_id,))
+                            row = cur.fetchone()
+                            work_item_id = row[0] if row else None
+                            if work_item_id and is_approval_reply:
+                                # Mark approved
+                                cur.execute("""
+                                    UPDATE work_items
+                                    SET status = 'approved', decision = 'approved',
+                                        decision_at = NOW(), updated_date = NOW(),
+                                        status_changed_at = NOW()
+                                    WHERE id = %s
+                                """, (work_item_id,))
+                                cur.execute("""
+                                    INSERT INTO work_item_notes (work_item_id, note_date, content, source)
+                                    VALUES (%s, NOW(), %s, 'email_processor')
+                                """, (work_item_id,
+                                      f"HPPR/LBC approval from email: {subject[:200]}"))
+                                conn.commit()
+                                result['work_item_id'] = str(work_item_id)
+                                result['actions'].append(f'hppr_work_item_approved: {work_item_id}')
+                            elif not work_item_id:
+                                # Create new LBC work item
+                                owner_subj = subject or ''
+                                cur.execute("""
+                                    INSERT INTO work_items
+                                        (property_id, title, description, category, status, priority,
+                                         created_date, updated_date)
+                                    VALUES (%s, %s, %s, 'lbc', 'lbc', 'normal', NOW(), NOW())
+                                    RETURNING id
+                                """, (
+                                    property_id,
+                                    f'HPPR/LBC Request - {result["parcel_code"]}',
+                                    f'HPPR/LBC form submission: {owner_subj[:200]}',
+                                ))
+                                work_item_id = cur.fetchone()[0]
+                                conn.commit()
+                                result['work_item_id'] = str(work_item_id)
+                                result['actions'].append(f'created_work_item: HPPR/LBC Request - {result["parcel_code"]}')
+                            # Link email to work item (either case)
+                            if work_item_id:
+                                cur.execute("""
+                                    INSERT INTO issue_email_link (work_item_id, email_message_id, role, match_method, match_confidence)
+                                    VALUES (%s, %s, 'related', 'parcel_date', 0.8)
+                                    ON CONFLICT DO NOTHING
+                                """, (work_item_id, email_uuid))
+                                conn.commit()
+                                result['actions'].append(f'created_issue_email_link: {work_item_id}')
+                    except Exception as e:
+                        print(f"[ERROR] hppr_form work item handling failed: {e}", file=sys.stderr)
+                        conn.rollback()
+                else:
+                    result['actions'].append('property_not_found_or_no_email_uuid')
+            else:
+                result['actions'].append('no_address_found')
+
+    elif classification in ('property_report', 'ops_alert', 'invoice_pending'):
         parse_payload = {'body_preview': body[:1000]}
         result['parsed_data'] = parse_payload
         result['actions'].append(f'logged_as_{classification}')
@@ -2217,6 +2979,16 @@ def main():
         new_processed = set()
         classification_counts = {}
 
+        # Process LLM retry queue first (if any emails were queued due to API issues)
+        retry_queue = load_retry_queue()
+        if retry_queue:
+            stale = check_retry_queue_age(retry_queue)
+            if stale:
+                print(f'[ALERT] {len(stale)} emails in LLM retry queue older than {LLM_MAX_RETRY_DAYS} days!', file=sys.stderr)
+                for item in stale:
+                    print(f'  Stale: {item.get("subject", "?")[:60]} (queued {item.get("queued_at", "?")})', file=sys.stderr)
+            print(f'[INFO] Processing {len(retry_queue)} queued emails from LLM retry queue', file=sys.stderr)
+
         for email_data in emails:
             msg_id = email_data['gmail_message_id']
 
@@ -2231,6 +3003,12 @@ def main():
                 result = process_email(email_data, debug=args.debug, dry_run=args.dry_run, conn=conn, gmail_service=service if mailbox['type'] == 'service_account' else None, notify=args.notify, mailbox_email=mb_email)
                 result['mailbox'] = mb_email
                 results.append(result)
+                # Remove from LLM retry queue if present
+                if os.path.exists(LLM_RETRY_QUEUE):
+                    queue = load_retry_queue()
+                    queue = [q for q in queue if q.get('gmail_message_id') != msg_id]
+                    save_retry_queue(queue)
+
                 if full_id not in processed_ids:
                     new_processed.add(full_id)
 

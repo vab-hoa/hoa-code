@@ -1,0 +1,15 @@
+# HOA Tracker state files (not code, should not be committed)
+.jane_inbound_processed.json
+.jane_inbound_processed.json.bak-*
+.jane_inbound_processed.json.*
+.llm_retry_queue.json
+last_run.json
+cron_run.log
+*.log
+
+# Backups
+*.bak-*
+*.bak.*
+
+# Secrets (also covered by root .gitignore, but belt and suspenders)
+secrets/
