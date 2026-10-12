@@ -1,6 +1,25 @@
-## ⚠️ PARTIALLY SUPERSEDED (2026-09-09)
+## ⚠️ PARTIALLY SUPERSEDED (2026-10-12)
 
-Status and category models have been replaced with the Responsibility model. See ai-memory #692. The status values, category values, VALID_STATUSES_BY_CATEGORY, and TERMINAL_STATUSES_BY_CATEGORY described below are outdated. The UI label is now "Responsibility" not "Status". The rest of the spec (architecture, data model, UI layout) is still useful reference.
+**Updated:** 2026-10-12. The status/category models and some UI details below are OUTDATED.
+
+### What's changed since this spec was written:
+- **Responsibility model** (Sep 9, 2026): Status field repurposed as "Responsibility". Values: manager, board, arc, contractor, project: window_wells/concrete/lawns/wood_trim/asphalt/tree_trimming/gutter_cleaning, closed, approved, approved_with_conditions, denied, withdrawn, notified, fined, resolved. See ai-memory #692.
+- **Categories** reduced to: work_order, arc_request, violation, other. No sub-categories. Work type lives in the title.
+- **Title format**: LastName - ParcelCode - ShortDescription (WO#xxxxx if known)
+- **LLM-based email classification** (Oct 8-11): GLM 5.3 Flash via OpenRouter. Classifications: homeowner_direct, board_email, josh_direct, wo_homeowner, wo_form, wo_followup, arc_form_submission, arc_form_forward, arc_approval, arc_manager_reply, arc_process_discussion, hppr_form, wo_status_report, ops_alert, governance, property_report, noise, unclassified.
+- **Aging config**: wo/manager 7d, wo/board 7d, wo/contractor 15d, project:* 365d, arc/manager 7d, arc/arc 14d, violation/manager 30d
+- **Idempotency guards** (Oct 12): All work-item-creating handlers now check_thread_has_work_item before creating
+
+### What's still accurate:
+- Architecture overview, Supabase schema, data flow, UI layout concepts
+- Vercel deployment config, environment variables
+- RLS approach (Phase 1: no auth, anon key)
+
+### Source of truth for current values:
+- `hoa-tracker-dashboard/src/lib/types.ts` — current TypeScript types
+- `hoa-tracker-dashboard/src/lib/constants.ts` — current status/category constants
+- `hoa-tracker/email_processor.py` — current email classification logic
+- Supabase CHECK constraints (query the DB)
 
 # HOA Issue Tracker Dashboard — Claude Code Build Spec
 
