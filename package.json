@@ -3,13 +3,20 @@
   "version": "1.0.0",
   "description": "Villas at the Boulders HOA automation",
   "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "hoa-tracker-dashboard"
+  ],
   "scripts": {
     "sync:keystone": "node scripts/sync-keystone-status.js",
-    "generate:arc-serials": "node scripts/generate-arc-serials.js"
+    "generate:arc-serials": "node scripts/generate-arc-serials.js",
+    "email-processor": "node --import tsx packages/email-processor/src/index.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.38.0",
-    "googleapis": "^118.0.0",
+    "@supabase/supabase-js": "^2.112.3",
+    "googleapis": "^176.0.0",
     "string-similarity": "^4.0.4"
   },
   "engines": {
