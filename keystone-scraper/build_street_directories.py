@@ -233,24 +233,37 @@ def ensure_sheets_exist(sheets, spreadsheet_id, sheet_names):
     existing_sheets = {s['properties']['title']: s['properties']['sheetId']
                        for s in meta['sheets']}
 
-    requests = []
+    add_requests = []
+    delete_requests = []
+
+    # Create missing sheets FIRST (before any deletion) so the spreadsheet
+    # never has zero sheets, which Google rejects with a 400.
+    for sheet_name in sheet_names:
+        if sheet_name not in existing_sheets:
+            add_requests.append({'addSheet': {'properties': {'title': sheet_name}}})
 
     # Delete the default "Sheet1" if it exists and is not in our desired sheets
     if 'Sheet1' in existing_sheets and 'Sheet1' not in sheet_names:
-        requests.append({'deleteSheet': {'sheetId': existing_sheets['Sheet1']}})
+        delete_requests.append({'deleteSheet': {'sheetId': existing_sheets['Sheet1']}})
 
-    # Create missing sheets
-    for sheet_name in sheet_names:
-        if sheet_name not in existing_sheets:
-            requests.append({'addSheet': {'properties': {'title': sheet_name}}})
-
-    if requests:
+    # Add new sheets first, then delete Sheet1 in a separate batch
+    if add_requests:
         retry_sheets_call(
             lambda: sheets.spreadsheets().batchUpdate(
                 spreadsheetId=spreadsheet_id,
-                body={'requests': requests}
+                body={'requests': add_requests}
             ).execute()
         )
+
+    if delete_requests:
+        retry_sheets_call(
+            lambda: sheets.spreadsheets().batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body={'requests': delete_requests}
+            ).execute()
+        )
+
+    if add_requests or delete_requests:
         # Refresh meta
         meta = retry_sheets_call(
             lambda: sheets.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
