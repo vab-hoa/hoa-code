@@ -2,7 +2,7 @@
 """
 Retry helper for Google Sheets API operations with exponential backoff.
 
-Handles transient errors (503 Service Unavailable, 502 Bad Gateway, 504 Gateway Timeout, 429 Too Many Requests)
+Handles transient errors (500 Internal Error, 502 Bad Gateway, 503 Service Unavailable, 504 Gateway Timeout, 429 Too Many Requests)
 with exponential backoff and jitter. Does not retry on client errors (400/401/403/404).
 """
 
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def retry_sheets_call(callable_obj, max_retries=5, initial_delay=2):
     """
-    Execute a Google Sheets API call with retry-on-503 logic.
+    Execute a Google API call with retry-on-transient-error logic.
 
     Args:
         callable_obj: A callable that executes a Sheets API call (e.g., lambda: sheets.spreadsheets().get(...).execute())
@@ -41,11 +41,11 @@ def retry_sheets_call(callable_obj, max_retries=5, initial_delay=2):
                 raise
 
             # Retry on transient server errors
-            if status in (429, 502, 503, 504):
+            if status in (429, 500, 502, 503, 504):
                 attempt += 1
                 if attempt > max_retries:
                     logger.error(
-                        f"Google Sheets API {status}, max retries ({max_retries}) exceeded"
+                        f"Google API {status}, max retries ({max_retries}) exceeded"
                     )
                     raise
 
@@ -55,7 +55,7 @@ def retry_sheets_call(callable_obj, max_retries=5, initial_delay=2):
                 delay = min(delay + jitter, 60)  # Cap at 60 seconds
 
                 logger.warning(
-                    f"Google Sheets API {status}, retrying in {delay:.1f}s "
+                    f"Google API {status}, retrying in {delay:.1f}s "
                     f"(attempt {attempt}/{max_retries})"
                 )
                 time.sleep(delay)

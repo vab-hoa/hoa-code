@@ -162,7 +162,12 @@ def build_email_to_groups_map(directory):
 
 
 def find_existing_spreadsheet(drive, spreadsheet_name):
-    """Find an existing spreadsheet by name in Member Lists folder. Return file ID or None."""
+    """Find an existing spreadsheet by name in Member Lists folder. Return file ID or None.
+
+    Uses retry_sheets_call for transient error handling (500, 502, 503, 504, 429).
+    On retryable errors, retries with backoff. On non-retryable errors, raises so
+    the caller can handle the failure rather than silently treating it as 'not found'.
+    """
     query = (
         f"name='{spreadsheet_name}' "
         f"and '{MEMBER_LISTS_FOLDER_ID}' in parents "
@@ -170,19 +175,21 @@ def find_existing_spreadsheet(drive, spreadsheet_name):
         f"and trashed=false"
     )
     try:
-        result = drive.files().list(
-            q=query,
-            corpora='allDrives',
-            includeItemsFromAllDrives=True,
-            supportsAllDrives=True,
-            pageSize=1,
-            fields='files(id)',
-        ).execute()
+        result = retry_sheets_call(
+            lambda: drive.files().list(
+                q=query,
+                corpora='allDrives',
+                includeItemsFromAllDrives=True,
+                supportsAllDrives=True,
+                pageSize=1,
+                fields='files(id)',
+            ).execute()
+        )
         files = result.get('files', [])
         return files[0]['id'] if files else None
     except HttpError as e:
         print(f"  ERROR querying for existing '{spreadsheet_name}': {e}")
-        return None
+        raise
 
 
 def create_spreadsheet(drive, sheets, spreadsheet_name):
@@ -201,13 +208,15 @@ def create_spreadsheet(drive, sheets, spreadsheet_name):
 
     # Move it to the Member Lists folder (add parent, remove from root)
     try:
-        drive.files().update(
-            fileId=spreadsheet_id,
-            addParents=MEMBER_LISTS_FOLDER_ID,
-            removeParents='root',
-            supportsAllDrives=True,
-            fields='id',
-        ).execute()
+        retry_sheets_call(
+            lambda: drive.files().update(
+                fileId=spreadsheet_id,
+                addParents=MEMBER_LISTS_FOLDER_ID,
+                removeParents='root',
+                supportsAllDrives=True,
+                fields='id',
+            ).execute()
+        )
     except HttpError as e:
         print(f"  ERROR moving spreadsheet to Member Lists: {e}")
         return None
