@@ -1,0 +1,223 @@
+﻿Villas at the Boulders
+Document Organization Guide
+Last updated 9/7/2026
+
+
+For current and future board members
+________________
+
+
+The Big Picture
+The HOA uses three places to store and share data (documents): Board Documents, Homeowner Documents, and the Website. Each has a distinct purpose, and understanding the relationship among them is essential for keeping things organized as the board changes over time.
+
+
+HOA Board Documents        HOA Documents                HOA Website
+(board-private)    ──→   (homeowner-visible)   ──→   (public links)
+source files               final published PDFs          points here
+working drafts             browseable by owners
+historic versions
+
+The flow is one-directional: board members work in HOA Board Documents, publish final versions to HOA Documents, and the HOA Website links to HOA Documents. Homeowners never need to touch (and cannot see) HOA Board Documents, and board members rarely need to touch the website — the website links are stable because they point usually to folders or occasionally to files that rarely change.
+
+
+________________
+
+
+HOA Board Documents
+Who can see it: Board members and the Property Manager only (by invitation to the shared drive). The HOA Board Documents drive is specifically shared with the google “group” named “Board”, so email addresses added to the “Board” group automatically are enabled to view the drive. The drive is also shared with the google group named “Manager”, which contains the email address of the property manager. There is a document called HOA Board Drive Guide in the HOA Board Documents folder, which describes this more fully. 
+
+
+
+
+What it contains:
+
+
+* Working files — drafts, revisions, and source documents for everything the board produces: documents in progress, policy revisions, budget spreadsheets, contractor bids, correspondence
+* Board-private content — insurance files, owner issues, legal correspondence, meeting prep materials, financial working documents
+* Historic versions — full revision history of governing documents (ARC Design Guidelines going back to 2019, every bylaws draft, etc.)
+* Board operations — check-in notes, worksession materials, board-internal communications
+
+
+What it does NOT contain (by design):
+
+
+HOA Board Documents does not hold the authoritative published copy of anything homeowners are meant to see. If a final newsletter PDF exists in both places, the one in HOA Documents is the real one; the HOA Board Documents copy is a leftover and could be removed.
+
+
+Navigation shortcuts (→):
+
+
+Several folders in HOA Board Documents contain a shortcut (marked with →) pointing into the corresponding folder in HOA Documents. For example, inside Budget/ you will find a file named ‘→ Published Budgets (Homeowner Docs)’. These shortcuts exist so board members can navigate to the published version without leaving the HOA Board Documents drive.. They are navigational conveniences only — the documents themselves live in HOA Documents.
+
+
+The one top-level shortcut at the HOA Board Documents root is ‘→ Newsletters’, which points to HOA Documents/Newsletters. It sits at the root because newsletters are created inside Communications/Newsletters/ in HOA Board Documents, and the shortcut bridges the gap to the published location without requiring board members to switch drives.
+
+
+________________
+
+
+HOA Documents (documents for homeowners)
+Who can see it: Any homeowner — it appears in their Google Drive when shared, and the website links here. As before, access is controlled by google “groups”. The main group is “Owners”, but there are also “Non Owner Occupants” – i.e. people who live in Villas who are either tenants, or family members of owners. Any email address in any of these groups will have access to the HOA Documents drive.  There is a document called Homeowner Drive Guide in the HOA Documents folder that describes this. 
+
+
+What it contains: Final, published documents in their authoritative form. Mostly PDFs.
+The two ways homeowners use HOA Documents
+1. Direct browsing from Google Drive
+
+
+All Homeowners have access to the shared drive, and can open it from their own[1] Google Drive and browse the folder structure directly — just like browsing a filing cabinet. The folder layout is meant to be self-explanatory:
+
+
+(on Google Drive, under "Shared Drives")
+HOA Documents/
+  BRL Master Documents/       (Broadlands Master Documents)
+  Budgets/                    (annual budget documents by year)
+  Financials/                 (monthly financial reports)
+  Forms/                      (current ARC application, planting application)
+  Governing Documents/        (bylaws, covenants, ARC guidelines, articles)
+  History/                    (some history of the Villas at the Boulders)
+  Insurance/                  (the HOA insurance policy)
+  Landscaping/                (documents from the LBC)
+  Maps/                       (plat documents, model map)
+  Meetings/                   (published board meeting minutes)
+  Newsletters/                (newsletters by year)
+  Policies/                   (all current HOA policies)
+  Reserve Studies/            (reserve study reports)
+  Directors and Officers      (current board and officers — updated each year)
+  Policy Directory            (describes all current policies/documents)
+
+The two file items at the root level — Directors and Officers, and Policy Directory — are intentionally prominent. They answer the two most fundamental questions a homeowner has: Who runs this place? and What rules apply to me?
+
+
+2. Document Links from the Website
+
+
+The HOA website has many links to documents and folders in HOA Documents. When a homeowner clicks "View Bylaws" or "Download ARC Application" on the website, they are being directed to a file or folder in HOA Documents.
+
+
+This is why HOA Documents matters: it is simultaneously the browseable filing cabinet and the document repository behind the website. Keeping it organized and up-to-date keeps both experiences working correctly.
+What goes in HOA Documents
+Final PDFs only — with deliberate exceptions:
+
+
+* Published meeting minutes (PDFs)
+* Final approved governing documents (bylaws, covenants, ARC guidelines, articles) — PDFs
+* Published newsletters — PDFs
+* Monthly financial reports — PDFs
+* Annual budgets — PDFs
+* Reserve studies — PDFs
+* Current forms (ARC application, planting/removal application) — fillable PDFs
+* Maps and plat documents — PDFs, plus supporting image files where needed
+
+
+Intentional exceptions to PDF-only:
+
+
+* History/ — contains video recordings and interview transcripts (oral history project; PDFs don't apply here)
+* Maps/ — contains image files and spreadsheets where appropriate for reference
+
+
+What does NOT belong here:
+
+
+* Drafts, working versions, or revision-tracked documents
+* Board-private documents (insurance files, owner issues, legal correspondence)
+* Source files (.docx, .xlsx) for documents that have a final PDF version
+* Historic/superseded versions of governing documents (keep those in HOA Board Documents)
+Sharing settings — important
+Documents in HOA Documents should generally have the sharing setting set to "Anyone with the link can view". This matters for two reasons:
+
+
+1. When a homeowner clicks a link on the website, they are not required to be logged in to a Google account — the link should just open. If sharing is set to "Restricted," they will hit a permission wall, and Google will ask them to log in, which is confusing.
+2. Homeowners who browse the drive directly may share specific links with household members or contractors who are not themselves named on the drive.
+
+
+When you upload a new document to HOA Documents, check its sharing setting. Files copied or moved within Drive do not always inherit the expected sharing. The safe practice is: after uploading, right-click the file, choose "Share," and confirm it is set to "Anyone with the link" (viewer).
+
+
+The shared drive itself has a setting that controls defaults, but individual file sharing can override it — so verify on anything important.
+
+
+________________
+
+
+The Website
+Who can see it: Anyone — it is publicly accessible
+
+
+The website is not a document store. It is a navigation layer that points homeowners to the right documents in HOA Documents. When you need to update a document that the website links to, you usually do not need to touch the website at all — you just replace or update the file in HOA Documents, and the link continues to work.
+
+
+When you DO need to edit the website: Only if you are adding a new link, removing a link, or changing what a link points to. Website edits require access to Google Sites (in the Google Workspace called villasboulders.org) and are done manually — there is currently no programmatic access to Google Sites, we can always hope that will change..
+
+
+Important: Website links point to specific file or folder IDs in Google Drive. If you delete a file and re-upload it (rather than updating the existing file in place), the new file gets a new ID and any website link to the old file will break. To avoid this: upload new versions by updating the existing file ("Manage versions" or replacing content), not by deleting and re-uploading.
+
+
+________________
+
+
+Practical Guide: What to Do When
+Publishing a new newsletter:
+
+
+1. Write and finalize the newsletter as a google doc in Board Documents / Communications / Newsletters / [year]/[month]
+2. Use “Download as PDF”
+3. Then while in HOA Homeowner Documents, in the correct folder, e.g. 2027. Right click and choose Upload File. Select the PDF you just downloaded. If you want to change the name of the document, you can right click and pick Rename, and name it as January 2027 Newsletter.pdf. 
+4. Confirm sharing: "Anyone with the link — viewer"
+5. The website's "Newsletters" link points to the Newsletters folder — new newsletters appear automatically, no website edit needed
+
+
+Updating a policy:
+
+
+1. Find the current .docx (old) or google doc (new)  source in HOA Board Documents / Policies and Procedures / Policy Source Documents / [Policy Name]
+2. Make edits, track changes, get board approval at a meeting
+3. Record the adoption date in the document
+4. Download to PDF, and then Upload the PDF  as PolicyName[date approved].pdf in HOA Documents/Policies/[Policy Name], removing the old one. 
+5. Update the Policy Directory Spreadsheet to reflect the new version date,
+6. Confirm sharing on the updated file: "Anyone with the link — viewer"
+
+
+Adding a new policy: 
+
+
+1. You can draft early version any way you like, but as you approach approval time, the document draft needs to be placed in HOA Board Documents/Policies and Procedures/Policy Source Documents/[Policy Name]/  as a Google Doc. If it is in word in can be uploaded as word (but you should convert to Google Doc).
+2. When approved, record adoption date in the document.
+3. Download to PDF, then Upload the PDF as PolicyName_[date approved].pdf into HOA Documents/Policies/[Policy Name] 
+4. Update the Policy Directory Spreadsheet to reflect the new version date
+
+
+
+
+Updating the ARC Design Guidelines:
+
+
+1. Older working .docx files live in HOA Board Documents / Governing Documents / ARC Design Guidelines / [year]/
+2. Current and upcoming approved versions (PDF) go in Homeowner Documents / Governing Documents /
+3. Historic versions stay in Board Documents / Governing Documents / ARC Design Guidelines / (do not put in Homeowner Documents)
+
+
+Updating Directors and Officers: This file sits at the Homeowner Documents root. Update it in place each year after the annual meeting — edit the existing file so the link remains stable.
+
+
+________________
+
+
+The Policy Directory in the website era
+The Policy Directory was originally distributed as a PDF email attachment to all homeowners because there was no website. That distribution channel has changed, but the document's purpose has not.
+
+
+Today, the Policy Directory lives at the HOA Documents root and is linked from the website. Homeowners who browse Homeowner Documents see it prominently. It remains the board's formal certification of which policies are currently in effect — a role the website and the Policies folder alone cannot fill.
+________________
+
+
+Summary: The One Rule
+HOA Board Documents is the workshop. HOA Documents is the window.
+
+
+Work happens in HOA Board Documents. What homeowners see — via their Drive or via the website — comes from HOA Documents. Keep those two things separate and the system stays clean.
+
+
+________________
+[1] In order to have a “google drive” at all, one must have a google account. Only people having a google account would be able to browse the HOA Documents google drive.

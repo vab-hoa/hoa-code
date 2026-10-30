@@ -1,0 +1,88 @@
+﻿Villas at the Boulders
+
+
+Working in Google Drive
+
+
+Version 1.0 — Draft
+
+
+1. Overview
+
+
+This document describes how board members should use Google Docs' collaboration features — editing modes, comments, and version history — when working on Association documents together. It applies broadly: minutes, RFPs, governing documents, correspondence, anything drafted or revised collaboratively on the Association's Google Drive.
+
+
+Other process documents (for example, the Document Adoption Process) assume the practices described here and don't repeat them.
+
+
+2. The Core Idea
+
+
+Google Docs gives you three ways to make a change, and they have different costs:
+
+
+- Editing directly changes the text immediately, with no review step.
+- “Suggesting” proposes a change that someone has to look at and accept or reject before it becomes real.
+- “Version History” lets you return to an entire past state of the document, as a whole, regardless of how many edits happened since.
+
+
+None of these is "more careful" than the others by default. Each is right for a different kind of change, and using the wrong one creates work without creating value. The sections below describe when to reach for which.
+
+
+3. Most of the Time: Just Edit
+
+
+If you're fixing wording, correcting a date, tightening a sentence, adding content, or fixing a typo — just type the change directly. Don't switch to Suggesting mode for this.
+
+
+The reasoning: Suggesting mode has a real cost. Every suggestion has to be reviewed by someone and explicitly accepted or rejected, or it just sits there. A document with a backlog of unresolved suggestions is worse than a clean document, because no one can tell what's actually settled. Using Suggesting mode for changes nobody would object to just creates review work for no benefit.
+
+
+This is the default. Most editing on most days should be direct editing.
+
+
+4. When to Use Suggesting Mode
+
+
+Use Suggesting mode when the change is substantive enough that a reasonable board member might want to weigh in, push back, or want to discuss it before it's final. The test isn't how big the change is — it's whether someone could reasonably disagree with it.
+
+
+Examples of changes that warrant Suggesting mode:
+- Changing what a policy actually requires or permits
+- Rewording something where the new phrasing could shift meaning, not just clarity
+- Anything you're not fully sure about and want a second opinion on before it's locked in
+
+
+How to use it: click the pencil icon at the top right of the Google Docs toolbar and choose Suggesting (instead of Editing). Your changes will appear as colored edits attributed to your name, rather than silently changing the text. Reviewers accept or reject each suggestion individually, using the checkmark or X icon next to it, or go through them all at once via Tools → Review suggested edits. Of course, somebody has to do the review, and I don’t know who that will be. 
+
+
+If you just want to flag something without proposing specific replacement text — a question, a "should we double check this," a concern — use a comment instead (select the text, then Insert → Comment). Comments don't change the document; they sit in the margin and can be discussed and resolved.
+
+
+5. When to Use Version History
+
+
+Version History is for when you're not refining a document, you're redirecting it: adding a whole new section, restructuring it, abandoning one approach in favor of a different one. These are changes too large and too holistic for line-by-line suggestions to make sense of — there's nothing to "accept or reject" one clause at a time when the whole frame has changed.
+
+
+A good test: if you'd describe what you're about to do as "rewriting this section" or "taking this in a different direction," rather than "fixing" or "improving" what's there, that's a Version History moment, not a Suggesting moment.
+
+
+Example: a recent rewrite of the Association's recordkeeping policy started from a fairly elaborate draft and replaced it with a simpler one — different structure, different scope, not a set of line edits. That's exactly the kind of change Version History is for: not because it was risky, but because there was no meaningful way to express it as a series of accept/reject suggestions.
+
+
+How to use it: before making a major change, open File → Version history → See version history (or Ctrl+Alt+Shift+H / Cmd+Option+Shift+H), find the current version, click the three-dot menu next to it, and choose Name this version — something like "Before simplification, 2026-06-19." This gives you a clearly labeled checkpoint to return to if the new direction doesn't work out, without needing to remember which of dozens of unnamed auto-saves was the right one.
+
+
+You don't have to do anything to make Version History exist — Google Docs is always saving versions in the background. Naming a version just makes a particular one easy to find later; unnamed versions can eventually get cleared out, but named ones are protected.
+
+
+6. Quick Reference
+
+
+Situation: Fixing wording, a date, a typo — Use: Just edit directly
+Situation: A change someone might reasonably contest — Use: Suggesting mode
+Situation: A question or flag, no specific text change — Use: Comment
+Situation: Restructuring, new direction, abandoning an approach — Use: Name a version in Version History before you start
+Situation: Default, when unsure — Use: Just edit. Reach for Suggesting only if you'd actually want someone's sign-off.
