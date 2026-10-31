@@ -5,6 +5,7 @@ import { callModel } from './decide.js'
 import { buildDigest } from './digest.js'
 import { downloadGmailAttachment, fetchGmail } from './gmail.js'
 import { fetchImap } from './imap.js'
+import { loadEmailModel, modelLabel } from './model-config.js'
 import { decideMessage } from './pipeline.js'
 import { sendDigest } from './smtp.js'
 import type { InboundEmail, Outcome } from './types.js'
@@ -37,7 +38,8 @@ async function main() {
   const out = option('--out', '')
   if (!Number.isFinite(days) || days < 1) throw new Error('--days must be a positive number')
 
-  console.error(`email processor ${mode}, last ${days} day(s), mailbox ${which}`)
+  const choice = loadEmailModel()
+  console.error(`email processor ${mode}, last ${days} day(s), mailbox ${which}, ${modelLabel(choice)}`)
   const emails: InboundEmail[] = []
   const errors: string[] = []
   if (which === 'all' || which === 'admin') {
@@ -72,11 +74,18 @@ async function main() {
     }
   }
 
-  const digest = buildDigest(outcomes)
+  const digest = buildDigest(outcomes, modelLabel(choice))
   console.log(digest)
   if (errors.length) console.error(errors.join('\n'))
   if (out) {
-    writeFileSync(out, JSON.stringify({ mode, generatedAt: new Date().toISOString(), errors, outcomes }, null, 2))
+    writeFileSync(out, JSON.stringify({
+      mode,
+      model: choice.model,
+      modelSource: choice.source,
+      generatedAt: new Date().toISOString(),
+      errors,
+      outcomes,
+    }, null, 2))
     console.error(`wrote ${out}`)
   }
   if (write) await sendDigest(digest + (errors.length ? `\nErrors:\n${errors.join('\n')}` : ''))

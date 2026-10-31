@@ -1,9 +1,10 @@
 import type { Outcome } from './types.js'
 
-export function buildDigest(rows: Outcome[]): string {
+export function buildDigest(rows: Outcome[], modelLine = ''): string {
   const count = (d: string) => rows.filter((r) => r.disposition === d && !r.alreadyProcessed).length
   const lines = [
     'HOA email processor',
+    ...(modelLine ? [modelLine] : []),
     `new requests: ${count('new_request')}`,
     `updates: ${count('update')}`,
     `not a work item: ${count('unrelated')}`,

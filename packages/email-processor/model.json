@@ -1,0 +1,6 @@
+{
+  "note": "Remembered model for free-form HOA email only. Jane and hoa-tracker/email_processor.py do not read this file. Change model to switch. OPENROUTER_MODEL overrides a single run and does not change this file. reasoning_effort is sent as OpenRouter reasoning.effort; null omits it. GLM 5.3 Flash needs low.",
+  "model": "anthropic/claude-sonnet-5.5",
+  "reasoning_effort": "medium",
+  "max_tokens": 4000
+}

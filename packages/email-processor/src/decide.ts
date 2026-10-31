@@ -1,3 +1,4 @@
+import { loadEmailModel } from './model-config.js'
 import type { Candidate, InboundEmail, ModelDecision, WorkCategory } from './types.js'
 import { cleanBody } from './text.js'
 
@@ -93,22 +94,23 @@ export function parseModelJson(content: string): ModelDecision | null {
 export async function callModel(email: InboundEmail, candidates: Candidate[]): Promise<ModelDecision | null> {
   const key = process.env.OPENROUTER_API_KEY
   if (!key) throw new Error('OPENROUTER_API_KEY is required')
-  const model = process.env.OPENROUTER_MODEL || 'z-ai/glm-5.3-flash'
+  const choice = loadEmailModel()
+  const body: Record<string, unknown> = {
+    model: choice.model,
+    temperature: 0.1,
+    max_tokens: choice.maxTokens,
+    messages: [{ role: 'user', content: buildPrompt(email, candidates) }],
+  }
+  // Some models spend a mandatory reasoning budget before the JSON.
+  // The effort lives in model.json so a switch does not inherit GLM Flash's setting.
+  if (choice.reasoningEffort) body.reasoning = { effort: choice.reasoningEffort }
   const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${key}`,
     },
-    body: JSON.stringify({
-      model,
-      temperature: 0.1,
-      // This model spends a mandatory reasoning budget before the JSON.
-      // 500 tokens came back truncated, which parsed as nothing.
-      max_tokens: 2000,
-      reasoning: { effort: 'low' },
-      messages: [{ role: 'user', content: buildPrompt(email, candidates) }],
-    }),
+    body: JSON.stringify(body),
     signal: AbortSignal.timeout(60_000),
   })
   if (!res.ok) {
@@ -118,12 +120,12 @@ export async function callModel(email: InboundEmail, candidates: Candidate[]): P
   const json = await res.json() as {
     choices?: { finish_reason?: string; message?: { content?: unknown; reasoning?: string } }[]
   }
-  const choice = json.choices?.[0]
-  const message = choice?.message
+  const reply = json.choices?.[0]
+  const message = reply?.message
   const content = textOf(message?.content) || textOf(message?.reasoning)
   const parsed = parseModelJson(content)
   if (!parsed) {
-    const why = choice?.finish_reason === 'length' ? 'truncated' : 'unparsed'
+    const why = reply?.finish_reason === 'length' ? 'truncated' : 'unparsed'
     throw new Error(`model reply ${why}`)
   }
   return parsed

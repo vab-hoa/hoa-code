@@ -31,8 +31,21 @@ Sender role is context. It does not decide the disposition.
 
 ## Model
 
-One OpenRouter call (`OPENROUTER_MODEL`, default `z-ai/glm-5.3-flash`). The
-prompt includes the message and at most 15 candidates: the work item already
+Free-form mail uses the model named in `packages/email-processor/model.json`.
+That file is the remembered choice for this processor only. Jane's models and
+`hoa-tracker/email_processor.py` do not read it. To switch, edit `model` and
+push. The next shadow run uses the new value.
+
+`OPENROUTER_MODEL`, when set in the environment, overrides that one run and
+does not change the file. The workflow leaves it unset. The report and the
+digest name the model and say whether it came from the file or from the
+environment.
+
+`reasoning_effort` and `max_tokens` in the same file travel with the model.
+GLM 5.3 Flash needs `reasoning_effort` of `low`. A null effort omits the
+field. The current choice is `anthropic/claude-sonnet-5.5` at medium effort.
+
+The prompt includes the message and at most 15 candidates: the work item already
 on this thread, an item whose WO number is in the text, and open items on the
 extracted parcel. It does not include the rest of the database.
 
