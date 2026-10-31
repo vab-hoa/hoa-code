@@ -5,6 +5,7 @@ Usage: python3 work_order_report.py [--email]
 """
 
 import os
+import re
 import sys
 from datetime import date
 from googleapiclient.discovery import build
@@ -44,6 +45,18 @@ def fetch_profiles(sheets_service):
     return {row[0]: row[2] for row in rows[1:] if len(row) >= 3}
 
 
+def display_date(value):
+    """Show cache dates as M/D/YYYY.
+
+    The Keystone Cache stores ISO dates (YYYY-MM-DD) since the CINC Connect cutover, but this
+    report's text is parsed by hoa-tracker/email_processor.py, which expects M/D/YYYY.
+    """
+    m = re.match(r'^(\d{4})-(\d{2})-(\d{2})', value or '')
+    if m:
+        return f"{int(m.group(2))}/{int(m.group(3))}/{m.group(1)}"
+    return value
+
+
 def fetch_work_orders(sheets_service):
     profiles = fetch_profiles(sheets_service)
     result = sheets_service.spreadsheets().values().get(
@@ -59,9 +72,10 @@ def fetch_work_orders(sheets_service):
         address = row[0] if len(row) > 0 else ''
         orders.append({
             'address':     address,
-            'owner':       profiles.get(address, ''),
+            # email_processor.py's line regex needs a non-empty owner field
+            'owner':       profiles.get(address, '') or '(owner unknown)',
             'wo_number':   row[1] if len(row) > 1 else '',
-            'date':        row[2] if len(row) > 2 else '',
+            'date':        display_date(row[2] if len(row) > 2 else ''),
             'description': row[3] if len(row) > 3 else '',
             'vendor':      row[4] if len(row) > 4 else '',
             'status':      status,
