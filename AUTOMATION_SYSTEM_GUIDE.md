@@ -1,8 +1,18 @@
 # Villas at the Boulders HOA — Automation System Guide
 
-**Last updated:** 2026-09-07  
+**Last updated:** 2026-10-31  
 **Owner:** Dee Buck, IT Officer  
 **Repository:** github.com/vab-hoa/hoa-code (private)
+
+---
+
+---
+
+> ## ⚠️ READ THIS FIRST — CRITICAL HANDOVER ISSUE
+>
+> **The Keystone portal scraper runs under Dee's personal homeowner account.**
+> It is not an HOA-owned credential, and it must be replaced before this system can run without him.
+> See [Critical Handover Issue — Keystone Portal Credentials](#critical-handover-issue--keystone-portal-credentials) below.
 
 ---
 
@@ -22,6 +32,32 @@
 ## Introduction 
 
 Most of this was written by AI. I'm writing this part to set the stage. I have built a bunch of stuff (with AI help) to help run the HOA. Initially this was all on my own computers, but I'm trying to move everything off of my stuff so it will still run when I croak. But there is still some reliance on me. The management company right now is Keystone Pacific, and they offer a wretched nearly unusable portal, which almost nobody uses but me. But we have to get information out of it sometimes. The only access we have is via a homeowner login account, so at the moment we are using my account. That is one thing which has to change when things have to run without me. This document describes what infrastructure we use, where it is located, how to authenticate into it, where to get credentials, how it all fits together. That kind of stuff. It is intended for somebody who is reasonably tech-savvy, but such a person would be needed to run it. 
+
+## Critical Handover Issue — Keystone Portal Credentials
+
+**Status:** OPEN — unresolved. This is the single largest obstacle to running the HOA automation without Dee.
+
+The Keystone Pacific portal scraper (`keystone-scraper.yml`, plus the Broadlands document sync that shares the same login) authenticates using **Dee's personal homeowner account**:
+
+- `KEYSTONE_USERNAME` / `KEYSTONE_PASSWORD` — GitHub Actions secrets
+- the same pair in `.env` on oregano, for the local cron fallback
+
+**Why this matters.** Those credentials belong to Dee as a homeowner, not to the HOA as an organization. If Dee becomes unavailable, the scrape stops as soon as that account is closed, and nobody else can retrieve the data. Everything downstream depends on it: the Keystone Cache sheet, the dashboard, work orders, violations, ACC reviews, the Full Directory rebuild, and the Broadlands document monitor.
+
+**Why it has not been fixed yet.** Keystone replaced its portal with **CINC Connect** (`kppm.cincconnect.com`) around 28 October 2026, retiring `kppm.cincwebaxis.com`. The scraper was rewritten to log in with Playwright and then call the portal's REST API directly. Asking Keystone for an IT or service account right now would draw attention to automated API use against a portal that is only days old, with a real risk of rate limiting, blocking, or a policy change. Dee has deliberately deferred the request.
+
+**What must happen before handover:**
+
+1. Obtain credentials that belong to the HOA — ideally a service account issued by Keystone Pacific, or at minimum a dedicated board-owned portal login that is not tied to one person.
+2. Store them in GitHub Actions secrets and the Bitwarden IT Officer vault.
+3. Re-run the scraper and verify the full chain (scrape → Keystone Cache → Supabase sync → dashboard).
+4. Remove Dee's personal credentials from the GitHub secrets and from oregano `.env`.
+
+No code changes are required — only the account.
+
+**Risk if handover happens first:** the daily scrape fails silently, the Keystone Cache goes stale, the dashboard stops reflecting work orders and violations, and the board loses visibility with no obvious warning.
+
+---
 
 ## System Overview
 
@@ -186,7 +222,8 @@ All cloud-hosted; no oregano dependencies except `daily_memory_sync.sh`. Workflo
 - **Implementation:** Selenium + Python (in `keystone-scraper/` directory)
 - **Output:** Writes to "Keystone Cache" Google Sheet
 - **Secrets used:** KEYSTONE_USERNAME, KEYSTONE_PASSWORD, GOOGLE_SERVICE_ACCOUNT_JSON
-- **Dependencies:** Keystone Pacific portal (kppm.cincwebaxis.com)
+- **Dependencies:** Keystone Pacific portal — now **CINC Connect** (`kppm.cincconnect.com`); old portal `kppm.cincwebaxis.com` retired ~2026-10-28
+- **Account:** Dee's personal homeowner login — see Critical Handover Issue at top of this document
 
 #### work-order-schedule.yml
 - **Trigger:** Daily, 7 AM MDT
@@ -252,6 +289,18 @@ Note: These are NOT part of the critical automation path (which is all in GitHub
 ---
 
 ## Authentication & Credentials
+
+### 0. Keystone Portal — personal credentials (**OPEN HANDOVER ISSUE**)
+
+⚠️ See [Critical Handover Issue — Keystone Portal Credentials](#critical-handover-issue--keystone-portal-credentials) near the top of this document.
+
+| Item | Value |
+|------|-------|
+| Portal | `https://kppm.cincconnect.com` (CINC Connect — replaced `kppm.cincwebaxis.com` on/around 2026-10-28) |
+| Account | **Dee's personal homeowner login** — not an HOA account |
+| Secrets | `KEYSTONE_USERNAME`, `KEYSTONE_PASSWORD` (GitHub Actions); `.env` on oregano |
+| Used by | `keystone-scraper.yml`, `broadlands-sync.yml` |
+| Ownership | **Personal. Must be replaced before handover.** |
 
 **Credential Storage:**
 - **Bitwarden IT Officer Vault** — Primary store for HOA automation credentials (succession-facing, shared with IT Officer successors)
