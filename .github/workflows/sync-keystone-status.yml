@@ -2,7 +2,7 @@ name: Sync Keystone Status
 
 on:
   schedule:
-    # Run nightly at 3:30 AM MDT (4:30 AM CDT, after keystone-scraper at 3 AM)
+    # 09:30 UTC = 3:30 AM MDT / 2:30 AM MST
     - cron: '30 9 * * *'  # UTC
   workflow_dispatch:  # Allow manual trigger
 
@@ -29,12 +29,10 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/generate-arc-serials.cjs
 
-      - name: Sync Keystone status
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
-        run: node scripts/sync-keystone-status.cjs
+      # The former "Sync Keystone status" step (scripts/sync-keystone-status.cjs) was removed
+      # 2026-10-31: it read sheet tabs that don't exist ('Work Orders', 'ARC Review'), so it
+      # silently did nothing, and fixing it would create a second writer of
+      # work_items.keystone_status. hoa-tracker/keystone_reconcile.py is the single writer.
 
       - name: Report status
         if: always()
