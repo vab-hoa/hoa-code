@@ -235,6 +235,29 @@ class CincClient:
         """Bytes of a file record from list_folder/walk_files."""
         return self.download(record["location"] + record["name"])
 
+    # ── work-order / ARC attachments ──────────────────────────────────────────
+    # Attachment lists: GET /api/v1/bod/work-orders/attachments/{wo} (items: _id, filename,
+    # database, fileSize) and /api/v1/bod/acc-review/attachments/{acc} (items: attachmentId,
+    # fileName, database, fileSize). Downloading asks a helper for a signed link, passing
+    # the module the attachment belongs to.
+    WO_MODULE = "boardWorkOrders"
+    ARC_MODULE = "boardAccReview"
+
+    def attachment(self, attachment_id, database, file_name, module):
+        """Bytes of a work-order or ARC attachment."""
+        body = self.get(f"/api/v1/bod/helpers/getSqlAttachmentAndUploadToS3/{attachment_id}",
+                        params={"fileDatabase": database, "fileName": file_name, "boardModule": module})
+        url = (body.get("data") or {}).get("url_path") if isinstance(body, dict) else None
+        if not url:
+            raise CincError(f"No download link for attachment {attachment_id}")
+        try:
+            resp = requests.get(url, timeout=120)  # signed link: no token sent
+        except requests.RequestException as e:
+            raise CincError(f"Attachment download failed: {type(e).__name__}") from e
+        if resp.status_code != 200:
+            raise CincError(f"Attachment download failed with HTTP {resp.status_code}")
+        return resp.content
+
     def download_url(self, key):
         """Ask the API for a signed, short-lived link to a document file."""
         path = "/api/v2/file/download/url"
