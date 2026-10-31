@@ -71,6 +71,8 @@ SHEETS_SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 
 SPREADSHEET_ID = "1TBC1B2V_yzZaost6r7IGWWqiEebEcQwMp5DknahwYuQ"
 WORKORDERS_SHEET = "WorkOrders"
+# The tab normally holds 120+ work orders; fewer than this means a failed scrape.
+MIN_WORKORDER_ROWS = 50
 
 SUPABASE_HOST = "db.obveytoovkzjrpzrhrim.supabase.co"
 SUPABASE_PORT = 5432
@@ -344,6 +346,13 @@ def run_reconciliation(dry_run, debug):
         summary["total_sheet_rows"] = len(sheet_rows)
         logger.info("Read %d WorkOrders rows from the cache sheet",
                     len(sheet_rows))
+        # An empty or truncated tab means the scraper failed, not that Keystone dropped
+        # its work orders. Reconciling against it would mark every linked item
+        # "not in keystone", so stop before touching the database.
+        if len(sheet_rows) < MIN_WORKORDER_ROWS:
+            raise RuntimeError(
+                f"WorkOrders tab has only {len(sheet_rows)} rows "
+                f"(minimum {MIN_WORKORDER_ROWS}); refusing to reconcile")
 
         # Parcel sets per category, for matching WO-less items (case d)
         parcel_tabs = {
