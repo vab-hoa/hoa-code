@@ -1,236 +1,929 @@
 {
-  "last_checked": "2026-10-28T15:42:29.557634",
+  "version": 2,
+  "last_checked": "2026-10-31T17:48:18+00:00",
   "files": {
     "Agendas": {
-      "042125 VBDR Agenda.pdf": "177389",
-      "051925 VBDR Agenda.pdf": "182320",
-      "061625 VBDR Agenda.pdf": "185232",
-      "081825 VBDR Homeowner Board Packet.pdf": "193108",
-      "092225 VBDR Agenda.pdf": "197539",
-      "111726 VATB Annual Mtgt Mailer.pdf": "254811"
+      "042125 VBDR Agenda.pdf": {
+        "id": "6ae304d04f6019d2fa02ce37",
+        "size": 112285,
+        "updated_at": "2025-04-20T07:48:31.453Z"
+      },
+      "051925 VBDR Agenda.pdf": {
+        "id": "6ae304e14f6019d2fa02cfd5",
+        "size": 112025,
+        "updated_at": "2025-05-17T11:56:57.767Z"
+      },
+      "061625 VBDR Agenda.pdf": {
+        "id": "6ae304ec4f6019d2fa02d0d9",
+        "size": 147702,
+        "updated_at": "2025-06-13T16:52:20.117Z"
+      },
+      "081825 VBDR Homeowner Board Packet.pdf": {
+        "id": "6ae305134f6019d2fa02d452",
+        "size": 441097,
+        "updated_at": "2025-08-15T18:11:19.533Z"
+      },
+      "092225 VBDR Agenda.pdf": {
+        "id": "6ae3052a4f6019d2fa02d666",
+        "size": 154175,
+        "updated_at": "2025-09-18T10:47:34.040Z"
+      },
+      "111726 VATB Annual Mtgt Mailer.pdf": {
+        "id": "6ae307144f6019d2fa0301f5",
+        "size": 534753,
+        "updated_at": "2026-10-27T12:32:16.903Z"
+      }
     },
     "Architectural": {
-      "Approved Plant List.pdf": "156681",
-      "ARC Design Guidelines - Final Version 2020.pdf": "156682",
-      "ARC Improvement Application 2024.pdf": "156683",
-      "Signature Guide to ARC Guidelines.pdf": "156684"
+      "ARC Design Guidelines - Final Version 2020.pdf": {
+        "id": "6ae307f44f6019d2fa0313df",
+        "size": 258506,
+        "updated_at": "2024-11-27T14:35:23.957Z"
+      },
+      "ARC Improvement Application 2024.pdf": {
+        "id": "6ae307f44f6019d2fa0313dc",
+        "size": 151805,
+        "updated_at": "2024-11-27T14:35:24.080Z"
+      },
+      "Approved Plant List.pdf": {
+        "id": "6ae307f44f6019d2fa0313cb",
+        "size": 34963,
+        "updated_at": "2024-11-27T14:30:46.503Z"
+      },
+      "Signature Guide to ARC Guidelines.pdf": {
+        "id": "6ae307f44f6019d2fa0313c8",
+        "size": 104384,
+        "updated_at": "2024-11-27T14:35:24.233Z"
+      }
     },
     "Board - Financials": {
-      "013124 VATB Financials Board.pdf": "156668",
-      "022924 VBDR Financials Post.pdf": "156669",
-      "033124 VBDR Financials Board.pdf": "156670",
-      "043024 VBDR Financials Board.pdf": "156671",
-      "053024 VBDR Financials Board.pdf": "156672",
-      "063024 VBDR Financials Board.pdf": "156673",
-      "073124 VBDR Financials Board.pdf": "156674",
-      "083124 VBDR Financials Board.pdf": "156675",
-      "093024 VBDR Financials Board.pdf": "156676"
+      "013124 VATB Financials Board.pdf": {
+        "id": "6ae2ab6b4f6019d2fafc3c24",
+        "size": 10916920,
+        "updated_at": "2024-11-27T14:29:25.287Z"
+      },
+      "022924 VBDR Financials Post.pdf": {
+        "id": "6ae2ab6c4f6019d2fafc3c28",
+        "size": 1396900,
+        "updated_at": "2024-11-27T14:29:25.810Z"
+      },
+      "033124 VBDR Financials Board.pdf": {
+        "id": "6ae2ab6d4f6019d2fafc3c3f",
+        "size": 15349523,
+        "updated_at": "2024-11-27T14:29:26.273Z"
+      },
+      "043024 VBDR Financials Board.pdf": {
+        "id": "6ae2ab6d4f6019d2fafc3c39",
+        "size": 13769449,
+        "updated_at": "2024-11-27T14:29:26.683Z"
+      },
+      "053024 VBDR Financials Board.pdf": {
+        "id": "6ae2ab6d4f6019d2fafc3c36",
+        "size": 12194739,
+        "updated_at": "2024-11-27T14:29:27.033Z"
+      },
+      "063024 VBDR Financials Board.pdf": {
+        "id": "6ae2ab6d4f6019d2fafc3c3c",
+        "size": 13041394,
+        "updated_at": "2024-11-27T14:29:27.447Z"
+      },
+      "073124 VBDR Financials Board.pdf": {
+        "id": "6ae2ab6d4f6019d2fafc3c42",
+        "size": 14342592,
+        "updated_at": "2024-11-27T14:29:27.837Z"
+      },
+      "083124 VBDR Financials Board.pdf": {
+        "id": "6ae2ab6d4f6019d2fafc3c30",
+        "size": 12991206,
+        "updated_at": "2024-11-27T14:29:28.243Z"
+      },
+      "093024 VBDR Financials Board.pdf": {
+        "id": "6ae2ab6d4f6019d2fafc3c33",
+        "size": 13814983,
+        "updated_at": "2024-11-27T14:29:28.620Z"
+      }
     },
     "Board - Financials/2024": {
-      "073124 VBDR Financials Board.pdf": "159991",
-      "083124 VBDR Financials Board.pdf": "159990",
-      "093024 VBDR Financials Board.pdf": "159989",
-      "103124-Villas at the Boulders Financials.pdf": "159987",
-      "1124 VAB Monthly Financial.pdf": "159984",
-      "CO - Financial - 1224": "162327"
+      "073124 VBDR Financials Board.pdf": {
+        "id": "6ae312c44f6019d2fa039c84",
+        "size": 14342592,
+        "updated_at": "2025-01-01T16:51:38.133Z"
+      },
+      "083124 VBDR Financials Board.pdf": {
+        "id": "6ae312c44f6019d2fa039c7e",
+        "size": 12991206,
+        "updated_at": "2025-01-01T16:49:37.167Z"
+      },
+      "093024 VBDR Financials Board.pdf": {
+        "id": "6ae312c44f6019d2fa039c80",
+        "size": 13814983,
+        "updated_at": "2025-01-01T16:48:22.980Z"
+      },
+      "103124-Villas at the Boulders Financials.pdf": {
+        "id": "6ae312c44f6019d2fa039c87",
+        "size": 28109046,
+        "updated_at": "2025-01-01T16:43:44.103Z"
+      },
+      "1124 VAB Monthly Financial.pdf": {
+        "id": "6ae312c34f6019d2fa039c74",
+        "size": 1630149,
+        "updated_at": "2025-01-01T16:35:28.557Z"
+      },
+      "CO - Financial - 1224 52.pdf": {
+        "id": "6ae313484f6019d2fa03a353",
+        "size": 1532959,
+        "updated_at": "2025-01-22T19:21:55.607Z"
+      }
     },
     "Board - Financials/2025": {
-      "Aurora - Financial - 0125": "164480",
-      "Aurora - Financial - 0225 - REVISED": "171588",
-      "Aurora - Financial - 0325 REVISED": "180495",
-      "Aurora - Financial - 0425": "182347",
-      "Aurora - Financial - 0525": "185444",
-      "Aurora - Financial - 0625": "189022",
-      "Aurora - Financial - 0725": "193212",
-      "Aurora - Financial - 0825": "197036",
-      "Aurora - Financial - 0925": "202390",
-      "Aurora - Financial - 1025": "207320",
-      "Aurora - Financial - 1125": "211156",
-      "Aurora - Financial - 1225": "214368"
+      "Aurora - Financial - 0125 5.pdf": {
+        "id": "6ae31cb44f6019d2fa043cdd",
+        "size": 1576800,
+        "updated_at": "2025-02-17T11:35:22.260Z"
+      },
+      "Aurora - Financial - 0225 - REVISED.pdf": {
+        "id": "6ae31d324f6019d2fa044240",
+        "size": 1774640,
+        "updated_at": "2025-04-04T12:35:03.450Z"
+      },
+      "Aurora - Financial - 0325 REVISED.pdf": {
+        "id": "6ae31dbe4f6019d2fa0448f4",
+        "size": 1673903,
+        "updated_at": "2025-05-04T16:13:02.967Z"
+      },
+      "Aurora - Financial - 0425 8.pdf": {
+        "id": "6ae31df34f6019d2fa044c16",
+        "size": 1639315,
+        "updated_at": "2025-05-18T20:17:47.723Z"
+      },
+      "Aurora - Financial - 0525 42.pdf": {
+        "id": "6ae31e8a4f6019d2fa0451b9",
+        "size": 1496310,
+        "updated_at": "2025-06-17T01:08:12.260Z"
+      },
+      "Aurora - Financial - 0625 18.pdf": {
+        "id": "6ae31f244f6019d2fa0459f9",
+        "size": 1448653,
+        "updated_at": "2025-07-21T02:30:22.023Z"
+      },
+      "Aurora - Financial - 0725 19.pdf": {
+        "id": "6ae31fb64f6019d2fa04600b",
+        "size": 1459981,
+        "updated_at": "2025-08-16T21:13:00.383Z"
+      },
+      "Aurora - Financial - 0825 22.pdf": {
+        "id": "6ae320664f6019d2fa04687e",
+        "size": 1419317,
+        "updated_at": "2025-09-16T01:28:41.733Z"
+      },
+      "Aurora - Financial - 0925 54.pdf": {
+        "id": "6ae321294f6019d2fa047169",
+        "size": 1452667,
+        "updated_at": "2025-10-15T23:28:14.360Z"
+      },
+      "Aurora - Financial - 1025 61.pdf": {
+        "id": "6ae3221e4f6019d2fa047caf",
+        "size": 1472118,
+        "updated_at": "2025-11-16T22:55:56.480Z"
+      },
+      "Aurora - Financial - 1125 67.pdf": {
+        "id": "6ae322d84f6019d2fa048513",
+        "size": 1549706,
+        "updated_at": "2025-12-22T17:07:13.007Z"
+      },
+      "Aurora - Financial - 1225 41.pdf": {
+        "id": "6ae323484f6019d2fa048a02",
+        "size": 1492057,
+        "updated_at": "2026-01-19T00:34:49.943Z"
+      }
     },
     "Board - Financials/2026": {
-      "Aurora - Financial - 0126": "218910",
-      "Aurora - Financial - 0226": "222484",
-      "Aurora - Financial - 0326": "226262",
-      "Aurora - Financial - 0426": "229389",
-      "Aurora - Financial - 0526": "232864",
-      "Aurora - Financial - 0626": "236323",
-      "Aurora - Financial - 0726": "240351",
-      "Aurora - Financial - 0826": "245564",
-      "Aurora - Financial - 0926": "253468"
+      "Aurora - Financial - 0126 64.pdf": {
+        "id": "6ae337c54f6019d2fa057963",
+        "size": 1598163,
+        "updated_at": "2026-02-15T01:24:58.977Z"
+      },
+      "Aurora - Financial - 0226 47.pdf": {
+        "id": "6ae3384e4f6019d2fa057e97",
+        "size": 2396170,
+        "updated_at": "2026-03-16T00:13:20.757Z"
+      },
+      "Aurora - Financial - 0326 37.pdf": {
+        "id": "6ae338e74f6019d2fa0584dc",
+        "size": 701805,
+        "updated_at": "2026-04-16T02:16:47.677Z"
+      },
+      "Aurora - Financial - 0426 42.pdf": {
+        "id": "6ae339834f6019d2fa058b21",
+        "size": 576871,
+        "updated_at": "2026-05-16T16:38:57.060Z"
+      },
+      "Aurora - Financial - 0526 67.pdf": {
+        "id": "6ae33a434f6019d2fa059283",
+        "size": 686590,
+        "updated_at": "2026-06-15T16:55:25.533Z"
+      },
+      "Aurora - Financial - 0626 41.pdf": {
+        "id": "6ae33adc4f6019d2fa0599e8",
+        "size": 774334,
+        "updated_at": "2026-07-16T01:21:28.817Z"
+      },
+      "Aurora - Financial - 0726 52.pdf": {
+        "id": "6ae33bba4f6019d2fa05a3f9",
+        "size": 821191,
+        "updated_at": "2026-08-18T00:57:56.500Z"
+      },
+      "Aurora - Financial - 0826 55.pdf": {
+        "id": "6ae33c7b4f6019d2fa05ac54",
+        "size": 930347,
+        "updated_at": "2026-09-15T20:16:41.537Z"
+      },
+      "Aurora - Financial - 0926 65.pdf": {
+        "id": "6ae33d5a4f6019d2fa05b620",
+        "size": 860159,
+        "updated_at": "2026-10-18T19:48:53.883Z"
+      }
     },
     "Board - Insurance": {
-      "Fidelity Bond dec page.pdf": "159343",
-      "Umbrella dec page.pdf": "159344",
-      "Villas at Boulders Dec page.pdf": "159345"
+      "Fidelity Bond dec page.pdf": {
+        "id": "6ae2ee184f6019d2fa012fb8",
+        "size": 161603,
+        "updated_at": "2024-12-18T12:00:51.310Z"
+      },
+      "Umbrella dec page.pdf": {
+        "id": "6ae2ee184f6019d2fa012fb2",
+        "size": 177191,
+        "updated_at": "2024-12-18T12:00:51.483Z"
+      },
+      "Villas at Boulders Dec page.pdf": {
+        "id": "6ae2ee184f6019d2fa012fb7",
+        "size": 405476,
+        "updated_at": "2024-12-18T12:00:51.623Z"
+      }
     },
     "Board - Management Contract": {
-      "Villas at the Boulders 2024.11.pdf": "155434"
+      "Villas at the Boulders 2024.11.pdf": {
+        "id": "6ae2e2664f6019d2fa005e18",
+        "size": 487950,
+        "updated_at": "2024-11-10T14:12:06.213Z"
+      }
     },
     "Board - Reserve Studies": {
-      "28837-0-ExecutiveSummary.pdf": "156677",
-      "28837-0-ReserveStudy (1).pdf": "156678"
+      "28837-0-ExecutiveSummary.pdf": {
+        "id": "6ae2eac34f6019d2fa00eeac",
+        "size": 135215,
+        "updated_at": "2024-11-27T14:29:55.700Z"
+      },
+      "28837-0-ReserveStudy (1).pdf": {
+        "id": "6ae2eac34f6019d2fa00eeb8",
+        "size": 2294421,
+        "updated_at": "2024-11-27T14:29:55.833Z"
+      }
     },
     "Board - Vendor Contracts": {
-      "VBDR High Plains Landscape and Snow Contract 2024-2026.pdf": "155435",
-      "VBDR Waste Management Contract 2023-2028.pdf": "155436"
+      "VBDR High Plains Landscape and Snow Contract 2024-2026.pdf": {
+        "id": "6ae2e1eb4f6019d2fa0053ab",
+        "size": 526163,
+        "updated_at": "2024-11-10T14:12:32.597Z"
+      },
+      "VBDR Waste Management Contract 2023-2028.pdf": {
+        "id": "6ae2e1eb4f6019d2fa0053ae",
+        "size": 221653,
+        "updated_at": "2024-11-10T14:12:32.730Z"
+      }
     },
     "Budgets -/2024": {
-      "VATB 2024 Budget.pdf": "210723"
+      "VATB 2024 Budget.pdf": {
+        "id": "6ae30e044f6019d2fa035de0",
+        "size": 1035982,
+        "updated_at": "2025-12-19T10:51:17.900Z"
+      }
     },
     "Budgets -/2025": {
-      "2025 VATB Budget.pdf": "210721"
+      "2025 VATB Budget.pdf": {
+        "id": "6ae330fb4f6019d2fa052a65",
+        "size": 511491,
+        "updated_at": "2025-12-19T10:50:14.410Z"
+      }
     },
     "Budgets -/2026": {
-      "2026 VATB Budget.pdf": "210722"
+      "2026 VATB Budget.pdf": {
+        "id": "6ae33dd94f6019d2fa05bcd9",
+        "size": 141166,
+        "updated_at": "2025-12-19T10:50:42.357Z"
+      }
     },
     "Certificate of Insurance -": {
-      "VATB COI Exp 071227": "238366"
+      "VATB COI Exp 071227.pdf": {
+        "id": "6ae2f4854f6019d2fa018f87",
+        "size": 353757,
+        "updated_at": "2026-07-30T12:02:22.843Z"
+      }
     },
     "Financials/2024": {
-      "083124 VATB Financials Owner.pdf": "156679",
-      "093024 VATB Financials Owner.pdf": "156680",
-      "103124 VATB Financials Owner.pdf": "159986",
-      "1124 VAB Monthly Financial - Owner.pdf": "159985",
-      "CO - Owners Monthly Report 1224": "162328"
+      "083124 VATB Financials Owner.pdf": {
+        "id": "6ae3173b4f6019d2fa03d80f",
+        "size": 3474431,
+        "updated_at": "2024-11-27T14:30:29.943Z"
+      },
+      "093024 VATB Financials Owner.pdf": {
+        "id": "6ae3173b4f6019d2fa03d80c",
+        "size": 3652450,
+        "updated_at": "2024-11-27T14:30:30.123Z"
+      },
+      "103124 VATB Financials Owner.pdf": {
+        "id": "6ae3177d4f6019d2fa03da85",
+        "size": 1847752,
+        "updated_at": "2025-01-01T16:42:39.477Z"
+      },
+      "1124 VAB Monthly Financial - Owner.pdf": {
+        "id": "6ae3177d4f6019d2fa03da6c",
+        "size": 156204,
+        "updated_at": "2025-01-01T16:36:38.823Z"
+      },
+      "CO -  Owners Monthly Report 1224 50.pdf": {
+        "id": "6ae317b84f6019d2fa03dc7b",
+        "size": 149274,
+        "updated_at": "2025-01-22T19:22:40.327Z"
+      }
     },
     "Financials/2025": {
-      "Aurora - Owners Monthly Report 0125": "164499",
-      "Aurora - Owners Monthly Report 0225": "171589",
-      "Aurora - Owners Monthly Report 0325": "180496",
-      "Aurora - Owners Monthly Report 0425": "182391",
-      "Aurora - Owners Monthly Report 0525": "185457",
-      "Aurora - Owners Monthly Report 0625": "189068",
-      "Aurora - Owners Monthly Report 0725": "193250",
-      "Aurora - Owners Monthly Report 0825": "197082",
-      "Aurora - Owners Monthly Report 0925": "202438",
-      "Aurora - Owners Monthly Report 1025": "207359",
-      "Aurora - Owners Monthly Report 1125": "211196",
-      "Aurora - Owners Monthly Report 1225": "214420"
+      "Aurora -  Owners Monthly Report 0125.pdf": {
+        "id": "6ae326734f6019d2fa04c473",
+        "size": 141203,
+        "updated_at": "2025-02-17T13:28:02.300Z"
+      },
+      "Aurora -  Owners Monthly Report 0225 3.pdf": {
+        "id": "6ae326d64f6019d2fa04c7f8",
+        "size": 153024,
+        "updated_at": "2025-04-04T12:35:49.427Z"
+      },
+      "Aurora -  Owners Monthly Report 0325 52.pdf": {
+        "id": "6ae3272d4f6019d2fa04cbdb",
+        "size": 153906,
+        "updated_at": "2025-05-04T16:14:15.473Z"
+      },
+      "Aurora -  Owners Monthly Report 0425 6.pdf": {
+        "id": "6ae3273f4f6019d2fa04cd2b",
+        "size": 149678,
+        "updated_at": "2025-05-18T20:31:16.883Z"
+      },
+      "Aurora -  Owners Monthly Report 0525 9.pdf": {
+        "id": "6ae3277d4f6019d2fa04cf17",
+        "size": 149568,
+        "updated_at": "2025-06-17T01:29:03.220Z"
+      },
+      "Aurora -  Owners Monthly Report 0625 7.pdf": {
+        "id": "6ae327d84f6019d2fa04d1c9",
+        "size": 150136,
+        "updated_at": "2025-07-21T02:41:05.847Z"
+      },
+      "Aurora -  Owners Monthly Report 0725 8.pdf": {
+        "id": "6ae3284a4f6019d2fa04d5d1",
+        "size": 149848,
+        "updated_at": "2025-08-16T21:21:22.810Z"
+      },
+      "Aurora -  Owners Monthly Report 0825 12.pdf": {
+        "id": "6ae328ab4f6019d2fa04d8ad",
+        "size": 148552,
+        "updated_at": "2025-09-16T01:52:50.803Z"
+      },
+      "Aurora -  Owners Monthly Report 0925 43.pdf": {
+        "id": "6ae329374f6019d2fa04dd3c",
+        "size": 149760,
+        "updated_at": "2025-10-15T23:54:44.453Z"
+      },
+      "Aurora -  Owners Monthly Report 1025 7.pdf": {
+        "id": "6ae329a84f6019d2fa04e2fd",
+        "size": 154792,
+        "updated_at": "2025-11-16T23:10:33.180Z"
+      },
+      "Aurora -  Owners Monthly Report 1125 33.pdf": {
+        "id": "6ae32a444f6019d2fa04e8e2",
+        "size": 156789,
+        "updated_at": "2025-12-22T17:36:35.310Z"
+      },
+      "Aurora -  Owners Monthly Report 1225 12.pdf": {
+        "id": "6ae32aaf4f6019d2fa04ed71",
+        "size": 155925,
+        "updated_at": "2026-01-19T00:48:02.367Z"
+      }
     },
     "Financials/2026": {
-      "Aurora - Owners Monthly Report 0126": "218940",
-      "Aurora - Owners Monthly Report 0226": "222535",
-      "Aurora - Owners Monthly Report 0326": "226318",
-      "Aurora - Owners Monthly Report 0426": "229443",
-      "Aurora - Owners Monthly Report 0526": "232996",
-      "Aurora - Owners Monthly Report 0626": "237718",
-      "Aurora - Owners Monthly Report 0726": "240595",
-      "Aurora - Owners Monthly Report 0826": "245604",
-      "Aurora - Owners Monthly Report 0926": "253496"
+      "Aurora -  Owners Monthly Report 0126 45.pdf": {
+        "id": "6ae33e764f6019d2fa05c4b1",
+        "size": 152964,
+        "updated_at": "2026-02-15T01:44:39.923Z"
+      },
+      "Aurora -  Owners Monthly Report 0226 42.pdf": {
+        "id": "6ae33edf4f6019d2fa05c7de",
+        "size": 153340,
+        "updated_at": "2026-03-16T01:05:02.873Z"
+      },
+      "Aurora -  Owners Monthly Report 0326 36.pdf": {
+        "id": "6ae33f4e4f6019d2fa05cb86",
+        "size": 153713,
+        "updated_at": "2026-04-16T03:13:35.630Z"
+      },
+      "Aurora -  Owners Monthly Report 0426 5.pdf": {
+        "id": "6ae33fa34f6019d2fa05cedd",
+        "size": 153657,
+        "updated_at": "2026-05-16T16:40:27.083Z"
+      },
+      "Aurora -  Owners Monthly Report 0526 14.pdf": {
+        "id": "6ae3402f4f6019d2fa05d3ed",
+        "size": 154055,
+        "updated_at": "2026-06-15T23:19:30.287Z"
+      },
+      "Aurora -  Owners Monthly Report 0626 4.pdf": {
+        "id": "6ae340ba4f6019d2fa05d9ff",
+        "size": 154390,
+        "updated_at": "2026-07-26T23:21:50.380Z"
+      },
+      "Aurora -  Owners Monthly Report 0726 43.pdf": {
+        "id": "6ae341444f6019d2fa05df5d",
+        "size": 154354,
+        "updated_at": "2026-08-18T19:18:43.137Z"
+      },
+      "Aurora -  Owners Monthly Report 0826 38.pdf": {
+        "id": "6ae341b44f6019d2fa05e31d",
+        "size": 154451,
+        "updated_at": "2026-09-15T20:18:10.410Z"
+      },
+      "Aurora -  Owners Monthly Report 0926 38.pdf": {
+        "id": "6ae342504f6019d2fa05e9a4",
+        "size": 155946,
+        "updated_at": "2026-10-18T20:00:52.773Z"
+      }
     },
     "Forms": {
-      "ARC Improvement Application 2025.0908.pdf": "196441",
-      "Homeowner Paid Removal Planting Application (2025a).pdf": "196442"
+      "ARC Improvement Application 2025.0908.pdf": {
+        "id": "6ae2e4fa4f6019d2fa008c66",
+        "size": 307017,
+        "updated_at": "2025-09-11T19:13:03.280Z"
+      },
+      "Homeowner Paid Removal Planting Application (2025a).pdf": {
+        "id": "6ae2e4fa4f6019d2fa008c56",
+        "size": 130916,
+        "updated_at": "2025-09-11T19:13:38.513Z"
+      }
     },
     "General Session Minutes/2022": {
-      "011722 Work Session Meeting Minutes APPROVED.pdf": "159364",
-      "022122 VATB Minutes.pdf": "159365",
-      "032122 Work Session Meeting Minutes Approved.pdf": "159366",
-      "041822 Work Session Meeting Minutes Approved.pdf": "159367",
-      "051622 VATB Minutes.pdf": "159368",
-      "062922 Work Session Meeting Minutes.pdf": "159369",
-      "071822 Work Session Meeting Minutes.pdf": "159370",
-      "081522 VATB Minutes.pdf": "159371",
-      "091922 VATB Minutes_ (002).pdf": "159372",
-      "101722 VATB Minutes(1).pdf": "159373"
+      "011722 Work Session Meeting Minutes APPROVED.pdf": {
+        "id": "6ae2dc194f6019d2faffbe5a",
+        "size": 117644,
+        "updated_at": "2024-12-18T12:06:53.950Z"
+      },
+      "022122 VATB  Minutes.pdf": {
+        "id": "6ae2dc194f6019d2faffbe65",
+        "size": 251937,
+        "updated_at": "2024-12-18T12:06:54.330Z"
+      },
+      "032122 Work Session Meeting Minutes Approved.pdf": {
+        "id": "6ae2dc194f6019d2faffbe55",
+        "size": 255633,
+        "updated_at": "2024-12-18T12:06:54.733Z"
+      },
+      "041822 Work Session Meeting Minutes Approved.pdf": {
+        "id": "6ae2dc194f6019d2faffbe53",
+        "size": 253805,
+        "updated_at": "2024-12-18T12:06:55.073Z"
+      },
+      "051622 VATB Minutes.pdf": {
+        "id": "6ae2dc194f6019d2faffbe6e",
+        "size": 254720,
+        "updated_at": "2024-12-18T12:06:55.430Z"
+      },
+      "062922 Work Session Meeting Minutes.pdf": {
+        "id": "6ae2dc194f6019d2faffbe64",
+        "size": 249576,
+        "updated_at": "2024-12-18T12:06:55.743Z"
+      },
+      "071822 Work Session Meeting Minutes.pdf": {
+        "id": "6ae2dc194f6019d2faffbe63",
+        "size": 250862,
+        "updated_at": "2024-12-18T12:06:56.040Z"
+      },
+      "081522 VATB Minutes.pdf": {
+        "id": "6ae2dc194f6019d2faffbe59",
+        "size": 254716,
+        "updated_at": "2024-12-18T12:06:56.370Z"
+      },
+      "091922 VATB Minutes_ (002).pdf": {
+        "id": "6ae2dc194f6019d2faffbe62",
+        "size": 250470,
+        "updated_at": "2024-12-18T12:06:56.720Z"
+      },
+      "101722 VATB Minutes(1).pdf": {
+        "id": "6ae2dc1a4f6019d2faffbe7d",
+        "size": 251309,
+        "updated_at": "2024-12-18T12:06:57.033Z"
+      }
     },
     "General Session Minutes/2023": {
-      "011623 VATB Minutes Approved.pdf": "159354",
-      "022023 VATB Minutes.pdf": "159355",
-      "032023 VATB Minutes.pdf": "159356",
-      "041723 VATB Minutes.pdf": "159357",
-      "051523 VATB Minutes.pdf": "159358",
-      "061923 VATB Minutes.pdf": "159359",
-      "071723 Board Meeting Minutes.pdf": "159360",
-      "082123 VATB Minutes Approved.pdf": "159361",
-      "091823 Board Meeting Minutes.pdf": "159362",
-      "101623 Board Meeting Minutes.pdf": "159363"
+      "011623 VATB Minutes Approved.pdf": {
+        "id": "6ae2fcd74f6019d2fa021f3a",
+        "size": 119826,
+        "updated_at": "2024-12-18T12:03:25.593Z"
+      },
+      "022023 VATB Minutes.pdf": {
+        "id": "6ae2fcd74f6019d2fa021f38",
+        "size": 170478,
+        "updated_at": "2024-12-18T12:03:25.933Z"
+      },
+      "032023 VATB Minutes.pdf": {
+        "id": "6ae2fcd74f6019d2fa021f36",
+        "size": 118607,
+        "updated_at": "2024-12-18T12:03:26.270Z"
+      },
+      "041723 VATB Minutes.pdf": {
+        "id": "6ae2fcd74f6019d2fa021f3e",
+        "size": 119910,
+        "updated_at": "2024-12-18T12:03:26.653Z"
+      },
+      "051523 VATB Minutes.pdf": {
+        "id": "6ae2fcd84f6019d2fa021f6c",
+        "size": 121974,
+        "updated_at": "2024-12-18T12:03:27.033Z"
+      },
+      "061923 VATB Minutes.pdf": {
+        "id": "6ae2fcd84f6019d2fa021f54",
+        "size": 119382,
+        "updated_at": "2024-12-18T12:03:27.350Z"
+      },
+      "071723 Board Meeting Minutes.pdf": {
+        "id": "6ae2fcd84f6019d2fa021f5d",
+        "size": 118709,
+        "updated_at": "2024-12-18T12:03:27.687Z"
+      },
+      "082123 VATB Minutes Approved.pdf": {
+        "id": "6ae2fcd84f6019d2fa021f6f",
+        "size": 124122,
+        "updated_at": "2024-12-18T12:03:28.003Z"
+      },
+      "091823 Board Meeting Minutes.pdf": {
+        "id": "6ae2fcd84f6019d2fa021f61",
+        "size": 117653,
+        "updated_at": "2024-12-18T12:03:28.383Z"
+      },
+      "101623 Board Meeting Minutes.pdf": {
+        "id": "6ae2fcd84f6019d2fa021f55",
+        "size": 120582,
+        "updated_at": "2024-12-18T12:03:28.783Z"
+      }
     },
     "General Session Minutes/2024": {
-      "011524 Board Meeting Minutes.pdf": "159346",
-      "021924 VATB Mintues.pdf": "159347",
-      "031824 VBDR Board Meeting Mintues.pdf": "159348",
-      "041524 VBDR Board Meeting Mintues.pdf": "159349",
-      "052024 VBDR Board Meeting Mintues.pdf": "159350",
-      "061824 VBDR Board Meeting Mintues.pdf": "159351",
-      "071524 VBDR Board Meeting Mintues.pdf": "159352",
-      "082624 VBDR Board Meeting Mintues.pdf": "159353",
-      "091624 VBDR Board Meeting Mintues.pdf": "164811",
-      "102124 VBDR Board Meeting Mintues.pdf": "164812",
-      "121624 VBDR Minutes.pdf": "164813"
+      "011524 Board Meeting Minutes.pdf": {
+        "id": "6ae319304f6019d2fa03fc2a",
+        "size": 112961,
+        "updated_at": "2024-12-18T12:02:58.847Z"
+      },
+      "021924 VATB Mintues.pdf": {
+        "id": "6ae319304f6019d2fa03fc36",
+        "size": 114316,
+        "updated_at": "2024-12-18T12:02:59.177Z"
+      },
+      "031824 VBDR Board Meeting Mintues.pdf": {
+        "id": "6ae319304f6019d2fa03fc32",
+        "size": 124692,
+        "updated_at": "2024-12-18T12:02:59.503Z"
+      },
+      "041524 VBDR Board Meeting Mintues.pdf": {
+        "id": "6ae319304f6019d2fa03fc2b",
+        "size": 126444,
+        "updated_at": "2024-12-18T12:02:59.810Z"
+      },
+      "052024 VBDR Board Meeting Mintues.pdf": {
+        "id": "6ae319304f6019d2fa03fc3e",
+        "size": 123195,
+        "updated_at": "2024-12-18T12:03:00.207Z"
+      },
+      "061824 VBDR Board Meeting Mintues.pdf": {
+        "id": "6ae319304f6019d2fa03fc2e",
+        "size": 111194,
+        "updated_at": "2024-12-18T12:03:00.477Z"
+      },
+      "071524 VBDR Board Meeting Mintues.pdf": {
+        "id": "6ae319314f6019d2fa03fc4e",
+        "size": 112182,
+        "updated_at": "2024-12-18T12:03:00.777Z"
+      },
+      "082624 VBDR Board Meeting Mintues.pdf": {
+        "id": "6ae319314f6019d2fa03fc4f",
+        "size": 115556,
+        "updated_at": "2024-12-18T12:03:01.043Z"
+      },
+      "091624 VBDR Board Meeting Mintues.pdf": {
+        "id": "6ae3195d4f6019d2fa04003c",
+        "size": 123277,
+        "updated_at": "2025-02-20T15:46:20.563Z"
+      },
+      "102124 VBDR Board Meeting Mintues.pdf": {
+        "id": "6ae3195d4f6019d2fa04003b",
+        "size": 127228,
+        "updated_at": "2025-02-20T15:46:57.133Z"
+      },
+      "121624 VBDR Minutes.pdf": {
+        "id": "6ae3195d4f6019d2fa040034",
+        "size": 124175,
+        "updated_at": "2025-02-20T15:47:39.297Z"
+      }
     },
     "General Session Minutes/2025": {
-      "012025 VBDR Minutes.pdf": "172009",
-      "021725 VBDR Minutes.pdf": "172010",
-      "032425 VBDR Minutes.pdf": "182848",
-      "042125 VBDR Minutes.pdf": "182849",
-      "051925 VBDR Minutes.pdf": "191835",
-      "061625 VBDR Minutes.pdf": "191836",
-      "072125 VBDR Minutes.pdf": "198601",
-      "081825 VBDR Minutes.pdf": "198602",
-      "090325 VBDR Minutes.pdf": "198603",
-      "092225 VATB Board Minutes.pdf": "198809",
-      "102025 VBDR Minutes.pdf": "204236"
+      "012025 VBDR Minutes.pdf": {
+        "id": "6ae324c84f6019d2fa04a06b",
+        "size": 123214,
+        "updated_at": "2025-04-08T16:08:15.917Z"
+      },
+      "021725 VBDR Minutes.pdf": {
+        "id": "6ae324c84f6019d2fa04a058",
+        "size": 121654,
+        "updated_at": "2025-04-08T16:08:26.573Z"
+      },
+      "032425 VBDR Minutes.pdf": {
+        "id": "6ae324ea4f6019d2fa04a337",
+        "size": 118745,
+        "updated_at": "2025-05-20T21:48:56.493Z"
+      },
+      "042125 VBDR Minutes.pdf": {
+        "id": "6ae324ea4f6019d2fa04a33b",
+        "size": 121860,
+        "updated_at": "2025-05-20T21:49:03.180Z"
+      },
+      "051925 VBDR Minutes.pdf": {
+        "id": "6ae325364f6019d2fa04a9ab",
+        "size": 160913,
+        "updated_at": "2025-08-08T20:32:35.910Z"
+      },
+      "061625 VBDR Minutes.pdf": {
+        "id": "6ae325364f6019d2fa04a99c",
+        "size": 158854,
+        "updated_at": "2025-08-08T20:32:39.730Z"
+      },
+      "072125 VBDR Minutes.pdf": {
+        "id": "6ae3256d4f6019d2fa04ae4f",
+        "size": 154587,
+        "updated_at": "2025-09-24T14:08:17.043Z"
+      },
+      "081825 VBDR Minutes.pdf": {
+        "id": "6ae3256d4f6019d2fa04ae56",
+        "size": 160473,
+        "updated_at": "2025-09-24T14:08:23.897Z"
+      },
+      "090325 VBDR Minutes.pdf": {
+        "id": "6ae3256d4f6019d2fa04ae65",
+        "size": 121612,
+        "updated_at": "2025-09-24T14:08:27.833Z"
+      },
+      "092225 VATB Board Minutes.pdf": {
+        "id": "6ae325714f6019d2fa04aebb",
+        "size": 171317,
+        "updated_at": "2025-09-26T18:00:46.030Z"
+      },
+      "102025 VBDR Minutes.pdf": {
+        "id": "6ae325954f6019d2fa04b1c5",
+        "size": 164963,
+        "updated_at": "2025-10-27T18:28:52.180Z"
+      }
     },
     "General Session Minutes/2026": {
-      "012726 VBDR Minutes.pdf": "233162",
-      "022526 VBDR Minutes.pdf": "233163",
-      "032426 VATB Minutes.pdf": "233164",
-      "042826 VBDR Minutes.pdf": "233165"
+      "012726  VBDR Minutes.pdf": {
+        "id": "6ae342f04f6019d2fa05f2df",
+        "size": 150000,
+        "updated_at": "2026-06-17T13:00:21.960Z"
+      },
+      "022526 VBDR Minutes.pdf": {
+        "id": "6ae342f04f6019d2fa05f2cc",
+        "size": 179590,
+        "updated_at": "2026-06-17T13:01:25.833Z"
+      },
+      "032426 VATB Minutes.pdf": {
+        "id": "6ae342f04f6019d2fa05f2e0",
+        "size": 64182,
+        "updated_at": "2026-06-17T13:01:32.387Z"
+      },
+      "042826  VBDR Minutes.pdf": {
+        "id": "6ae342f04f6019d2fa05f2ce",
+        "size": 163797,
+        "updated_at": "2026-06-17T13:01:40.013Z"
+      }
     },
     "Governing Documents": {
-      "00 VBDR Articles of Incorporation 2002.pdf": "155437",
-      "01 VBDR Amendment of CCR's 2022.pdf": "155438",
-      "01 VBDR Decalration of CCR's 2002.pdf": "155440",
-      "04 VBDR Collection Policy 2022.pdf": "155443",
-      "04 VBDR Conduct of Meetings 2022.pdf": "155444",
-      "04 VBDR Covenant Enforcement Policy 2022.pdf": "155445",
-      "Adoption and Amendment of Policies, Procedures and Rules.pdf": "196446",
-      "Alternative Dispute Resolution.pdf": "196447",
-      "Appointment of Officers.2023.01.16.signed.pdf": "196448",
-      "ARC Design Guidelines (2021.8f).pdf": "196438",
-      "Bylaws.2025.08c (signed).pdf": "196437",
-      "Committee Authorities (2025.09.22 signed).pdf": "198512",
-      "Covenant_Enforcement_Policy(2025.10.20 signed).pdf": "204237",
-      "Current Directors and Officers.pdf": "209980",
-      "Current Policy Directory.pdf": "209979",
-      "Director Conflict of Interest.pdf": "196449",
-      "Homeowner Paid Planting and Removal.9.22.2025 (signed).pdf": "198508",
-      "Inspection and Copying of Association Records.pdf": "196451",
-      "Investment of Reserve Funds.pdf": "196452",
-      "Policy Directory.2025.0910 (signed).pdf": "196444",
-      "Reserve Requirements.pdf": "196453",
-      "Responsibility for Deductible Portion of Insurance Claims.pdf": "196454",
-      "Snow Policy 2023.08.22(signed).pdf": "196455"
+      "00 VBDR Articles of Incorporation 2002.pdf": {
+        "id": "6ae2b5234f6019d2fafd2ca2",
+        "size": 232336,
+        "updated_at": "2024-11-10T14:13:25.190Z"
+      },
+      "01 VBDR Amendment of CCR's 2022.pdf": {
+        "id": "6ae2b5234f6019d2fafd2c9c",
+        "size": 200586,
+        "updated_at": "2024-11-10T14:13:25.453Z"
+      },
+      "01 VBDR Decalration of CCR's 2002.pdf": {
+        "id": "6ae2b5254f6019d2fafd2cd2",
+        "size": 4421426,
+        "updated_at": "2024-11-10T14:13:25.977Z"
+      },
+      "04 VBDR  Collection Policy 2022.pdf": {
+        "id": "6ae2b5244f6019d2fafd2cc3",
+        "size": 336579,
+        "updated_at": "2024-11-10T14:13:45.167Z"
+      },
+      "04 VBDR Conduct of Meetings 2022.pdf": {
+        "id": "6ae2b5254f6019d2fafd2cc5",
+        "size": 268033,
+        "updated_at": "2024-11-10T14:13:45.430Z"
+      },
+      "04 VBDR Covenant Enforcement Policy 2022.pdf": {
+        "id": "6ae2b5244f6019d2fafd2cbf",
+        "size": 392938,
+        "updated_at": "2024-11-10T14:13:45.740Z"
+      },
+      "ARC Design Guidelines (2021.8f).pdf": {
+        "id": "6ae2b5724f6019d2fafd341f",
+        "size": 126340,
+        "updated_at": "2025-09-11T19:09:06.440Z"
+      },
+      "Adoption and Amendment of Policies, Procedures and Rules.pdf": {
+        "id": "6ae2b5724f6019d2fafd3422",
+        "size": 114352,
+        "updated_at": "2025-09-11T19:15:12.890Z"
+      },
+      "Alternative Dispute Resolution 2.pdf": {
+        "id": "6ae2b5724f6019d2fafd3429",
+        "size": 115657,
+        "updated_at": "2025-09-11T19:15:34.957Z"
+      },
+      "Appointment of Officers.2023.01.16.signed.pdf": {
+        "id": "6ae2b5724f6019d2fafd3436",
+        "size": 177069,
+        "updated_at": "2025-09-11T19:15:40.947Z"
+      },
+      "Bylaws.2025.08c (signed).pdf": {
+        "id": "6ae2b5714f6019d2fafd33fe",
+        "size": 285733,
+        "updated_at": "2025-09-11T19:08:53.763Z"
+      },
+      "Committee Authorities (2025.09.22 signed).pdf": {
+        "id": "6ae2b5764f6019d2fafd347d",
+        "size": 164796,
+        "updated_at": "2025-09-23T16:32:32.383Z"
+      },
+      "Covenant_Enforcement_Policy(2025.10.20 signed).pdf": {
+        "id": "6ae2b5804f6019d2fafd3571",
+        "size": 78905,
+        "updated_at": "2025-10-27T18:31:46.400Z"
+      },
+      "Current Directors and Officers.pdf": {
+        "id": "6ae2b58b4f6019d2fafd3638",
+        "size": 57152,
+        "updated_at": "2025-12-14T10:56:36.873Z"
+      },
+      "Current Policy Directory.pdf": {
+        "id": "6ae2b58b4f6019d2fafd363a",
+        "size": 51847,
+        "updated_at": "2025-12-14T10:56:31.630Z"
+      },
+      "Director Conflict of Interest.pdf": {
+        "id": "6ae2b5724f6019d2fafd341e",
+        "size": 115993,
+        "updated_at": "2025-09-11T19:15:46.887Z"
+      },
+      "Homeowner Paid Planting and Removal.9.22.2025 (signed).pdf": {
+        "id": "6ae2b5764f6019d2fafd347a",
+        "size": 117028,
+        "updated_at": "2025-09-23T16:31:57.927Z"
+      },
+      "Inspection and Copying of Association Records.pdf": {
+        "id": "6ae2b5724f6019d2fafd3420",
+        "size": 122290,
+        "updated_at": "2025-09-11T19:16:00.543Z"
+      },
+      "Investment of Reserve Funds.pdf": {
+        "id": "6ae2b5724f6019d2fafd3425",
+        "size": 115730,
+        "updated_at": "2025-09-11T19:16:06.183Z"
+      },
+      "Policy Directory.2025.0910 (signed).pdf": {
+        "id": "6ae2b5724f6019d2fafd342e",
+        "size": 136952,
+        "updated_at": "2025-09-11T19:14:12.247Z"
+      },
+      "Reserve Requirements.pdf": {
+        "id": "6ae2b5724f6019d2fafd341c",
+        "size": 115423,
+        "updated_at": "2025-09-11T19:16:12.093Z"
+      },
+      "Responsibility for Deductible Portion of Insurance Claims.pdf": {
+        "id": "6ae2b5724f6019d2fafd3434",
+        "size": 118193,
+        "updated_at": "2025-09-11T19:16:18.460Z"
+      },
+      "Snow Policy 2023.08.22(signed).pdf": {
+        "id": "6ae2b5734f6019d2fafd343e",
+        "size": 849825,
+        "updated_at": "2025-09-11T19:16:24.627Z"
+      }
     },
     "Maps": {
-      "Backflow valve map.pdf": "156694",
-      "BROADLANDS_FILING12_ADDRESS-PLAT.pdf": "156695",
-      "VBDR Best map!.pdf": "156696",
-      "VBDR Broadlands ALL map.pdf": "156697",
-      "VBDR BROADLANDS_FILING12_ADDRESS-PLAT.pdf": "156698",
-      "VBDR Plot Maps05232014_0000.pdf": "156699",
-      "VBDR Villas Models Map013.pdf": "156700"
+      "BROADLANDS_FILING12_ADDRESS-PLAT.pdf": {
+        "id": "6ae2ea4a4f6019d2fa00e58d",
+        "size": 125730,
+        "updated_at": "2024-11-27T14:39:31.877Z"
+      },
+      "Backflow valve map.pdf": {
+        "id": "6ae2ea484f6019d2fa00e56a",
+        "size": 735492,
+        "updated_at": "2024-11-27T14:39:31.547Z"
+      },
+      "VBDR BROADLANDS_FILING12_ADDRESS-PLAT.pdf": {
+        "id": "6ae2ea4a4f6019d2fa00e58a",
+        "size": 125730,
+        "updated_at": "2024-11-27T14:39:32.880Z"
+      },
+      "VBDR Best map!.pdf": {
+        "id": "6ae2ea4a4f6019d2fa00e598",
+        "size": 136604,
+        "updated_at": "2024-11-27T14:39:32.227Z"
+      },
+      "VBDR Broadlands ALL map.pdf": {
+        "id": "6ae2ea4a4f6019d2fa00e590",
+        "size": 488339,
+        "updated_at": "2024-11-27T14:39:32.513Z"
+      },
+      "VBDR Plot Maps05232014_0000.pdf": {
+        "id": "6ae2ea4a4f6019d2fa00e59e",
+        "size": 3713056,
+        "updated_at": "2024-11-27T14:39:33.190Z"
+      },
+      "VBDR Villas Models Map013.pdf": {
+        "id": "6ae2ea4a4f6019d2fa00e58b",
+        "size": 709683,
+        "updated_at": "2024-11-27T14:39:33.553Z"
+      }
     },
     "Newsletters/2025": {
-      "December 2025 Newsletter.pdf": "209978",
-      "November 2025 HOA Newsletter (2).pdf": "208204",
-      "October 2025 HOA Newsletter.a.pdf": "204097",
-      "September 2025 HOA Newsletter.pdf": "198808"
+      "December 2025 Newsletter 3.pdf": {
+        "id": "6ae31c794f6019d2fa043a47",
+        "size": 143575,
+        "updated_at": "2025-12-14T10:56:01.333Z"
+      },
+      "November 2025 HOA Newsletter (2).pdf": {
+        "id": "6ae31c6f4f6019d2fa0439c7",
+        "size": 2267762,
+        "updated_at": "2025-11-25T12:12:38.530Z"
+      },
+      "October 2025 HOA Newsletter.a.pdf": {
+        "id": "6ae31c5d4f6019d2fa043849",
+        "size": 303337,
+        "updated_at": "2025-10-26T11:58:20.400Z"
+      },
+      "September 2025 HOA Newsletter.pdf": {
+        "id": "6ae31c3b4f6019d2fa0435f1",
+        "size": 476992,
+        "updated_at": "2025-09-26T18:00:18.187Z"
+      }
     },
     "Newsletters/2026": {
-      "February 2026 Newsletter.pdf": "219626",
-      "January 2026 Newsletter (1).docx.pdf": "214592",
-      "July 2026 Newsletter.pdf": "235962",
-      "June 2026 Newsletter.pdf": "233160",
-      "March 2026 Newsletter (3).pdf": "223489"
+      "February 2026 Newsletter 4.pdf": {
+        "id": "6ae343e04f6019d2fa060442",
+        "size": 96166,
+        "updated_at": "2026-02-21T12:42:30.243Z"
+      },
+      "January 2026 Newsletter (1).docx.pdf": {
+        "id": "6ae343c64f6019d2fa0602d8",
+        "size": 222379,
+        "updated_at": "2026-01-19T15:59:24.363Z"
+      },
+      "July 2026 Newsletter 4.pdf": {
+        "id": "6ae3445f4f6019d2fa060ba0",
+        "size": 178221,
+        "updated_at": "2026-07-14T16:27:52.153Z"
+      },
+      "June 2026 Newsletter 4.pdf": {
+        "id": "6ae344464f6019d2fa060a2c",
+        "size": 189909,
+        "updated_at": "2026-06-17T12:46:31.383Z"
+      },
+      "March 2026 Newsletter (3).pdf": {
+        "id": "6ae343f64f6019d2fa0605a8",
+        "size": 118759,
+        "updated_at": "2026-03-24T16:12:32.147Z"
+      }
     },
     "Reserve Study": {
-      "28837-0-ReserveStudy (1).pdf": "159342"
+      "28837-0-ReserveStudy (1).pdf": {
+        "id": "6ae2a9d24f6019d2fafc138f",
+        "size": 2294421,
+        "updated_at": "2024-12-18T11:59:41.267Z"
+      }
     },
     "Rules and Regulations": {
-      "Rules and Regulations (2022.11).pdf": "196443"
+      "Rules and Regulations (2022.11).pdf": {
+        "id": "6ae2c8614f6019d2fafe7e1a",
+        "size": 63616,
+        "updated_at": "2025-09-11T19:14:03.313Z"
+      }
     }
   }
 }

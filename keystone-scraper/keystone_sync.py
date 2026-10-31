@@ -23,7 +23,6 @@ Usage:
 """
 import argparse
 import gzip
-import io
 import json
 import logging
 import os
@@ -31,6 +30,7 @@ import sys
 from datetime import datetime, timezone
 
 from cinc_client import CincClient, CincError, VILLAS_GROUPING
+import drive_files
 from keystone_extract import (DENVER, HEADERS, SchemaError, arch_review_rows, profile_rows,
                               violation_rows, work_order_rows)
 from sheets_retry import retry_sheets_call
@@ -40,7 +40,6 @@ SPREADSHEET_ID = "1TBC1B2V_yzZaost6r7IGWWqiEebEcQwMp5DknahwYuQ"  # Keystone Cach
 
 BOARD_DRIVE_ID = "0AExYZWmfRm9JUk9PVA"  # HOA Board Documents (board-private)
 ARCHIVE_FOLDER_NAME = "Keystone Archive"
-DELEGATED_USER = "admin@villasboulders.org"
 
 ENDPOINTS = {
     "work_orders": f"/api/v1/bod/work-orders/{VILLAS_GROUPING}",
@@ -70,38 +69,8 @@ def sheets_service():
     return build("sheets", "v4", credentials=creds, cache_discovery=False)
 
 
-def drive_service():
-    from google.oauth2 import service_account
-    from googleapiclient.discovery import build
-    creds = service_account.Credentials.from_service_account_file(
-        CREDENTIALS_PATH, scopes=["https://www.googleapis.com/auth/drive"])
-    return build("drive", "v3", credentials=creds.with_subject(DELEGATED_USER), cache_discovery=False)
-
-
-# ── Archive ───────────────────────────────────────────────────────────────────
-
-def _q(value):
-    return value.replace("\\", "\\\\").replace("'", "\\'")
-
-
-def find_or_create_folder(drive, name, parent_id):
-    query = (f"name = '{_q(name)}' and '{parent_id}' in parents and trashed = false "
-             "and mimeType = 'application/vnd.google-apps.folder'")
-    found = retry_sheets_call(lambda: drive.files().list(
-        q=query, corpora="drive", driveId=BOARD_DRIVE_ID, includeItemsFromAllDrives=True,
-        supportsAllDrives=True, fields="files(id)").execute()).get("files", [])
-    if found:
-        return found[0]["id"]
-    created = retry_sheets_call(lambda: drive.files().create(
-        body={"name": name, "mimeType": "application/vnd.google-apps.folder", "parents": [parent_id]},
-        supportsAllDrives=True, fields="id").execute())
-    logger.info("Created archive folder %s", name)
-    return created["id"]
-
-
 def archive_raw(drive, raw, run_time):
     """Upload the day's raw responses; a same-day rerun replaces that day's file."""
-    from googleapiclient.http import MediaIoBaseUpload
     local = run_time.astimezone(DENVER)
     payload = {
         "fetched_at": run_time.isoformat(),
@@ -110,21 +79,14 @@ def archive_raw(drive, raw, run_time):
         "data": raw,
     }
     blob = gzip.compress(json.dumps(payload, ensure_ascii=False).encode("utf-8"))
-    archive_id = find_or_create_folder(drive, ARCHIVE_FOLDER_NAME, BOARD_DRIVE_ID)
-    year_id = find_or_create_folder(drive, str(local.year), archive_id)
+    archive_id = drive_files.find_or_create_folder(drive, ARCHIVE_FOLDER_NAME, BOARD_DRIVE_ID)
+    year_id = drive_files.find_or_create_folder(drive, str(local.year), archive_id)
     name = f"{local.date().isoformat()}-{VILLAS_GROUPING}.json.gz"
-    existing = retry_sheets_call(lambda: drive.files().list(
-        q=f"name = '{name}' and '{year_id}' in parents and trashed = false",
-        corpora="drive", driveId=BOARD_DRIVE_ID, includeItemsFromAllDrives=True,
-        supportsAllDrives=True, fields="files(id)").execute()).get("files", [])
-    media = MediaIoBaseUpload(io.BytesIO(blob), mimetype="application/gzip", resumable=False)
+    existing = drive_files.find_child(drive, year_id, name)
     if existing:
-        retry_sheets_call(lambda: drive.files().update(
-            fileId=existing[0]["id"], media_body=media, supportsAllDrives=True).execute())
+        drive_files.update_file(drive, existing, blob, "application/gzip")
     else:
-        retry_sheets_call(lambda: drive.files().create(
-            body={"name": name, "parents": [year_id]}, media_body=media,
-            supportsAllDrives=True, fields="id").execute())
+        drive_files.create_file(drive, year_id, name, blob, "application/gzip")
     logger.info("Archived raw responses: %s/%s/%s (%d KB)",
                 ARCHIVE_FOLDER_NAME, local.year, name, len(blob) // 1024)
 
@@ -184,7 +146,7 @@ def run(dry_run=False, force=False):
         logger.info("[dry run] would archive %d KB of raw responses",
                     len(gzip.compress(json.dumps(raw).encode())) // 1024)
     else:
-        archive_raw(drive_service(), raw, run_time)
+        archive_raw(drive_files.drive_service(), raw, run_time)
 
     tabs = {
         "WorkOrders": work_order_rows(raw["work_orders"]),
