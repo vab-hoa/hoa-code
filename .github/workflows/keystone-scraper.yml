@@ -2,9 +2,14 @@ name: Keystone Scraper
 
 on:
   schedule:
-    # 3 AM MDT (9 AM UTC) — matches previous oregano cron schedule
+    # 09:00 UTC = 3 AM MDT / 2 AM MST
     - cron: '0 9 * * *'
   workflow_dispatch:  # allow manual runs from GitHub Actions UI
+
+# Never let two Keystone runs write the cache at the same time.
+concurrency:
+  group: keystone
+  cancel-in-progress: false
 
 jobs:
   scrape:
@@ -23,31 +28,36 @@ jobs:
       - name: Install dependencies
         run: |
           cd keystone-scraper
-          pip install -r requirements.txt
-
-      - name: Install Playwright Chromium
-        run: |
-          playwright install --with-deps chromium
+          pip install -r requirements.txt pytest
 
       - name: Write Google service account credentials
         run: |
           mkdir -p ~/.config/openclaw
           echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}' > ~/.config/openclaw/google-service-account.json
 
-      - name: Run scraper (v2 — CINC Connect REST API)
+      - name: Unit tests
+        run: |
+          cd keystone-scraper
+          python -m pytest -q tests
+
+      - name: Sync Keystone data (CINC Connect API -> archive -> Keystone Cache)
         env:
           KEYSTONE_USERNAME: ${{ secrets.KEYSTONE_USERNAME }}
           KEYSTONE_PASSWORD: ${{ secrets.KEYSTONE_PASSWORD }}
         run: |
           cd keystone-scraper
-          python keystone_scraper_v2.py
+          python keystone_sync.py
 
+      # The directory steps don't use Keystone data (they read the Directory tab and
+      # Google Contacts), so they run even if the Keystone sync failed.
       - name: Rebuild Full Directory
+        if: ${{ !cancelled() }}
         run: |
           cd keystone-scraper
           python build_full_directory.py
 
       - name: Build per-street member directories
+        if: ${{ !cancelled() }}
         run: |
           cd keystone-scraper
           python build_street_directories.py
@@ -61,3 +71,13 @@ jobs:
           git add keystone-scraper/last_run.txt
           git commit -m "chore: keystone scraper ran $(date -u '+%Y-%m-%d')"
           git push
+
+      - name: Email alert on failure
+        if: failure()
+        run: |
+          cd keystone-scraper
+          python notify.py "Keystone nightly sync FAILED" "The Keystone Scraper workflow failed on $(date -u '+%Y-%m-%d'). The Keystone Cache sheet was left as it was before this run.
+
+          Details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          Common causes: Keystone password changed (update the KEYSTONE_PASSWORD secret), or Keystone changed their portal. See keystone-scraper/README.md."
