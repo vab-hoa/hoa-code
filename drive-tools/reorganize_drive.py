@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Reorganize the VaB Board Documents shared drive.
+Reorganize the HOA Board Documents shared drive.
 
 - Protects canonical file IDs (the ones the website links to)
 - Trashes symlink artifacts (Current.Signed.Policies/ copies, Covenants.Amendment doc)
