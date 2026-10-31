@@ -62,6 +62,7 @@ Only these exact scopes work with impersonation (no readonly variants):
 - `https://www.googleapis.com/auth/admin.directory.user.readonly`
 - `https://www.googleapis.com/auth/groups`
 - `https://www.googleapis.com/auth/contacts.readonly`
+- `https://www.googleapis.com/auth/documents` (added 2026-10-31, Docs API editing)
 
 ### Clasp
 - Auth token: `~/.clasprc.json`
