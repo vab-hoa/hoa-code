@@ -46,8 +46,13 @@ logger = logging.getLogger(__name__)
 
 
 def load_env():
-    env_path = Path("/home/dee/hoa-code/keystone-scraper/.env")
+    """Load credentials: environment variables first (CI), then .env next to script."""
     env_vars = {}
+    if os.environ.get("KEYSTONE_USERNAME") and os.environ.get("KEYSTONE_PASSWORD"):
+        env_vars["KEYSTONE_USERNAME"] = os.environ["KEYSTONE_USERNAME"]
+        env_vars["KEYSTONE_PASSWORD"] = os.environ["KEYSTONE_PASSWORD"]
+        return env_vars
+    env_path = Path(__file__).parent / ".env"
     if env_path.exists():
         for line in env_path.read_text().splitlines():
             line = line.strip()
@@ -504,7 +509,8 @@ async def scrape():
                             p['email'], p['phone'], p['last_updated'], p['source']])
         write_sheet(PROFILES_SHEET, p_rows)
 
-    with open("/home/dee/hoa-code/keystone-scraper/last_run.txt", "w") as f:
+    last_run_path = Path(__file__).parent / "last_run.txt"
+    with open(last_run_path, "w") as f:
         f.write(f"Last successful run: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}\n")
 
     return True
