@@ -26,6 +26,8 @@ from pathlib import Path
 import requests
 from playwright.async_api import async_playwright
 
+from sheets_retry import retry_sheets_call
+
 # ── Config ───────────────────────────────────────────────────────────────────
 
 PORTAL_URL = "https://kppm.cincconnect.com"
@@ -230,7 +232,7 @@ async def login_and_get_token(username, password):
 
     if not auth_header:
         raise RuntimeError("Could not obtain JWT auth header")
-    logger.info(f"Auth header obtained: {auth_header[:60]}...")
+    logger.info("Auth header obtained")
     return auth_header
 
 
@@ -252,10 +254,15 @@ class CINCApiClient:
         })
 
     def get_all(self, path, extra_params=None):
-        """Fetch all pages of a paginated list endpoint."""
+        """Fetch all pages of a paginated list endpoint.
+
+        Raises on any non-200 response, unexpected shape, or fewer docs than the API's
+        totalDocs, so a failed fetch can never be written to the sheet as an empty tab.
+        """
         url = f"{API_BASE}{path}"
         all_docs = []
         page = 1
+        total = 0
 
         while True:
             params = {"page": page, "limit": PAGE_LIMIT}
@@ -263,22 +270,20 @@ class CINCApiClient:
                 params.update(extra_params)
 
             logger.info(f"  GET {path}?page={page}&limit={PAGE_LIMIT}")
-            resp = self.session.get(url, params=params, timeout=15)
+            resp = self.session.get(url, params=params, timeout=30)
 
             if resp.status_code != 200:
-                logger.error(f"  API error {resp.status_code}: {resp.text[:200]}")
-                break
+                raise RuntimeError(f"API error {resp.status_code} on {path} page {page}")
 
             data = resp.json()
-            inner = data.get("data", {})
+            inner = data.get("data", {}) if isinstance(data, dict) else None
 
-            if not isinstance(inner, dict) or "docs" not in inner:
-                logger.warning(f"  Unexpected response structure: {list(data.keys())}")
-                break
+            if not isinstance(inner, dict) or not isinstance(inner.get("docs"), list):
+                raise RuntimeError(f"Unexpected response structure on {path} page {page}")
 
-            docs = inner.get("docs", [])
-            total = inner.get("totalDocs", 0)
-            total_pages = inner.get("totalPages", 1)
+            docs = inner["docs"]
+            total = inner.get("totalDocs", 0) or 0
+            total_pages = inner.get("totalPages", 1) or 1
 
             all_docs.extend(docs)
             logger.info(f"  Page {page}/{total_pages}: {len(docs)} docs (total: {total})")
@@ -287,6 +292,8 @@ class CINCApiClient:
                 break
             page += 1
 
+        if len(all_docs) < total:
+            raise RuntimeError(f"Short fetch on {path}: {len(all_docs)} of {total} docs")
         logger.info(f"  Collected {len(all_docs)} docs from {page} page(s)")
         return all_docs
 
@@ -346,44 +353,71 @@ def extract_violations(docs):
     return violations
 
 
+def profile_address(name):
+    """Standardize a home-owner unit name to a parcel code.
+
+    The API gives e.g. "3510 Broadlands Lane #101  Broomfield CO 80023"; the city/state/ZIP
+    follow a double space. Parse only the street part, with the same parser used for work
+    orders, so "#101" becomes unit 1 -> "3510BL1".
+    """
+    street_part = name.split("  ")[0].strip() if name else ""
+    standardized, street_name = parse_work_location(street_part)
+    if standardized and validate_address(standardized, street_name):
+        return standardized
+    return None
+
+
+def _join_unique(values, sep):
+    seen = []
+    for v in values:
+        v = (v or "").strip()
+        if v and v not in seen:
+            seen.append(v)
+    return sep.join(seen)
+
+
 def extract_profiles(docs):
-    """Extract homeowner profiles from home-owner/grouping API response."""
-    profiles = []
+    """Extract one profile row per unit from the home-owner/grouping API response.
+
+    The API returns one doc per owner contact, so a unit with two owners appears twice.
+    Rows are merged by parcel code: owner names joined with " & ", emails/phones with "; ".
+    Units whose address can't be parsed keep their raw street text as the key.
+    """
+    units = {}
+    unparsed = 0
     for d in docs:
-        name = d.get("name", "")  # e.g. "3510 Broadlands Lane #101  Broomfield CO 80023"
-        account_number = d.get("accountNumber", "")
+        name = d.get("name", "") or ""
         owner = d.get("owner", {}) or {}
-        owner_name = ""
-        if owner.get("names") and owner.get("lastNames"):
-            owner_name = f"{owner['names']} {owner['lastNames']}".strip()
-        elif owner.get("names"):
-            owner_name = owner["names"]
-        elif owner.get("lastNames"):
-            owner_name = owner["lastNames"]
-        owner_email = owner.get("email", "") or ""
-        owner_phone = owner.get("phoneNumber", "") or ""
+        owner_name = " ".join(
+            p for p in ((owner.get("names") or "").strip(), (owner.get("lastNames") or "").strip()) if p)
 
-        # Parse address from the name field (e.g. "3510 Broadlands Lane #101  Broomfield CO 80023")
-        # Extract street number and street name
-        addr_match = re.match(r'(\d+)\s+(.+?)(?:\s+#?(\d{3}))?\s+\d{5}', name)
-        if addr_match:
-            street_num = addr_match.group(1)
-            street_name = addr_match.group(2).strip()
-            unit = addr_match.group(3) or ""
-            standardized = standardize_address(street_num, street_name, unit)
-        else:
-            standardized = None
+        address = profile_address(name)
+        if not address:
+            unparsed += 1
+            address = name.split("  ")[0].strip()
+        if not address:
+            continue
+        unit = units.setdefault(address, {"accounts": [], "names": [], "emails": [], "phones": []})
+        unit["accounts"].append(str(d.get("accountNumber", "") or ""))
+        unit["names"].append(owner_name)
+        unit["emails"].append(owner.get("email", "") or "")
+        unit["phones"].append(owner.get("phoneNumber", "") or "")
 
+    today = datetime.now().strftime("%Y-%m-%d")
+    profiles = []
+    for address in sorted(units):
+        u = units[address]
         profiles.append({
-            "address": standardized or name.split("  ")[0] if name else "",
-            "account_number": account_number,
-            "account_name": owner_name,
-            "email": owner_email,
-            "phone": owner_phone,
-            "last_updated": datetime.now().strftime("%Y-%m-%d"),
+            "address": address,
+            "account_number": _join_unique(u["accounts"], "; "),
+            "account_name": _join_unique(u["names"], " & "),
+            "email": _join_unique(u["emails"], "; "),
+            "phone": _join_unique(u["phones"], "; "),
+            "last_updated": today,
             "source": "Keystone",
         })
-    logger.info(f"Profiles: {len(profiles)} extracted")
+    logger.info(f"Profiles: {len(docs)} contacts merged into {len(profiles)} units"
+                f" ({unparsed} with unparsed address)")
     return profiles
 
 
@@ -410,31 +444,69 @@ def extract_acc_reviews(docs):
 
 # ── Google Sheets ─────────────────────────────────────────────────────────────
 
-def write_sheet(sheet_name, rows):
+# Refuse to replace a tab with far fewer rows than it has now; a sudden drop almost always
+# means a bad fetch, not real data. Small tabs (violations) legitimately swing, so the
+# percentage rule only applies once a tab has GUARD_MIN_ROWS rows. --force overrides.
+MIN_KEEP_FRACTION = 0.7
+GUARD_MIN_ROWS = 20
+
+
+def sheets_service():
     from google.oauth2 import service_account
     from googleapiclient.discovery import build
     creds = service_account.Credentials.from_service_account_file(
         CREDENTIALS_PATH, scopes=['https://www.googleapis.com/auth/spreadsheets'])
-    svc = build('sheets', 'v4', credentials=creds)
-    ss = svc.spreadsheets().get(spreadsheetId=SPREADSHEET_ID).execute()
+    return build('sheets', 'v4', credentials=creds)
+
+
+def current_row_count(svc, sheet_name):
+    """Data rows (excluding header) currently in a tab; 0 if the tab doesn't exist."""
+    from googleapiclient.errors import HttpError
+    try:
+        result = retry_sheets_call(lambda: svc.spreadsheets().values().get(
+            spreadsheetId=SPREADSHEET_ID, range=f"{sheet_name}!A:A").execute())
+    except HttpError as e:
+        if e.resp.status == 400:
+            return 0
+        raise
+    return max(0, len(result.get('values', [])) - 1)
+
+
+def guard_problem(sheet_name, new_count, current_count):
+    """Return a reason to refuse the write, or None if it looks safe."""
+    if new_count == 0 and current_count > 0:
+        return f"{sheet_name}: fetched 0 rows but the tab has {current_count}"
+    if current_count >= GUARD_MIN_ROWS and new_count < MIN_KEEP_FRACTION * current_count:
+        return (f"{sheet_name}: fetched {new_count} rows, below {MIN_KEEP_FRACTION:.0%} "
+                f"of the {current_count} currently in the tab")
+    return None
+
+
+def write_sheet(svc, sheet_name, rows):
+    """Write rows starting at A1, then clear only the stale rows below them.
+
+    Writing before clearing means the tab is never empty, even if the run dies midway.
+    """
+    ss = retry_sheets_call(lambda: svc.spreadsheets().get(spreadsheetId=SPREADSHEET_ID).execute())
     if not any(s['properties']['title'] == sheet_name for s in ss['sheets']):
-        svc.spreadsheets().batchUpdate(
+        retry_sheets_call(lambda: svc.spreadsheets().batchUpdate(
             spreadsheetId=SPREADSHEET_ID,
             body={'requests': [{'addSheet': {'properties': {'title': sheet_name}}}]}
-        ).execute()
-    svc.spreadsheets().values().clear(
-        spreadsheetId=SPREADSHEET_ID, range=f"{sheet_name}!A:Z").execute()
-    svc.spreadsheets().values().update(
+        ).execute())
+    last_col = chr(ord('A') + len(rows[0]) - 1)
+    retry_sheets_call(lambda: svc.spreadsheets().values().update(
         spreadsheetId=SPREADSHEET_ID,
-        range=f"{sheet_name}!A1:Z{len(rows)}",
+        range=f"{sheet_name}!A1:{last_col}{len(rows)}",
         valueInputOption='RAW',
-        body={'values': rows}).execute()
+        body={'values': rows}).execute())
+    retry_sheets_call(lambda: svc.spreadsheets().values().clear(
+        spreadsheetId=SPREADSHEET_ID, range=f"{sheet_name}!A{len(rows) + 1}:Z").execute())
     logger.info(f"Wrote {len(rows)-1} rows to {sheet_name}")
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
-async def scrape():
+async def scrape(dry_run=False, force=False):
     env = load_env()
     username = env.get("KEYSTONE_USERNAME", "")
     password = env.get("KEYSTONE_PASSWORD", "")
@@ -449,69 +521,67 @@ async def scrape():
         logger.error(f"Login failed: {e}")
         return False
 
-    # Step 2: Use REST API directly
+    # Step 2: Fetch everything before writing anything, so a failure part-way through
+    # can't leave some tabs new and others stale or empty.
     client = CINCApiClient(auth_header)
+    try:
+        logger.info("Fetching work orders...")
+        all_work_orders = extract_work_orders(client.get_all(f"/api/v1/bod/work-orders/{GROUPING_ID}"))
+        logger.info("Fetching violations...")
+        all_violations = extract_violations(client.get_all(f"/api/v1/bod/violations/{GROUPING_ID}"))
+        logger.info("Fetching ACC reviews...")
+        all_acc_reviews = extract_acc_reviews(client.get_all(f"/api/v1/bod/acc-review/{GROUPING_ID}"))
+        logger.info("Fetching homeowner profiles...")
+        all_profiles = extract_profiles(client.get_all(f"/api/v1/bod/home-owner/grouping/{GROUPING_ID}"))
+    except Exception as e:
+        logger.error(f"Fetch failed, sheet left untouched: {e}")
+        return False
 
-    # Work Orders
-    logger.info("Fetching work orders...")
-    wo_docs = client.get_all(f"/api/v1/bod/work-orders/{GROUPING_ID}")
-    all_work_orders = extract_work_orders(wo_docs)
+    wo_rows = [['Address', 'WO Number', 'Date Created', 'Description', 'Vendor', 'Status', 'Type']]
+    for wo in all_work_orders:
+        wo_rows.append([wo['address'], wo['wo_number'], wo['date'],
+                        wo['description'], wo['vendor'], wo['status'], wo['wo_type']])
+    v_rows = [['Address', 'Date', 'Description', 'Status']]
+    for v in all_violations:
+        v_rows.append([v['address'], v['date'], v['description'], v['status']])
+    a_rows = [['Address', 'Date', 'Description', 'Status']]
+    for a in all_acc_reviews:
+        a_rows.append([a['address'], a['date'], a['description'], a['status']])
+    p_rows = [['Address', 'AccountNumber', 'AccountName', 'Email', 'Phone', 'LastUpdated', 'Source']]
+    for p in all_profiles:
+        p_rows.append([p['address'], p['account_number'], p['account_name'],
+                       p['email'], p['phone'], p['last_updated'], p['source']])
+    tabs = [(WORKORDERS_SHEET, wo_rows), (VIOLATIONS_SHEET, v_rows),
+            (ARCHREVIEWS_SHEET, a_rows), (PROFILES_SHEET, p_rows)]
 
-    # Violations
-    logger.info("Fetching violations...")
-    viol_docs = client.get_all(f"/api/v1/bod/violations/{GROUPING_ID}")
-    all_violations = extract_violations(viol_docs)
+    svc = sheets_service()
+    problems = []
+    logger.info("=== Summary (new rows vs current tab) ===")
+    for sheet_name, rows in tabs:
+        current = current_row_count(svc, sheet_name)
+        logger.info(f"{sheet_name}: {len(rows) - 1} new, {current} current")
+        problem = guard_problem(sheet_name, len(rows) - 1, current)
+        if problem:
+            problems.append(problem)
 
-    # ACC Reviews
-    logger.info("Fetching ACC reviews...")
-    acc_docs = client.get_all(f"/api/v1/bod/acc-review/{GROUPING_ID}")
-    all_acc_reviews = extract_acc_reviews(acc_docs)
+    if problems:
+        for problem in problems:
+            logger.error(f"Guard: {problem}")
+        if not force:
+            logger.error("Refusing to write; sheet left untouched (use --force if the drop is real)")
+            return False
+        logger.warning("--force given; writing despite guard warnings")
 
-    # Profiles (homeowner data)
-    logger.info("Fetching homeowner profiles...")
-    ho_docs = client.get_all(f"/api/v1/bod/home-owner/grouping/{GROUPING_ID}")
-    all_profiles = extract_profiles(ho_docs)
-
-    logger.info(f"\n=== Summary ===")
-    logger.info(f"Work Orders: {len(all_work_orders)}")
-    logger.info(f"Violations: {len(all_violations)}")
-    logger.info(f"ACC Reviews: {len(all_acc_reviews)}")
-    logger.info(f"Profiles: {len(all_profiles)}")
-
-    if '--dry-run' in sys.argv:
+    if dry_run:
         logger.info("[DRY RUN] Skipping sheet writes")
-        if all_work_orders:
-            logger.info(f"Sample WO: {json.dumps(all_work_orders[0])[:300]}")
-        if all_violations:
-            logger.info(f"Sample violation: {json.dumps(all_violations[0])[:300]}")
-        if all_acc_reviews:
-            logger.info(f"Sample ACC: {json.dumps(all_acc_reviews[0])[:300]}")
-    else:
-        wo_rows = [['Address', 'WO Number', 'Date Created', 'Description', 'Vendor', 'Status', 'Type']]
-        for wo in all_work_orders:
-            wo_rows.append([wo['address'], wo['wo_number'], wo['date'],
-                            wo['description'], wo['vendor'], wo['status'], wo['wo_type']])
-        write_sheet(WORKORDERS_SHEET, wo_rows)
+        return True
 
-        v_rows = [['Address', 'Date', 'Description', 'Status']]
-        for v in all_violations:
-            v_rows.append([v['address'], v['date'], v['description'], v['status']])
-        write_sheet(VIOLATIONS_SHEET, v_rows)
-
-        a_rows = [['Address', 'Date', 'Description', 'Status']]
-        for a in all_acc_reviews:
-            a_rows.append([a['address'], a['date'], a['description'], a['status']])
-        write_sheet(ARCHREVIEWS_SHEET, a_rows)
-
-        p_rows = [['Address', 'AccountNumber', 'AccountName', 'Email', 'Phone', 'LastUpdated', 'Source']]
-        for p in all_profiles:
-            p_rows.append([p['address'], p['account_number'], p['account_name'],
-                            p['email'], p['phone'], p['last_updated'], p['source']])
-        write_sheet(PROFILES_SHEET, p_rows)
+    for sheet_name, rows in tabs:
+        write_sheet(svc, sheet_name, rows)
 
     last_run_path = Path(__file__).parent / "last_run.txt"
     with open(last_run_path, "w") as f:
-        f.write(f"Last successful run: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}\n")
+        f.write(f"Last successful run: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}\n")
 
     return True
 
@@ -519,13 +589,15 @@ async def scrape():
 def main():
     parser = argparse.ArgumentParser(description='Keystone CINC Connect Scraper v2')
     parser.add_argument('--dry-run', action='store_true', help='Don\'t write to Google Sheets')
+    parser.add_argument('--force', action='store_true',
+                        help='Write even if a tab would shrink sharply (use only when the drop is real)')
     args = parser.parse_args()
 
     logger.info("=" * 60)
     logger.info("Keystone CINC Connect Scraper v2 (REST API)")
     logger.info("=" * 60)
 
-    success = asyncio.run(scrape())
+    success = asyncio.run(scrape(dry_run=args.dry_run, force=args.force))
     if success:
         logger.info("Scraping completed successfully")
         sys.exit(0)
