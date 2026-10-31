@@ -63,6 +63,17 @@ jobs:
           git add keystone_docs_manifest.json
           git diff --staged --quiet || (git commit -m "chore: keystone documents manifest updated $(date -u '+%Y-%m-%d')" && git push)
 
+      - name: Import Keystone notes into the HOA tracker
+        if: ${{ !cancelled() }}
+        env:
+          KEYSTONE_USERNAME: ${{ secrets.KEYSTONE_USERNAME }}
+          KEYSTONE_PASSWORD: ${{ secrets.KEYSTONE_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          cd keystone-scraper
+          python keystone_notes.py
+
       # The directory steps don't use Keystone data (they read the Directory tab and
       # Google Contacts), so they run even if the Keystone sync failed.
       - name: Rebuild Full Directory
