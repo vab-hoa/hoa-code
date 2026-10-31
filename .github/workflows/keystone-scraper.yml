@@ -84,6 +84,9 @@ jobs:
         run: |
           cd keystone-scraper
           python keystone_attachments.py
+          # Remember identical copies skipped this run, so they're never re-downloaded.
+          git add keystone_attachment_duplicates.json
+          git diff --staged --quiet || (git commit -m "chore: keystone attachment duplicates updated $(date -u '+%Y-%m-%d')" && git push)
 
       # The directory steps don't use Keystone data (they read the Directory tab and
       # Google Contacts), so they run even if the Keystone sync failed.

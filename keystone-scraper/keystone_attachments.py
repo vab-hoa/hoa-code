@@ -10,18 +10,27 @@ Linking is the same as for notes (keystone_notes.py): work orders by keystone_wo
 ARC requests by parcel + nearest date. Every row carries a source_key
 (keystone:wo-attachment:<id> / keystone:arc-attachment:<id>); the database refuses
 duplicates. Files the old backfill already imported (same work item, file name and size)
-are recognised and skipped. At most MAX_DOWNLOADS files are fetched per run; the rest
-follow on later nights.
+are recognised and skipped. Keystone sometimes attaches the very same file several times to
+one work order; only one copy is kept per work item. When an attachment has the same size as
+a file the work item already has, both are compared byte for byte, and an identical one is
+skipped and its key remembered in keystone_attachment_duplicates.json (committed to git;
+attachment keys only) so it is never downloaded again. At most MAX_DOWNLOADS files are
+fetched per run; the rest follow on later nights.
 
 Usage:
   python keystone_attachments.py            # import
   python keystone_attachments.py --dry-run  # count what would be imported; write nothing
 """
 import argparse
+import hashlib
+import json
 import logging
 import mimetypes
 import re
 import sys
+from pathlib import Path
+
+import requests
 
 from cinc_client import VILLAS_GROUPING, CincClient, CincError
 from keystone_notes import arc_candidates, arc_work_item, linked_work_orders
@@ -29,6 +38,7 @@ from tracker_db import TrackerDB, TrackerError
 
 UPLOADED_BY = "Keystone portal (imported)"
 MAX_DOWNLOADS = 300
+DUPLICATES_PATH = Path(__file__).parent / "keystone_attachment_duplicates.json"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger("keystone_attachments")
@@ -63,6 +73,12 @@ def already_have(att, existing_keys, existing_files):
     return (att["work_item_id"], att["file_name"], str(att["size"])) in existing_files
 
 
+def same_size_paths(att, docs):
+    """Storage paths of the work item's existing documents with this attachment's size."""
+    return [d["storage_path"] for d in docs
+            if d["work_item_id"] == att["work_item_id"] and str(d["file_size_bytes"]) == str(att["size"])]
+
+
 def document_row(att, storage_path, size):
     return {
         "work_item_id": att["work_item_id"],
@@ -94,6 +110,14 @@ def list_attachments(client, db):
     return found
 
 
+def stored_digest(db, storage_path):
+    """SHA-256 of a file already in the tracker's (public) documents bucket."""
+    resp = requests.get(f"{db.url}/storage/v1/object/public/work-item-documents/{storage_path}", timeout=120)
+    if resp.status_code != 200:
+        raise TrackerError(f"could not read stored document for comparison: HTTP {resp.status_code}")
+    return hashlib.sha256(resp.content).hexdigest()
+
+
 def main():
     parser = argparse.ArgumentParser(description="Import Keystone attachments into the HOA tracker")
     parser.add_argument("--dry-run", action="store_true", help="count only; write nothing")
@@ -104,25 +128,35 @@ def main():
         client = CincClient()
         client.login()
         attachments = list_attachments(client, db)
-        docs = db.select("work_item_documents", {"select": "work_item_id,file_name,file_size_bytes,source_key"})
+        docs = db.select("work_item_documents",
+                         {"select": "work_item_id,file_name,file_size_bytes,source_key,storage_path"})
         existing_keys = {d["source_key"] for d in docs if d.get("source_key")}
         existing_files = {(d["work_item_id"], d["file_name"], str(d["file_size_bytes"])) for d in docs}
-        todo = [a for a in attachments if not already_have(a, existing_keys, existing_files)]
-        logger.info("%d attachments on linked items, %d already in the tracker, %d to import (%.0f MB)",
-                    len(attachments), len(attachments) - len(todo), len(todo),
+        duplicates = set(json.loads(DUPLICATES_PATH.read_text())) if DUPLICATES_PATH.exists() else set()
+        todo = [a for a in attachments
+                if a["source_key"] not in duplicates and not already_have(a, existing_keys, existing_files)]
+        logger.info("%d attachments on linked items, %d already in the tracker or known duplicates, "
+                    "%d to import (%.0f MB)", len(attachments), len(attachments) - len(todo), len(todo),
                     sum(int(a["size"] or 0) for a in todo) / 1e6)
         if args.dry_run:
             logger.info("[dry run] nothing written")
             return
-        imported = 0
+        imported = skipped = 0
         for att in todo[:MAX_DOWNLOADS]:
             data = client.attachment(att["id"], att["database"], att["file_name"], att["module"])
+            digest = hashlib.sha256(data).hexdigest()
+            if any(stored_digest(db, p) == digest for p in same_size_paths(att, docs)):
+                duplicates.add(att["source_key"])
+                skipped += 1
+                continue
             kind = att["source_key"].split(":")[1]
             path = f"{att['work_item_id']}/keystone-{kind}-{att['id']}-{safe_name(att['file_name'])}"
             row = document_row(att, path, len(data))
             db.upload(path, data, row["content_type"])  # file first; a rerun overwrites it
             imported += len(db.insert_new("work_item_documents", [row]))
-        logger.info("Imported %d attachments%s", imported,
+            docs.append({**row, "storage_path": path})  # later identical copies in this run match it
+        DUPLICATES_PATH.write_text(json.dumps(sorted(duplicates), indent=1) + "\n")
+        logger.info("Imported %d attachments, skipped %d identical copies%s", imported, skipped,
                     f"; {len(todo) - MAX_DOWNLOADS} left for later runs" if len(todo) > MAX_DOWNLOADS else "")
     except (CincError, TrackerError) as e:
         logger.error("Keystone attachments import failed: %s", e)

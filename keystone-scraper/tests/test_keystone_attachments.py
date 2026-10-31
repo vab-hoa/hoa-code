@@ -27,3 +27,12 @@ def test_document_row():
     assert row["content_type"] == "application/pdf"
     assert row["source_key"] == "keystone:arc-attachment:7"
     assert row["title"] == "plan.pdf"
+
+
+def test_same_size_paths_only_on_same_work_item():
+    from keystone_attachments import same_size_paths
+    att = wo_attachment({"_id": 1, "filename": "a.jpg", "database": "d", "fileSize": 10}, "wi")
+    docs = [{"work_item_id": "wi", "file_size_bytes": 10, "storage_path": "wi/x"},
+            {"work_item_id": "wi", "file_size_bytes": 11, "storage_path": "wi/y"},
+            {"work_item_id": "other", "file_size_bytes": 10, "storage_path": "other/z"}]
+    assert same_size_paths(att, docs) == ["wi/x"]
