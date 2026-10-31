@@ -99,6 +99,28 @@ def arc_note_row(record, work_item_id, today):
 
 # ── run ───────────────────────────────────────────────────────────────────────
 
+def linked_work_orders(db):
+    """Tracker work-order items that carry a Keystone WO number."""
+    return db.select("work_items", {
+        "select": "id,keystone_wo_number", "category": "eq.work_order",
+        "excluded_at": "is.null", "keystone_wo_number": "not.is.null"})
+
+
+def arc_candidates(db):
+    """Tracker ARC items as match candidates: [{"id", "created_date", "parcel"}]."""
+    arcs = db.select("work_items", {
+        "select": "id,created_date,properties(parcel_code)", "category": "eq.arc_request",
+        "excluded_at": "is.null"})
+    return [{"id": a["id"], "created_date": a.get("created_date"),
+             "parcel": (a.get("properties") or {}).get("parcel_code")} for a in arcs]
+
+
+def arc_work_item(record, candidates):
+    """Tracker ARC item id for a Keystone ARC record, or None (see match_arc)."""
+    parcel = unit_address((record.get("unit") or {}).get("name", ""))
+    return match_arc(parcel, normalize_date(record.get("postedDate")), candidates)
+
+
 def portal_notes(client, wo_number):
     """All notes for one work order (this endpoint returns its page fields at the top level)."""
     notes, page = [], 1
@@ -124,26 +146,19 @@ def main():
         client = CincClient()
         client.login()
 
-        work_orders = db.select("work_items", {
-            "select": "id,keystone_wo_number", "category": "eq.work_order",
-            "excluded_at": "is.null", "keystone_wo_number": "not.is.null"})
+        work_orders = linked_work_orders(db)
         rows = []
         for wi in work_orders:
             rows += wo_note_rows(wi["keystone_wo_number"], wi["id"],
                                  portal_notes(client, wi["keystone_wo_number"]))
         logger.info("Work orders: %d linked tracker items, %d portal notes", len(work_orders), len(rows))
 
-        arcs = db.select("work_items", {
-            "select": "id,created_date,properties(parcel_code)", "category": "eq.arc_request",
-            "excluded_at": "is.null"})
-        candidates = [{"id": a["id"], "created_date": a.get("created_date"),
-                       "parcel": (a.get("properties") or {}).get("parcel_code")} for a in arcs]
+        candidates = arc_candidates(db)
         matched = unmatched = 0
         for rec in client.get_all(f"/api/v1/bod/acc-review/{VILLAS_GROUPING}"):
             if not (rec.get("committeeResponse") or "").strip():
                 continue
-            parcel = unit_address((rec.get("unit") or {}).get("name", ""))
-            wi_id = match_arc(parcel, normalize_date(rec.get("postedDate")), candidates)
+            wi_id = arc_work_item(rec, candidates)
             if not wi_id:
                 unmatched += 1
                 continue
