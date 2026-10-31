@@ -1,22 +1,75 @@
 {
-  "last_checked": "2026-10-26T16:51:11.244902",
   "folders": {
     "Architectural": {
-      "Design Guidelines": "230979",
-      "Fence and Mailbox Detail": "165991",
-      "Waterwise Plans.pdf": "161866"
+      "Design Guidelines 15.pdf": {
+        "size": 415654,
+        "updated_at": "2026-05-29T11:39:51.070Z",
+        "drive_file_id": "1ua36ZbXery6YyN7NiphC-WRkBa36jDZp"
+      },
+      "Fence and Mailbox Detail.pdf": {
+        "size": 139221,
+        "updated_at": "2025-03-04T14:10:44.550Z",
+        "drive_file_id": "1SoPmnCKm2hEK10As9hd-5xajZBeBe-fo"
+      },
+      "Waterwise Plans.pdf": {
+        "size": 4611381,
+        "updated_at": "2025-01-20T17:23:44.440Z",
+        "drive_file_id": "17ISWMMBLStWudi1ALe7f5nJT9ibP8dbr"
+      }
     },
     "Governing Documents": {
-      "BRL Annexation": "150037",
-      "BRL Articles of Incorporation.pdf": "150038",
-      "BRL Bylaws.pdf": "150039",
-      "BRL CC&Rs.pdf": "150040",
-      "BRL Design Guidelines Amended 5-27-26.pdf": "230915",
-      "BRL Policies and Procedures.pdf": "199376",
-      "BRL Reserve Study.pdf": "150042",
-      "BRL Rules and Regulations Revised 5-27-2026.pdf": "230916",
-      "BRL Signs and Flags Rules": "204398",
-      "BRL Turnover Audit.pdf": "150036"
+      "BRL Annexation.PDF": {
+        "size": 389261,
+        "updated_at": "2024-09-11T15:31:20.210Z",
+        "drive_file_id": "1A4owLryo8tVNv7XUAbGPLe6F95LPYvJt"
+      },
+      "BRL Articles of Incorporation.pdf": {
+        "size": 384666,
+        "updated_at": "2024-09-11T15:31:20.483Z",
+        "drive_file_id": "1LBJAjZrPZJOmhNyjTd7zZ7zSwCIyphML"
+      },
+      "BRL Bylaws.pdf": {
+        "size": 1266745,
+        "updated_at": "2024-09-11T15:31:20.737Z",
+        "drive_file_id": "1gP6ibFSzjqHohqGOVjcPlX54chIHFiE9"
+      },
+      "BRL CC&Rs.pdf": {
+        "size": 5657753,
+        "updated_at": "2024-09-11T15:31:21.003Z",
+        "drive_file_id": "1b6Cm9vZvvOJNzdHiiOtfJ-u9eRXmkG1L"
+      },
+      "BRL Design Guidelines Amended 5-27-26.pdf": {
+        "size": 433689,
+        "updated_at": "2026-05-28T16:21:19.787Z",
+        "drive_file_id": "1oL01ctVm9ZC4SnLuPXsGoptyFHE9dhqm"
+      },
+      "BRL Policies and Procedures.pdf": {
+        "size": 2582530,
+        "updated_at": "2025-10-01T13:39:11.580Z",
+        "drive_file_id": "1O_L3iyZ8F4cSp6k1EJndSjcIKEE1rLa8"
+      },
+      "BRL Reserve Study.pdf": {
+        "size": 2297939,
+        "updated_at": "2024-09-11T15:31:21.677Z",
+        "drive_file_id": "1Q0YBLys7bdmEJFIhrWiso_mBZVpmxuin"
+      },
+      "BRL Rules and Regulations Revised 5-27-2026.pdf": {
+        "size": 194527,
+        "updated_at": "2026-05-28T16:21:19.877Z",
+        "drive_file_id": "1rwcI5j9ylKaPjDFpgmwGW9boQkF03moV"
+      },
+      "BRL Signs and Flags Rules.pdf": {
+        "size": 124832,
+        "updated_at": "2025-10-28T14:18:37.147Z",
+        "drive_file_id": "1Li6IrcT614e4FJqoQiUWtOz8Q7hlFteH"
+      },
+      "BRL Turnover Audit.pdf": {
+        "size": 442413,
+        "updated_at": "2024-09-11T15:31:19.843Z",
+        "drive_file_id": "1Rq8egxzFzDrlt8B3cAgH2oYrcSkpUzTQ"
+      }
     }
-  }
+  },
+  "version": 2,
+  "last_checked": "2026-10-31T17:45:35+00:00"
 }

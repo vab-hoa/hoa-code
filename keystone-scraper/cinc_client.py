@@ -203,6 +203,38 @@ class CincClient:
         logger.info("%s: %d docs (%d page(s), totalDocs %d)", path, len(docs), page, total)
         return docs
 
+    # ── document library ──────────────────────────────────────────────────────
+    # The library is a folder tree per association. Folder IDs are shared across
+    # associations (e.g. "Architectural" has one ID); cincGrouping picks whose files.
+    # A file's download key is its location + name.
+
+    def list_folder(self, grouping, folder_id=None):
+        """Items (files and folders) directly inside a folder; top level if folder_id is None."""
+        params = {"cincGrouping": grouping, "search": "", "feature": ""}
+        if folder_id:
+            params["id"] = folder_id
+        return self.get_all("/api/v2/file/list/byUser", params=params)
+
+    def walk_files(self, grouping, folder_id=None, path=""):
+        """Yield (folder_path, file_record) for every file below a folder, recursively."""
+        for item in self.list_folder(grouping, folder_id):
+            if item.get("type") == "folder":
+                sub = f"{path}/{item['name']}" if path else item["name"]
+                yield from self.walk_files(grouping, item["_id"], sub)
+            else:
+                yield path, item
+
+    def find_folder(self, grouping, name, parent_id=None):
+        """ID of the folder with this exact name inside parent (top level by default)."""
+        for item in self.list_folder(grouping, parent_id):
+            if item.get("type") == "folder" and item.get("name") == name:
+                return item["_id"]
+        raise CincError(f"Portal folder {name!r} not found for grouping {grouping}")
+
+    def download_file(self, record):
+        """Bytes of a file record from list_folder/walk_files."""
+        return self.download(record["location"] + record["name"])
+
     def download_url(self, key):
         """Ask the API for a signed, short-lived link to a document file."""
         path = "/api/v2/file/download/url"

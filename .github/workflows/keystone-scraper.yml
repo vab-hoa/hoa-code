@@ -48,6 +48,21 @@ jobs:
           cd keystone-scraper
           python keystone_sync.py
 
+      - name: Check Villas portal documents (copy new financials/minutes, alert on others)
+        if: ${{ !cancelled() }}
+        env:
+          KEYSTONE_USERNAME: ${{ secrets.KEYSTONE_USERNAME }}
+          KEYSTONE_PASSWORD: ${{ secrets.KEYSTONE_PASSWORD }}
+        run: |
+          cd keystone-scraper
+          python keystone_documents.py
+          # Commit the manifest now, so a later failing step can't make the next run
+          # treat these files as new again.
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add keystone_docs_manifest.json
+          git diff --staged --quiet || (git commit -m "chore: keystone documents manifest updated $(date -u '+%Y-%m-%d')" && git push)
+
       # The directory steps don't use Keystone data (they read the Directory tab and
       # Google Contacts), so they run even if the Keystone sync failed.
       - name: Rebuild Full Directory
