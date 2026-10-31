@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import clsx from 'clsx'
 import { formatDateTime, truncate } from '@/lib/format'
+import { DISPOSITION_LABELS } from '@/lib/constants'
 import { StatusBadge } from './status-badge'
 import type { CorrespondenceEntry, EmailMessage, WorkItemNote } from '@/lib/types'
 
@@ -98,7 +99,12 @@ export function CorrespondenceTimeline({ correspondence, emails, notes = [] }: C
               )}
 
               {entry.classification && (
-                <div className="text-xs text-gray-500 mt-1">Classification: {entry.classification}</div>
+                <div className="text-xs text-gray-500 mt-1">
+                  Classification: {entry.classification}
+                  {entry.email?.disposition && DISPOSITION_LABELS[entry.email.disposition]
+                    ? ` · ${DISPOSITION_LABELS[entry.email.disposition]}`
+                    : ''}
+                </div>
               )}
 
               <div className={clsx('mt-2 text-sm text-gray-700 border p-2 rounded max-h-20 overflow-hidden',
@@ -154,6 +160,10 @@ function EmailBodyModal({ email, onClose }: { email: EmailMessage; onClose: () =
         <div className="px-4 py-3 border-b border-gray-100 text-xs text-gray-600">
           <div>From: {email.from_name} &lt;{email.from_email}&gt;</div>
           <div>Date: {formatDateTime(email.received_date)}</div>
+          {email.disposition && DISPOSITION_LABELS[email.disposition] && (
+            <div>{DISPOSITION_LABELS[email.disposition]}</div>
+          )}
+          {email.disposition_reason && <div>Reason: {email.disposition_reason}</div>}
           {email.classification && <div>Classification: {email.classification}</div>}
         </div>
 

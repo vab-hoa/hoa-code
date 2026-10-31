@@ -1,0 +1,40 @@
+name: Email processor
+
+on:
+  schedule:
+    # 8:00 AM MDT, after the oregano Python processor (5:55 AM) and the
+    # Keystone reconcile (7:30 AM). Shadow mode writes nothing.
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Shadow run
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GMAIL_IMAP_PASSWORD_MCDONALDBUCKHOA: ${{ secrets.GMAIL_IMAP_PASSWORD_MCDONALDBUCKHOA }}
+          SMTP_PASS_JANE: ${{ secrets.SMTP_PASS_JANE }}
+        run: npm run email-processor -- --shadow --days 1 --out email-processor-report.json
+
+      - name: Upload decision report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: email-processor-report
+          path: email-processor-report.json
+          retention-days: 14

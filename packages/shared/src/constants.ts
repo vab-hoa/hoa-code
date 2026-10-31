@@ -94,6 +94,14 @@ export const EMAIL_CLASSIFICATION_LABELS: Record<string, string> = {
   unclassified: 'Unclassified',
 }
 
+export const DISPOSITION_LABELS: Record<string, string> = {
+  new_request: 'New request',
+  update: 'Update',
+  unrelated: 'Not a work item',
+  needs_review: 'Needs review',
+  system: 'System',
+}
+
 export const PRIORITY_ORDER: Record<string, number> = {
   urgent: 4,
   high: 3,

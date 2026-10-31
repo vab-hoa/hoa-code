@@ -66,6 +66,9 @@ export interface EmailMessage {
   received_date: string | null
   classification: string | null
   classification_confidence: number | null
+  disposition?: string | null
+  disposition_reason?: string | null
+  needs_review?: boolean | null
   is_noise: boolean
   parse_payload: Record<string, unknown> | null
   processed_at: string | null

@@ -3,8 +3,17 @@
 import { useState, useEffect } from 'react'
 import { getEmails, getEmailLinkedWorkItems } from '@/lib/queries'
 import { Loading } from '@/components/loading'
-import { formatDateTime, truncate } from '@/lib/format'
+import { formatDateTime } from '@/lib/format'
+import { DISPOSITION_LABELS, EMAIL_CLASSIFICATION_LABELS } from '@/lib/constants'
 import Link from 'next/link'
+
+function emailLabel(email: { disposition?: string | null; classification?: string | null }) {
+  if (email.disposition && DISPOSITION_LABELS[email.disposition]) return DISPOSITION_LABELS[email.disposition]
+  if (email.classification && EMAIL_CLASSIFICATION_LABELS[email.classification]) {
+    return EMAIL_CLASSIFICATION_LABELS[email.classification]
+  }
+  return email.classification || 'unclassified'
+}
 
 export default function EmailsPage() {
   const [emails, setEmails] = useState<any[]>([])
@@ -78,8 +87,8 @@ export default function EmailsPage() {
                 <td className="px-4 py-2 text-xs text-gray-600">{formatDateTime(email.received_date)}</td>
                 <td className="px-4 py-2 text-sm text-gray-900">{email.from_name || email.from_email}</td>
                 <td className="px-4 py-2 text-sm text-gray-700 truncate">{email.subject || '(no subject)'}</td>
-                <td className="px-4 py-2 text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded w-fit">
-                  {email.classification || 'unclassified'}
+                <td className={`px-4 py-2 text-xs ${email.needs_review ? 'text-amber-800 font-medium' : 'text-gray-700'}`}>
+                  {emailLabel(email)}
                 </td>
               </tr>
             ))}
@@ -100,6 +109,8 @@ export default function EmailsPage() {
             <div className="px-4 py-3 border-b border-gray-100 text-xs text-gray-600">
               <div>From: {selectedEmail.from_name} &lt;{selectedEmail.from_email}&gt;</div>
               <div>Date: {formatDateTime(selectedEmail.received_date)}</div>
+              <div>{emailLabel(selectedEmail)}</div>
+              {selectedEmail.disposition_reason && <div>Reason: {selectedEmail.disposition_reason}</div>}
               {selectedEmail.classification && <div>Classification: {selectedEmail.classification}</div>}
             </div>
 
