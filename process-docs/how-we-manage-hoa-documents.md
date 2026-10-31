@@ -32,7 +32,7 @@ The HOA has three shared Google Drives. You will see them under "Shared drives" 
 - Policies (all current HOA policies)
 - Reserve Studies (reserve study reports)
 
-Two files sit at the top level because they answer a homeowner's first two questions: **Directors and Officers** (who runs this place) and **Policy Directory** (what rules apply to me).
+Two files sit at the top level because they answer a homeowner's first two questions: **Directors and Officers** (who runs this place) and **Policy Directory**, a Google Doc with a table listing the current policies (what rules apply to me).
 
 **HOA Website** is the public website, villasboulders.org. It is a navigation layer, not a document store. It points to files in HOA Documents. Its pages are built in Google Sites, and Google does not give us a way to edit Sites from outside, so website changes are made by hand.
 
@@ -88,7 +88,7 @@ Homeowners read PDFs. They should not have to open Google Docs or Word files.
 2. Download it as a PDF: File, then Download, then PDF Document.
 3. Open the matching folder in HOA Documents. You can get there from HOA Board Documents through the → shortcut.
 4. Upload the PDF, or use Manage versions if you are replacing an existing PDF (see Kind 1 above).
-5. Name the PDF with the document name and the approval date, such as "Snow Removal Policy (approved 2026-10-31).pdf". For newsletters, use the month and year, such as "January 2027 Newsletter.pdf".
+5. Name the PDF with the document name and the date, such as "Snow Removal Policy (2026-10-31).pdf". For newsletters, use the month and year, such as "January 2027 Newsletter.pdf".
 6. Check sharing. Right-click the file, choose **Share**, and set General access to **Anyone with the link, Viewer**. This is required for website links to open without a login. See "Sharing" below.
 7. If the document is new (Kind 2), update the website pages listed in the checklist below.
 
@@ -166,8 +166,8 @@ Policy source documents (the Word or Google Doc versions the board edits) live i
 
 1. Draft the policy in that folder. Before the meeting where it will be voted on, make sure it is a Google Doc.
 2. When the board approves it, record the approval date inside the document.
-3. Download it as a PDF and upload it to HOA Documents, Policies, then the policy's folder, as "Policy Name (approved YYYY-MM-DD).pdf". Remove or replace the old PDF.
-4. Update the Policy Directory so it shows the new approval date.
+3. Download it as a PDF and upload it to HOA Documents, Policies, then the policy's folder, as "Policy Name (YYYY-MM-DD).pdf", using the approval date. Remove or replace the old PDF.
+4. Update the Policy Directory (a Google Doc containing a table of current policies) so its row for this policy shows the new approval date.
 5. Check sharing on the uploaded file.
 
 ## Governing Documents and ARC Guidelines
