@@ -1,8 +1,9 @@
 const { createClient } = require('@supabase/supabase-js')
 
 const supabase = createClient(
-  'https://obveytoovkzjrpzrhrim.supabase.co',
-  'REDACTED'
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://obveytoovkzjrpzrhrim.supabase.co',
+  // Never hardcode keys here: this repo is public. Set SUPABASE_SERVICE_ROLE_KEY in the environment.
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 )
 
 async function checkView() {
