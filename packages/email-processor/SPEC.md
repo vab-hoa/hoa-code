@@ -1,8 +1,9 @@
 # HOA email processor
 
-Decides what to do with each HOA email. The live writer is still
-`hoa-tracker/email_processor.py` on oregano. This package is the replacement.
-It does not write unless invoked with `--write`.
+Decides what to do with each HOA email. The scheduled writer is this
+package: the GitHub Actions workflow "Email processor" runs with `--write`.
+The oregano cron for `hoa-tracker/email_processor.py` was removed on
+2026-11-01. A local run writes only when invoked with `--write`.
 
 ## Disposition
 
@@ -34,7 +35,7 @@ Sender role is context. It does not decide the disposition.
 Free-form mail uses the model named in `packages/email-processor/model.json`.
 That file is the remembered choice for this processor only. Jane's models and
 `hoa-tracker/email_processor.py` do not read it. To switch, edit `model` and
-push. The next shadow run uses the new value.
+push. The next scheduled run uses the new value.
 
 `OPENROUTER_MODEL`, when set in the environment, overrides that one run and
 does not change the file. The workflow leaves it unset. The report and the
@@ -88,7 +89,7 @@ It is rejected together with `--write`.
 `--shadow` and `--dry-run` read Supabase and call the model, then write a
 report. They do not insert work items and they do not send mail. `--write`
 persists, uploads attachments onto the linked work item, and emails the
-digest to dee@wmbuck.net. The scheduled workflow runs `--shadow`.
+digest to dee@wmbuck.net. The scheduled workflow runs `--write`.
 
 Apply `hoa-tracker/schema_email_disposition.sql` before the first `--write`.
 If those columns are missing, the writer retries without them and says so.
