@@ -169,9 +169,10 @@ function gatherReportData(email, standardizedAddress, displayAddress, originalAd
     woodTrimFolderImages: null
   };
 
-  // Get homeowner contact info from HOA Contacts
+  // Get the unit's homeowner(s) from HOA Contacts, by the unit's address. Not by the
+  // requester's email: a board member may request a report on someone else's unit.
   try {
-    data.contact = HOALibrary.getHomeownerFromEmail(email);
+    data.contact = HOALibrary.getHomeownerByAddress(standardizedAddress);
   } catch (e) {
     console.error('Error getting contact data: ' + e.toString());
   }

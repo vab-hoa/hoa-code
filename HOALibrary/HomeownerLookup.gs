@@ -71,6 +71,70 @@ function getHomeownerFromEmail(email) {
 
 
 /**
+ * Look up the homeowner(s) of a unit in HOA Contacts by the unit's address.
+ *
+ * Use this (not getHomeownerFromEmail) when reporting on a unit: a board member may
+ * request a report on someone else's unit, and the report must show that unit's owners,
+ * not the person who asked.
+ *
+ * Every contact whose address standardizes to the unit is included, so a unit with two
+ * owners shows both: names joined " & ", emails and phones joined "; ".
+ *
+ * @param {string} standardizedAddress - Unit parcel code, e.g. "13713BP2"
+ * @return {object|null} {name, address, email, phone} or null if no contact has that address
+ */
+function getHomeownerByAddress(standardizedAddress) {
+  if (!standardizedAddress) return null;
+  try {
+    var names = [], emails = [], phones = [], address = '';
+    var pageToken = null;
+    do {
+      var resp = People.People.Connections.list('people/me', {
+        personFields: 'names,addresses,emailAddresses,phoneNumbers',
+        pageSize: 1000,
+        pageToken: pageToken
+      });
+      (resp.connections || []).forEach(function(person) {
+        var matches = (person.addresses || []).some(function(a) {
+          var text = a.formattedValue || a.streetAddress || '';
+          return text && standardizeHOAAddress(text) === standardizedAddress;
+        });
+        if (!matches) return;
+        if (person.names && person.names.length > 0) {
+          var n = person.names[0];
+          var full = n.displayName || [n.givenName, n.familyName].filter(Boolean).join(' ');
+          if (full && names.indexOf(full) === -1) names.push(full);
+        }
+        (person.emailAddresses || []).forEach(function(e) {
+          if (e.value && emails.indexOf(e.value) === -1) emails.push(e.value);
+        });
+        if (person.phoneNumbers && person.phoneNumbers.length > 0) {
+          var p = person.phoneNumbers[0].value || '';
+          if (p && phones.indexOf(p) === -1) phones.push(p);
+        }
+        if (!address) {
+          var addr = person.addresses[0];
+          address = addr.formattedValue || addr.streetAddress || '';
+        }
+      });
+      pageToken = resp.nextPageToken;
+    } while (pageToken);
+
+    if (names.length === 0 && !address) return null;
+    return {
+      name: names.join(' & '),
+      address: address,
+      email: emails.join('; '),
+      phone: phones.join('; ')
+    };
+  } catch (e) {
+    console.error('Error looking up homeowner for ' + standardizedAddress + ': ' + e);
+    return null;
+  }
+}
+
+
+/**
  * Check if email is a member of the HOA board group.
  *
  * @param {string} email - Email to check
