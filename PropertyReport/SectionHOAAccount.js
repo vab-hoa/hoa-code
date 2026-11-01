@@ -1,7 +1,8 @@
 /**
  * HOA Account Section Generator
  * Generates a Google Doc with homeowner identity and account information.
- * Data sources: HOA Contacts (Google People API) + Keystone account number.
+ * Data sources: HOA Contacts (Google People API), looked up by the unit's address,
+ * with the Keystone profile as fallback; never the requester's own contact record.
  * Includes a note to contact the property manager for corrections.
  */
 
@@ -47,8 +48,10 @@ function generateSectionHOAAccount(address, displayAddress, data) {
                (data.keystone && data.keystone.profile && data.keystone.profile.name) || '';
     // Address: from HOA Contacts
     var contactAddress = (data.contact && data.contact.address) || displayAddress;
-    // Email: from HOA Contacts (the email used to submit the form)
-    var email = (data.contact && data.contact.email) || data.email || '';
+    // Email: from HOA Contacts, fall back to Keystone profile. Never the requester's
+    // email (data.email): a board member may be reporting on someone else's unit.
+    var email = (data.contact && data.contact.email) ||
+                (data.keystone && data.keystone.profile && data.keystone.profile.email) || '';
     // Phone: from HOA Contacts, fall back to Keystone profile
     var phone = (data.contact && data.contact.phone) ||
                 (data.keystone && data.keystone.profile && data.keystone.profile.phone) || '';
