@@ -29,8 +29,8 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/generate-arc-serials.cjs
 
-      # The former "Sync Keystone status" step (scripts/sync-keystone-status.cjs) was removed
-      # 2026-10-31: it read sheet tabs that don't exist ('Work Orders', 'ARC Review'), so it
+      # The former "Sync Keystone status" step (scripts/sync-keystone-status.cjs, now deleted) was
+      # removed 2026-10-31: it read sheet tabs that don't exist ('Work Orders', 'ARC Review'), so it
       # silently did nothing, and fixing it would create a second writer of
       # work_items.keystone_status. hoa-tracker/keystone_reconcile.py is the single writer.
 

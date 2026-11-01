@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-31  
 **Owner:** Dee Buck, IT Officer  
-**Repository:** github.com/vab-hoa/hoa-code (private)
+**Repository:** github.com/vab-hoa/hoa-code (**PUBLIC** — never commit passwords, keys or homeowner data)
 
 ---
 
@@ -40,11 +40,11 @@ Most of this was written by AI. I'm writing this part to set the stage. I have b
 The Keystone Pacific portal scraper (`keystone-scraper.yml`, plus the Broadlands document sync that shares the same login) authenticates using **Dee's personal homeowner account**:
 
 - `KEYSTONE_USERNAME` / `KEYSTONE_PASSWORD` — GitHub Actions secrets
-- the same pair in `.env` on oregano, for the local cron fallback
+- the same pair in `keystone-scraper/.env` on oregano, for running the scripts by hand (the oregano cron copy was retired 2026-10-31; GitHub Actions is the only scheduled runner)
 
 **Why this matters.** Those credentials belong to Dee as a homeowner, not to the HOA as an organization. If Dee becomes unavailable, the scrape stops as soon as that account is closed, and nobody else can retrieve the data. Everything downstream depends on it: the Keystone Cache sheet, the dashboard, work orders, violations, ACC reviews, the Full Directory rebuild, and the Broadlands document monitor.
 
-**Why it has not been fixed yet.** Keystone replaced its portal with **CINC Connect** (`kppm.cincconnect.com`) around 28 October 2026, retiring `kppm.cincwebaxis.com`. The scraper was rewritten to log in with Playwright and then call the portal's REST API directly. Asking Keystone for an IT or service account right now would draw attention to automated API use against a portal that is only days old, with a real risk of rate limiting, blocking, or a policy change. Dee has deliberately deferred the request.
+**Why it has not been fixed yet.** Keystone replaced its portal with **CINC Connect** (`kppm.cincconnect.com`) around 28 October 2026, retiring `kppm.cincwebaxis.com`. The scraper was rewritten (2026-10-31) to log in and read everything through the portal's REST API, with no browser; see `keystone-scraper/README.md`. Asking Keystone for an IT or service account right now would draw attention to automated API use against a portal that is only days old, with a real risk of rate limiting, blocking, or a policy change. Dee has deliberately deferred the request.
 
 **What must happen before handover:**
 
@@ -55,7 +55,7 @@ The Keystone Pacific portal scraper (`keystone-scraper.yml`, plus the Broadlands
 
 No code changes are required — only the account.
 
-**Risk if handover happens first:** the daily scrape fails silently, the Keystone Cache goes stale, the dashboard stops reflecting work orders and violations, and the board loses visibility with no obvious warning.
+**Risk if handover happens first:** the nightly jobs fail as soon as the account stops working. Since 2026-10-31 they email itofficer@ and admin@ ("Keystone nightly sync FAILED") and leave the spreadsheet untouched, but until a new login is in place the Keystone Cache goes stale, the tracker stops receiving work orders, notes and attachments, and the Broadlands document mirror stops updating.
 
 ---
 
@@ -217,11 +217,11 @@ All deployed via `clasp push` + `clasp deploy --deploymentId <ID>`.
 All cloud-hosted; no oregano dependencies except `daily_memory_sync.sh`. Workflows stored in `.github/workflows/`.
 
 #### keystone-scraper.yml
-- **Trigger:** Daily, 3 AM MDT
-- **Function:** Scrapes Keystone HOA management portal for violations, work orders, homeowner profiles
-- **Implementation:** Selenium + Python (in `keystone-scraper/` directory)
-- **Output:** Writes to "Keystone Cache" Google Sheet
-- **Secrets used:** KEYSTONE_USERNAME, KEYSTONE_PASSWORD, GOOGLE_SERVICE_ACCOUNT_JSON
+- **Trigger:** Daily, 09:00 UTC (3 AM MDT / 2 AM MST)
+- **Function:** Reads the Keystone portal API: work orders, violations, ARC requests, owner contacts → Keystone Cache sheet + daily raw archive (HOA Board Documents/Keystone Archive); new portal financials/minutes → HOA Documents; Keystone notes and attachments → HOA tracker (Supabase); then rebuilds the Full Directory and street lists
+- **Implementation:** Python, REST API, no browser (`keystone-scraper/`; runbook in `keystone-scraper/README.md`). Unit tests run first; failures email itofficer@ and admin@
+- **Output:** Keystone Cache sheet, Drive archive, HOA Documents, tracker notes/documents
+- **Secrets used:** KEYSTONE_USERNAME, KEYSTONE_PASSWORD, GOOGLE_SERVICE_ACCOUNT_JSON, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 - **Dependencies:** Keystone Pacific portal — now **CINC Connect** (`kppm.cincconnect.com`); old portal `kppm.cincwebaxis.com` retired ~2026-10-28
 - **Account:** Dee's personal homeowner login — see Critical Handover Issue at top of this document
 
@@ -249,11 +249,11 @@ All cloud-hosted; no oregano dependencies except `daily_memory_sync.sh`. Workflo
 - **Secrets used:** GOOGLE_SERVICE_ACCOUNT_JSON
 
 #### sync-keystone-status.yml
-- **Trigger:** Daily, 4 AM MDT (after keystone-scraper completes)
-- **Function:** Syncs scraped Keystone data to Supabase Postgres (for hoa-tracker-dashboard)
-- **Implementation:** Node.js scripts (`generate-arc-serials.js`, `sync-keystone-status.js`)
-- **Output:** Supabase tables updated (work_orders, arc_requests, violations, etc.)
-- **Secrets used:** GOOGLE_SERVICE_ACCOUNT_JSON, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+- **Trigger:** Daily, 09:30 UTC
+- **Function:** Assigns ARC request serial numbers in the tracker. (Its former Keystone-status step read sheet tabs that don't exist and silently did nothing; removed 2026-10-31. `hoa-tracker/keystone_reconcile.py` is the one writer of Keystone status.)
+- **Implementation:** Node.js (`scripts/generate-arc-serials.cjs`)
+- **Output:** `work_items.arc_request_serial`
+- **Secrets used:** SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 
 ### 3. Next.js Dashboard (Vercel)
 
@@ -385,8 +385,8 @@ Managed via `gh secret` CLI or GitHub web UI. Last audited 2026-08-30:
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | 2026-08-25 | All Python/Node workflows | GCP service account (see §1) |
 | `KEYSTONE_USERNAME` | 2026-06-07 | keystone-scraper, broadlands-sync | Keystone portal login |
 | `KEYSTONE_PASSWORD` | 2026-06-07 | keystone-scraper, broadlands-sync | Keystone portal login |
-| `SUPABASE_URL` | 2026-08-25 | sync-keystone-status | Supabase project URL |
-| `SUPABASE_SERVICE_ROLE_KEY` | 2026-08-25 | sync-keystone-status | Server-side Supabase full access |
+| `SUPABASE_URL` | 2026-08-25 | sync-keystone-status, keystone-scraper, email-processor | Supabase project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | 2026-10-31 | sync-keystone-status, keystone-scraper, email-processor | Supabase *secret* key (`sb_secret_…`), full access. Rotated 2026-10-31 after the old legacy key was found in this public repo; legacy JWT keys are disabled. |
 
 **Adding a new secret:**
 ```bash
@@ -450,10 +450,10 @@ All times are MDT. Most tasks run in GitHub Actions (cloud); LinkMonitor runs in
 
 | Time | Frequency | Task | Workflow | Output |
 |------|-----------|------|----------|--------|
-| 3 AM | Daily | Scrape Keystone portal (violations, work orders, profiles) | keystone-scraper.yml | Keystone Cache sheet |
+| 3 AM | Daily | Keystone portal → Keystone Cache, archive, HOA Documents, tracker notes/attachments | keystone-scraper.yml | Keystone Cache sheet, Drive, tracker |
 | 3 AM | Daily | Sync Gmail labels to Google Groups | labels-to-groups.yml | Street group memberships |
 | 3 AM | Daily | Link check villasboulders.org | LinkMonitor (Apps Script time trigger) | Email to admin@ on new broken links |
-| 4 AM | Daily | Sync Keystone data to Supabase | sync-keystone-status.yml | hoa-tracker-dashboard database |
+| 3:30 AM | Daily | ARC request serial numbers | sync-keystone-status.yml | hoa-tracker-dashboard database |
 | 7 AM | Daily | Work order report email | work-order-schedule.yml | Email to board@, manager@ |
 | 4:30 AM | Weekly (Mon) | Sync Broadlands Master Association docs | broadlands-sync.yml | broadlands_manifest.json commit |
 
@@ -596,7 +596,7 @@ gh act  # Requires act CLI: https://github.com/nektos/act
 ### Supabase / Dashboard
 
 **Problem:** Dashboard shows stale work order data  
-**Solution:** Check sync-keystone-status workflow runs correctly (4 AM daily). If failing, check `SUPABASE_SERVICE_ROLE_KEY` is valid in GitHub Actions secrets.
+**Solution:** Check the Keystone Scraper workflow (nightly) in GitHub Actions; a failure also sends an email. If its tracker steps fail, check `SUPABASE_SERVICE_ROLE_KEY` is valid in GitHub Actions secrets. See `keystone-scraper/README.md`.
 
 **Problem:** `/send` page returns 500 error  
 **Solution:** Check Vercel logs. Likely `GOOGLE_SERVICE_ACCOUNT_B64` is corrupted or outdated. Verify in Vercel env vars that the base64 JSON is valid.
