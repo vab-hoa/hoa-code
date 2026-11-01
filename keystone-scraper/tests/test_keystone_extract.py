@@ -87,3 +87,41 @@ def test_profiles_merge_one_row_per_unit():
         ["3510BL1", "A1", "Pat Doe & Lee Doe", "p@example.com; l@example.com", "555", "2026-11-01", "Keystone"],
         ["3510BL2", "A2", "", "", "", "2026-11-01", "Keystone"],
     ]
+
+
+def test_format_phone():
+    from keystone_extract import format_phone
+    assert format_phone("3035551234") == "(303) 555-1234"
+    assert format_phone("+1 303-555-1234") == "(303) 555-1234"
+    assert format_phone("555-1234") == "555-1234"
+    assert format_phone(None) == ""
+
+
+def test_directory_rows_one_per_unit_last_names():
+    from keystone_extract import directory_rows
+    unit1 = "13622 Boulder Circle #101  Broomfield CO 80023"
+    docs = [
+        {"name": unit1, "owner": {"names": "Pat", "lastNames": "Doe", "phoneNumber": "3035551234"}},
+        {"name": unit1, "owner": {"names": "Lee", "lastNames": "Roe", "phoneNumber": ""}},
+        {"name": "3510 Broadlands Lane #102  Broomfield CO 80023", "owner": {"names": "Sam", "lastNames": "Poe"}},
+        {"name": "999 Nowhere St  Denver CO 80000", "owner": {"lastNames": "Skip"}},
+    ]
+    assert directory_rows(docs, "2026-11-01") == [
+        ["Boulder Circle", "13622", "101", "13622 Boulder Circle #101", "Doe & Roe", "(303) 555-1234", "2026-11-01"],
+        ["Broadlands Lane", "3510", "102", "3510 Broadlands Lane #102", "Poe", "", "2026-11-01"],
+    ]
+
+
+def test_directory_keeps_known_phone_for_same_family_only():
+    from keystone_extract import directory_rows
+    docs = [
+        {"name": "13622 Boulder Circle #101  Broomfield CO 80023", "owner": {"lastNames": "Doe"}},
+        {"name": "13622 Boulder Circle #102  Broomfield CO 80023", "owner": {"lastNames": "Newowner"}},
+    ]
+    previous = [
+        ["Boulder Circle", "13622", "101", "13622 Boulder Circle #101", "Doe", "(303) 555-0001", "2026-05-27"],
+        ["Boulder Circle", "13622", "102", "13622 Boulder Circle #102", "Oldowner", "(303) 555-0002", "2026-05-27"],
+    ]
+    rows = directory_rows(docs, "2026-11-01", previous=previous)
+    assert rows[0][5] == "(303) 555-0001"   # same family, Keystone has no phone: kept
+    assert rows[1][5] == ""                 # new owner: old owner's phone not carried over

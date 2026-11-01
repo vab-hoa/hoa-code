@@ -10,7 +10,8 @@ Runs in GitHub Actions (.github/workflows/keystone-scraper.yml). Steps:
      in the board-private drive, never in git). Saved before the sheet, so even a run
      that fails later leaves the evidence behind.
   3. Shape rows (keystone_extract.py) and write the WorkOrders, Violations, ArchReviews and
-     Profiles tabs of the Keystone Cache sheet.
+     Profiles tabs of the Keystone Cache sheet, and the Directory tab (owner names/phones
+     per unit) that build_full_directory.py merges with Google Contacts.
 
 Safety: everything is fetched and checked before any tab is written; a tab is never
 replaced by a much smaller one (bad fetch) unless --force is given; writes never leave a
@@ -31,8 +32,8 @@ from datetime import datetime, timezone
 
 from cinc_client import CincClient, CincError, VILLAS_GROUPING
 import drive_files
-from keystone_extract import (DENVER, HEADERS, SchemaError, arch_review_rows, profile_rows,
-                              violation_rows, work_order_rows)
+from keystone_extract import (DENVER, HEADERS, SchemaError, arch_review_rows, directory_rows,
+                              profile_rows, violation_rows, work_order_rows)
 from sheets_retry import retry_sheets_call
 
 CREDENTIALS_PATH = os.path.expanduser("~/.config/openclaw/google-service-account.json")
@@ -153,9 +154,16 @@ def run(dry_run=False, force=False):
         "Violations": violation_rows(raw["violations"]),
         "ArchReviews": arch_review_rows(raw["acc_reviews"]),
         "Profiles": profile_rows(raw["home_owners"], today=run_time.astimezone(DENVER).date().isoformat()),
+        # Keystone side of the owner directory; build_full_directory.py merges it with
+        # Google Contacts into Full Directory and the street lists.
+        "Directory": None,  # filled below: needs the tab's current phones
     }
 
     svc = sheets_service()
+    current_directory = retry_sheets_call(lambda: svc.spreadsheets().values().get(
+        spreadsheetId=SPREADSHEET_ID, range="Directory!A2:G").execute()).get("values", [])
+    tabs["Directory"] = directory_rows(raw["home_owners"], run_time.astimezone(DENVER).date().isoformat(),
+                                       previous=current_directory)
     problems = []
     for tab, rows in tabs.items():
         current = current_row_count(svc, tab)
