@@ -1,0 +1,64 @@
+name: Contacts sync
+
+on:
+  schedule:
+    # 10:00 UTC = 3:00 AM MST / 4:00 AM MDT, after the Keystone scraper at 09:00 UTC
+    # and before the email processor at 14:00 UTC.
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+
+# A second run must not mark the first run's people inactive mid-write.
+concurrency:
+  group: contacts-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Sync Google Contacts into people
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npm run contacts-sync -- --write --out "$GITHUB_WORKSPACE/contacts-sync-report.json"
+
+      - name: Set up Python
+        if: success()
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        if: success()
+        run: |
+          cd keystone-scraper
+          pip install -r requirements.txt
+
+      - name: Rebuild per-street member directories
+        if: success()
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          cd keystone-scraper
+          python build_street_directories.py
+
+      - name: Upload sync report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: contacts-sync-report
+          path: contacts-sync-report.json
+          retention-days: 14

@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """
-Build per-street neighbor directory spreadsheets from the Full Directory tab.
+Build per-street neighbor directory spreadsheets from people + contacts.
 
 For each of 6 streets, creates a Google Sheets spreadsheet in Board Documents/Member Lists/
 with 3 tabs: "Last Name", "First Name", "Address" — sorted by that field.
 Each row contains one person (couples/families get multiple rows per unit).
 Columns: Last Name, First Name, Full Address, Phone 1, Phone 2, Email, Groups
 
-Depends on: Full Directory tab in Keystone Cache spreadsheet (populated by build_full_directory.py).
-Runs nightly via GitHub Actions after build_full_directory.py.
+Source: the Supabase people and contacts tables (Google Contacts sync).
+Inactive people are left off these sheets; the dashboard still shows them.
+Runs after the contacts sync. The Groups column still comes from Google Group membership.
 """
 import json
 import os
@@ -20,12 +21,12 @@ from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 
 from sheets_retry import retry_sheets_call
+from tracker_db import TrackerDB
 
 # IDs and config
 DOMAIN = "villasboulders.org"
 ADMIN_EMAIL = "admin@villasboulders.org"
 SA_FILE = os.path.expanduser("~/.config/openclaw/google-service-account.json")
-KEYSTONE_CACHE_SHEET_ID = '1TBC1B2V_yzZaost6r7IGWWqiEebEcQwMp5DknahwYuQ'
 MEMBER_LISTS_FOLDER_ID = '1SVWOn1NMmq4Sj846BEGJoeI85ttT0ETK'
 SHARED_DRIVE_ID = '0AExYZWmfRm9JUk9PVA'
 
@@ -112,15 +113,61 @@ def street_sort_key(street_name):
         return 99
 
 
-def load_full_directory(sheets):
-    """Load Full Directory tab from Keystone Cache spreadsheet."""
-    result = retry_sheets_call(
-        lambda: sheets.spreadsheets().values().get(
-            spreadsheetId=KEYSTONE_CACHE_SHEET_ID,
-            range='Full Directory!A2:J500'
-        ).execute()
-    )
-    return result.get('values', [])
+def ordered_contacts(contacts, kind):
+    """Primary contact first, then the rest, for one kind (email or phone)."""
+    items = [c for c in contacts if c.get('kind') == kind and c.get('value')]
+    items.sort(key=lambda c: (0 if c.get('is_primary') else 1, c['value']))
+    return [c['value'] for c in items]
+
+
+def full_address(person):
+    raw = (person.get('raw_address') or '').split('\n')[0].strip()
+    if raw:
+        return raw
+    street = (person.get('street') or '').title()
+    unit = f" #{person['unit']}" if person.get('unit') else ''
+    return f"{person.get('street_number') or ''} {street}{unit}".strip()
+
+
+def load_people_directory():
+    """Load active people as the row shape the street sheets already expect.
+
+    Columns: Street, Street Number, Unit, Full Address, Last, First,
+    Phone 1, Phone 2 (further phones joined), Emails separated by '; ', Source.
+    """
+    db = TrackerDB()
+    people = []
+    offset = 0
+    while True:
+        page = db.select('people', {
+            'select': 'street,street_number,unit,raw_address,last_name,first_name,inactive,contacts(kind,value,is_primary)',
+            'inactive': 'eq.false',
+            'order': 'street.asc,street_number.asc,last_name.asc',
+            'limit': '1000',
+            'offset': str(offset),
+        })
+        people.extend(page)
+        if len(page) < 1000:
+            break
+        offset += 1000
+    rows = []
+    for person in people:
+        contacts = person.get('contacts') or []
+        phones = ordered_contacts(contacts, 'phone')
+        emails = ordered_contacts(contacts, 'email')
+        rows.append([
+            person.get('street') or '',
+            person.get('street_number') or '',
+            person.get('unit') or '',
+            full_address(person),
+            person.get('last_name') or '',
+            person.get('first_name') or '',
+            phones[0] if phones else '',
+            ' · '.join(phones[1:]),
+            '; '.join(emails),
+            'google_contacts',
+        ])
+    return rows
 
 
 def build_email_to_groups_map(directory):
@@ -355,9 +402,14 @@ def build_street_directory(directory_rows, email_to_groups, street_name):
         phone2 = row[7] if len(row) > 7 else ''
         email = row[8] if len(row) > 8 else ''
 
-        # Look up groups for this email
-        norm_email = normalize_email(email) if email else ''
-        groups = email_to_groups.get(norm_email, [])
+        # The email cell may hold several addresses. Match groups on any of them.
+        groups = []
+        seen = set()
+        for one in [part.strip() for part in email.split(';') if part.strip()]:
+            for label in email_to_groups.get(normalize_email(one), []):
+                if label not in seen:
+                    seen.add(label)
+                    groups.append(label)
         groups_str = ', '.join(sorted(groups))
 
         output_rows.append({
@@ -436,9 +488,9 @@ def main():
 
     sheets, drive, directory = build_services()
 
-    # Load Full Directory
-    print("Loading Full Directory...")
-    directory_rows = load_full_directory(sheets)
+    # Load active people. Inactive contacts stay in the dashboard and off these sheets.
+    print("Loading people from the HOA tracker...")
+    directory_rows = load_people_directory()
     print(f"  {len(directory_rows)} people loaded")
 
     # Build email -> groups map

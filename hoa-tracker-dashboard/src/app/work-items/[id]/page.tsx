@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useWorkItem } from '@/hooks/useWorkItem'
 import { supabase } from '@/lib/supabase'
-import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted, updateWorkItemStatus, resetWorkItemClock, getWorkItem, addWorkItemNote } from '@/lib/queries'
+import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted, updateWorkItemStatus, resetWorkItemClock, getWorkItem, addWorkItemNote, getPropertyOwners } from '@/lib/queries'
 import { ALL_TERMINAL_STATUSES, getValidStatusesForCategory } from '@/lib/work-item-helpers'
 import { STATUS_LABELS } from '@/lib/constants'
 import { Loading } from '@/components/loading'
@@ -20,6 +20,7 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
   const { id } = React.use(params)
   const router = useRouter()
   const { item, correspondence, emails, statusHistory, documents, notes, loading, error, refetch } = useWorkItem(id)
+  const [owners, setOwners] = useState<string[]>([])
 
   const [showExclusionDialog, setShowExclusionDialog] = useState(false)
   const [exclusionReason, setExclusionReason] = useState('')
@@ -72,6 +73,14 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
   React.useEffect(() => {
     setLocalNotes(notes)
   }, [notes])
+
+  React.useEffect(() => {
+    if (!item?.property_id) {
+      setOwners([])
+      return
+    }
+    getPropertyOwners(item.property_id).then(setOwners)
+  }, [item?.property_id])
 
   const handleExclude = async () => {
     if (!exclusionReason.trim() || !excludingName.trim()) {
@@ -292,9 +301,9 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                       {(item as any).properties?.parcel_code || 'View property'}
                     </Link>
                   </p>
-                  {(item as any).properties?.owner_name && (
+                  {owners.length > 0 && (
                     <p className="text-sm text-mute mb-4">
-                      Owner: {(item as any).properties.owner_name}
+                      Owner: {owners.join(', ')}
                     </p>
                   )}
                 </>

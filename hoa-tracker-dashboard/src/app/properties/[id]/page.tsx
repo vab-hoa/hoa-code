@@ -7,7 +7,7 @@ import { Loading } from '@/components/loading'
 import { StatusBadge } from '@/components/status-badge'
 import { CategoryBadge } from '@/components/category-badge'
 import { formatDate } from '@/lib/format'
-import type { DirectoryPerson } from '@/lib/directory'
+import { contactsOf, OWNER_ROLES, personName, ROLE_LABEL, type DirectoryPerson } from '@/lib/directory'
 
 export default function PropertyDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params)
@@ -84,50 +84,19 @@ export default function PropertyDetail({ params }: { params: Promise<{ id: strin
             <div>
               <h2 className="text-sm font-semibold text-ink mb-2">Residents / contacts</h2>
               {residents.length === 0 ? (
-                <p className="text-sm text-mute">No Full Directory matches for this parcel.</p>
+                <p className="text-sm text-mute">No contacts synced for this parcel.</p>
               ) : (
-                <ul className="space-y-3">
-                  {residents.map((r, i) => {
-                    const name = [r.firstName, r.lastName].filter(Boolean).join(' ') || '—'
-                    return (
-                      <li
-                        key={`${r.email}-${r.firstName}-${r.lastName}-${i}`}
-                        className="text-sm border border-edge rounded-md p-3"
-                      >
-                        <div className="font-medium text-ink">{name}</div>
-                        {r.email && (
-                          <div className="text-mute">
-                            <a href={`mailto:${r.email}`} className="text-blue-300 hover:underline">
-                              {r.email}
-                            </a>
-                          </div>
-                        )}
-                        {(r.phone1 || r.phone2) && (
-                          <div className="text-mute">
-                            {[r.phone1, r.phone2].filter(Boolean).join(' · ')}
-                          </div>
-                        )}
-                        {r.source && (
-                          <div className="text-[11px] text-mute mt-1">Source: {r.source}</div>
-                        )}
-                      </li>
-                    )
-                  })}
-                </ul>
+                <div className="space-y-3">
+                  {residents.map((resident) => (
+                    <PersonCard key={resident.id} person={resident} />
+                  ))}
+                </div>
               )}
             </div>
 
             <div>
-              <h2 className="text-sm font-semibold text-ink mb-2">Official owner (Keystone)</h2>
-              <div className="text-sm text-mute space-y-1 border border-edge rounded-md p-3">
-                <p className="text-ink">{property.owner_name || '—'}</p>
-                {property.owner_email && <p>Email: {property.owner_email}</p>}
-                {property.owner_phone && <p>Phone: {property.owner_phone}</p>}
-                <p className="text-[11px] mt-2">
-                  Legal / account name from Keystone Profiles. Prefer resident contacts above for
-                  day-to-day outreach.
-                </p>
-              </div>
+              <h2 className="text-sm font-semibold text-ink mb-2">Owners</h2>
+              <OwnerList people={residents.filter((resident) => OWNER_ROLES.includes(resident.role))} />
             </div>
           </div>
         </div>
@@ -191,6 +160,56 @@ export default function PropertyDetail({ params }: { params: Promise<{ id: strin
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+function PersonCard({ person }: { person: DirectoryPerson }) {
+  const emails = contactsOf(person, 'email')
+  const phones = contactsOf(person, 'phone')
+  const name = personName(person) || '—'
+  return (
+    <div className={`text-sm border border-edge rounded-md p-3 ${person.inactive ? 'opacity-60' : ''}`}>
+      <div className="font-medium text-ink">
+        {name}
+        {person.inactive && (
+          <span className="ml-2 text-[10px] uppercase tracking-wide text-mute">Inactive</span>
+        )}
+      </div>
+      <div className="text-[11px] text-mute">{ROLE_LABEL[person.role]}</div>
+      {emails.map((contact) => (
+        <div key={contact.value} className="text-mute">
+          <a href={`mailto:${contact.value}`} className="text-blue-300 hover:underline">
+            {contact.value}
+          </a>
+        </div>
+      ))}
+      {phones.length > 0 && (
+        <div className="text-mute">{phones.map((contact) => contact.value).join(' · ')}</div>
+      )}
+    </div>
+  )
+}
+
+function OwnerList({ people }: { people: DirectoryPerson[] }) {
+  if (people.length === 0) {
+    return (
+      <div className="text-sm text-mute border border-edge rounded-md p-3">
+        <p>No owner-role contact for this parcel.</p>
+        <p className="text-[11px] mt-2">
+          Owners are Google Contacts labeled owner-occupant or non-occupant owner. Inactive people stay listed until purged.
+        </p>
+      </div>
+    )
+  }
+  return (
+    <div className="space-y-3">
+      {people.map((person) => (
+        <PersonCard key={person.id} person={person} />
+      ))}
+      <p className="text-[11px] text-mute">
+        Owners are Google Contacts labeled owner-occupant or non-occupant owner. Inactive people stay listed until purged.
+      </p>
     </div>
   )
 }

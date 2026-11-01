@@ -5,9 +5,6 @@ export interface Property {
   parcel_code: string
   address: string
   unit: string | null
-  owner_name: string | null
-  owner_email: string | null
-  owner_phone: string | null
 }
 
 export interface WorkItem {
@@ -158,7 +155,6 @@ export interface DashboardSummary {
 export interface OpenWorkItem extends WorkItem {
   parcel_code: string | null
   address: string | null
-  owner_name: string | null
 }
 
 export interface AgingWorkItem {
@@ -168,7 +164,6 @@ export interface AgingWorkItem {
   status: string
   parcel_code: string | null
   address: string | null
-  owner_name: string | null
   created_date: string
   max_days: number
   days_open: number

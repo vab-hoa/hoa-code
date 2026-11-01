@@ -32,6 +32,7 @@ Thumbs.db
 # Logs
 *.log
 email-processor-report.json
+contacts-sync-report.json
 !keystone-scraper/broadlands_manifest.json
 !keystone-scraper/keystone_docs_manifest.json
 

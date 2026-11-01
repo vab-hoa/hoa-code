@@ -12,6 +12,7 @@
     "sync:keystone": "node scripts/sync-keystone-status.js",
     "generate:arc-serials": "node scripts/generate-arc-serials.js",
     "email-processor": "npm run start -w @vab-hoa/email-processor --",
+    "contacts-sync": "npm run start -w @vab-hoa/contacts-sync --",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

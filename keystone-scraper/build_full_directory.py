@@ -9,6 +9,10 @@ One output row per person (not per unit), so couples each get their own row.
 Output tab: "Full Directory" in the Keystone Cache spreadsheet.
 Columns: Street, Street Number, Unit, Full Address, Last Name, First Name,
          Phone 1, Phone 2, Email, Source
+
+The nightly Keystone workflow no longer runs this script. The dashboard and
+the per-street sheets read the people and contacts tables. Run this by hand
+only if the Full Directory tab itself still needs a refresh.
 """
 
 import os

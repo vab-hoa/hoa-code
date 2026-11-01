@@ -98,19 +98,9 @@ jobs:
           git add keystone_attachment_duplicates.json
           git diff --staged --quiet || (git commit -m "chore: keystone attachment duplicates updated $(date -u '+%Y-%m-%d')" && git push)
 
-      # The directory steps don't use Keystone data (they read the Directory tab and
-      # Google Contacts), so they run even if the Keystone sync failed.
-      - name: Rebuild Full Directory
-        if: ${{ !cancelled() }}
-        run: |
-          cd keystone-scraper
-          python build_full_directory.py
-
-      - name: Build per-street member directories
-        if: ${{ !cancelled() }}
-        run: |
-          cd keystone-scraper
-          python build_street_directories.py
+      # People and the per-street sheets are rebuilt by the Contacts sync workflow,
+      # which runs an hour after this one. build_full_directory.py stays in the
+      # repo for a manual refresh of the Full Directory tab.
 
       - name: Record successful run
         if: success()

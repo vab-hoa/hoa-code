@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Loading } from '@/components/loading'
 import { SortableTh } from '@/components/sortable-th'
 import { useSortableData } from '@/hooks/useSortableData'
-import type { DirectoryPerson } from '@/lib/directory'
+import { contactsOf, ROLE_LABEL, type DirectoryPerson } from '@/lib/directory'
 
 type SortablePerson = DirectoryPerson & {
   /** Combined resident display name for default sort/search */
@@ -55,11 +55,13 @@ function matchesSearch(p: SortablePerson, q: string): boolean {
     p.email,
     p.phone1,
     p.phone2,
+    ...p.contacts.map((contact) => contact.value),
     p.officialOwner,
-    p.ownerEmail,
-    p.ownerPhone,
     p.parcelCode,
     p.source,
+    ROLE_LABEL[p.role],
+    p.inactive ? 'inactive' : '',
+    ...p.labels,
   ]
     .filter(Boolean)
     .join(' ')
@@ -134,8 +136,7 @@ export default function PropertiesPage() {
           <div>
             <h1 className="text-2xl font-bold text-ink">Properties</h1>
             <p className="text-sm text-mute mt-1">
-              Homeowner directory (names, addresses, phones, emails). Official Keystone
-              owner is kept on each property but shown second — resident name is primary.
+              Homeowner directory from Google Contacts. Inactive contacts stay on this list until they are purged.
             </p>
           </div>
           {asOf && (
@@ -150,7 +151,7 @@ export default function PropertiesPage() {
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search email, address, street, name, phone, official owner…"
+            placeholder="Search email, address, street, name, phone, role, owner…"
             className="w-full sm:max-w-xl px-3 py-2 border border-edge bg-surface text-ink rounded-lg text-sm placeholder:text-mute focus:outline-none focus:ring-1 focus:ring-blue-400"
             autoFocus
           />
@@ -182,7 +183,7 @@ export default function PropertiesPage() {
         </div>
 
         <div className="bg-surface rounded-lg border border-edge overflow-x-auto">
-          <table className="w-full min-w-[1100px]">
+          <table className="w-full min-w-[1280px]">
             <thead className="bg-edge/50 border-b border-edge">
               <tr>
                 <SortableTh
@@ -208,6 +209,13 @@ export default function PropertiesPage() {
                   onSort={(k) => requestSort(k as keyof SortablePerson)}
                 />
                 <SortableTh
+                  label="Role"
+                  sortKey="role"
+                  currentSortKey={sortKey as string | null}
+                  currentSortDir={sortDir}
+                  onSort={(k) => requestSort(k as keyof SortablePerson)}
+                />
+                <SortableTh
                   label="Email"
                   sortKey="email"
                   currentSortKey={sortKey as string | null}
@@ -216,7 +224,7 @@ export default function PropertiesPage() {
                 />
                 <th className="px-4 py-2 text-left text-xs font-semibold text-ink">Phone</th>
                 <SortableTh
-                  label="Official owner"
+                  label="Owners"
                   sortKey="officialOwner"
                   currentSortKey={sortKey as string | null}
                   currentSortDir={sortDir}
@@ -227,16 +235,16 @@ export default function PropertiesPage() {
             <tbody className="divide-y divide-edge">
               {sortedItems.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-sm text-mute">
+                  <td colSpan={7} className="px-4 py-8 text-center text-sm text-mute">
                     No matches for “{search}”.
                   </td>
                 </tr>
               ) : (
-                sortedItems.map((p, idx) => {
-                  const phone = [p.phone1, p.phone2].filter(Boolean).join(' · ')
-                  const key = `${p.parcelCode || p.fullAddress}-${p.email}-${p.firstName}-${p.lastName}-${idx}`
+                sortedItems.map((p) => {
+                  const phones = contactsOf(p, 'phone')
+                  const emails = contactsOf(p, 'email')
                   return (
-                    <tr key={key} className="hover:bg-edge/25 transition-colors">
+                    <tr key={p.id} className={p.inactive ? 'opacity-60 hover:bg-edge/25' : 'hover:bg-edge/25 transition-colors'}>
                       <td className="px-4 py-2 text-sm text-ink whitespace-nowrap">
                         {p.propertyId ? (
                           <Link
@@ -252,22 +260,33 @@ export default function PropertiesPage() {
                           <div className="text-[11px] text-mute mt-0.5">{p.parcelCode}</div>
                         )}
                       </td>
-                      <td className="px-4 py-2 text-sm text-ink">{p.lastName || '—'}</td>
+                      <td className="px-4 py-2 text-sm text-ink">
+                        {p.lastName || '—'}
+                        {p.inactive && (
+                          <span className="ml-2 text-[10px] uppercase tracking-wide text-mute">Inactive</span>
+                        )}
+                      </td>
                       <td className="px-4 py-2 text-sm text-ink">{p.firstName || '—'}</td>
+                      <td className="px-4 py-2 text-sm text-mute whitespace-nowrap">{ROLE_LABEL[p.role]}</td>
                       <td className="px-4 py-2 text-sm">
-                        {p.email ? (
-                          <a
-                            href={`mailto:${p.email}`}
-                            className="text-blue-300 hover:underline break-all"
-                          >
-                            {p.email}
-                          </a>
-                        ) : (
+                        {emails.length === 0 ? (
                           <span className="text-mute">—</span>
+                        ) : (
+                          <div className="flex flex-col gap-0.5">
+                            {emails.map((contact) => (
+                              <a
+                                key={contact.value}
+                                href={`mailto:${contact.value}`}
+                                className="text-blue-300 hover:underline break-all"
+                              >
+                                {contact.value}
+                              </a>
+                            ))}
+                          </div>
                         )}
                       </td>
                       <td className="px-4 py-2 text-sm text-mute whitespace-nowrap">
-                        {phone || '—'}
+                        {phones.length === 0 ? '—' : phones.map((contact) => contact.value).join(' · ')}
                       </td>
                       <td className="px-4 py-2 text-sm text-mute max-w-[14rem]">
                         <span className="line-clamp-2" title={p.officialOwner || undefined}>
@@ -286,7 +305,9 @@ export default function PropertiesPage() {
           {sortedItems.length} of {people.length} people
           {search.trim() ? ` matching “${search.trim()}”` : ''}
           {' · '}
-          one row per person (couples appear separately), from Keystone Full Directory
+          {people.filter((person) => person.inactive).length} inactive
+          {' · '}
+          one row per person, from Google Contacts. Inactive rows stay until purged.
         </p>
       </div>
     </div>
