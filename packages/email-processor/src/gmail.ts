@@ -2,7 +2,7 @@ import { google, type gmail_v1 } from 'googleapis'
 import { extractAddresses, parseAddress, stripHtml } from './text.js'
 import type { InboundAttachment, InboundEmail } from './types.js'
 
-export function gmailClient(): gmail_v1.Gmail {
+export function gmailClient(scopes = ['https://www.googleapis.com/auth/gmail.readonly']): gmail_v1.Gmail {
   const raw = process.env.GOOGLE_SERVICE_ACCOUNT_JSON
   if (!raw) throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON is required')
   const json = raw.trim().startsWith('{')
@@ -11,7 +11,7 @@ export function gmailClient(): gmail_v1.Gmail {
   const auth = new google.auth.JWT({
     email: json.client_email,
     key: String(json.private_key).replace(/\\n/g, '\n'),
-    scopes: ['https://www.googleapis.com/auth/gmail.readonly'],
+    scopes,
     subject: 'admin@villasboulders.org',
   })
   return google.gmail({ version: 'v1', auth })
@@ -39,6 +39,34 @@ export async function fetchGmail(days: number): Promise<InboundEmail[]> {
     emails.push(email)
   }
   return emails
+}
+
+/** Digest from admin@, the mailbox this service account can send as. */
+export async function sendDigest(body: string): Promise<void> {
+  if (!process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+    console.error('GOOGLE_SERVICE_ACCOUNT_JSON is not set; digest was not emailed')
+    return
+  }
+  try {
+    const gmail = gmailClient(['https://www.googleapis.com/auth/gmail.send'])
+    const message = [
+      'From: admin@villasboulders.org',
+      'To: dee@wmbuck.net',
+      'Subject: [HOA Tracker] email processor',
+      'MIME-Version: 1.0',
+      'Content-Type: text/plain; charset=utf-8',
+      '',
+      body,
+    ].join('\r\n')
+    await gmail.users.messages.send({
+      userId: 'me',
+      requestBody: { raw: Buffer.from(message).toString('base64url') },
+    })
+    console.error('digest emailed to dee@wmbuck.net')
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error(`digest email failed: ${message}`)
+  }
 }
 
 export async function downloadGmailAttachment(providerId: string, attachmentId: string): Promise<Buffer> {

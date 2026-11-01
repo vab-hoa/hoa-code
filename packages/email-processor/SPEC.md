@@ -89,7 +89,7 @@ It is rejected together with `--write`.
 `--shadow` and `--dry-run` read Supabase and call the model, then write a
 report. They do not insert work items and they do not send mail. `--write`
 persists, uploads attachments onto the linked work item, and emails the
-digest to dee@wmbuck.net. The scheduled workflow runs `--write`.
+digest from admin@villasboulders.org to dee@wmbuck.net. The scheduled workflow runs `--write`.
 
 Apply `hoa-tracker/schema_email_disposition.sql` before the first `--write`.
 If those columns are missing, the writer retries without them and says so.

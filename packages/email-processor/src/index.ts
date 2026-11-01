@@ -3,11 +3,10 @@ import { applyOutcome } from './apply.js'
 import { getDb, loadCandidates, messageExists } from './db.js'
 import { callModel } from './decide.js'
 import { buildDigest } from './digest.js'
-import { downloadGmailAttachment, fetchGmail } from './gmail.js'
+import { downloadGmailAttachment, fetchGmail, sendDigest } from './gmail.js'
 import { fetchImap } from './imap.js'
 import { loadEmailModel, modelLabel } from './model-config.js'
 import { decideMessage } from './pipeline.js'
-import { sendDigest } from './smtp.js'
 import type { InboundEmail, Outcome } from './types.js'
 
 /**
