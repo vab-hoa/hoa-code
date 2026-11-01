@@ -20,7 +20,12 @@ HEADERS = {
     "Violations": ["Address", "Date", "Description", "Status"],
     "ArchReviews": ["Address", "Date", "Description", "Status"],
     "Profiles": ["Address", "AccountNumber", "AccountName", "Email", "Phone", "LastUpdated", "Source"],
+    # Read by build_full_directory.py by position: Name is the owners' last name(s).
+    "Directory": ["Street", "Street Number", "Unit", "Full Address", "Name", "Phone", "As Of"],
 }
+
+STREET_NAMES = {"BC": "Boulder Circle", "BP": "Boulder Point", "BL": "Broadlands Lane",
+                "SC": "Stone Circle", "PP": "Plaster Point", "RP": "Rock Point"}
 
 
 class SchemaError(ValueError):
@@ -268,4 +273,55 @@ def profile_rows(docs, today=None):
             for address, u in sorted(units.items())]
     logger.info("Profiles: %d contacts merged into %d units (%d unparsed addresses)",
                 len(docs), len(rows), unparsed)
+    return rows
+
+
+def format_phone(value):
+    """(303) 555-1234 for 10-digit US numbers (a leading 1 is dropped); anything else as given."""
+    digits = re.sub(r"\D", "", value or "")
+    if len(digits) == 11 and digits.startswith("1"):
+        digits = digits[1:]
+    if len(digits) == 10:
+        return f"({digits[:3]}) {digits[3:6]}-{digits[6:]}"
+    return (value or "").strip()
+
+
+def _name_words(name):
+    return set(re.findall(r"[a-z]+", (name or "").lower()))
+
+
+def directory_rows(docs, as_of, previous=None):
+    """Directory tab rows (one per unit) from the home-owner/grouping records.
+
+    Name holds the owners' last name(s), joined " & " when a unit has several owners with
+    different last names; Phone is the first owner phone. Units whose address can't be
+    parsed are left out (the Directory is keyed by street, number and unit).
+
+    previous: the tab's current rows. Keystone has no phone on file for some owners, so
+    when it has none, the phone already in the tab is kept, but only if the name still
+    shares a word with the previous name (same family): a new owner never inherits the
+    last owner's number.
+    """
+    prev = {(r[1], r[2]): r + [""] * (7 - len(r)) for r in (previous or []) if len(r) >= 3}
+    units = {}
+    for d in docs:
+        address = unit_address(d.get("name", "") or "")
+        if not address:
+            continue
+        owner = d.get("owner") or {}
+        u = units.setdefault(address, {"last": [], "phones": []})
+        u["last"].append((owner.get("lastNames") or "").strip())
+        u["phones"].append(owner.get("phoneNumber") or "")
+    rows = []
+    for address, u in sorted(units.items()):
+        m = re.match(r"^(\d{4,5})([A-Z]{2})([12])$", address)
+        number, code, unit = m.group(1), m.group(2), "10" + m.group(3)
+        street = STREET_NAMES[code]
+        name = _join_unique(u["last"], " & ")
+        phone = next((format_phone(p) for p in u["phones"] if (p or "").strip()), "")
+        old = prev.get((number, unit))
+        if not phone and old and old[5] and _name_words(old[4]) & _name_words(name):
+            phone = old[5]
+        rows.append([street, number, unit, f"{number} {street} #{unit}", name, phone, as_of])
+    logger.info("Directory: %d units", len(rows))
     return rows

@@ -65,6 +65,16 @@ class TrackerDB:
             raise TrackerError(f"insert into {table} failed: HTTP {resp.status_code} {resp.text[:200]}")
         return resp.json()
 
+    def update(self, table, row_id, values):
+        """Update one row by id; raises unless exactly one row changed."""
+        resp = self.session.patch(
+            f"{self.url}/rest/v1/{table}", params={"id": f"eq.{row_id}"}, json=values,
+            headers={"Prefer": "return=representation"}, timeout=30)
+        if resp.status_code != 200:
+            raise TrackerError(f"update {table} {row_id} failed: HTTP {resp.status_code}")
+        if len(resp.json()) != 1:
+            raise TrackerError(f"update {table} {row_id}: expected 1 row, matched {len(resp.json())}")
+
     def upload(self, path, data, content_type):
         """Upload a file to the work-item documents bucket (overwrites the same path)."""
         resp = self.session.post(

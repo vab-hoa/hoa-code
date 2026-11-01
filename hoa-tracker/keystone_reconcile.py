@@ -33,9 +33,14 @@ Usage:
   python3 keystone_reconcile.py --debug             # apply, verbose per-change log
   python3 keystone_reconcile.py                     # cron mode (quiet)
 
-Transaction safety: one transaction per run, one SAVEPOINT per item so a bad
-row cannot abort the whole batch (historical psycopg2 "current transaction is
-aborted" issue). conn.rollback() runs in every error handler.
+Runs nightly in GitHub Actions right after the Keystone sync
+(.github/workflows/keystone-scraper.yml). Talks to Supabase through its REST API
+with the service secret key (keystone-scraper/tracker_db.py), so no database
+password or direct Postgres connection is needed. Each change is a separate
+single-row update: if a run stops part-way, the updates already made are
+correct on their own and the next run finishes the rest (every pass is
+idempotent). Normal logs carry WO numbers, parcels and statuses only (the repo
+and its Actions logs are public); --debug adds titles for local runs.
 """
 
 import argparse
@@ -45,7 +50,7 @@ import os
 import re
 import sys
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 
 try:
     from google.oauth2 import service_account
@@ -54,10 +59,8 @@ try:
 except ImportError:
     SHEETS_AVAILABLE = False
 
-try:
-    import psycopg2
-except ImportError:
-    psycopg2 = None
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "keystone-scraper"))
+from tracker_db import TrackerDB  # noqa: E402  (shared Supabase REST client)
 
 # ============================================================
 # Configuration
@@ -74,11 +77,6 @@ WORKORDERS_SHEET = "WorkOrders"
 # The tab normally holds 120+ work orders; fewer than this means a failed scrape.
 MIN_WORKORDER_ROWS = 50
 
-SUPABASE_HOST = "db.obveytoovkzjrpzrhrim.supabase.co"
-SUPABASE_PORT = 5432
-SUPABASE_DB = "postgres"
-SUPABASE_USER = "postgres"
-SUPABASE_PASSWORD_FILE = os.path.join(SCRIPT_DIR, "secrets", ".supabase_db_password")
 
 # Internal statuses that are terminal. Keystone "Closed" must never override
 # these — a closed/approved/denied item stays decided by the board.
@@ -165,50 +163,38 @@ def read_parcel_set(svc, tab):
             for r in res.get("values", [])[1:] if r and r[0].strip()}
 
 
-def get_db_connection():
-    if psycopg2 is None:
-        raise ImportError("psycopg2 not available on this host")
-    with open(SUPABASE_PASSWORD_FILE, "r") as f:
-        password = f.read().strip()
-    return psycopg2.connect(
-        host=SUPABASE_HOST,
-        port=SUPABASE_PORT,
-        dbname=SUPABASE_DB,
-        user=SUPABASE_USER,
-        password=password,
-        sslmode="require",
-    )
-
-
-def load_work_items(cur):
+def load_work_items(db):
     """Load all non-excluded work items with their parcel code."""
-    cur.execute("""
-        SELECT wi.id, wi.keystone_wo_number, wi.keystone_status, wi.status,
-               wi.title, wi.category, wi.created_date, p.parcel_code
-        FROM work_items wi
-        LEFT JOIN properties p ON p.id = wi.property_id
-        WHERE wi.excluded_at IS NULL
-    """)
+    rows = db.select("work_items", {
+        "select": "id,keystone_wo_number,keystone_status,status,title,category,"
+                  "created_date,properties(parcel_code)",
+        "excluded_at": "is.null"})
     items = []
-    for r in cur.fetchall():
+    for r in rows:
+        parcel = (r.get("properties") or {}).get("parcel_code")
+        created = r.get("created_date")
         items.append({
-            "id": r[0],
-            "wo": (r[1] or "").strip() if r[1] else "",
-            "keystone_status": r[2],
-            "status": r[3],
-            "title": r[4] or "",
-            "category": r[5] or "",
-            "created": r[6],
-            "parcel": (r[7] or "").strip().upper() if r[7] else "",
+            "id": r["id"],
+            "wo": (r.get("keystone_wo_number") or "").strip(),
+            "keystone_status": r.get("keystone_status"),
+            "status": r.get("status"),
+            "title": r.get("title") or "",
+            "category": r.get("category") or "",
+            "created": datetime.fromisoformat(created[:19]) if created else None,
+            "parcel": (parcel or "").strip().upper(),
         })
     return items
+
+
+def now_utc():
+    return datetime.now(timezone.utc).isoformat()
 
 
 # ============================================================
 # Reconciliation passes
 # ============================================================
 
-def assign_wo_numbers(cur, items, by_parcel, summary, dry_run):
+def assign_wo_numbers(db, items, by_parcel, summary, dry_run):
     """
     Case (b): give WO-less, still-open work_order items the WO number from a
     same-parcel sheet row whose description matches their title. Closed or
@@ -238,20 +224,17 @@ def assign_wo_numbers(cur, items, by_parcel, summary, dry_run):
                              sheet_descs if sheet_descs else "none")
             continue
         score, row = best
-        logger.info("[assign] WO %s -> %s %r (sim %.2f, sheet: %r)",
-                    row["wo_number"], item["parcel"], item["title"][:60],
-                    score, row["description"][:60])
+        logger.info("[assign] WO %s -> %s (sim %.2f)", row["wo_number"], item["parcel"], score)
+        logger.debug("   item %r, sheet %r", item["title"][:60], row["description"][:60])
         summary["wo_numbers_assigned"] += 1
         if not dry_run:
-            cur.execute(
-                "UPDATE work_items SET keystone_wo_number = %s, "
-                "updated_date = NOW() WHERE id = %s",
-                (row["wo_number"], item["id"]))
+            db.update("work_items", item["id"],
+                      {"keystone_wo_number": row["wo_number"], "updated_date": now_utc()})
         item["wo"] = row["wo_number"]
         used_rows.add(id(row))
 
 
-def refresh_keystone_statuses(cur, items, by_wo, summary, dry_run):
+def refresh_keystone_statuses(db, items, by_wo, summary, dry_run):
     """
     Cases (a) and (c) for every work item that has a WO number present in the
     sheet: refresh keystone_status, and close our item if Keystone closed it.
@@ -273,30 +256,26 @@ def refresh_keystone_statuses(cur, items, by_wo, summary, dry_run):
                         item["keystone_status"], new_status)
             summary["keystone_status_updated"] += 1
             if not dry_run:
-                cur.execute(
-                    "UPDATE work_items SET keystone_status = %s, "
-                    "updated_date = NOW() WHERE id = %s",
-                    (new_status, item["id"]))
+                db.update("work_items", item["id"],
+                          {"keystone_status": new_status, "updated_date": now_utc()})
             item["keystone_status"] = new_status
 
         # (a) closed by Keystone — the only internal-status change we make
         if (new_status.lower() in KEYSTONE_CLOSED
                 and item["status"] not in TERMINAL_INTERNAL):
-            logger.info("[closed-by-keystone] WO %s (%s): status %r -> 'closed'  %r",
-                        item["wo"], item["parcel"], item["status"],
-                        item["title"][:60])
+            logger.info("[closed-by-keystone] WO %s (%s): status %r -> 'closed'",
+                        item["wo"], item["parcel"], item["status"])
+            logger.debug("   item %r", item["title"][:60])
             summary["closed_by_keystone"] += 1
             if not dry_run:
-                cur.execute(
-                    "UPDATE work_items SET status = 'closed', "
-                    "completed_date = NOW(), closed_date = NOW(), "
-                    "status_changed_at = NOW(), updated_date = NOW() "
-                    "WHERE id = %s",
-                    (item["id"],))
+                stamp = now_utc()
+                db.update("work_items", item["id"],
+                          {"status": "closed", "completed_date": stamp, "closed_date": stamp,
+                           "status_changed_at": stamp, "updated_date": stamp})
             item["status"] = "closed"
 
 
-def mark_not_in_keystone(cur, items, by_wo, parcel_tabs, summary, dry_run):
+def mark_not_in_keystone(db, items, by_wo, parcel_tabs, summary, dry_run):
     """
     Case (d): any work item with no row in the cache sheet. Items with a WO
     number match by WO; WO-less items match by parcel against the tab for
@@ -311,15 +290,13 @@ def mark_not_in_keystone(cur, items, by_wo, parcel_tabs, summary, dry_run):
             matched = bool(item["parcel"]) and item["parcel"] in parcels
         if matched or item["keystone_status"] == NOT_IN_KEYSTONE:
             continue  # in the cache, or already marked (idempotent no-op)
-        logger.info("[not-in-keystone] %s (parcel=%s) keystone_status -> %r  %r",
-                    item["wo"] or item["category"], item["parcel"] or "none",
-                    NOT_IN_KEYSTONE, item["title"][:60])
+        logger.info("[not-in-keystone] %s (parcel=%s) keystone_status -> %r",
+                    item["wo"] or item["category"], item["parcel"] or "none", NOT_IN_KEYSTONE)
+        logger.debug("   item %r", item["title"][:60])
         summary["not_in_keystone"] += 1
         if not dry_run:
-            cur.execute(
-                "UPDATE work_items SET keystone_status = %s, "
-                "updated_date = NOW() WHERE id = %s",
-                (NOT_IN_KEYSTONE, item["id"]))
+            db.update("work_items", item["id"],
+                      {"keystone_status": NOT_IN_KEYSTONE, "updated_date": now_utc()})
 
 
 # ============================================================
@@ -337,7 +314,6 @@ def run_reconciliation(dry_run, debug):
         "errors": [],
     }
     ok = False
-    conn = None
     try:
         creds = service_account.Credentials.from_service_account_file(
             SERVICE_ACCOUNT_FILE, scopes=SHEETS_SCOPES)
@@ -367,48 +343,29 @@ def run_reconciliation(dry_run, debug):
             by_wo[row["wo_number"]] = row
             by_parcel[row["parcel"]].append(row)
 
-        conn = get_db_connection()
-        cur = conn.cursor()
-        items = load_work_items(cur)
+        db = TrackerDB()
+        items = load_work_items(db)
         logger.info("Loaded %d non-excluded work items from Supabase", len(items))
-
-        # Per-item savepoints so one bad row can't abort the whole batch.
-        if not dry_run:
-            cur.execute("SAVEPOINT reconcile_batch")
 
         # Order matters: assign WOs first so newly assigned items are covered
         # by the status refresh, then mark the leftovers.
-        assign_wo_numbers(cur, items, by_parcel, summary, dry_run)
-        refresh_keystone_statuses(cur, items, by_wo, summary, dry_run)
-        mark_not_in_keystone(cur, items, by_wo, parcel_tabs, summary, dry_run)
+        assign_wo_numbers(db, items, by_parcel, summary, dry_run)
+        refresh_keystone_statuses(db, items, by_wo, summary, dry_run)
+        mark_not_in_keystone(db, items, by_wo, parcel_tabs, summary, dry_run)
 
         if dry_run:
-            conn.rollback()
-            logger.info("[dry-run] rolled back — nothing was written")
+            logger.info("[dry-run] nothing was written")
         else:
-            if summary["errors"]:
-                conn.rollback()
-                logger.error("Errors occurred — rolled back entire batch")
-            else:
-                conn.commit()
-                logger.info("Committed %d keystone_status updates, %d closures, "
-                            "%d WO assignments, %d not-in-keystone marks",
-                            summary["keystone_status_updated"],
-                            summary["closed_by_keystone"],
-                            summary["wo_numbers_assigned"],
-                            summary["not_in_keystone"])
+            logger.info("Applied %d keystone_status updates, %d closures, "
+                        "%d WO assignments, %d not-in-keystone marks",
+                        summary["keystone_status_updated"],
+                        summary["closed_by_keystone"],
+                        summary["wo_numbers_assigned"],
+                        summary["not_in_keystone"])
         ok = True
     except Exception as e:
-        if conn:
-            try:
-                conn.rollback()
-            except Exception:
-                pass
         summary["errors"].append(f"{type(e).__name__}: {e}")
-        logger.exception("Reconciliation failed: %s", e)
-    finally:
-        if conn:
-            conn.close()
+        logger.error("Reconciliation failed: %s: %s", type(e).__name__, e)
 
     return summary, ok
 

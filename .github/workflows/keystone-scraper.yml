@@ -48,6 +48,16 @@ jobs:
           cd keystone-scraper
           python keystone_sync.py
 
+      - name: Reconcile Keystone status into the HOA tracker
+        if: ${{ !cancelled() }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          # Copies Keystone status into work_items, closes items Keystone closed, assigns
+          # WO numbers; refuses to run against an empty/short WorkOrders tab.
+          python hoa-tracker/keystone_reconcile.py
+
       - name: Check Villas portal documents (copy new financials/minutes, alert on others)
         if: ${{ !cancelled() }}
         env:

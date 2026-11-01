@@ -18,9 +18,9 @@ Everything here runs in **GitHub Actions** (in the cloud). No home computer is i
 
 | Job (GitHub → Actions) | When | What it does |
 |---|---|---|
-| **Keystone Scraper** | nightly, 09:00 UTC (3 AM summer / 2 AM winter, Colorado) | 1. Copies work orders, violations, ARC requests and owner contacts into the **Keystone Cache** spreadsheet, and saves the raw data to **HOA Board Documents → Keystone Archive**. 2. Copies new financial reports and minutes from the portal into **HOA Documents** (year folders) and emails the board about other new portal files. 3. Copies Keystone notes and attachments into the **HOA tracker** (tracker.villasboulders.org). 4. Rebuilds the Full Directory and per-street member lists. |
+| **Keystone Scraper** | nightly, 09:00 UTC (3 AM summer / 2 AM winter, Colorado; GitHub sometimes starts it hours late) | 1. Copies work orders, violations, ARC requests and owner contacts into the **Keystone Cache** spreadsheet (including the **Directory** tab of owner names and phones), and saves the raw data to **HOA Board Documents → Keystone Archive**. Then updates the **HOA tracker** with Keystone's status for each work item, closing items Keystone closed. 2. Copies new financial reports and minutes from the portal into **HOA Documents** (year folders) and emails the board about other new portal files. 3. Copies Keystone notes and attachments into the **HOA tracker** (tracker.villasboulders.org). 4. Rebuilds the Full Directory and per-street member lists. |
 | **Broadlands Document Sync** | Mondays 10:30 UTC | Keeps **HOA Documents → BRL Master Documents** matching the Broadlands master association's Architectural and Governing Documents folders on the portal. Changed files are replaced in place, so links never break. |
-| **Work Order Schedule** | daily 13:00 UTC | Emails the work-order status report before board meetings. |
+| **Work Order Schedule** | daily 13:00 UTC | Emails the work-order status report before board meetings. **Switched off on purpose since Sept 2026**; turn it back on under Actions if wanted. |
 | **Sync Keystone Status** | nightly 09:30 UTC | Numbers ARC requests in the tracker (ARC serials). |
 | **Labels to Groups Sync** | nightly 09:00 UTC | Gmail contact labels → Google Groups (not Keystone; lives here for convenience). |
 
@@ -99,10 +99,11 @@ refuses them.
 |---|---|
 | `cinc_client.py` | The only code that talks to the portal. Read-only by construction (GET, plus the login and download-link POSTs); sends the token only to the API host, never to signed links; never retries a rejected login (account lockout); refuses partial lists. |
 | `keystone_extract.py` | Turns API records into Keystone Cache rows (addresses → parcel codes like `13713BP2`, dates → `YYYY-MM-DD` Denver time). Pure functions, fully tested. **The sheet layout is a contract** with `work_order_report.py`, `hoa-tracker/keystone_reconcile.py`, `HOALibrary/KeystoneIntegration.gs` and the dashboard: keep tab names, headers and column order. |
-| `keystone_sync.py` | Nightly: fetch all → archive raw JSON → write the four tabs. Fetches everything before writing anything; refuses to shrink a tab below 70% (`--force` overrides); writes before clearing, so a tab is never empty. |
+| `keystone_sync.py` | Nightly: fetch all → archive raw JSON → write the WorkOrders, Violations, ArchReviews, Profiles and Directory tabs. Directory keeps a phone already in the tab when Keystone has none, for the same family only. Fetches everything before writing anything; refuses to shrink a tab below 70% (`--force` overrides); writes before clearing, so a tab is never empty. |
 | `keystone_documents.py` | Villas portal library monitor (manifest: `keystone_docs_manifest.json`). |
 | `broadlands_docs.py` | Broadlands library mirror (manifest: `broadlands_manifest.json`, which records the Drive file ID each portal file is mirrored to). |
 | `keystone_notes.py` / `keystone_attachments.py` | Copy notes and attachments into the tracker. Every row has a `source_key`; the database's unique index (`hoa-tracker/schema_v6.sql`) makes repeats impossible. Identical duplicate attachments are skipped and listed in `keystone_attachment_duplicates.json`. |
+| `../hoa-tracker/keystone_reconcile.py` | Nightly, after the sync: copies Keystone status into tracker work items, closes items Keystone closed, assigns WO numbers to matching items. Uses the tracker's REST API (no database password); refuses to run on a short WorkOrders tab. |
 | `drive_files.py`, `tracker_db.py`, `notify.py`, `sheets_retry.py` | Shared helpers: Google Drive, the tracker database (Supabase REST), alert emails (to itofficer@ and admin@), retry with backoff. |
 | `work_order_report.py` / `work_order_schedule.py` | The work-order status report and its meeting-aware schedule. |
 | `build_full_directory.py` / `build_street_directories.py` | Full Directory tab and per-street member spreadsheets (from the Directory tab + Google Contacts; not Keystone data). |

@@ -183,7 +183,7 @@ function getKeystoneViolations(address) {
       }
     }
 
-    console.log('Found ' + violations.length + ' violations for ' + searchBuilding);
+    console.log('Found ' + violations.length + ' violations for ' + searchAddress);
     return violations;
 
   } catch (error) {
@@ -393,7 +393,7 @@ function getKeystoneArchReviews(address, status) {
     }
 
     var filterMsg = statusFilter ? ' (filtered by status: ' + status + ')' : '';
-    console.log('Found ' + archReviews.length + ' architectural reviews for ' + searchBuilding + filterMsg);
+    console.log('Found ' + archReviews.length + ' architectural reviews for ' + searchAddress + filterMsg);
     return archReviews;
 
   } catch (error) {
