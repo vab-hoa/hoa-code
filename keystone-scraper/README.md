@@ -32,7 +32,7 @@ To run any of them by hand: GitHub → the repository → **Actions** → pick t
 | Subject | Means | What to do |
 |---|---|---|
 | **Keystone nightly sync FAILED** | Something in the nightly job failed. The spreadsheet was **left as it was**, so nothing downstream is damaged; it is just a day old. | Open the link in the email to see which step failed. Most often: the Keystone password changed (see below). If it fails one night and works the next, ignore it. |
-| **Broadlands document sync FAILED** | The weekly Broadlands job failed. No Drive files were removed. | Same as above. |
+| **Broadlands document sync FAILED** | The weekly Broadlands job failed. Drive files were not removed. The failure may be the sync, or the git push of the manifest if main moved during the job. | Open the link in the email. A rejected git push is fixed by re-running the workflow. |
 | **Broadlands documents updated** | The master association changed a document; Drive now has the new version. | Updated files keep their links. A *NEW* file has a new link: add it to the website if it should be linked. |
 | **New Keystone portal documents** | Keystone posted files to our portal library that aren't copied automatically. | Look at them on the portal; file them in Drive if they matter. |
 

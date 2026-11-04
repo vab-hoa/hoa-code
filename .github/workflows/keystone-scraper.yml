@@ -19,6 +19,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -71,7 +73,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add keystone_docs_manifest.json
-          git diff --staged --quiet || (git commit -m "chore: keystone documents manifest updated $(date -u '+%Y-%m-%d')" && git push)
+          git diff --staged --quiet || git commit -m "chore: keystone documents manifest updated $(date -u '+%Y-%m-%d')"
+          git pull --rebase --autostash origin main
+          git push
 
       - name: Import Keystone notes into the HOA tracker
         if: ${{ !cancelled() }}
@@ -96,7 +100,9 @@ jobs:
           python keystone_attachments.py
           # Remember identical copies skipped this run, so they're never re-downloaded.
           git add keystone_attachment_duplicates.json
-          git diff --staged --quiet || (git commit -m "chore: keystone attachment duplicates updated $(date -u '+%Y-%m-%d')" && git push)
+          git diff --staged --quiet || git commit -m "chore: keystone attachment duplicates updated $(date -u '+%Y-%m-%d')"
+          git pull --rebase --autostash origin main
+          git push
 
       # People and the per-street sheets are rebuilt by the Contacts sync workflow,
       # which runs an hour after this one. build_full_directory.py stays in the
@@ -110,6 +116,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add keystone-scraper/last_run.txt
           git commit -m "chore: keystone scraper ran $(date -u '+%Y-%m-%d')"
+          git pull --rebase --autostash origin main
           git push
 
       - name: Email alert on failure
