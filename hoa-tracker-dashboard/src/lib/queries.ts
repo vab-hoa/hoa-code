@@ -267,20 +267,22 @@ export async function markWorkItemCompleted(
 // === Property Detail ===
 
 export async function getPropertyOwners(propertyId: string): Promise<string[]> {
-  const { data, error } = await supabase
-    .from('people')
-    .select('first_name, last_name, display_name, inactive')
-    .eq('property_id', propertyId)
-    .in('role', ['owner_occupant', 'non_occupant_owner'])
-    .order('last_name')
-  if (error) {
-    console.error('getPropertyOwners:', error)
-    return []
-  }
-  return (data || []).map((row) => {
-    const name = [row.first_name, row.last_name].filter(Boolean).join(' ') || row.display_name || 'Owner'
-    return row.inactive ? `${name} (inactive)` : name
-  })
+  const res = await fetch('/api/directory')
+  if (!res.ok) return []
+  const body = await res.json()
+  const people = (body.people || []) as Array<{
+    propertyId: string | null
+    role: string
+    firstName: string
+    lastName: string
+    inactive: boolean
+  }>
+  return people
+    .filter((person) => person.propertyId === propertyId && (person.role === 'owner_occupant' || person.role === 'non_occupant_owner'))
+    .map((person) => {
+      const name = [person.firstName, person.lastName].filter(Boolean).join(' ') || 'Owner'
+      return person.inactive ? `${name} (inactive)` : name
+    })
 }
 
 export async function getProperty(id: string): Promise<Property | null> {

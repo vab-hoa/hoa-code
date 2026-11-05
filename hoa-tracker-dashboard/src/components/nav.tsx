@@ -40,6 +40,16 @@ export function Nav() {
               ))}
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <Link href="/login" className="px-3 py-1.5 text-sm text-mute hover:text-ink">
+              Sign in
+            </Link>
+            <form action="/auth/signout" method="post">
+              <button type="submit" className="px-3 py-1.5 text-sm text-mute hover:text-ink">
+                Sign out
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </nav>

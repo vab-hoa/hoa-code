@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import type { DirectoryContact, DirectoryPerson, PersonRole } from '@/lib/directory'
 import { OWNER_ROLES, personName } from '@/lib/directory'
+import { requireBoard } from '@/lib/require-board'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -77,15 +77,9 @@ function ordered(contacts: ContactRow[], kind: ContactRow['kind']): DirectoryCon
 
 export async function GET() {
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    if (!supabaseUrl || !supabaseKey) {
-      return NextResponse.json({ error: 'Supabase env not configured' }, { status: 500 })
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseKey, {
-      auth: { persistSession: false },
-    })
+    const access = await requireBoard()
+    if (!access.ok) return access.response
+    const supabase = access.supabase
 
     const [{ data: peopleRows, error: peopleErr }, { data: properties, error: propErr }] = await Promise.all([
       supabase
@@ -161,7 +155,7 @@ export async function GET() {
 
     return NextResponse.json(
       { asOf: new Date().toISOString(), count: people.length, people },
-      { headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' } },
+      { headers: { 'Cache-Control': 'private, no-store' } },
     )
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error)

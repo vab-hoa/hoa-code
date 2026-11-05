@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Loading } from '@/components/loading'
 import { SortableTh } from '@/components/sortable-th'
 import { useSortableData } from '@/hooks/useSortableData'
-import { contactsOf, ROLE_LABEL, type DirectoryPerson } from '@/lib/directory'
+import { contactsOf, ROLE_LABEL, type DirectoryPerson, type PersonRole } from '@/lib/directory'
 
 type SortablePerson = DirectoryPerson & {
   /** Combined resident display name for default sort/search */
@@ -78,7 +78,20 @@ export default function PropertiesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
+  const [street, setStreet] = useState('')
+  const [role, setRole] = useState<PersonRole | ''>('')
+  const [label, setLabel] = useState('')
+  const [active, setActive] = useState<'' | 'active' | 'inactive'>('')
   const [asOf, setAsOf] = useState<string | null>(null)
+
+  const streets = useMemo(
+    () => [...new Set(people.map((person) => person.street).filter(Boolean))].sort(),
+    [people],
+  )
+  const labels = useMemo(
+    () => [...new Set(people.flatMap((person) => person.labels))].sort((a, b) => a.localeCompare(b)),
+    [people],
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -107,8 +120,15 @@ export default function PropertiesPage() {
   }, [])
 
   const filtered = useMemo(
-    () => people.filter((p) => matchesSearch(p, search.trim())),
-    [people, search]
+    () => people.filter((p) => {
+      if (street && p.street !== street) return false
+      if (role && p.role !== role) return false
+      if (label && !p.labels.some((item) => item.toLowerCase() === label.toLowerCase())) return false
+      if (active === 'active' && p.inactive) return false
+      if (active === 'inactive' && !p.inactive) return false
+      return matchesSearch(p, search.trim())
+    }),
+    [people, search, street, role, label, active],
   )
 
   const { sortedItems, sortKey, sortDir, requestSort } = useSortableData<SortablePerson>(
@@ -136,7 +156,7 @@ export default function PropertiesPage() {
           <div>
             <h1 className="text-2xl font-bold text-ink">Properties</h1>
             <p className="text-sm text-mute mt-1">
-              Homeowner directory from Google Contacts. Inactive contacts stay on this list until they are purged.
+              Read-only directory from Google Contacts. Filter by street, role, or committee label. To change a contact, edit it in Google Contacts.
             </p>
           </div>
           {asOf && (
@@ -155,6 +175,49 @@ export default function PropertiesPage() {
             className="w-full sm:max-w-xl px-3 py-2 border border-edge bg-surface text-ink rounded-lg text-sm placeholder:text-mute focus:outline-none focus:ring-1 focus:ring-blue-400"
             autoFocus
           />
+          <select
+            value={street}
+            onChange={(e) => setStreet(e.target.value)}
+            className="px-3 py-2 border border-edge bg-surface text-ink rounded-lg text-sm"
+            aria-label="Street"
+          >
+            <option value="">All streets</option>
+            {streets.map((item) => (
+              <option key={item} value={item}>{item}</option>
+            ))}
+          </select>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value as PersonRole | '')}
+            className="px-3 py-2 border border-edge bg-surface text-ink rounded-lg text-sm"
+            aria-label="Role"
+          >
+            <option value="">All roles</option>
+            {(Object.keys(ROLE_LABEL) as PersonRole[]).map((item) => (
+              <option key={item} value={item}>{ROLE_LABEL[item]}</option>
+            ))}
+          </select>
+          <select
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            className="px-3 py-2 border border-edge bg-surface text-ink rounded-lg text-sm"
+            aria-label="Committee or label"
+          >
+            <option value="">All labels</option>
+            {labels.map((item) => (
+              <option key={item} value={item}>{item}</option>
+            ))}
+          </select>
+          <select
+            value={active}
+            onChange={(e) => setActive(e.target.value as '' | 'active' | 'inactive')}
+            className="px-3 py-2 border border-edge bg-surface text-ink rounded-lg text-sm"
+            aria-label="Active status"
+          >
+            <option value="">Active and inactive</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
           <div className="flex flex-wrap gap-2 text-xs">
             <span className="text-mute self-center">Quick sort:</span>
             {(
@@ -303,7 +366,7 @@ export default function PropertiesPage() {
 
         <p className="text-xs text-mute mt-4">
           {sortedItems.length} of {people.length} people
-          {search.trim() ? ` matching “${search.trim()}”` : ''}
+          {search.trim() || street || role || label || active ? ' matching the current filters' : ''}
           {' · '}
           {people.filter((person) => person.inactive).length} inactive
           {' · '}
