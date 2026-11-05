@@ -58,9 +58,9 @@ async function main() {
       else phones += 1
     }
   }
-  const unparsedHoaAddresses = [...new Set(
+  const unparsedHoaAddressCount = new Set(
     classified.flatMap((item) => item.unparsedLines.filter(looksLikeHoaAddress)),
-  )].sort().slice(0, 40)
+  ).size
 
   const report = {
     mode,
@@ -79,7 +79,7 @@ async function main() {
     parcelsNotInTracker: covered.parcelsNotInTracker,
     wouldMarkInactive: plan.markInactive.length,
     wouldReactivate: plan.reactivate.length,
-    unparsedHoaAddresses,
+    unparsedHoaAddressCount,
   }
 
   console.log(summary(report))
@@ -111,7 +111,7 @@ function summary(report: {
   parcelsNotInTracker: string[]
   wouldMarkInactive: number
   wouldReactivate: number
-  unparsedHoaAddresses: string[]
+  unparsedHoaAddressCount: number
 }): string {
   const lines = [
     `contacts sync ${report.mode}`,
@@ -129,9 +129,8 @@ function summary(report: {
   if (report.parcelsNotInTracker.length) {
     lines.push(`parsed parcels not in the tracker: ${report.parcelsNotInTracker.join(', ')}`)
   }
-  if (report.unparsedHoaAddresses.length) {
-    lines.push('unparsed lines that look like this neighborhood:')
-    for (const line of report.unparsedHoaAddresses) lines.push(`  ${line}`)
+  if (report.unparsedHoaAddressCount) {
+    lines.push(`unparsed lines that look like this neighborhood: ${report.unparsedHoaAddressCount}`)
   }
   return lines.join('\n')
 }

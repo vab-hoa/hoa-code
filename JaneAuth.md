@@ -680,7 +680,7 @@ Located in `~/hoa-code/hoa-tracker/secrets/` (gitignored). Moved from `/tmp/` to
 
 - **Script ID:** `15Ey8ZSROvVPF2sYXhnLfypi2ppl3C8F5W3icGbofezWMM_iOq9dVdahz`
 - **Secret property:** `OAUTH_CLIENT_SECRET` — moved from hardcoded source into Script Properties during the 2026-08-12 OAuth incident remediation.
-- **Full incident writeup:** `OAUTH_INCIDENT_REMEDIATION.md` in the repo.
+- **Incident writeup:** removed from the repo on 2026-11-05. The file contained the client secret. That secret was deleted in GCP.
 
 Other HOA Apps Script projects (HOALibrary, LinkMonitor, ARC/LBC/WO RequestForms) were not checked for Script Properties secrets — no evidence of any, but not independently verified.
 

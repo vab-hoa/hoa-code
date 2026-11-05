@@ -2,7 +2,7 @@ import { writeFileSync } from 'node:fs'
 import { applyOutcome } from './apply.js'
 import { getDb, loadCandidates, messageExists } from './db.js'
 import { callModel } from './decide.js'
-import { buildDigest } from './digest.js'
+import { buildDigest, buildRunLog } from './digest.js'
 import { downloadGmailAttachment, fetchGmail, sendDigest } from './gmail.js'
 import { fetchImap } from './imap.js'
 import { loadEmailModel, modelLabel } from './model-config.js'
@@ -66,15 +66,15 @@ async function main() {
         model: callModel,
       })
       if (write) await applyOutcome(db, email, outcome, downloadGmailAttachment)
-      outcomes.push(publicOutcome(outcome))
-      console.error(`${outcome.disposition}\t${email.mailbox}\t${email.subject.slice(0, 90)}`)
+      outcomes.push(outcome)
+      console.error(`${outcome.disposition}\t${email.mailbox}\t${email.gmailMessageId}`)
     } catch (err) {
       errors.push(`${email.gmailMessageId}: ${messageOf(err)}`)
     }
   }
 
   const digest = buildDigest(outcomes, modelLabel(choice))
-  console.log(digest)
+  console.log(buildRunLog(outcomes, modelLabel(choice)))
   if (errors.length) console.error(errors.join('\n'))
   if (out) {
     writeFileSync(out, JSON.stringify({
@@ -83,7 +83,7 @@ async function main() {
       modelSource: choice.source,
       generatedAt: new Date().toISOString(),
       errors,
-      outcomes,
+      outcomes: outcomes.map(artifactOutcome),
     }, null, 2))
     console.error(`wrote ${out}`)
   }
@@ -101,9 +101,19 @@ function messageOf(err: unknown): string {
   return err instanceof Error ? err.message : String(err)
 }
 
-/** Drop anything that should not land in a GitHub artifact. */
-function publicOutcome(outcome: Outcome): Outcome {
-  return { ...outcome, preview: outcome.preview.slice(0, 240) }
+/** Drop message text before the report is uploaded as an Actions artifact. */
+function artifactOutcome(outcome: Outcome): Record<string, unknown> {
+  const {
+    subject: _subject,
+    from: _from,
+    homeownerName: _homeownerName,
+    description: _description,
+    title: _title,
+    preview: _preview,
+    reason: _reason,
+    ...rest
+  } = outcome
+  return rest
 }
 
 main().catch((err) => {

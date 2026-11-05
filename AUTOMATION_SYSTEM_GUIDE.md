@@ -374,7 +374,7 @@ const sheets = google.sheets({version: 'v4', auth: authClient});
 - Moved to Script Properties at runtime
 - Git history rewritten with `git filter-branch`
 - Old secret revoked; new secret generated and stored in Script Properties
-- See [OAUTH_INCIDENT_REMEDIATION.md](OAUTH_INCIDENT_REMEDIATION.md) for full details
+- The incident writeup was removed from the repo on 2026-11-05 because it contained the client secret. That secret was deleted in GCP.
 
 ### 3. GitHub Actions Secrets
 
@@ -638,7 +638,6 @@ gh run view <run-id> --repo vab-hoa/hoa-code --log
 - **[CLAUDE.md](CLAUDE.md)** — Project structure, script IDs, deployment IDs
 - **[memory/auth_inventory.md](../memory/auth_inventory.md)** — Complete credential inventory (current/deprecated status, key IDs, locations)
 - **[memory/gcp_apps_script_architecture.md](../memory/gcp_apps_script_architecture.md)** — Architecture explanation (GCP projects, OAuth, delegation)
-- **[OAUTH_INCIDENT_REMEDIATION.md](OAUTH_INCIDENT_REMEDIATION.md)** — PropertyReport OAuth secret exposure incident (2026-08-12)
 - **[PropertyReport/OAUTH_SECURITY.md](PropertyReport/OAUTH_SECURITY.md)** — Ongoing OAuth management
 - **[hoa-tracker-dashboard/README.md](hoa-tracker-dashboard/README.md)** — Dashboard local dev and deployment
 - **[CommunityBoard/README.md](CommunityBoard/README.md)** — Community Board web app
