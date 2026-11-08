@@ -6,6 +6,13 @@ function isPeoplePath(pathname: string): boolean {
   return pathname === '/properties' || pathname.startsWith('/properties/') || pathname === '/api/directory'
 }
 
+function isBoardApi(pathname: string): boolean {
+  return pathname === '/api/send-email'
+    || pathname === '/api/board'
+    || pathname === '/api/work-items'
+    || pathname === '/api/work-item-documents'
+}
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request })
   const supabase = createServerClient(
@@ -27,7 +34,7 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
   const pathname = request.nextUrl.pathname
-  if (!isPeoplePath(pathname)) return response
+  if (!isPeoplePath(pathname) && !isBoardApi(pathname)) return response
 
   const carry = (target: NextResponse) => {
     response.cookies.getAll().forEach((cookie) => {

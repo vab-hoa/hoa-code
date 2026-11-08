@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireBoard } from '@/lib/require-board'
 import { sendEmail } from '@/lib/send-email'
 
 export async function POST(request: NextRequest) {
+  const access = await requireBoard()
+  if (!access.ok) return access.response
+
   try {
     const body = await request.json()
 

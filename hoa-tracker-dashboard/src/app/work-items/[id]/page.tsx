@@ -4,8 +4,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useWorkItem } from '@/hooks/useWorkItem'
-import { supabase } from '@/lib/supabase'
-import { uploadWorkItemDocument, updateWorkItemDocumentTitle, getWorkItemDocumentUrl, markWorkItemCompleted, updateWorkItemStatus, resetWorkItemClock, getWorkItem, addWorkItemNote, getPropertyOwners } from '@/lib/queries'
+import { uploadWorkItemDocument, updateWorkItemDocumentTitle, openWorkItemDocument, markWorkItemCompleted, updateWorkItemStatus, resetWorkItemClock, addWorkItemNote, getPropertyOwners, excludeWorkItem, deleteWorkItem } from '@/lib/queries'
 import { ALL_TERMINAL_STATUSES, getValidStatusesForCategory } from '@/lib/work-item-helpers'
 import { STATUS_LABELS } from '@/lib/constants'
 import { Loading } from '@/components/loading'
@@ -89,19 +88,11 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
     }
 
     setIsExcluding(true)
-    const { error: updateError } = await supabase
-      .from('work_items')
-      .update({
-        excluded_at: new Date().toISOString(),
-        excluded_by: excludingName,
-        excluded_reason: exclusionReason,
-      })
-      .eq('id', id)
-
+    const result = await excludeWorkItem(id, excludingName, exclusionReason)
     setIsExcluding(false)
 
-    if (updateError) {
-      alert('Error excluding item: ' + updateError.message)
+    if (!result.success) {
+      alert('Error excluding item: ' + (result.error || 'Unknown error'))
       return
     }
 
@@ -183,23 +174,10 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
     setIsDeleting(true)
 
     try {
-      // Delete related records first
-      await supabase.from('issue_email_link').delete().eq('work_item_id', id)
-      await supabase.from('wo_status_snapshot').delete().eq('work_item_id', id)
-      await supabase.from('work_item_documents').delete().eq('work_item_id', id)
-
-      // Null out the foreign key on work_items before deleting source_documents
-      const sourceDocId = (item as any).source_document_id
-      if (sourceDocId) {
-        await supabase.from('work_items').update({ source_document_id: null }).eq('id', id)
-        await supabase.from('source_documents').delete().eq('id', sourceDocId)
-      }
-
-      // Delete the work item itself
-      const { error: deleteError } = await supabase.from('work_items').delete().eq('id', id)
-
-      if (deleteError) {
-        alert('Error deleting work item: ' + deleteError.message)
+      const sourceDocId = (item as { source_document_id?: string | null }).source_document_id
+      const result = await deleteWorkItem(id, sourceDocId)
+      if (!result.success) {
+        alert('Error deleting work item: ' + (result.error || 'Unknown error'))
         setIsDeleting(false)
         return
       }
@@ -547,14 +525,17 @@ export default function WorkItemDetail({ params }: { params: Promise<{ id: strin
                           </div>
                         ) : (
                           <div className="flex items-center gap-2 mb-1">
-                            <a
-                              href={getWorkItemDocumentUrl(doc.storage_path)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-300 hover:underline text-sm font-medium truncate"
+                            <button
+                              type="button"
+                              onClick={() => {
+                                openWorkItemDocument(doc.storage_path).catch((err) => {
+                                  alert(err instanceof Error ? err.message : 'Could not open document')
+                                })
+                              }}
+                              className="text-blue-300 hover:underline text-sm font-medium truncate text-left"
                             >
                               {doc.title || <span className="italic text-mute">Untitled document</span>}
-                            </a>
+                            </button>
                             <button
                               onClick={() => {
                                 setEditingDocId(doc.id)

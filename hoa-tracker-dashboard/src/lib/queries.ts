@@ -1,5 +1,26 @@
 import { supabase } from './supabase'
 import { isTerminalStatus } from './work-item-helpers'
+
+async function boardGet<T>(q: string, params: Record<string, string> = {}): Promise<T> {
+  const search = new URLSearchParams({ q, ...params })
+  const res = await fetch(`/api/board?${search.toString()}`)
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(body.error || `Board data request failed (${res.status})`)
+  return body as T
+}
+
+async function boardPost<T>(payload: Record<string, unknown>): Promise<T> {
+  const res = await fetch('/api/work-items', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok && body.success !== false) {
+    throw new Error(body.error || `Work item request failed (${res.status})`)
+  }
+  return body as T
+}
 import type {
   DashboardSummary, OpenWorkItem, AgingWorkItem,
   WorkItem, Property, CorrespondenceEntry, EmailMessage,
@@ -9,26 +30,26 @@ import type {
 // === Dashboard Home ===
 
 export async function getDashboardSummary(): Promise<DashboardSummary | null> {
-  const { data, error } = await supabase
-    .from('v_dashboard_summary')
-    .select('*')
-    .single()
-  if (error) { console.error('getDashboardSummary:', error); return null }
-  return data
+  try {
+    return await boardGet<DashboardSummary>('summary')
+  } catch (error) {
+    console.error('getDashboardSummary:', error)
+    return null
+  }
 }
 
 export async function getAgingWorkItems(): Promise<AgingWorkItem[]> {
-  const { data, error } = await supabase
-    .from('v_aging_work_items')
-    .select('*')
-    .order('days_open', { ascending: false })
-  if (error) { console.error('getAgingWorkItems:', error); return [] }
+  let items: AgingWorkItem[] = []
+  try {
+    items = await boardGet<AgingWorkItem[]>('aging')
+  } catch (error) {
+    console.error('getAgingWorkItems:', error)
+    return []
+  }
 
-  const items = data || []
   console.log('Raw aging items count:', items.length)
   console.log('Raw aging items statuses:', items.map(i => ({ title: i.title, status: i.status })))
 
-  // Exclude terminal statuses and project category items from aging alerts
   const filtered = items.filter(item =>
     !isTerminalStatus(item) &&
     !item.category?.startsWith('project:')
@@ -39,83 +60,69 @@ export async function getAgingWorkItems(): Promise<AgingWorkItem[]> {
 }
 
 export async function getOpenWorkItems(): Promise<OpenWorkItem[]> {
-  const { data, error } = await supabase
-    .from('v_open_work_items')
-    .select('*')
-    .order('priority', { ascending: false })
-  if (error) { console.error('getOpenWorkItems:', error); return [] }
-  const items = data || []
-  return items.filter(item => !isTerminalStatus(item))
+  try {
+    const items = await boardGet<OpenWorkItem[]>('open')
+    return items.filter(item => !isTerminalStatus(item))
+  } catch (error) {
+    console.error('getOpenWorkItems:', error)
+    return []
+  }
 }
 
 export async function getRecentCorrespondence(limit: number = 10) {
-  const { data, error } = await supabase
-    .from('correspondence_entries')
-    .select(`
-      *,
-      work_items (
-        title,
-        category,
-        status
-      )
-    `)
-    .order('entry_date', { ascending: false })
-    .limit(limit)
-  if (error) { console.error('getRecentCorrespondence:', error); return [] }
-  return data || []
+  try {
+    return await boardGet<any[]>('recent-correspondence', { limit: String(limit) })
+  } catch (error) {
+    console.error('getRecentCorrespondence:', error)
+    return []
+  }
 }
 
 // === Work Item Detail ===
 
 export async function getWorkItem(id: string): Promise<WorkItem | null> {
-  const { data, error } = await supabase
-    .from('work_items')
-    .select('*, properties(*)')
-    .eq('id', id)
-    .single()
-  if (error) { console.error('getWorkItem:', error); return null }
-  return data as any
+  try {
+    return await boardGet<WorkItem>('work-item', { id })
+  } catch (error) {
+    console.error('getWorkItem:', error)
+    return null
+  }
 }
 
 export async function getWorkItemCorrespondence(workItemId: string): Promise<CorrespondenceEntry[]> {
-  const { data, error } = await supabase
-    .from('correspondence_entries')
-    .select('*')
-    .eq('work_item_id', workItemId)
-    .order('entry_date', { ascending: true })
-  if (error) { console.error('getWorkItemCorrespondence:', error); return [] }
-  return data || []
+  try {
+    return await boardGet<CorrespondenceEntry[]>('correspondence', { id: workItemId })
+  } catch (error) {
+    console.error('getWorkItemCorrespondence:', error)
+    return []
+  }
 }
 
 export async function getWorkItemEmails(workItemId: string) {
-  const { data, error } = await supabase
-    .from('issue_email_link')
-    .select('*, email_message(*)')
-    .eq('work_item_id', workItemId)
-    .order('email_message(received_date)', { ascending: true })
-  if (error) { console.error('getWorkItemEmails:', error); return [] }
-  return data || []
+  try {
+    return await boardGet<any[]>('emails', { id: workItemId })
+  } catch (error) {
+    console.error('getWorkItemEmails:', error)
+    return []
+  }
 }
 
 export async function getWorkItemStatusHistory(workItemId: string) {
-  const { data, error } = await supabase
-    .from('correspondence_entries')
-    .select('*')
-    .eq('work_item_id', workItemId)
-    .not('old_status', 'is', null)
-    .order('entry_date', { ascending: true })
-  if (error) { console.error('getWorkItemStatusHistory:', error); return [] }
-  return data || []
+  try {
+    return await boardGet<CorrespondenceEntry[]>('status-history', { id: workItemId })
+  } catch (error) {
+    console.error('getWorkItemStatusHistory:', error)
+    return []
+  }
 }
 
 export async function getWorkItemDocuments(workItemId: string): Promise<WorkItemDocument[]> {
-  const { data, error } = await supabase
-    .from('work_item_documents')
-    .select('*')
-    .eq('work_item_id', workItemId)
-    .order('uploaded_at', { ascending: false })
-  if (error) { console.error('getWorkItemDocuments:', error); return [] }
-  return data || []
+  try {
+    return await boardGet<WorkItemDocument[]>('documents', { id: workItemId })
+  } catch (error) {
+    console.error('getWorkItemDocuments:', error)
+    return []
+  }
 }
 
 export async function uploadWorkItemDocument(
@@ -125,38 +132,18 @@ export async function uploadWorkItemDocument(
   uploadedBy: string
 ): Promise<WorkItemDocument | null> {
   try {
-    const fileName = file.name
-    const storagePath = `${workItemId}/${crypto.randomUUID()}-${fileName}`
-
-    const { error: uploadError } = await supabase.storage
-      .from('work-item-documents')
-      .upload(storagePath, file)
-
-    if (uploadError) {
-      console.error('Storage upload error:', uploadError)
+    const form = new FormData()
+    form.set('file', file)
+    form.set('workItemId', workItemId)
+    form.set('title', title || '')
+    form.set('uploadedBy', uploadedBy)
+    const res = await fetch('/api/work-item-documents', { method: 'POST', body: form })
+    const body = await res.json().catch(() => ({}))
+    if (!res.ok) {
+      console.error('uploadWorkItemDocument:', body.error)
       return null
     }
-
-    const { data, error: insertError } = await supabase
-      .from('work_item_documents')
-      .insert({
-        work_item_id: workItemId,
-        title: title || null,
-        file_name: fileName,
-        storage_path: storagePath,
-        content_type: file.type || null,
-        file_size_bytes: file.size,
-        uploaded_by: uploadedBy,
-      })
-      .select()
-      .single()
-
-    if (insertError) {
-      console.error('Database insert error:', insertError)
-      return null
-    }
-
-    return data
+    return body
   } catch (e) {
     console.error('uploadWorkItemDocument error:', e)
     return null
@@ -164,60 +151,52 @@ export async function uploadWorkItemDocument(
 }
 
 export async function updateWorkItemDocumentTitle(documentId: string, title: string | null): Promise<boolean> {
-  const { error } = await supabase
-    .from('work_item_documents')
-    .update({ title })
-    .eq('id', documentId)
-
-  if (error) {
+  try {
+    const body = await boardPost<{ success?: boolean; error?: string }>({
+      action: 'document-title',
+      documentId,
+      title,
+    })
+    if (body.success === false) {
+      console.error('updateWorkItemDocumentTitle:', body.error)
+      return false
+    }
+    return true
+  } catch (error) {
     console.error('updateWorkItemDocumentTitle:', error)
     return false
   }
-  return true
 }
 
-export function getWorkItemDocumentUrl(storagePath: string): string {
-  const { data } = supabase.storage.from('work-item-documents').getPublicUrl(storagePath)
-  return data.publicUrl
+export async function openWorkItemDocument(storagePath: string): Promise<void> {
+  const search = new URLSearchParams({ path: storagePath })
+  const res = await fetch(`/api/work-item-documents?${search.toString()}`)
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok || !body.url) throw new Error(body.error || 'Could not open document')
+  window.open(body.url, '_blank', 'noopener')
 }
 
 export async function updateWorkItemStatus(
   workItemId: string,
   newStatus: string
 ): Promise<{ success: boolean; error?: string }> {
-  console.log('updateWorkItemStatus called', { workItemId, newStatus })
-
-  const { error } = await supabase
-    .from('work_items')
-    .update({
-      status: newStatus,
-      status_changed_at: new Date().toISOString(),
-    })
-    .eq('id', workItemId)
-
-  if (error) {
-    console.error('updateWorkItemStatus error:', error)
-    return { success: false, error: error.message }
+  try {
+    return await boardPost({ action: 'status', id: workItemId, status: newStatus })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return { success: false, error: message }
   }
-
-  console.log('Status update succeeded')
-  return { success: true }
 }
 
 export async function resetWorkItemClock(
   workItemId: string
 ): Promise<{ success: boolean; error?: string }> {
-  const { error } = await supabase
-    .from('work_items')
-    .update({ status_changed_at: new Date().toISOString() })
-    .eq('id', workItemId)
-
-  if (error) {
-    console.error('resetWorkItemClock error:', error)
-    return { success: false, error: error.message }
+  try {
+    return await boardPost({ action: 'reset-clock', id: workItemId })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return { success: false, error: message }
   }
-
-  return { success: true }
 }
 
 export async function markWorkItemCompleted(
@@ -225,42 +204,40 @@ export async function markWorkItemCompleted(
   newStatus: string,
   closedDate?: string
 ): Promise<{ success: boolean; error?: string }> {
-  console.log('markWorkItemCompleted called', { workItemId, newStatus, closedDate })
-
-  const updateData = {
-    status: newStatus,
-    closed_date: closedDate || new Date().toISOString().split('T')[0],
+  try {
+    return await boardPost({ action: 'complete', id: workItemId, status: newStatus, closedDate })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return { success: false, error: message }
   }
-  console.log('updateData:', updateData)
+}
 
-  // First, verify the work item exists
-  const { data: existingItem, error: fetchError } = await supabase
-    .from('work_items')
-    .select('id, status')
-    .eq('id', workItemId)
-    .single()
+export async function excludeWorkItem(
+  workItemId: string,
+  excludedBy: string,
+  excludedReason: string
+): Promise<{ success: boolean; error?: string }> {
+  const res = await fetch('/api/work-items', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'exclude', id: workItemId, excludedBy, excludedReason }),
+  })
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok) return { success: false, error: body.error || 'Could not exclude item' }
+  return { success: true }
+}
 
-  if (fetchError) {
-    console.error('Error fetching work item:', fetchError)
-    return { success: false, error: `Item not found: ${fetchError.message}` }
-  }
-
-  console.log('Found existing item:', existingItem)
-
-  // Now update it
-  const { error } = await supabase
-    .from('work_items')
-    .update(updateData)
-    .eq('id', workItemId)
-
-  console.log('Supabase response error:', error)
-
-  if (error) {
-    console.error('markWorkItemCompleted error:', error)
-    return { success: false, error: error.message }
-  }
-
-  console.log('Update succeeded')
+export async function deleteWorkItem(
+  workItemId: string,
+  sourceDocumentId?: string | null
+): Promise<{ success: boolean; error?: string }> {
+  const res = await fetch('/api/work-items', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'delete', id: workItemId, sourceDocumentId: sourceDocumentId || null }),
+  })
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok) return { success: false, error: body.error || 'Could not delete item' }
   return { success: true }
 }
 
@@ -306,24 +283,21 @@ export async function getPropertyByParcelCode(parcelCode: string): Promise<Prope
 }
 
 export async function getPropertyWorkItems(propertyId: string): Promise<WorkItem[]> {
-  const { data, error } = await supabase
-    .from('work_items')
-    .select('*')
-    .eq('property_id', propertyId)
-    .is('excluded_at', null)
-    .order('created_date', { ascending: false })
-  if (error) { console.error('getPropertyWorkItems:', error); return [] }
-  return data as any || []
+  try {
+    return await boardGet<WorkItem[]>('property-work-items', { id: propertyId })
+  } catch (error) {
+    console.error('getPropertyWorkItems:', error)
+    return []
+  }
 }
 
 export async function getPropertySourceDocuments(propertyId: string): Promise<SourceDocument[]> {
-  const { data, error } = await supabase
-    .from('source_documents')
-    .select('*')
-    .eq('property_id', propertyId)
-    .order('received_date', { ascending: false })
-  if (error) { console.error('getPropertySourceDocuments:', error); return [] }
-  return data || []
+  try {
+    return await boardGet<SourceDocument[]>('source-documents', { id: propertyId })
+  } catch (error) {
+    console.error('getPropertySourceDocuments:', error)
+    return []
+  }
 }
 
 export async function getAllProperties(): Promise<Property[]> {
@@ -343,54 +317,45 @@ export async function getEmails(options: {
   limit?: number
   offset?: number
 } = {}) {
-  let query = supabase
-    .from('email_message')
-    .select('*')
-    .order('received_date', { ascending: false })
-
-  if (options.classification) {
-    query = query.eq('classification', options.classification)
+  const params: Record<string, string> = {
+    limit: String(options.limit || 50),
+    offset: String(options.offset || 0),
   }
-  if (options.isNoise !== undefined) {
-    query = query.eq('is_noise', options.isNoise)
+  if (options.classification) params.classification = options.classification
+  if (options.isNoise !== undefined) params.isNoise = String(options.isNoise)
+  try {
+    return await boardGet<any[]>('inbox', params)
+  } catch (error) {
+    console.error('getEmails:', error)
+    return []
   }
-
-  const limit = options.limit || 50
-  const offset = options.offset || 0
-  query = query.range(offset, offset + limit - 1)
-
-  const { data, error } = await query
-  if (error) { console.error('getEmails:', error); return [] }
-  return data || []
 }
 
 export async function getEmailByMessageId(messageId: string): Promise<EmailMessage | null> {
-  const { data, error } = await supabase
-    .from('email_message')
-    .select('*')
-    .eq('gmail_message_id', messageId)
-    .single()
-  if (error) { console.error('getEmailByMessageId:', error); return null }
-  return data
+  try {
+    return await boardGet<EmailMessage>('email-by-gmail-id', { id: messageId })
+  } catch (error) {
+    console.error('getEmailByMessageId:', error)
+    return null
+  }
 }
 
 export async function getEmailLinkedWorkItems(emailId: string) {
-  const { data, error } = await supabase
-    .from('issue_email_link')
-    .select('*, work_items(title, category, status)')
-    .eq('email_message_id', emailId)
-  if (error) { console.error('getEmailLinkedWorkItems:', error); return [] }
-  return data || []
+  try {
+    return await boardGet<any[]>('email-links', { id: emailId })
+  } catch (error) {
+    console.error('getEmailLinkedWorkItems:', error)
+    return []
+  }
 }
 
 export async function getThreadMessages(threadId: string): Promise<EmailMessage[]> {
-  const { data, error } = await supabase
-    .from('email_message')
-    .select('*')
-    .eq('gmail_thread_id', threadId)
-    .order('received_date', { ascending: true })
-  if (error) { console.error('getThreadMessages:', error); return [] }
-  return data || []
+  try {
+    return await boardGet<EmailMessage[]>('thread', { id: threadId })
+  } catch (error) {
+    console.error('getThreadMessages:', error)
+    return []
+  }
 }
 
 // === WO Status Snapshots ===
@@ -467,24 +432,23 @@ export async function getSnapshotDiff(date1: string, date2: string) {
 // === Email Stats ===
 
 export async function getEmailStats() {
-  const { data, error } = await supabase
-    .from('v_email_processing_stats')
-    .select('*')
-    .order('message_count', { ascending: false })
-  if (error) { console.error('getEmailStats:', error); return [] }
-  return data || []
+  try {
+    return await boardGet<any[]>('email-stats')
+  } catch (error) {
+    console.error('getEmailStats:', error)
+    return []
+  }
 }
 
 // === Work Item Notes ===
 
 export async function getWorkItemNotes(workItemId: string): Promise<WorkItemNote[]> {
-  const { data, error } = await supabase
-    .from('work_item_notes')
-    .select('*')
-    .eq('work_item_id', workItemId)
-    .order('note_date', { ascending: true })
-  if (error) { console.error('getWorkItemNotes:', error); return [] }
-  return data || []
+  try {
+    return await boardGet<WorkItemNote[]>('notes', { id: workItemId })
+  } catch (error) {
+    console.error('getWorkItemNotes:', error)
+    return []
+  }
 }
 
 export async function addWorkItemNote(
@@ -493,16 +457,16 @@ export async function addWorkItemNote(
   content: string,
   source?: string | null
 ): Promise<WorkItemNote | null> {
-  const { data, error } = await supabase
-    .from('work_item_notes')
-    .insert({
-      work_item_id: workItemId,
-      note_date: noteDate,
+  try {
+    return await boardPost<WorkItemNote>({
+      action: 'note',
+      id: workItemId,
+      noteDate,
       content,
       source: source || null,
     })
-    .select()
-    .single()
-  if (error) { console.error('addWorkItemNote:', error); return null }
-  return data
+  } catch (error) {
+    console.error('addWorkItemNote:', error)
+    return null
+  }
 }
