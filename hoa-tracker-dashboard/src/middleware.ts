@@ -2,15 +2,8 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { BOARD_COOKIE, boardCookieMatches, safeNext } from '@/lib/board-cookie'
 
-function isPeoplePath(pathname: string): boolean {
-  return pathname === '/properties' || pathname.startsWith('/properties/') || pathname === '/api/directory'
-}
-
-function isBoardApi(pathname: string): boolean {
-  return pathname === '/api/send-email'
-    || pathname === '/api/board'
-    || pathname === '/api/work-items'
-    || pathname === '/api/work-item-documents'
+function isPublicPath(pathname: string): boolean {
+  return pathname === '/login' || pathname.startsWith('/auth/')
 }
 
 export async function middleware(request: NextRequest) {
@@ -34,7 +27,7 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
   const pathname = request.nextUrl.pathname
-  if (!isPeoplePath(pathname) && !isBoardApi(pathname)) return response
+  if (isPublicPath(pathname)) return response
 
   const carry = (target: NextResponse) => {
     response.cookies.getAll().forEach((cookie) => {
@@ -49,16 +42,26 @@ export async function middleware(request: NextRequest) {
     }
     const login = request.nextUrl.clone()
     login.pathname = '/login'
-    login.searchParams.set('next', pathname)
+    login.search = ''
+    login.searchParams.set('next', safeNext(pathname))
     return carry(NextResponse.redirect(login))
   }
 
-  const allowed = await boardCookieMatches(request.cookies.get(BOARD_COOKIE)?.value, user.email)
+  let allowed = false
+  try {
+    allowed = await boardCookieMatches(request.cookies.get(BOARD_COOKIE)?.value, user.email)
+  } catch (error) {
+    console.error('board cookie check:', error)
+  }
   if (allowed) return response
 
-  if (pathname.startsWith('/api/')) return response
+  if (pathname.startsWith('/api/')) {
+    return carry(NextResponse.json({ error: 'Not a board member' }, { status: 403 }))
+  }
+
   const check = request.nextUrl.clone()
   check.pathname = '/auth/board-check'
+  check.search = ''
   check.searchParams.set('next', safeNext(pathname))
   return carry(NextResponse.redirect(check))
 }

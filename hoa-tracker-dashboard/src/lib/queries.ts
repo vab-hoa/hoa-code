@@ -1,4 +1,3 @@
-import { supabase } from './supabase'
 import { isTerminalStatus } from './work-item-helpers'
 
 async function boardGet<T>(q: string, params: Record<string, string> = {}): Promise<T> {
@@ -263,23 +262,21 @@ export async function getPropertyOwners(propertyId: string): Promise<string[]> {
 }
 
 export async function getProperty(id: string): Promise<Property | null> {
-  const { data, error } = await supabase
-    .from('properties')
-    .select('*')
-    .eq('id', id)
-    .single()
-  if (error) { console.error('getProperty:', error); return null }
-  return data
+  try {
+    return await boardGet<Property>('property', { id })
+  } catch (error) {
+    console.error('getProperty:', error)
+    return null
+  }
 }
 
 export async function getPropertyByParcelCode(parcelCode: string): Promise<Property | null> {
-  const { data, error } = await supabase
-    .from('properties')
-    .select('*')
-    .eq('parcel_code', parcelCode)
-    .single()
-  if (error) { console.error('getPropertyByParcelCode:', error); return null }
-  return data
+  try {
+    return await boardGet<Property>('property-by-parcel', { id: parcelCode })
+  } catch (error) {
+    console.error('getPropertyByParcelCode:', error)
+    return null
+  }
 }
 
 export async function getPropertyWorkItems(propertyId: string): Promise<WorkItem[]> {
@@ -301,12 +298,12 @@ export async function getPropertySourceDocuments(propertyId: string): Promise<So
 }
 
 export async function getAllProperties(): Promise<Property[]> {
-  const { data, error } = await supabase
-    .from('properties')
-    .select('*')
-    .order('address', { ascending: true })
-  if (error) { console.error('getAllProperties:', error); return [] }
-  return data || []
+  try {
+    return await boardGet<Property[]>('properties')
+  } catch (error) {
+    console.error('getAllProperties:', error)
+    return []
+  }
 }
 
 // === Email Inbox ===
@@ -361,42 +358,30 @@ export async function getThreadMessages(threadId: string): Promise<EmailMessage[
 // === WO Status Snapshots ===
 
 export async function getLatestSnapshots() {
-  const { data: latest } = await supabase
-    .from('wo_status_snapshot')
-    .select('snapshot_date')
-    .order('snapshot_date', { ascending: false })
-    .limit(1)
-    .single()
-
-  if (!latest?.snapshot_date) return []
-
-  const { data, error } = await supabase
-    .from('wo_status_snapshot')
-    .select('*')
-    .eq('snapshot_date', latest.snapshot_date)
-    .order('status_raw', { ascending: true })
-  if (error) { console.error('getLatestSnapshots:', error); return [] }
-  return data || []
+  try {
+    return await boardGet<any[]>('snapshots-latest')
+  } catch (error) {
+    console.error('getLatestSnapshots:', error)
+    return []
+  }
 }
 
 export async function getSnapshotDates(): Promise<string[]> {
-  const { data, error } = await supabase
-    .from('wo_status_snapshot')
-    .select('snapshot_date')
-    .order('snapshot_date', { ascending: false })
-  if (error) { console.error('getSnapshotDates:', error); return [] }
-  const dates = (data || []).map(d => d.snapshot_date)
-  return [...new Set(dates)] as string[]
+  try {
+    return await boardGet<string[]>('snapshot-dates')
+  } catch (error) {
+    console.error('getSnapshotDates:', error)
+    return []
+  }
 }
 
 export async function getSnapshotsByDate(date: string): Promise<WoStatusSnapshot[]> {
-  const { data, error } = await supabase
-    .from('wo_status_snapshot')
-    .select('*')
-    .eq('snapshot_date', date)
-    .order('status_raw', { ascending: true })
-  if (error) { console.error('getSnapshotsByDate:', error); return [] }
-  return data || []
+  try {
+    return await boardGet<WoStatusSnapshot[]>('snapshots-by-date', { date })
+  } catch (error) {
+    console.error('getSnapshotsByDate:', error)
+    return []
+  }
 }
 
 export async function getSnapshotDiff(date1: string, date2: string) {

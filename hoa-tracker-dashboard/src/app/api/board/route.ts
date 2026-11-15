@@ -141,6 +141,55 @@ export async function GET(request: NextRequest) {
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
       return NextResponse.json(data || [])
     }
+    if (q === 'property') {
+      const { data, error } = await supabase.from('properties').select('*').eq('id', params.get('id') || '').single()
+      if (error) return NextResponse.json({ error: error.message }, { status: 404 })
+      return NextResponse.json(data)
+    }
+    if (q === 'property-by-parcel') {
+      const { data, error } = await supabase.from('properties').select('*').eq('parcel_code', params.get('id') || '').single()
+      if (error) return NextResponse.json({ error: error.message }, { status: 404 })
+      return NextResponse.json(data)
+    }
+    if (q === 'properties') {
+      const { data, error } = await supabase.from('properties').select('*').order('address', { ascending: true })
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json(data || [])
+    }
+    if (q === 'snapshots-latest') {
+      const { data: latest, error: latestError } = await supabase
+        .from('wo_status_snapshot')
+        .select('snapshot_date')
+        .order('snapshot_date', { ascending: false })
+        .limit(1)
+        .single()
+      if (latestError || !latest?.snapshot_date) return NextResponse.json([])
+      const { data, error } = await supabase
+        .from('wo_status_snapshot')
+        .select('*')
+        .eq('snapshot_date', latest.snapshot_date)
+        .order('status_raw', { ascending: true })
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json(data || [])
+    }
+    if (q === 'snapshot-dates') {
+      const { data, error } = await supabase
+        .from('wo_status_snapshot')
+        .select('snapshot_date')
+        .order('snapshot_date', { ascending: false })
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+      const dates = [...new Set((data || []).map((row) => row.snapshot_date))]
+      return NextResponse.json(dates)
+    }
+    if (q === 'snapshots-by-date') {
+      const { data, error } = await supabase
+        .from('wo_status_snapshot')
+        .select('*')
+        .eq('snapshot_date', params.get('date') || '')
+        .order('status_raw', { ascending: true })
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json(data || [])
+    }
     if (q === 'email-stats') {
       const { data, error } = await supabase.from('v_email_processing_stats').select('*').order('message_count', { ascending: false })
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
