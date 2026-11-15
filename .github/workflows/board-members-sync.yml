@@ -1,0 +1,32 @@
+name: Board members sync
+
+on:
+  schedule:
+    # 10:30 UTC, after contacts sync at 10:00 UTC.
+    - cron: '30 10 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: board-members-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Sync board@villasboulders.org into board_members
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/sync-board-members.mjs

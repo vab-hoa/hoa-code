@@ -1,5 +1,6 @@
 -- PDS-004 / PDS-005 / PDS-007
--- Phase 2a pattern: signed-in users may SELECT. Board membership stays in the app.
+-- PDS-008: SELECT requires is_board_member() from schema_board_members_rls.sql.
+-- Apply that file first. Rerunning this file keeps the board predicate.
 -- Writes are not granted to anon or authenticated. Server routes use the service role.
 -- Does not change people or contacts.
 
@@ -29,19 +30,19 @@ BEGIN
 END $$;
 
 CREATE POLICY email_message_select_authenticated ON email_message
-  FOR SELECT TO authenticated USING (true);
+  FOR SELECT TO authenticated USING (public.is_board_member());
 CREATE POLICY work_items_select_authenticated ON work_items
-  FOR SELECT TO authenticated USING (true);
+  FOR SELECT TO authenticated USING (public.is_board_member());
 CREATE POLICY work_item_notes_select_authenticated ON work_item_notes
-  FOR SELECT TO authenticated USING (true);
+  FOR SELECT TO authenticated USING (public.is_board_member());
 CREATE POLICY work_item_documents_select_authenticated ON work_item_documents
-  FOR SELECT TO authenticated USING (true);
+  FOR SELECT TO authenticated USING (public.is_board_member());
 CREATE POLICY correspondence_entries_select_authenticated ON correspondence_entries
-  FOR SELECT TO authenticated USING (true);
+  FOR SELECT TO authenticated USING (public.is_board_member());
 CREATE POLICY issue_email_link_select_authenticated ON issue_email_link
-  FOR SELECT TO authenticated USING (true);
+  FOR SELECT TO authenticated USING (public.is_board_member());
 CREATE POLICY source_documents_select_authenticated ON source_documents
-  FOR SELECT TO authenticated USING (true);
+  FOR SELECT TO authenticated USING (public.is_board_member());
 
 REVOKE ALL ON email_message, work_items, work_item_notes, work_item_documents,
   correspondence_entries, issue_email_link, source_documents
