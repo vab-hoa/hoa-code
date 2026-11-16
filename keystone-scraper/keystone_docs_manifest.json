@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "last_checked": "2026-11-15T15:59:35+00:00",
+  "last_checked": "2026-11-16T19:04:48+00:00",
   "files": {
     "Agendas": {
       "042125 VBDR Agenda.pdf": {
@@ -32,6 +32,11 @@
         "id": "6ae307144f6019d2fa0301f5",
         "size": 534753,
         "updated_at": "2026-10-27T12:32:16.903Z"
+      },
+      "VATB 111726 Agenda Annual & Budget Ratification Meeting.pdf": {
+        "id": "6afa5f31ba092fe90590528d",
+        "size": 248843,
+        "updated_at": "2026-11-16T01:41:06.235Z"
       }
     },
     "Architectural": {
