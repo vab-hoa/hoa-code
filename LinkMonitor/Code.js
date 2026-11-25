@@ -18,6 +18,7 @@
 
 const BASE_URL    = 'https://www.villasboulders.org';
 const ALERT_EMAIL = 'admin@villasboulders.org';
+const SCRIPT_URL  = 'https://script.google.com/d/1NDs6kxjB1z4LO8liXNFlNfHkb5o9I6ovYrS2RQtcKGR5tgchpzA5eFPt/edit';
 
 const SKIP_PREFIXES = ['mailto:', 'tel:', 'javascript:', 'data:'];
 
@@ -254,8 +255,8 @@ function sendAlert(newBroken, totalBroken, pagesCrawled, linksChecked) {
     lines.push('');
   }
 
-  lines.push('Previously known broken links are suppressed. To reset the suppression');
-  lines.push('list, run clearKnownBroken() in the Apps Script editor for this project.');
+  lines.push('Previously known broken links are suppressed until they are fixed.');
+  lines.push('Fix broken links: ' + SCRIPT_URL);
 
   GmailApp.sendEmail(ALERT_EMAIL, subject, lines.join('\n'));
 }
